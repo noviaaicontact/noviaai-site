@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoviaAI — Automatisation Intelligente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #080808;
+      --white: #ffffff;
+      --cream: #f8f6f2;
+      --accent: #c8f135;
+      --accent-dark: #a8cc1a;
+      --text: #1a1a1a;
+      --text-light: #555555;
+      --card-bg: #111111;
+      --border: rgba(0,0,0,0.1);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 400; overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: rgba(248,246,242,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.5px; color: var(--text); }
+    .logo span { color: var(--accent-dark); }
+    .nav-cta { background: var(--black); color: var(--white); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; padding: 12px 24px; border: none; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s ease; text-decoration: none; }
+    .nav-cta:hover { background: var(--accent-dark); color: var(--black); }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 140px 48px 100px; background: var(--black); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(200,241,53,0.12) 0%, transparent 70%); }
+    .hero-tag { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 36px; opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards; }
+    .hero-tag::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--accent); }
+    .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(48px, 7vw, 100px); line-height: 0.95; letter-spacing: -3px; max-width: 850px; color: var(--white); opacity: 0; animation: fadeUp 0.8s ease 0.4s forwards; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { margin-top: 40px; max-width: 500px; font-size: 18px; line-height: 1.7; color: rgba(255,255,255,0.65); opacity: 0; animation: fadeUp 0.8s ease 0.6s forwards; }
+    .hero-actions { margin-top: 52px; display: flex; align-items: center; gap: 28px; opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards; }
+    .btn-primary { background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 18px 40px; border: none; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s ease; text-decoration: none; display: inline-block; }
+    .btn-primary:hover { background: #d4f545; transform: translateY(-2px); }
+    .btn-ghost { color: rgba(255,255,255,0.7); font-size: 15px; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+    .btn-ghost:hover { color: var(--white); }
+    .btn-ghost::after { content: '→'; transition: transform 0.2s; }
+    .btn-ghost:hover::after { transform: translateX(4px); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--accent); }
+    .stat { padding: 48px; border-right: 1px solid rgba(0,0,0,0.1); }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 52px; color: var(--black); line-height: 1; }
+    .stat-label { font-size: 14px; color: rgba(0,0,0,0.6); margin-top: 10px; font-weight: 500; }
+    section { padding: 100px 48px; }
+    .section-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-weight: 600; }
+    .section-tag::before { content: ''; width: 24px; height: 2px; background: var(--accent-dark); }
+    .section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(32px, 4vw, 56px); line-height: 1.05; letter-spacing: -2px; color: var(--text); max-width: 650px; }
+    .problem { background: var(--white); }
+    .problem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 60px; }
+    .problem-item { background: var(--cream); padding: 40px; border: 1px solid var(--border); position: relative; transition: all 0.3s; }
+    .problem-item:hover { border-color: var(--accent-dark); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .problem-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; color: rgba(0,0,0,0.06); position: absolute; top: 16px; right: 20px; line-height: 1; }
+    .problem-icon { font-size: 32px; margin-bottom: 20px; }
+    .problem-item h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 12px; }
+    .problem-item p { font-size: 15px; line-height: 1.7; color: var(--text-light); }
+    .how { background: var(--black); }
+    .how .section-tag { color: var(--accent); }
+    .how .section-tag::before { background: var(--accent); }
+    .how .section-title { color: var(--white); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 60px; background: rgba(255,255,255,0.08); }
+    .step { background: var(--black); padding: 48px 40px; }
+    .step-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 28px; }
+    .step h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; color: var(--white); margin-bottom: 16px; line-height: 1.2; }
+    .step p { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.55); }
+    .pricing { background: var(--cream); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; max-width: 900px; margin-top: 60px; }
+    .pricing-card { padding: 48px 40px; border: 1px solid var(--border); background: var(--white); display: flex; flex-direction: column; }
+    .pricing-card.featured { background: var(--black); border-color: var(--black); }
+    .pricing-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 28px; color: var(--text-light); }
+    .pricing-card.featured .pricing-name { color: var(--accent); }
+    .pricing-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; line-height: 1; letter-spacing: -3px; color: var(--text); }
+    .pricing-card.featured .pricing-price { color: var(--white); }
+    .pricing-period { font-size: 14px; color: var(--text-light); margin-top: 8px; margin-bottom: 40px; }
+    .pricing-card.featured .pricing-period { color: rgba(255,255,255,0.45); }
+    .pricing-features { list-style: none; margin-bottom: 40px; flex: 1; }
+    .pricing-features li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; font-size: 15px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .pricing-card.featured .pricing-features li { color: rgba(255,255,255,0.8); border-bottom-color: rgba(255,255,255,0.08); }
+    .pricing-features li::before { content: '✓'; color: var(--accent-dark); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+    .pricing-card.featured .pricing-features li::before { color: var(--accent); }
+    .pricing-cta { display: block; width: 100%; padding: 16px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.5px; text-align: center; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; background: var(--black); color: var(--white); }
+    .pricing-card.featured .pricing-cta { background: var(--accent); color: var(--black); }
+    .pricing-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+    .cta-section { background: var(--black); text-align: center; padding: 120px 48px; }
+    .cta-section .section-tag { justify-content: center; color: var(--accent); }
+    .cta-section .section-tag::before { background: var(--accent); }
+    .cta-section .section-title { color: var(--white); margin: 0 auto 24px; max-width: 700px; }
+    .cta-section p { font-size: 18px; color: rgba(255,255,255,0.55); max-width: 480px; margin: 0 auto 52px; line-height: 1.7; }
+    footer { padding: 36px 48px; background: var(--cream); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    footer p { font-size: 13px; color: var(--text-light); margin-top: 6px; }
+    .footer-contact { display: flex; gap: 24px; align-items: center; }
+    .footer-contact a { font-size: 13px; color: var(--text); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .footer-contact a:hover { color: var(--accent-dark); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .hero { padding: 110px 24px 80px; }
+      section { padding: 70px 24px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 32px 24px; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+      .hero-actions { flex-direction: column; align-items: flex-start; gap: 20px; }
+    }
+
+    /* ===== CHATBOTS ===== */
+    .chat-toggle-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; z-index: 9999; }
+    .chat-toggle-wrapper { display: flex; align-items: center; gap: 10px; }
+    .chat-toggle-label { background: #1a1a1a; color: white; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; opacity: 0; transform: translateX(10px); transition: all 0.2s; pointer-events: none; }
+    .chat-toggle-wrapper:hover .chat-toggle-label { opacity: 1; transform: translateX(0); }
+    .chat-toggle { width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: relative; }
+    .chat-toggle.novia { background: #d4ff3a; }
+    .chat-toggle.demo { background: #1a1a1a; }
+    .chat-toggle:hover { transform: scale(1.05); }
+    .chat-toggle svg { width: 28px; height: 28px; }
+    .chat-toggle .pulse-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background: #4ade80; border-radius: 50%; border: 2px solid white; }
+    .chat-window { position: fixed; bottom: 24px; right: 24px; width: 380px; height: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 9998; }
+    .chat-window.open { display: flex; animation: slideUp 0.3s ease-out; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .chat-header { background: #1a1a1a; color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+    .chat-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .chat-avatar.novia { background: #d4ff3a; }
+    .chat-avatar.demo { background: #d4ff3a; }
+    .chat-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .chat-status { font-size: 12px; color: #b0b0b0; display: flex; align-items: center; gap: 6px; }
+    .status-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
+    .chat-close { margin-left: auto; background: none; border: none; color: white; cursor: pointer; font-size: 22px; opacity: 0.7; transition: opacity 0.2s; }
+    .chat-close:hover { opacity: 1; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; background: #fafafa; }
+    .message { margin-bottom: 16px; display: flex; flex-direction: column; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .message-bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-wrap: break-word; font-family: 'DM Sans', sans-serif; }
+    .message.bot .message-bubble { background: white; color: #1a1a1a; border: 1px solid #eee; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .message.bot .message-bubble a { color: #a8cc1a; text-decoration: underline; font-weight: 600; }
+    .message.user { align-items: flex-end; }
+    .message.user .message-bubble { background: #1a1a1a; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .message-time { font-size: 11px; color: #999; margin-top: 4px; padding: 0 6px; }
+    .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .quick-reply { background: white; border: 1px solid #ddd; padding: 8px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #1a1a1a; font-family: 'DM Sans', sans-serif; }
+    .quick-reply:hover { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+    .typing-indicator { display: inline-flex; gap: 4px; padding: 12px 16px; background: white; border: 1px solid #eee; border-radius: 18px; border-bottom-left-radius: 4px; }
+    .typing-dot { width: 7px; height: 7px; background: #999; border-radius: 50%; animation: typingAnim 1.4s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingAnim { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+    .chat-input-area { padding: 16px; background: white; border-top: 1px solid #eee; }
+    .chat-input-wrapper { display: flex; gap: 8px; align-items: center; background: #f5f5f5; border-radius: 24px; padding: 4px 4px 4px 16px; }
+    .chat-input { flex: 1; border: none; background: none; padding: 10px 0; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif; }
+    .send-btn { width: 36px; height: 36px; border-radius: 50%; background: #1a1a1a; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .send-btn:hover { background: #333; }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .chat-footer { text-align: center; font-size: 11px; color: #999; padding: 8px; background: white; }
+    .demo-badge { background: #fff3cd; color: #856404; padding: 6px 10px; border-radius: 8px; font-size: 11px; text-align: center; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">Novia<span>AI</span></div>
+    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Voir une démo gratuite</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-tag">Automatisation IA · Québec</div>
+    <h1>Vos clients<br/>répondus.<br/><em>24h/24.</em></h1>
+    <p class="hero-sub">J'automatise la prise de rendez-vous et la gestion des messages de votre entreprise grâce à l'intelligence artificielle — pendant que vous travaillez.</p>
+    <div class="hero-actions">
+      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Voir une démo gratuite →</a>
+      <a href="#comment" class="btn-ghost">Comment ça marche</a>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat reveal">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Disponibilité de votre assistant IA</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">0$</div>
+      <div class="stat-label">Pour tester — démo gratuite 2 semaines</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Personnalisé pour votre entreprise</div>
+    </div>
+  </div>
+
+  <section class="problem">
+    <div class="section-tag">Le problème</div>
+    <h2 class="section-title reveal">Combien de clients perdez-vous chaque soir ?</h2>
+    <div class="problem-grid">
+      <div class="problem-item reveal">
+        <div class="problem-num">01</div>
+        <div class="problem-icon">💬</div>
+        <h3>Messages sans réponse</h3>
+        <p>Un client écrit à 21h pour réserver. Vous êtes occupé. Il n'attend pas — il va chez la concurrence.</p>
+      </div>
+      <div class="problem-item reveal">
+        <div class="problem-num">02</div>
+        <div class="problem-icon">🔁</div>
+        <h3>Questions répétitives</h3>
+        <p>Prix, disponibilités, services offerts. Vous répondez aux mêmes questions 10 fois par jour. C'est du temps perdu.</p>
+      </div>
+      <div class="problem-item reveal">
+        <div class="problem-num">03</div>
+        <div class="problem-icon">📅</div>
+        <h3>Réservations manuelles</h3>
+        <p>Chaque rendez-vous pris à la main, c'est une interruption dans votre journée. Ça s'accumule vite.</p>
+      </div>
+      <div class="problem-item reveal">
+        <div class="problem-num">04</div>
+        <div class="problem-icon">😓</div>
+        <h3>Vous gérez tout seul</h3>
+        <p>Entre les clients, les messages, et les réservations — vous n'avez plus de temps pour votre vrai travail.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="comment">
+    <div class="section-tag">La solution</div>
+    <h2 class="section-title reveal">Un système qui travaille à votre place</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">ÉTAPE 01</div>
+        <h3>Votre client envoie un message</h3>
+        <p>Sur votre site web, Instagram ou Facebook. Peu importe l'heure — même à 2h du matin.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">ÉTAPE 02</div>
+        <h3>L'IA répond instantanément</h3>
+        <p>Elle répond aux questions, présente vos services, et guide le client vers la réservation — sans que vous ayez à toucher votre téléphone.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">ÉTAPE 03</div>
+        <h3>Le rendez-vous est confirmé</h3>
+        <p>Directement dans votre agenda. Le client reçoit une confirmation automatique. Vous découvrez un nouveau rendez-vous le matin.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="tarifs">
+    <div class="section-tag">Tarifs</div>
+    <h2 class="section-title reveal">Simple, transparent, sans surprise.</h2>
+    <div style="margin-top:60px; display:grid; grid-template-columns: repeat(2,1fr); gap:24px; max-width:900px;">
+      <div class="pricing-card featured reveal">
+        <div class="pricing-name">Forfait Essentiel</div>
+        <div class="pricing-price">399$</div>
+        <div class="pricing-period">par mois · sans engagement</div>
+        <ul class="pricing-features">
+          <li>Assistant IA 100% personnalisé</li>
+          <li>Réservation automatique 24h/24</li>
+          <li>Connecté à Google Agenda</li>
+          <li>Intégration sur votre site web</li>
+          <li>Réponses aux questions fréquentes</li>
+          <li>Rappels automatiques 24h avant</li>
+          <li>Confirmation par courriel automatique</li>
+          <li>Modifications incluses</li>
+          <li>Support par messagerie</li>
+        </ul>
+        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+      </div>
+      <div class="pricing-card reveal">
+        <div class="pricing-name">Site Web Professionnel</div>
+        <div class="pricing-price">300$</div>
+        <div class="pricing-period">one-time + 50$/année</div>
+        <ul class="pricing-features">
+          <li>Site web 100% personnalisé</li>
+          <li>Design professionnel moderne</li>
+          <li>Optimisé pour mobile</li>
+          <li>Domaine .ca inclus</li>
+          <li>Hébergement inclus</li>
+          <li>Renouvellement annuel géré</li>
+          <li>2-3 modifications par année</li>
+          <li>Livraison en 48-72h</li>
+          <li>Support par messagerie</li>
+        </ul>
+        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+      </div>
+    </div>
+    <p style="margin-top:32px; font-size:14px; color:var(--text-light);">
+      🎁 Les 2 premières semaines du forfait IA sont <strong>100% gratuites</strong> — aucune carte de crédit requise. &nbsp;|&nbsp; 💡 Combinez les deux services pour une solution complète.
+    </p>
+  </section>
+
+  <section class="cta-section" id="contact">
+    <div class="section-tag">Prêt à commencer ?</div>
+    <h2 class="section-title">Testez gratuitement pendant 2 semaines.</h2>
+    <p>Aucun engagement. Aucune carte de crédit. Juste un système qui travaille à votre place dès demain.</p>
+    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Demander ma démo gratuite →</a>
+  </section>
+
+  <footer>
+    <div class="footer-left">
+      <div class="logo">Novia<span style="color:var(--accent-dark)">AI</span></div>
+      <p>© 2026 NoviaAI · Automatisation intelligente · Québec</p>
+    </div>
+    <div class="footer-contact">
+      <a href="mailto:noviaai.contact@gmail.com">✉ noviaai.contact@gmail.com</a>
+      <a href="tel:+15819095332">📞 581-909-5332</a>
+    </div>
+  </footer>
+
+  <!-- Boutons chatbots -->
+  <div class="chat-toggle-group">
+    <div class="chat-toggle-wrapper">
+      <span class="chat-toggle-label">Voir une démo client</span>
+      <button class="chat-toggle demo" onclick="toggleChat('demo')" title="Démo: Clinique Bella">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#d4ff3a" stroke-width="2.5">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-toggle-wrapper">
+      <span class="chat-toggle-label">Parler à NoviaAI</span>
+      <button class="chat-toggle novia" onclick="toggleChat('novia')" title="Assistant NoviaAI">
+        <span class="pulse-dot"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Chatbot NoviaAI -->
+  <div class="chat-window" id="chatWindow_novia">
+    <div class="chat-header">
+      <div class="chat-avatar novia">⚡</div>
+      <div class="chat-info">
+        <h3>Assistant NoviaAI</h3>
+        <div class="chat-status">
+          <span class="status-dot"></span>
+          En ligne · Répond instantanément
+        </div>
+      </div>
+      <button class="chat-close" onclick="toggleChat('novia')">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages_novia"></div>
+    <div class="chat-input-area">
+      <div class="chat-input-wrapper">
+        <input type="text" class="chat-input" id="chatInput_novia" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') sendMessage('novia')">
+        <button class="send-btn" id="sendBtn_novia" onclick="sendMessage('novia')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+        </button>
+      </div>
+      <div class="chat-footer">Propulsé par <strong>NoviaAI</strong></div>
+    </div>
+  </div>
+
+  <!-- Chatbot Démo Clinique Bella -->
+  <div class="chat-window" id="chatWindow_demo">
+    <div class="chat-header">
+      <div class="chat-avatar demo">🤖</div>
+      <div class="chat-info">
+        <h3>Clinique Bella</h3>
+        <div class="chat-status">
+          <span class="status-dot"></span>
+          En ligne · Répond instantanément
+        </div>
+      </div>
+      <button class="chat-close" onclick="toggleChat('demo')">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages_demo">
+      <div class="demo-badge">✨ Démo — exemple d'assistant IA pour une clinique d'esthétique</div>
+    </div>
+    <div class="chat-input-area">
+      <div class="chat-input-wrapper">
+        <input type="text" class="chat-input" id="chatInput_demo" placeholder="Écrivez votre message..." onkeypress="if(event.key==='Enter') sendMessage('demo')">
+        <button class="send-btn" id="sendBtn_demo" onclick="sendMessage('demo')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+        </button>
+      </div>
+      <div class="chat-footer">Propulsé par <strong>NoviaAI</strong></div>
+    </div>
+  </div>
+
+  <script>
+    // Reveal animation
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ===== CHATBOTS =====
+    // API key is now hidden server-side
+    const MODEL = 'gpt-4o-mini';
+
+    // Prompt système — Clinique Bella (démo)
+    const PROMPT_DEMO = `Tu es l'assistante virtuelle de Clinique Bella, une clinique d'esthétique de haut de gamme.
+
+Informations de la clinique:
+- Nom: Clinique Bella
+- Adresse: 1234 rue Saint-Denis, Montréal
+- Téléphone: (514) 555-0123
+- Horaires: Lundi au vendredi 9h-19h, Samedi 10h-17h, Dimanche fermé
+- Services principaux: Soins du visage, épilation laser, injections de botox, traitements anti-âge, microdermabrasion, peelings chimiques
+- Tarifs indicatifs: Soins du visage à partir de 85$, Épilation laser dès 60$, Botox dès 12$/unité, Consultation gratuite
+
+Ton rôle:
+- Réponds en français avec un ton chaleureux, professionnel et bienveillant
+- Sois concise (max 3-4 phrases par réponse)
+- Pour prendre rendez-vous, partage ce lien directement: https://cal.com/noviaai.contact/consultation-clinique-bella
+- Si tu ne sais pas, propose de contacter la clinique
+- N'invente pas d'informations médicales — recommande une consultation
+
+Tu es une démo - ce chatbot illustre ce que NoviaAI peut bâtir pour les PME.`;
+
+    // Prompt système — NoviaAI (vrai assistant)
+    const PROMPT_NOVIA = `Tu es l'assistant virtuel de NoviaAI, une agence québécoise spécialisée dans l'automatisation IA pour les PME.
+
+Informations sur NoviaAI:
+- Nom de l'agence: NoviaAI
+- Fondateur: Étienne Alexandre
+- Ville: Québec, Canada
+- Email: noviaai.contact@gmail.com
+- Téléphone: 581-909-5332
+- Site: noviaai (en développement)
+
+Ce que fait NoviaAI:
+NoviaAI automatise la prise de rendez-vous et la gestion des messages des PME québécoises grâce à l'intelligence artificielle. On bâtit des assistants IA personnalisés qui répondent aux clients 24h/24, qualifient les demandes et bookent automatiquement les rendez-vous dans l'agenda du client.
+
+Clientèle cible: Cliniques esthétiques, salons de coiffure, dentistes, massothérapeutes, coachs, restaurants, et toute PME qui reçoit beaucoup de demandes par messages.
+
+Forfaits offerts:
+1. Forfait Essentiel - 399$/mois (sans engagement)
+   Inclut: Assistant IA personnalisé, réservation automatique 24h/24, connexion Google Agenda, intégration site web, réponses aux FAQ, rappels automatiques 24h avant, confirmations courriel, modifications incluses, support par messagerie.
+   🎁 Les 2 premières semaines sont 100% gratuites — aucune carte requise.
+
+2. Site Web Professionnel - 300$ one-time + 50$/année
+   Inclut: Site web 100% personnalisé, design moderne, optimisé mobile, domaine .ca inclus, hébergement inclus, 2-3 modifications/année, livraison en 48-72h.
+
+💡 Les deux forfaits peuvent être combinés pour une solution complète.
+
+Comment ça fonctionne (3 étapes):
+1. Le client envoie un message (site, Instagram, Facebook) — peu importe l'heure
+2. L'IA répond instantanément, présente les services et guide vers la réservation
+3. Le RDV est confirmé directement dans l'agenda, le client reçoit une confirmation automatique
+
+Pour booker une démo gratuite: https://cal.com/noviaai.contact/demo-gratuite
+
+Ton rôle:
+- Réponds en français avec un ton professionnel, chaleureux et confiant
+- Sois concis (max 3-4 phrases par réponse)
+- Pour les demandes de démo ou de contact, partage le lien Cal.com ou propose noviaai.contact@gmail.com
+- Si quelqu'un veut voir un exemple, dis-lui qu'il peut tester le chatbot "Clinique Bella" sur cette page (le bouton noir en bas à droite)
+- Si tu ne sais pas, invite la personne à contacter Étienne directement par courriel ou téléphone (581-909-5332)
+- N'invente pas de fonctionnalités ou de prix qui ne sont pas listés ci-dessus`;
+
+    const CONFIG = {
+      demo: {
+        prompt: PROMPT_DEMO,
+        greeting: "Bonjour! 👋 Je suis l'assistante virtuelle de la Clinique Bella, disponible 24h/24. Comment puis-je vous aider?",
+        errorMsg: "Désolée, une erreur technique s'est produite. Veuillez réessayer ou nous appeler au (514) 555-0123",
+        quickReplies: [
+          { text: 'Prendre un RDV 📅', msg: 'Je veux prendre un rendez-vous' },
+          { text: 'Voir les services ✨', msg: 'Quels sont vos services?' },
+          { text: 'Prix & tarifs 💰', msg: 'Quels sont vos tarifs?' },
+          { text: 'Horaires 🕒', msg: 'Quels sont vos horaires?' }
+        ]
+      },
+      novia: {
+        prompt: PROMPT_NOVIA,
+        greeting: "Bonjour! 👋 Je suis l'assistant virtuel de NoviaAI. Posez-moi vos questions sur nos services d'automatisation IA — ou demandez à voir un exemple concret!",
+        errorMsg: "Désolé, une erreur technique s'est produite. Vous pouvez me joindre directement à noviaai.contact@gmail.com ou au 581-909-5332.",
+        quickReplies: [
+          { text: 'Nos services ⚡', msg: 'Quels sont vos services?' },
+          { text: 'Nos tarifs 💰', msg: 'Quels sont vos tarifs?' },
+          { text: 'Comment ça marche 🔧', msg: 'Comment ça fonctionne?' },
+          { text: 'Démo gratuite 🎁', msg: 'Je veux une démo gratuite' }
+        ]
+      }
+    };
+
+    const state = {
+      demo: { history: [], isOpen: false },
+      novia: { history: [], isOpen: false }
+    };
+
+    function linkify(text) {
+      return text.replace(/(https?:\/\/[^\s<)\]]+)/g, '<a href="$1" target="_blank">$1</a>');
+    }
+
+    function toggleChat(bot) {
+      // Fermer l'autre chatbot s'il est ouvert
+      const other = bot === 'demo' ? 'novia' : 'demo';
+      if (state[other].isOpen) {
+        document.getElementById('chatWindow_' + other).classList.remove('open');
+        state[other].isOpen = false;
+      }
+      const chatWindow = document.getElementById('chatWindow_' + bot);
+      state[bot].isOpen = !state[bot].isOpen;
+      chatWindow.classList.toggle('open');
+      if (state[bot].isOpen && state[bot].history.length === 0) {
+        setTimeout(() => {
+          addBotMessage(bot, CONFIG[bot].greeting, true);
+        }, 400);
+      }
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.getHours().toString().padStart(2,'0') + 'h' + now.getMinutes().toString().padStart(2,'0');
+    }
+
+    function addBotMessage(bot, text, withQuickReplies = false) {
+      const messages = document.getElementById('chatMessages_' + bot);
+      const div = document.createElement('div');
+      div.className = 'message bot';
+      div.innerHTML = `<div class="message-bubble">${linkify(text)}</div><div class="message-time">${getCurrentTime()}</div>`;
+      if (withQuickReplies) {
+        const qr = document.createElement('div');
+        qr.className = 'quick-replies';
+        qr.innerHTML = CONFIG[bot].quickReplies.map(r =>
+          `<button class="quick-reply" onclick="sendQuickReply('${bot}', '${r.msg.replace(/'/g, "\\'")}')">${r.text}</button>`
+        ).join('');
+        div.appendChild(qr);
+      }
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addUserMessage(bot, text) {
+      const messages = document.getElementById('chatMessages_' + bot);
+      const div = document.createElement('div');
+      div.className = 'message user';
+      div.innerHTML = `<div class="message-bubble">${text}</div><div class="message-time">${getCurrentTime()}</div>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping(bot) {
+      const messages = document.getElementById('chatMessages_' + bot);
+      const div = document.createElement('div');
+      div.className = 'message bot';
+      div.id = 'typingIndicator_' + bot;
+      div.innerHTML = `<div class="typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function hideTyping(bot) {
+      const indicator = document.getElementById('typingIndicator_' + bot);
+      if (indicator) indicator.remove();
+    }
+
+    function sendQuickReply(bot, text) {
+      document.getElementById('chatInput_' + bot).value = text;
+      sendMessage(bot);
+    }
+
+    async function sendMessage(bot) {
+      const input = document.getElementById('chatInput_' + bot);
+      const sendBtn = document.getElementById('sendBtn_' + bot);
+      const userText = input.value.trim();
+      if (!userText) return;
+      addUserMessage(bot, userText);
+      input.value = '';
+      sendBtn.disabled = true;
+      state[bot].history.push({ role: 'user', content: userText });
+      showTyping(bot);
+      try {
+        const response = await fetch('/.netlify/functions/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: MODEL, messages: [{ role: 'system', content: CONFIG[bot].prompt }, ...state[bot].history], max_tokens: 250, temperature: 0.7 })
+        });
+        const data = await response.json();
+        hideTyping(bot);
+        if (data.error) {
+          addBotMessage(bot, CONFIG[bot].errorMsg);
+        } else {
+          const botReply = data.choices[0].message.content;
+          state[bot].history.push({ role: 'assistant', content: botReply });
+          addBotMessage(bot, botReply);
+        }
+      } catch (error) {
+        hideTyping(bot);
+        addBotMessage(bot, CONFIG[bot].errorMsg);
+      }
+      sendBtn.disabled = false;
+    }
+  </script>
+</body>
+</html>
