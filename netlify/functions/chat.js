@@ -1,4 +1,4 @@
-exports.handler = async function(event, context) {
+const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -10,7 +10,7 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': Bearer ${process.env.OPENAI_API_KEY}
+        'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY
       },
       body: JSON.stringify(body)
     });
@@ -32,3 +32,5 @@ exports.handler = async function(event, context) {
     };
   }
 };
+
+exports.handler = handler;
