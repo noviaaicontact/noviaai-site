@@ -96,6 +96,44 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .reveal { opacity: 0; transform: translateY(40px); transition: all 0.7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* ===== SECTION OFFRE GRATUITE ===== */
+    .offer { background: var(--accent); }
+    .offer .section-tag { color: rgba(0,0,0,0.55); }
+    .offer .section-tag::before { background: rgba(0,0,0,0.4); }
+    .offer .section-title { color: var(--black); max-width: 750px; }
+    .offer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 60px; background: rgba(0,0,0,0.12); }
+    .offer-step { background: var(--accent); padding: 48px 36px; }
+    .offer-step-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; color: rgba(0,0,0,0.08); line-height: 1; margin-bottom: 16px; }
+    .offer-step h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; color: var(--black); margin-bottom: 12px; }
+    .offer-step p { font-size: 15px; line-height: 1.7; color: rgba(0,0,0,0.65); }
+    .offer-cta-block { margin-top: 60px; display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
+    .offer-cta-block .btn-offer { background: var(--black); color: var(--white); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 20px 44px; text-decoration: none; display: inline-block; letter-spacing: 0.5px; transition: all 0.2s; }
+    .offer-cta-block .btn-offer:hover { background: #222; transform: translateY(-2px); }
+    .offer-note { font-size: 14px; color: rgba(0,0,0,0.6); line-height: 1.6; }
+    .offer-note strong { color: var(--black); }
+
+    /* ===== SECTION À PROPOS ===== */
+    .about { background: var(--white); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
+    .about-text p { font-size: 17px; line-height: 1.8; color: var(--text-light); margin-bottom: 20px; }
+    .about-text p strong { color: var(--text); }
+    .about-badge-list { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .about-badge { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: var(--cream); border: 1px solid var(--border); }
+    .about-badge-icon { font-size: 24px; flex-shrink: 0; }
+    .about-badge-text { font-size: 14px; line-height: 1.6; color: var(--text-light); }
+    .about-badge-text strong { color: var(--text); display: block; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-size: 15px; }
+    .about-visual { background: var(--black); padding: 48px 40px; display: flex; flex-direction: column; gap: 24px; }
+    .about-visual-stat { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; }
+    .about-visual-stat:last-child { border-bottom: none; padding-bottom: 0; }
+    .about-visual-stat .num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 48px; color: var(--accent); line-height: 1; }
+    .about-visual-stat .label { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+
+    /* ===== SECTION TÉMOIGNAGES ===== */
+    .testimonials { background: var(--cream); }
+    .testimonials-coming { margin-top: 60px; border: 2px dashed rgba(0,0,0,0.12); padding: 60px 48px; text-align: center; }
+    .testimonials-coming p { font-size: 17px; color: var(--text-light); line-height: 1.7; max-width: 480px; margin: 0 auto 32px; }
+    .testimonials-coming .tc-icon { font-size: 48px; margin-bottom: 20px; }
+
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
       .hero { padding: 110px 24px 80px; }
@@ -107,6 +145,9 @@
       .pricing-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
       .hero-actions { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .offer-grid { grid-template-columns: 1fr; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+      .offer-cta-block { flex-direction: column; align-items: flex-start; gap: 20px; }
     }
 
     /* ===== CHATBOTS ===== */
@@ -120,7 +161,15 @@
     .chat-toggle:hover { transform: scale(1.05); }
     .chat-toggle svg { width: 28px; height: 28px; }
     .chat-toggle .pulse-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background: #4ade80; border-radius: 50%; border: 2px solid white; }
-    .chat-window { position: fixed; bottom: 24px; right: 24px; width: 380px; height: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 9998; }
+    .chat-window { position: fixed; bottom: 100px; right: 24px; width: 380px; height: 580px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 9998; }
+    @media (max-width: 480px) {
+      .chat-window { width: calc(100vw - 24px); height: calc(100vh - 110px); bottom: 90px; right: 12px; border-radius: 16px; }
+      .chat-toggle-group { bottom: 16px; right: 16px; }
+      .chat-input-area { padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+      .chat-input-wrapper { padding: 6px 6px 6px 14px; }
+      .send-btn { width: 40px; height: 40px; flex-shrink: 0; }
+      .chat-messages { padding: 14px; }
+    }
     .chat-window.open { display: flex; animation: slideUp 0.3s ease-out; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .chat-header { background: #1a1a1a; color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
@@ -151,8 +200,8 @@
     @keyframes typingAnim { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
     .chat-input-area { padding: 16px; background: white; border-top: 1px solid #eee; }
     .chat-input-wrapper { display: flex; gap: 8px; align-items: center; background: #f5f5f5; border-radius: 24px; padding: 4px 4px 4px 16px; }
-    .chat-input { flex: 1; border: none; background: none; padding: 10px 0; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif; }
-    .send-btn { width: 36px; height: 36px; border-radius: 50%; background: #1a1a1a; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .chat-input { flex: 1; border: none; background: none; padding: 10px 0; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif; min-width: 0; }
+    .send-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: #1a1a1a; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
     .send-btn:hover { background: #333; }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .chat-footer { text-align: center; font-size: 11px; color: #999; padding: 8px; background: white; }
@@ -163,7 +212,7 @@
 
   <nav>
     <div class="logo">Novia<span>AI</span></div>
-    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Voir une démo gratuite</a>
+    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Avoir une démo gratuite</a>
   </nav>
 
   <section class="hero">
@@ -171,7 +220,7 @@
     <h1>Vos clients<br/>répondus.<br/><em>24h/24.</em></h1>
     <p class="hero-sub">J'automatise la prise de rendez-vous et la gestion des messages de votre entreprise grâce à l'intelligence artificielle — pendant que vous travaillez.</p>
     <div class="hero-actions">
-      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Voir une démo gratuite →</a>
+      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Avoir une démo gratuite →</a>
       <a href="#comment" class="btn-ghost">Comment ça marche</a>
     </div>
   </section>
@@ -246,12 +295,12 @@
 
   <section class="pricing" id="tarifs">
     <div class="section-tag">Tarifs</div>
-    <h2 class="section-title reveal">Simple, transparent, sans surprise.</h2>
-    <div style="margin-top:60px; display:grid; grid-template-columns: repeat(2,1fr); gap:24px; max-width:900px;">
-      <div class="pricing-card featured reveal">
-        <div class="pricing-name">Forfait Essentiel</div>
-        <div class="pricing-price">399$</div>
-        <div class="pricing-period">par mois · sans engagement</div>
+    <h2 class="section-title reveal">Commencez gratuitement.<br/>Payez seulement si ça marche.</h2>
+    <div style="margin-top:60px; max-width:700px;">
+      <div class="pricing-card featured reveal" style="padding:48px 40px;">
+        <div class="pricing-name">Essai gratuit 2 semaines</div>
+        <div class="pricing-price" style="font-size:52px;">0$</div>
+        <div class="pricing-period">pour commencer — aucune carte requise</div>
         <ul class="pricing-features">
           <li>Assistant IA 100% personnalisé</li>
           <li>Réservation automatique 24h/24</li>
@@ -261,31 +310,94 @@
           <li>Rappels automatiques 24h avant</li>
           <li>Confirmation par courriel automatique</li>
           <li>Modifications incluses</li>
-          <li>Support par messagerie</li>
+          <li>Support direct avec Étienne</li>
         </ul>
-        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
-      </div>
-      <div class="pricing-card reveal">
-        <div class="pricing-name">Site Web Professionnel</div>
-        <div class="pricing-price">300$</div>
-        <div class="pricing-period">one-time + 50$/année</div>
-        <ul class="pricing-features">
-          <li>Site web 100% personnalisé</li>
-          <li>Design professionnel moderne</li>
-          <li>Optimisé pour mobile</li>
-          <li>Domaine .ca inclus</li>
-          <li>Hébergement inclus</li>
-          <li>Renouvellement annuel géré</li>
-          <li>2-3 modifications par année</li>
-          <li>Livraison en 48-72h</li>
-          <li>Support par messagerie</li>
-        </ul>
-        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+        <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="pricing-cta">Réserver ma démo gratuite →</a>
       </div>
     </div>
     <p style="margin-top:32px; font-size:14px; color:var(--text-light);">
-      🎁 Les 2 premières semaines du forfait IA sont <strong>100% gratuites</strong> — aucune carte de crédit requise. &nbsp;|&nbsp; 💡 Combinez les deux services pour une solution complète.
+      🎁 2 semaines gratuites, aucune carte requise. &nbsp;|&nbsp; 💡 Tarification flexible discutée lors de votre appel selon vos besoins.
     </p>
+  </section>
+
+  <!-- SECTION OFFRE GRATUITE -->
+  <section class="offer">
+    <div class="section-tag">Offre de lancement</div>
+    <h2 class="section-title reveal">Zéro risque.<br/>Résultats d'abord.</h2>
+    <div class="offer-grid">
+      <div class="offer-step reveal">
+        <div class="offer-step-num">01</div>
+        <h3>On installe tout gratuitement</h3>
+        <p>Je configure votre assistant IA complet — chatbot, agenda, réponses personnalisées — sans que vous payiez un seul dollar. Aucune carte requise.</p>
+      </div>
+      <div class="offer-step reveal">
+        <div class="offer-step-num">02</div>
+        <h3>Vous voyez les résultats en 2 semaines</h3>
+        <p>Pendant 14 jours, votre système tourne à plein régime. Vous recevez vos rendez-vous automatiquement et vous constatez concrètement ce que ça change.</p>
+      </div>
+      <div class="offer-step reveal">
+        <div class="offer-step-num">03</div>
+        <h3>On continue seulement si vous êtes convaincu</h3>
+        <p>Si le système vous a apporté de la valeur, on continue ensemble. Sinon, on se sépare sans friction et sans frais. C'est aussi simple que ça.</p>
+      </div>
+    </div>
+    <div class="offer-cta-block">
+      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-offer">Commencer mon essai gratuit →</a>
+      <div class="offer-note">
+        <strong>Aucune carte de crédit. Aucun engagement.</strong><br/>
+        Offre limitée à 5 PME par mois pour garantir un service de qualité.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION À PROPOS -->
+  <section class="about">
+    <div class="section-tag">À propos</div>
+    <h2 class="section-title reveal">Une personne réelle<br/>derrière le système.</h2>
+    <div class="about-inner">
+      <div class="about-text reveal">
+        <p>Je m'appelle <strong>Étienne</strong>, fondateur de NoviaAI. J'ai créé cette agence avec un objectif simple : donner aux petites entreprises accès aux mêmes outils d'automatisation que les grandes — à un prix accessible.</p>
+        <p>J'ai vu trop de propriétaires de PME perdre des clients simplement parce qu'ils n'avaient pas le temps de répondre à tous les messages. Ce n'est pas un manque de compétence — c'est un manque d'outils.</p>
+        <p><strong>NoviaAI corrige ça.</strong></p>
+        <div class="about-badge-list">
+          <div class="about-badge">
+            <div class="about-badge-icon">🤝</div>
+            <div class="about-badge-text">
+              <strong>Suivi personnalisé</strong>
+              Vous parlez directement avec moi — pas un centre d'appels, pas un bot de support.
+            </div>
+          </div>
+          <div class="about-badge">
+            <div class="about-badge-icon">⚡</div>
+            <div class="about-badge-text">
+              <strong>Livraison rapide</strong>
+              Votre système est en ligne rapidement après notre premier appel.
+            </div>
+          </div>
+          <div class="about-badge">
+            <div class="about-badge-icon">🇨🇦</div>
+            <div class="about-badge-text">
+              <strong>100% québécois</strong>
+              Basé à Québec, je comprends la réalité des PME d'ici.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal">
+        <div class="about-visual-stat">
+          <div class="num">5 ★</div>
+          <div class="label">Satisfaction garantie — résultats ou remboursé</div>
+        </div>
+        <div class="about-visual-stat">
+          <div class="num">24/7</div>
+          <div class="label">Votre assistant répond, même quand vous dormez</div>
+        </div>
+        <div class="about-visual-stat">
+          <div class="num">0$</div>
+          <div class="label">Pour tester pendant 2 semaines complètes</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="cta-section" id="contact">
