@@ -435,29 +435,30 @@
   }
   .msg.user .msg-time { text-align: right; }
 
-  .quick-replies {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-    padding-left: 40px;
-  }
-  .quick-reply {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--gold-light);
-    padding: 8px 14px;
-    border-radius: 100px;
-    font-size: 12px;
+  .booking-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: var(--black);
     font-family: 'Outfit', sans-serif;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 12px;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px var(--gold-glow);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .quick-reply:hover {
-    background: rgba(201, 169, 98, 0.15);
-    border-color: var(--gold);
-    color: var(--cream);
+  .booking-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px var(--gold-glow);
+    color: var(--black);
+    text-decoration: none;
   }
 
   .typing-wrap {
@@ -710,8 +711,8 @@ HORAIRES:
 - Fermé dimanche et lundi
 
 PRISE DE RENDEZ-VOUS:
-- Dès qu'un client veut réserver, prendre un rendez-vous, booker, avoir une place, ou confirmer une date/heure, tu DOIS partager ce lien exact sur sa propre ligne: ${BOOKING_URL}
-- Encourage poliment à cliquer sur le lien pour choisir un créneau disponible.
+- Dès qu'un client veut réserver, prendre un rendez-vous, booker ou avoir une place, réponds UNIQUEMENT avec cette phrase exacte, sans URL, sans crochets, sans parenthèses: « Parfait ! Cliquez ici pour choisir votre service et votre créneau 👇 »
+- N'ajoute aucun lien ni texte après — l'interface affiche automatiquement un bouton de réservation.
 
 TON ET LANGUE:
 - Réponds TOUJOURS en français québécois naturel (tu/vous selon le client, expressions comme « ben », « parfait », « c'est beau », « on se voit », etc. avec modération).
@@ -729,27 +730,48 @@ RÈGLES:
 
     const ERROR_MSG = `Oups, y'a eu un petit problème technique. Tu peux réessayer dans un instant ou nous appeler au (418) 555-0147.`;
 
-    const QUICK_REPLIES = [
-      { text: 'Prendre un RDV 📅', msg: 'Je veux prendre un rendez-vous' },
-      { text: 'Voir les prix 💰', msg: 'Quels sont vos tarifs?' },
-      { text: 'Horaires 🕒', msg: 'Quels sont vos horaires?' },
-      { text: 'Services ✂️', msg: 'Quels services offrez-vous?' }
-    ];
+    const BOOKING_MSG = 'Parfait ! Cliquez ici pour choisir votre service et votre créneau 👇';
 
     let isOpen = false;
     let isTyping = false;
     let conversationHistory = [];
     let greeted = false;
 
-    function linkify(text) {
-      const escaped = text
+    function escapeHtml(text) {
+      return text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+    }
+
+    function linkify(text) {
+      const escaped = escapeHtml(text);
       return escaped.replace(
         /(https?:\/\/[^\s<]+)/g,
         '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
       );
+    }
+
+    function isBookingReply(text) {
+      return /cal\.com\/noviaai\.contact/i.test(text) ||
+        /cal\.com/i.test(text) ||
+        /\[BOOKING\]/i.test(text);
+    }
+
+    function processBotReply(text) {
+      if (isBookingReply(text)) {
+        return { text: BOOKING_MSG, showBooking: true };
+      }
+      let cleaned = text
+        .replace(/\[([^\]]*)\]\(https?:\/\/cal\.com[^\)]*\)/gi, '')
+        .replace(/https?:\/\/cal\.com\/noviaai\.contact[^\s]*/gi, '')
+        .replace(/\[BOOKING\]/gi, '')
+        .trim();
+      return { text: cleaned || text, showBooking: false };
+    }
+
+    function bookingButtonHtml() {
+      return `<a class="booking-btn" href="${BOOKING_URL}" target="_blank" rel="noopener noreferrer">Réserver mon rendez-vous</a>`;
     }
 
     function getTime() {
@@ -762,37 +784,25 @@ RÈGLES:
       document.getElementById('chat-window').classList.toggle('open', isOpen);
       if (isOpen && !greeted) {
         greeted = true;
-        setTimeout(() => addBotMessage(GREETING, true), 350);
+        setTimeout(() => addBotMessage(GREETING), 350);
       }
     }
 
-    function addBotMessage(text, withQuickReplies = false) {
+    function addBotMessage(text, showBooking = false) {
       const messages = document.getElementById('messages');
       const wrap = document.createElement('div');
       wrap.className = 'msg bot';
+      const bubbleContent = showBooking
+        ? `${escapeHtml(text)}${bookingButtonHtml()}`
+        : linkify(text);
       wrap.innerHTML = `
         <div class="msg-avatar-sm" aria-hidden="true">É</div>
         <div>
-          <div class="msg-bubble">${linkify(text)}</div>
+          <div class="msg-bubble">${bubbleContent}</div>
           <div class="msg-time">${getTime()}</div>
         </div>`;
-      if (withQuickReplies) {
-        const qr = document.createElement('div');
-        qr.className = 'quick-replies';
-        qr.innerHTML = QUICK_REPLIES.map(r =>
-          `<button type="button" class="quick-reply" data-msg="${escapeAttr(r.msg)}">${r.text}</button>`
-        ).join('');
-        qr.querySelectorAll('.quick-reply').forEach(btn => {
-          btn.addEventListener('click', () => sendSuggestion(btn.dataset.msg));
-        });
-        wrap.querySelector('div:last-child').appendChild(qr);
-      }
       messages.appendChild(wrap);
       messages.scrollTop = messages.scrollHeight;
-    }
-
-    function escapeAttr(s) {
-      return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function addUserMessage(text) {
@@ -871,7 +881,8 @@ RÈGLES:
         } else {
           const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
           conversationHistory.push({ role: 'assistant', content: reply });
-          addBotMessage(reply);
+          const { text: displayText, showBooking } = processBotReply(reply);
+          addBotMessage(displayText, showBooking);
         }
       } catch (err) {
         hideTyping();
