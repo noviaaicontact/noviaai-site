@@ -270,6 +270,17 @@
       color: var(--text);
     }
     .form-success.visible { display: block; }
+    .form-error {
+      display: none;
+      margin-top: 16px;
+      padding: 16px 20px;
+      background: rgba(220, 50, 50, 0.08);
+      border: 1px solid rgba(220, 50, 50, 0.3);
+      font-size: 14px;
+      color: #8b2020;
+    }
+    .form-error.visible { display: block; }
+    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     footer { padding: 36px 48px; background: var(--cream); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
     footer p { font-size: 13px; color: var(--text-light); margin-top: 6px; }
     .footer-contact { display: flex; gap: 24px; align-items: center; }
@@ -578,8 +589,9 @@
         <textarea id="besoins" name="besoins" rows="4" placeholder="Décrivez votre situation, vos questions ou ce que vous recherchez..."></textarea>
       </div>
       <button type="submit" class="form-submit">Recevoir ma démo gratuite</button>
+      <div class="form-error" id="form-error" role="alert"></div>
       <div class="form-success" id="form-success" role="status">
-        Merci! Votre demande a été envoyée. On vous contacte très bientôt pour votre démo gratuite. 🎉
+        Merci ! On vous contacte sous peu avec votre démo personnalisée.
       </div>
     </form>
   </section>
@@ -644,25 +656,53 @@
     reveals.forEach(el => observer.observe(el));
 
     // ===== FORMULAIRE =====
-    document.getElementById('demo-form').addEventListener('submit', function(e) {
+    const FORM_WEBHOOK_URL = 'https://hook.us2.make.com/jxtv9f69tea1xjktaxl9pstbgr27eqn7';
+
+    document.getElementById('demo-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      if (!this.checkValidity()) {
-        this.reportValidity();
+      const form = this;
+      const submitBtn = form.querySelector('.form-submit');
+      const successEl = document.getElementById('form-success');
+      const errorEl = document.getElementById('form-error');
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
         return;
       }
-      const data = new FormData(this);
-      const subject = encodeURIComponent('Demande démo gratuite — ' + data.get('entreprise'));
-      const body = encodeURIComponent(
-        `Nom: ${data.get('nom')}\n` +
-        `Entreprise: ${data.get('entreprise')}\n` +
-        `Type: ${data.get('business')}\n` +
-        `Téléphone: ${data.get('telephone')}\n` +
-        `Courriel: ${data.get('courriel')}\n` +
-        `Besoins: ${data.get('besoins') || '(non précisé)'}`
-      );
-      window.location.href = `mailto:noviaai.contact@gmail.com?subject=${subject}&body=${body}`;
-      document.getElementById('form-success').classList.add('visible');
-      this.reset();
+
+      const data = new FormData(form);
+      const payload = {
+        nom: data.get('nom'),
+        entreprise: data.get('entreprise'),
+        business: data.get('business'),
+        telephone: data.get('telephone'),
+        courriel: data.get('courriel'),
+        besoins: data.get('besoins') || ''
+      };
+
+      submitBtn.disabled = true;
+      successEl.classList.remove('visible');
+      errorEl.classList.remove('visible');
+
+      try {
+        const response = await fetch(FORM_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Erreur serveur');
+        }
+
+        successEl.classList.add('visible');
+        form.reset();
+      } catch (err) {
+        errorEl.textContent = 'Une erreur est survenue. Réessayez ou écrivez-nous à noviaai.contact@gmail.com.';
+        errorEl.classList.add('visible');
+      }
+
+      submitBtn.disabled = false;
     });
 
     // ===== CHATBOT NOVIAAI =====
