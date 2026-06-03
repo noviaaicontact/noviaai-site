@@ -184,7 +184,7 @@
     .pricing-card.featured { background: var(--black); border-color: var(--black); }
     .pricing-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 28px; color: var(--text-light); }
     .pricing-card.featured .pricing-name { color: var(--accent); }
-    .pricing-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; line-height: 1; letter-spacing: -3px; color: var(--text); }
+    .pricing-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(22px, 3vw, 32px); line-height: 1.2; letter-spacing: -1px; color: var(--text); }
     .pricing-card.featured .pricing-price { color: var(--white); }
     .pricing-period { font-size: 14px; color: var(--text-light); margin-top: 8px; margin-bottom: 40px; }
     .pricing-card.featured .pricing-period { color: rgba(255,255,255,0.45); }
@@ -201,6 +201,68 @@
     .cta-section .section-tag::before { background: var(--accent); }
     .cta-section .section-title { color: var(--white); margin: 0 auto 24px; max-width: 700px; }
     .cta-section p { font-size: 18px; color: rgba(255,255,255,0.55); max-width: 480px; margin: 0 auto 52px; line-height: 1.7; }
+    /* Formulaire démo */
+    .formulaire-section { background: var(--white); padding: 100px 48px 120px; }
+    .formulaire-section .section-title { max-width: 720px; }
+    .formulaire-desc { margin-top: 16px; font-size: 16px; line-height: 1.7; color: var(--text-light); max-width: 520px; }
+    .demo-form {
+      max-width: 640px;
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--text);
+    }
+    .form-group input,
+    .form-group select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent-dark);
+      box-shadow: 0 0 0 3px rgba(200,241,53,0.25);
+    }
+    .form-submit {
+      margin-top: 12px;
+      background: var(--accent);
+      color: var(--black);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 18px 32px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .form-submit:hover { background: #d4f545; transform: translateY(-2px); }
+    .form-success {
+      display: none;
+      margin-top: 24px;
+      padding: 20px 24px;
+      background: rgba(200,241,53,0.2);
+      border: 1px solid var(--accent-dark);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .form-success.visible { display: block; }
     footer { padding: 36px 48px; background: var(--cream); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
     footer p { font-size: 13px; color: var(--text-light); margin-top: 6px; }
     .footer-contact { display: flex; gap: 24px; align-items: center; }
@@ -232,16 +294,17 @@
       .pricing-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
       .hero-actions { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .formulaire-section { padding: 70px 24px 90px; }
     }
 
-    /* ===== CHATBOTS ===== */
-    .chat-toggle-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; z-index: 9999; }
+    /* ===== CHATBOT NOVIAAI ===== */
+    .chat-toggle-group { position: fixed; bottom: 24px; right: 24px; z-index: 9999; }
     .chat-toggle-wrapper { display: flex; align-items: center; gap: 10px; }
     .chat-toggle-label { background: #1a1a1a; color: white; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); white-space: nowrap; opacity: 0; transform: translateX(10px); transition: all 0.2s; pointer-events: none; }
     .chat-toggle-wrapper:hover .chat-toggle-label { opacity: 1; transform: translateX(0); }
     .chat-toggle { width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; position: relative; }
     .chat-toggle.novia { background: #d4ff3a; }
-    .chat-toggle.demo { background: #1a1a1a; }
     .chat-toggle:hover { transform: scale(1.05); }
     .chat-toggle svg { width: 28px; height: 28px; }
     .chat-toggle .pulse-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background: #4ade80; border-radius: 50%; border: 2px solid white; }
@@ -251,7 +314,6 @@
     .chat-header { background: #1a1a1a; color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
     .chat-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; }
     .chat-avatar.novia { background: #d4ff3a; }
-    .chat-avatar.demo { background: #d4ff3a; }
     .chat-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
     .chat-status { font-size: 12px; color: #b0b0b0; display: flex; align-items: center; gap: 6px; }
     .status-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
@@ -281,14 +343,13 @@
     .send-btn:hover { background: #333; }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .chat-footer { text-align: center; font-size: 11px; color: #999; padding: 8px; background: white; }
-    .demo-badge { background: #fff3cd; color: #856404; padding: 6px 10px; border-radius: 8px; font-size: 11px; text-align: center; margin-bottom: 12px; }
   </style>
 </head>
 <body>
 
   <nav>
     <div class="logo">Novia<span>AI</span></div>
-    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Voir une démo gratuite</a>
+    <a href="#formulaire" class="nav-cta">Obtenir ma démo gratuite</a>
   </nav>
 
   <section class="hero">
@@ -296,7 +357,7 @@
     <h1>Vos clients<br/>répondus.<br/><em>24h/24.</em></h1>
     <p class="hero-sub">J'automatise la prise de rendez-vous et la gestion des messages de votre entreprise grâce à l'intelligence artificielle — pendant que vous travaillez.</p>
     <div class="hero-actions">
-      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Voir une démo gratuite →</a>
+      <a href="#formulaire" class="btn-primary">Obtenir ma démo gratuite →</a>
       <a href="#comment" class="btn-ghost">Comment ça marche</a>
     </div>
   </section>
@@ -425,8 +486,8 @@
     <div style="margin-top:60px; display:grid; grid-template-columns: repeat(2,1fr); gap:24px; max-width:900px;">
       <div class="pricing-card featured reveal">
         <div class="pricing-name">Forfait Essentiel</div>
-        <div class="pricing-price">399$</div>
-        <div class="pricing-period">par mois · sans engagement</div>
+        <div class="pricing-price">Tarification sur mesure</div>
+        <div class="pricing-period">Adapté à votre entreprise · sans engagement</div>
         <ul class="pricing-features">
           <li>Assistant IA 100% personnalisé</li>
           <li>Réservation automatique 24h/24</li>
@@ -438,12 +499,12 @@
           <li>Modifications incluses</li>
           <li>Support par messagerie</li>
         </ul>
-        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+        <a href="#formulaire" class="pricing-cta">Obtenir mon prix →</a>
       </div>
       <div class="pricing-card reveal">
         <div class="pricing-name">Site Web Professionnel</div>
-        <div class="pricing-price">300$</div>
-        <div class="pricing-period">one-time + 50$/année</div>
+        <div class="pricing-price">Tarification sur mesure</div>
+        <div class="pricing-period">Devis personnalisé selon vos besoins</div>
         <ul class="pricing-features">
           <li>Site web 100% personnalisé</li>
           <li>Design professionnel moderne</li>
@@ -455,7 +516,7 @@
           <li>Livraison en 48-72h</li>
           <li>Support par messagerie</li>
         </ul>
-        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+        <a href="#formulaire" class="pricing-cta">Obtenir mon prix →</a>
       </div>
     </div>
     <p style="margin-top:32px; font-size:14px; color:var(--text-light);">
@@ -467,7 +528,49 @@
     <div class="section-tag">Prêt à commencer ?</div>
     <h2 class="section-title">Testez gratuitement pendant 2 semaines.</h2>
     <p>Aucun engagement. Aucune carte de crédit. Juste un système qui travaille à votre place dès demain.</p>
-    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Demander ma démo gratuite →</a>
+    <a href="#formulaire" class="btn-primary">Obtenir ma démo gratuite →</a>
+  </section>
+
+  <section class="formulaire-section" id="formulaire">
+    <div class="section-tag">Démo gratuite</div>
+    <h2 class="section-title reveal">Recevez votre démo personnalisée</h2>
+    <p class="formulaire-desc reveal">Remplissez le formulaire et on vous contacte sous 24 h pour configurer votre assistant IA sur mesure.</p>
+    <form class="demo-form reveal" id="demo-form" novalidate>
+      <div class="form-group">
+        <label for="nom">Prénom et nom</label>
+        <input type="text" id="nom" name="nom" required placeholder="Ex. Marie Tremblay" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="entreprise">Nom de l'entreprise</label>
+        <input type="text" id="entreprise" name="entreprise" required placeholder="Ex. Salon Élara">
+      </div>
+      <div class="form-group">
+        <label for="business">Type de business</label>
+        <select id="business" name="business" required>
+          <option value="" disabled selected>Choisissez votre secteur</option>
+          <option value="Salon de coiffure">Salon de coiffure</option>
+          <option value="Clinique esthétique">Clinique esthétique</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Clinique dentaire">Clinique dentaire</option>
+          <option value="Garage mécanique">Garage mécanique</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="telephone">Numéro de téléphone</label>
+          <input type="tel" id="telephone" name="telephone" required placeholder="418-555-1234" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label for="courriel">Courriel</label>
+          <input type="email" id="courriel" name="courriel" required placeholder="vous@entreprise.com" autocomplete="email">
+        </div>
+      </div>
+      <button type="submit" class="form-submit">Recevoir ma démo gratuite</button>
+      <div class="form-success" id="form-success" role="status">
+        Merci! Votre demande a été envoyée. On vous contacte très bientôt pour votre démo gratuite. 🎉
+      </div>
+    </form>
   </section>
 
   <footer>
@@ -481,19 +584,11 @@
     </div>
   </footer>
 
-  <!-- Boutons chatbots -->
+  <!-- Chatbot NoviaAI -->
   <div class="chat-toggle-group">
     <div class="chat-toggle-wrapper">
-      <span class="chat-toggle-label">Voir une démo client</span>
-      <button class="chat-toggle demo" onclick="toggleChat('demo')" title="Démo: Clinique Bella">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#d4ff3a" stroke-width="2.5">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-      </button>
-    </div>
-    <div class="chat-toggle-wrapper">
       <span class="chat-toggle-label">Parler à NoviaAI</span>
-      <button class="chat-toggle novia" onclick="toggleChat('novia')" title="Assistant NoviaAI">
+      <button class="chat-toggle novia" onclick="toggleChat()" title="Assistant NoviaAI" aria-label="Ouvrir le chat">
         <span class="pulse-dot"></span>
         <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -513,40 +608,13 @@
           En ligne · Répond instantanément
         </div>
       </div>
-      <button class="chat-close" onclick="toggleChat('novia')">×</button>
+      <button class="chat-close" onclick="toggleChat()">×</button>
     </div>
     <div class="chat-messages" id="chatMessages_novia"></div>
     <div class="chat-input-area">
       <div class="chat-input-wrapper">
-        <input type="text" class="chat-input" id="chatInput_novia" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') sendMessage('novia')">
-        <button class="send-btn" id="sendBtn_novia" onclick="sendMessage('novia')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-        </button>
-      </div>
-      <div class="chat-footer">Propulsé par <strong>NoviaAI</strong></div>
-    </div>
-  </div>
-
-  <!-- Chatbot Démo Clinique Bella -->
-  <div class="chat-window" id="chatWindow_demo">
-    <div class="chat-header">
-      <div class="chat-avatar demo">🤖</div>
-      <div class="chat-info">
-        <h3>Clinique Bella</h3>
-        <div class="chat-status">
-          <span class="status-dot"></span>
-          En ligne · Répond instantanément
-        </div>
-      </div>
-      <button class="chat-close" onclick="toggleChat('demo')">×</button>
-    </div>
-    <div class="chat-messages" id="chatMessages_demo">
-      <div class="demo-badge">✨ Démo — exemple d'assistant IA pour une clinique d'esthétique</div>
-    </div>
-    <div class="chat-input-area">
-      <div class="chat-input-wrapper">
-        <input type="text" class="chat-input" id="chatInput_demo" placeholder="Écrivez votre message..." onkeypress="if(event.key==='Enter') sendMessage('demo')">
-        <button class="send-btn" id="sendBtn_demo" onclick="sendMessage('demo')">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
         </button>
       </div>
@@ -564,119 +632,80 @@
     }, { threshold: 0.1 });
     reveals.forEach(el => observer.observe(el));
 
-    // ===== CHATBOTS =====
-    // API key is now hidden server-side
+    // ===== FORMULAIRE =====
+    document.getElementById('demo-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!this.checkValidity()) {
+        this.reportValidity();
+        return;
+      }
+      const data = new FormData(this);
+      const subject = encodeURIComponent('Demande démo gratuite — ' + data.get('entreprise'));
+      const body = encodeURIComponent(
+        `Nom: ${data.get('nom')}\n` +
+        `Entreprise: ${data.get('entreprise')}\n` +
+        `Type: ${data.get('business')}\n` +
+        `Téléphone: ${data.get('telephone')}\n` +
+        `Courriel: ${data.get('courriel')}`
+      );
+      window.location.href = `mailto:noviaai.contact@gmail.com?subject=${subject}&body=${body}`;
+      document.getElementById('form-success').classList.add('visible');
+      this.reset();
+    });
+
+    // ===== CHATBOT NOVIAAI =====
     const MODEL = 'gpt-4o-mini';
 
-    // Prompt système — Clinique Bella (démo)
-    const PROMPT_DEMO = `Tu es l'assistante virtuelle de Clinique Bella, une clinique d'esthétique de haut de gamme.
-
-Informations de la clinique:
-- Nom: Clinique Bella
-- Adresse: 1234 rue Saint-Denis, Montréal
-- Téléphone: (514) 555-0123
-- Horaires: Lundi au vendredi 9h-19h, Samedi 10h-17h, Dimanche fermé
-- Services principaux: Soins du visage, épilation laser, injections de botox, traitements anti-âge, microdermabrasion, peelings chimiques
-- Tarifs indicatifs: Soins du visage à partir de 85$, Épilation laser dès 60$, Botox dès 12$/unité, Consultation gratuite
-
-Ton rôle:
-- Réponds en français avec un ton chaleureux, professionnel et bienveillant
-- Sois concise (max 3-4 phrases par réponse)
-- Pour prendre rendez-vous, partage ce lien directement: https://cal.com/noviaai.contact/consultation-clinique-bella
-- Si tu ne sais pas, propose de contacter la clinique
-- N'invente pas d'informations médicales — recommande une consultation
-
-Tu es une démo - ce chatbot illustre ce que NoviaAI peut bâtir pour les PME.`;
-
-    // Prompt système — NoviaAI (vrai assistant)
-    const PROMPT_NOVIA = `Tu es l'assistant virtuel de NoviaAI, une agence québécoise spécialisée dans l'automatisation IA pour les PME.
+    const SYSTEM_PROMPT = `Tu es l'assistant virtuel de NoviaAI, une agence québécoise spécialisée dans l'automatisation IA pour les PME.
 
 Informations sur NoviaAI:
-- Nom de l'agence: NoviaAI
+- Nom: NoviaAI
 - Fondateur: Étienne Alexandre
 - Ville: Québec, Canada
 - Email: noviaai.contact@gmail.com
 - Téléphone: 581-909-5332
-- Site: noviaai (en développement)
 
 Ce que fait NoviaAI:
-NoviaAI automatise la prise de rendez-vous et la gestion des messages des PME québécoises grâce à l'intelligence artificielle. On bâtit des assistants IA personnalisés qui répondent aux clients 24h/24, qualifient les demandes et bookent automatiquement les rendez-vous dans l'agenda du client.
+Automatisation de la prise de rendez-vous et des messages pour PME québécoises. Assistants IA personnalisés 24h/24, réservation dans Google Agenda, confirmations et rappels.
 
-Clientèle cible: Cliniques esthétiques, salons de coiffure, dentistes, massothérapeutes, coachs, restaurants, et toute PME qui reçoit beaucoup de demandes par messages.
+Forfaits:
+1. Forfait Essentiel — tarification sur mesure (assistant IA, réservation auto, Google Agenda, site web, FAQ, rappels, support). 2 semaines gratuites, sans carte.
+2. Site Web Professionnel — tarification sur mesure (site personnalisé, mobile, domaine .ca, hébergement).
 
-Forfaits offerts:
-1. Forfait Essentiel - 399$/mois (sans engagement)
-   Inclut: Assistant IA personnalisé, réservation automatique 24h/24, connexion Google Agenda, intégration site web, réponses aux FAQ, rappels automatiques 24h avant, confirmations courriel, modifications incluses, support par messagerie.
-   🎁 Les 2 premières semaines sont 100% gratuites — aucune carte requise.
+Pour une démo gratuite ou un prix: invite à remplir le formulaire en bas de la page (section #formulaire) ou contact noviaai.contact@gmail.com / 581-909-5332.
 
-2. Site Web Professionnel - 300$ one-time + 50$/année
-   Inclut: Site web 100% personnalisé, design moderne, optimisé mobile, domaine .ca inclus, hébergement inclus, 2-3 modifications/année, livraison en 48-72h.
-
-💡 Les deux forfaits peuvent être combinés pour une solution complète.
-
-Comment ça fonctionne (3 étapes):
-1. Le client envoie un message (site, Instagram, Facebook) — peu importe l'heure
-2. L'IA répond instantanément, présente les services et guide vers la réservation
-3. Le RDV est confirmé directement dans l'agenda, le client reçoit une confirmation automatique
-
-Pour booker une démo gratuite: https://cal.com/noviaai.contact/demo-gratuite
+Exemple concret: démo salon de coiffure disponible sur la page (section Nos démos par niche).
 
 Ton rôle:
-- Réponds en français avec un ton professionnel, chaleureux et confiant
-- Sois concis (max 3-4 phrases par réponse)
-- Pour les demandes de démo ou de contact, partage le lien Cal.com ou propose noviaai.contact@gmail.com
-- Si quelqu'un veut voir un exemple, dis-lui qu'il peut tester le chatbot "Clinique Bella" sur cette page (le bouton noir en bas à droite)
-- Si tu ne sais pas, invite la personne à contacter Étienne directement par courriel ou téléphone (581-909-5332)
-- N'invente pas de fonctionnalités ou de prix qui ne sont pas listés ci-dessus`;
+- Français québécois, ton chaleureux et professionnel
+- Réponses concises (3-4 phrases max)
+- Ne jamais inventer de prix fixes — toujours « tarification sur mesure »
+- N'invente pas de fonctionnalités non listées`;
 
-    const CONFIG = {
-      demo: {
-        prompt: PROMPT_DEMO,
-        greeting: "Bonjour! 👋 Je suis l'assistante virtuelle de la Clinique Bella, disponible 24h/24. Comment puis-je vous aider?",
-        errorMsg: "Désolée, une erreur technique s'est produite. Veuillez réessayer ou nous appeler au (514) 555-0123",
-        quickReplies: [
-          { text: 'Prendre un RDV 📅', msg: 'Je veux prendre un rendez-vous' },
-          { text: 'Voir les services ✨', msg: 'Quels sont vos services?' },
-          { text: 'Prix & tarifs 💰', msg: 'Quels sont vos tarifs?' },
-          { text: 'Horaires 🕒', msg: 'Quels sont vos horaires?' }
-        ]
-      },
-      novia: {
-        prompt: PROMPT_NOVIA,
-        greeting: "Bonjour! 👋 Je suis l'assistant virtuel de NoviaAI. Posez-moi vos questions sur nos services d'automatisation IA — ou demandez à voir un exemple concret!",
-        errorMsg: "Désolé, une erreur technique s'est produite. Vous pouvez me joindre directement à noviaai.contact@gmail.com ou au 581-909-5332.",
-        quickReplies: [
-          { text: 'Nos services ⚡', msg: 'Quels sont vos services?' },
-          { text: 'Nos tarifs 💰', msg: 'Quels sont vos tarifs?' },
-          { text: 'Comment ça marche 🔧', msg: 'Comment ça fonctionne?' },
-          { text: 'Démo gratuite 🎁', msg: 'Je veux une démo gratuite' }
-        ]
-      }
+    const CHAT = {
+      greeting: "Bonjour! 👋 Je suis l'assistant virtuel de NoviaAI. Posez-moi vos questions sur nos services — ou remplissez le formulaire en bas pour votre démo gratuite!",
+      errorMsg: "Désolé, une erreur technique s'est produite. Écrivez-nous à noviaai.contact@gmail.com ou au 581-909-5332.",
+      quickReplies: [
+        { text: 'Nos services ⚡', msg: 'Quels sont vos services?' },
+        { text: 'Tarification 💰', msg: 'C\'est combien?' },
+        { text: 'Comment ça marche 🔧', msg: 'Comment ça fonctionne?' },
+        { text: 'Démo gratuite 🎁', msg: 'Je veux une démo gratuite' }
+      ]
     };
 
-    const state = {
-      demo: { history: [], isOpen: false },
-      novia: { history: [], isOpen: false }
-    };
+    let chatOpen = false;
+    let chatHistory = [];
 
     function linkify(text) {
       return text.replace(/(https?:\/\/[^\s<)\]]+)/g, '<a href="$1" target="_blank">$1</a>');
     }
 
-    function toggleChat(bot) {
-      // Fermer l'autre chatbot s'il est ouvert
-      const other = bot === 'demo' ? 'novia' : 'demo';
-      if (state[other].isOpen) {
-        document.getElementById('chatWindow_' + other).classList.remove('open');
-        state[other].isOpen = false;
-      }
-      const chatWindow = document.getElementById('chatWindow_' + bot);
-      state[bot].isOpen = !state[bot].isOpen;
-      chatWindow.classList.toggle('open');
-      if (state[bot].isOpen && state[bot].history.length === 0) {
-        setTimeout(() => {
-          addBotMessage(bot, CONFIG[bot].greeting, true);
-        }, 400);
+    function toggleChat() {
+      const chatWindow = document.getElementById('chatWindow_novia');
+      chatOpen = !chatOpen;
+      chatWindow.classList.toggle('open', chatOpen);
+      if (chatOpen && chatHistory.length === 0) {
+        setTimeout(() => addBotMessage(CHAT.greeting, true), 400);
       }
     }
 
@@ -685,16 +714,16 @@ Ton rôle:
       return now.getHours().toString().padStart(2,'0') + 'h' + now.getMinutes().toString().padStart(2,'0');
     }
 
-    function addBotMessage(bot, text, withQuickReplies = false) {
-      const messages = document.getElementById('chatMessages_' + bot);
+    function addBotMessage(text, withQuickReplies = false) {
+      const messages = document.getElementById('chatMessages_novia');
       const div = document.createElement('div');
       div.className = 'message bot';
       div.innerHTML = `<div class="message-bubble">${linkify(text)}</div><div class="message-time">${getCurrentTime()}</div>`;
       if (withQuickReplies) {
         const qr = document.createElement('div');
         qr.className = 'quick-replies';
-        qr.innerHTML = CONFIG[bot].quickReplies.map(r =>
-          `<button class="quick-reply" onclick="sendQuickReply('${bot}', '${r.msg.replace(/'/g, "\\'")}')">${r.text}</button>`
+        qr.innerHTML = CHAT.quickReplies.map(r =>
+          `<button class="quick-reply" onclick="sendQuickReply('${r.msg.replace(/'/g, "\\'")}')">${r.text}</button>`
         ).join('');
         div.appendChild(qr);
       }
@@ -702,8 +731,8 @@ Ton rôle:
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function addUserMessage(bot, text) {
-      const messages = document.getElementById('chatMessages_' + bot);
+    function addUserMessage(text) {
+      const messages = document.getElementById('chatMessages_novia');
       const div = document.createElement('div');
       div.className = 'message user';
       div.innerHTML = `<div class="message-bubble">${text}</div><div class="message-time">${getCurrentTime()}</div>`;
@@ -711,54 +740,59 @@ Ton rôle:
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function showTyping(bot) {
-      const messages = document.getElementById('chatMessages_' + bot);
+    function showTyping() {
+      const messages = document.getElementById('chatMessages_novia');
       const div = document.createElement('div');
       div.className = 'message bot';
-      div.id = 'typingIndicator_' + bot;
+      div.id = 'typingIndicator';
       div.innerHTML = `<div class="typing-indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function hideTyping(bot) {
-      const indicator = document.getElementById('typingIndicator_' + bot);
-      if (indicator) indicator.remove();
+    function hideTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
     }
 
-    function sendQuickReply(bot, text) {
-      document.getElementById('chatInput_' + bot).value = text;
-      sendMessage(bot);
+    function sendQuickReply(text) {
+      document.getElementById('chatInput').value = text;
+      sendMessage();
     }
 
-    async function sendMessage(bot) {
-      const input = document.getElementById('chatInput_' + bot);
-      const sendBtn = document.getElementById('sendBtn_' + bot);
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
       const userText = input.value.trim();
       if (!userText) return;
-      addUserMessage(bot, userText);
+      addUserMessage(userText);
       input.value = '';
       sendBtn.disabled = true;
-      state[bot].history.push({ role: 'user', content: userText });
-      showTyping(bot);
+      chatHistory.push({ role: 'user', content: userText });
+      showTyping();
       try {
         const response = await fetch('/.netlify/functions/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: MODEL, messages: [{ role: 'system', content: CONFIG[bot].prompt }, ...state[bot].history], max_tokens: 250, temperature: 0.7 })
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],
+            max_tokens: 250,
+            temperature: 0.7
+          })
         });
         const data = await response.json();
-        hideTyping(bot);
+        hideTyping();
         if (data.error) {
-          addBotMessage(bot, CONFIG[bot].errorMsg);
+          addBotMessage(CHAT.errorMsg);
         } else {
           const botReply = data.choices[0].message.content;
-          state[bot].history.push({ role: 'assistant', content: botReply });
-          addBotMessage(bot, botReply);
+          chatHistory.push({ role: 'assistant', content: botReply });
+          addBotMessage(botReply);
         }
       } catch (error) {
-        hideTyping(bot);
-        addBotMessage(bot, CONFIG[bot].errorMsg);
+        hideTyping();
+        addBotMessage(CHAT.errorMsg);
       }
       sendBtn.disabled = false;
     }
