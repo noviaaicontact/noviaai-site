@@ -56,6 +56,119 @@
     .problem-icon { font-size: 32px; margin-bottom: 20px; }
     .problem-item h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 12px; }
     .problem-item p { font-size: 15px; line-height: 1.7; color: var(--text-light); }
+    /* Comment ça fonctionne — parcours client 5 étapes */
+    .how-journey { background: var(--black); }
+    .how-journey .section-tag { color: var(--accent); }
+    .how-journey .section-tag::before { background: var(--accent); }
+    .how-journey .section-title { color: var(--white); }
+    .how-journey .section-desc { margin-top: 20px; max-width: 560px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.55); }
+    .flow-track {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      margin-top: 64px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .flow-step {
+      flex: 1;
+      min-width: 140px;
+      max-width: 200px;
+      text-align: center;
+      padding: 32px 16px;
+      background: var(--card-bg);
+      border: 1px solid rgba(200,241,53,0.15);
+      position: relative;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .flow-step:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    .flow-step-emoji { font-size: 36px; line-height: 1; margin-bottom: 16px; display: block; }
+    .flow-step-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .flow-step h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.35;
+      color: var(--white);
+    }
+    .flow-arrow {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 700;
+    }
+    /* Nos démos par niche */
+    .demos { background: var(--cream); }
+    .demo-niche-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 56px;
+      max-width: 480px;
+    }
+    .demo-niche-card {
+      background: var(--black);
+      border: 1px solid rgba(200,241,53,0.2);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .demo-niche-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(200,241,53,0.15);
+    }
+    .demo-niche-icon { font-size: 40px; line-height: 1; }
+    .demo-niche-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--white);
+    }
+    .demo-niche-card p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.6);
+      flex: 1;
+    }
+    .btn-demo {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--black);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 14px 28px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: all 0.2s;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-demo:hover {
+      background: #d4f545;
+      transform: translateY(-2px);
+    }
+
     .how { background: var(--black); }
     .how .section-tag { color: var(--accent); }
     .how .section-tag::before { background: var(--accent); }
@@ -96,44 +209,6 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .reveal { opacity: 0; transform: translateY(40px); transition: all 0.7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    /* ===== SECTION OFFRE GRATUITE ===== */
-    .offer { background: var(--accent); }
-    .offer .section-tag { color: rgba(0,0,0,0.55); }
-    .offer .section-tag::before { background: rgba(0,0,0,0.4); }
-    .offer .section-title { color: var(--black); max-width: 750px; }
-    .offer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 60px; background: rgba(0,0,0,0.12); }
-    .offer-step { background: var(--accent); padding: 48px 36px; }
-    .offer-step-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 64px; color: rgba(0,0,0,0.08); line-height: 1; margin-bottom: 16px; }
-    .offer-step h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; color: var(--black); margin-bottom: 12px; }
-    .offer-step p { font-size: 15px; line-height: 1.7; color: rgba(0,0,0,0.65); }
-    .offer-cta-block { margin-top: 60px; display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
-    .offer-cta-block .btn-offer { background: var(--black); color: var(--white); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; padding: 20px 44px; text-decoration: none; display: inline-block; letter-spacing: 0.5px; transition: all 0.2s; }
-    .offer-cta-block .btn-offer:hover { background: #222; transform: translateY(-2px); }
-    .offer-note { font-size: 14px; color: rgba(0,0,0,0.6); line-height: 1.6; }
-    .offer-note strong { color: var(--black); }
-
-    /* ===== SECTION À PROPOS ===== */
-    .about { background: var(--white); }
-    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 60px; }
-    .about-text p { font-size: 17px; line-height: 1.8; color: var(--text-light); margin-bottom: 20px; }
-    .about-text p strong { color: var(--text); }
-    .about-badge-list { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
-    .about-badge { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: var(--cream); border: 1px solid var(--border); }
-    .about-badge-icon { font-size: 24px; flex-shrink: 0; }
-    .about-badge-text { font-size: 14px; line-height: 1.6; color: var(--text-light); }
-    .about-badge-text strong { color: var(--text); display: block; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-size: 15px; }
-    .about-visual { background: var(--black); padding: 48px 40px; display: flex; flex-direction: column; gap: 24px; }
-    .about-visual-stat { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; }
-    .about-visual-stat:last-child { border-bottom: none; padding-bottom: 0; }
-    .about-visual-stat .num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 48px; color: var(--accent); line-height: 1; }
-    .about-visual-stat .label { font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 6px; }
-
-    /* ===== SECTION TÉMOIGNAGES ===== */
-    .testimonials { background: var(--cream); }
-    .testimonials-coming { margin-top: 60px; border: 2px dashed rgba(0,0,0,0.12); padding: 60px 48px; text-align: center; }
-    .testimonials-coming p { font-size: 17px; color: var(--text-light); line-height: 1.7; max-width: 480px; margin: 0 auto 32px; }
-    .testimonials-coming .tc-icon { font-size: 48px; margin-bottom: 20px; }
-
     @media (max-width: 768px) {
       nav { padding: 16px 24px; }
       .hero { padding: 110px 24px 80px; }
@@ -142,12 +217,21 @@
       .stat { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 32px 24px; }
       .problem-grid { grid-template-columns: 1fr; }
       .steps { grid-template-columns: 1fr; }
+      .flow-track {
+        flex-direction: column;
+        align-items: center;
+        overflow-x: visible;
+      }
+      .flow-step { max-width: 100%; width: 100%; min-width: 0; }
+      .flow-arrow {
+        width: auto;
+        height: 28px;
+        transform: rotate(90deg);
+      }
+      .demo-niche-grid { max-width: 100%; }
       .pricing-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
       .hero-actions { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .offer-grid { grid-template-columns: 1fr; }
-      .about-inner { grid-template-columns: 1fr; gap: 40px; }
-      .offer-cta-block { flex-direction: column; align-items: flex-start; gap: 20px; }
     }
 
     /* ===== CHATBOTS ===== */
@@ -161,15 +245,7 @@
     .chat-toggle:hover { transform: scale(1.05); }
     .chat-toggle svg { width: 28px; height: 28px; }
     .chat-toggle .pulse-dot { position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; background: #4ade80; border-radius: 50%; border: 2px solid white; }
-    .chat-window { position: fixed; bottom: 100px; right: 24px; width: 380px; height: 580px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 9998; }
-    @media (max-width: 480px) {
-      .chat-window { width: calc(100vw - 24px); height: calc(100vh - 110px); bottom: 90px; right: 12px; border-radius: 16px; }
-      .chat-toggle-group { bottom: 16px; right: 16px; }
-      .chat-input-area { padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-      .chat-input-wrapper { padding: 6px 6px 6px 14px; }
-      .send-btn { width: 40px; height: 40px; flex-shrink: 0; }
-      .chat-messages { padding: 14px; }
-    }
+    .chat-window { position: fixed; bottom: 24px; right: 24px; width: 380px; height: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 9998; }
     .chat-window.open { display: flex; animation: slideUp 0.3s ease-out; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .chat-header { background: #1a1a1a; color: white; padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
@@ -200,8 +276,8 @@
     @keyframes typingAnim { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
     .chat-input-area { padding: 16px; background: white; border-top: 1px solid #eee; }
     .chat-input-wrapper { display: flex; gap: 8px; align-items: center; background: #f5f5f5; border-radius: 24px; padding: 4px 4px 4px 16px; }
-    .chat-input { flex: 1; border: none; background: none; padding: 10px 0; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif; min-width: 0; }
-    .send-btn { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: #1a1a1a; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+    .chat-input { flex: 1; border: none; background: none; padding: 10px 0; font-size: 14px; outline: none; font-family: 'DM Sans', sans-serif; }
+    .send-btn { width: 36px; height: 36px; border-radius: 50%; background: #1a1a1a; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
     .send-btn:hover { background: #333; }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .chat-footer { text-align: center; font-size: 11px; color: #999; padding: 8px; background: white; }
@@ -212,7 +288,7 @@
 
   <nav>
     <div class="logo">Novia<span>AI</span></div>
-    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Avoir une démo gratuite</a>
+    <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="nav-cta">Voir une démo gratuite</a>
   </nav>
 
   <section class="hero">
@@ -220,7 +296,7 @@
     <h1>Vos clients<br/>répondus.<br/><em>24h/24.</em></h1>
     <p class="hero-sub">J'automatise la prise de rendez-vous et la gestion des messages de votre entreprise grâce à l'intelligence artificielle — pendant que vous travaillez.</p>
     <div class="hero-actions">
-      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Avoir une démo gratuite →</a>
+      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-primary">Voir une démo gratuite →</a>
       <a href="#comment" class="btn-ghost">Comment ça marche</a>
     </div>
   </section>
@@ -271,7 +347,57 @@
     </div>
   </section>
 
-  <section class="how" id="comment">
+  <section class="how-journey" id="comment">
+    <div class="section-tag">Comment ça fonctionne</div>
+    <h2 class="section-title reveal">Du message à l'avis Google, sans effort de votre part</h2>
+    <p class="section-desc reveal">Voici le parcours type de vos clients une fois votre assistant NoviaAI en place.</p>
+    <div class="flow-track reveal">
+      <div class="flow-step">
+        <span class="flow-step-num">01</span>
+        <span class="flow-step-emoji" aria-hidden="true">💬</span>
+        <h3>Client écrit au chatbot</h3>
+      </div>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-step">
+        <span class="flow-step-num">02</span>
+        <span class="flow-step-emoji" aria-hidden="true">📅</span>
+        <h3>Choisit son service et créneau</h3>
+      </div>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-step">
+        <span class="flow-step-num">03</span>
+        <span class="flow-step-emoji" aria-hidden="true">✅</span>
+        <h3>Reçoit une confirmation SMS</h3>
+      </div>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-step">
+        <span class="flow-step-num">04</span>
+        <span class="flow-step-emoji" aria-hidden="true">🏠</span>
+        <h3>Se présente au rendez-vous</h3>
+      </div>
+      <div class="flow-arrow" aria-hidden="true">→</div>
+      <div class="flow-step">
+        <span class="flow-step-num">05</span>
+        <span class="flow-step-emoji" aria-hidden="true">⭐</span>
+        <h3>Laisse un avis Google</h3>
+      </div>
+    </div>
+  </section>
+
+  <section class="demos" id="demos">
+    <div class="section-tag">Nos démos par niche</div>
+    <h2 class="section-title reveal">Testez avant de vous engager</h2>
+    <div class="demo-niche-grid">
+      <article class="demo-niche-card reveal">
+        <span class="demo-niche-icon" aria-hidden="true">💇</span>
+        <h3>Salon de coiffure</h3>
+        <p>Testez notre chatbot pour salon</p>
+        <a href="/chatbot-salon-coiffure.html" class="btn-demo" target="_blank" rel="noopener noreferrer">Voir la démo →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="how" id="solution">
     <div class="section-tag">La solution</div>
     <h2 class="section-title reveal">Un système qui travaille à votre place</h2>
     <div class="steps">
@@ -295,12 +421,12 @@
 
   <section class="pricing" id="tarifs">
     <div class="section-tag">Tarifs</div>
-    <h2 class="section-title reveal">Commencez gratuitement.<br/>Payez seulement si ça marche.</h2>
-    <div style="margin-top:60px; max-width:700px;">
-      <div class="pricing-card featured reveal" style="padding:48px 40px;">
-        <div class="pricing-name">Essai gratuit 2 semaines</div>
-        <div class="pricing-price" style="font-size:52px;">0$</div>
-        <div class="pricing-period">pour commencer — aucune carte requise</div>
+    <h2 class="section-title reveal">Simple, transparent, sans surprise.</h2>
+    <div style="margin-top:60px; display:grid; grid-template-columns: repeat(2,1fr); gap:24px; max-width:900px;">
+      <div class="pricing-card featured reveal">
+        <div class="pricing-name">Forfait Essentiel</div>
+        <div class="pricing-price">399$</div>
+        <div class="pricing-period">par mois · sans engagement</div>
         <ul class="pricing-features">
           <li>Assistant IA 100% personnalisé</li>
           <li>Réservation automatique 24h/24</li>
@@ -310,94 +436,31 @@
           <li>Rappels automatiques 24h avant</li>
           <li>Confirmation par courriel automatique</li>
           <li>Modifications incluses</li>
-          <li>Support direct avec Étienne</li>
+          <li>Support par messagerie</li>
         </ul>
-        <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="pricing-cta">Réserver ma démo gratuite →</a>
+        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
+      </div>
+      <div class="pricing-card reveal">
+        <div class="pricing-name">Site Web Professionnel</div>
+        <div class="pricing-price">300$</div>
+        <div class="pricing-period">one-time + 50$/année</div>
+        <ul class="pricing-features">
+          <li>Site web 100% personnalisé</li>
+          <li>Design professionnel moderne</li>
+          <li>Optimisé pour mobile</li>
+          <li>Domaine .ca inclus</li>
+          <li>Hébergement inclus</li>
+          <li>Renouvellement annuel géré</li>
+          <li>2-3 modifications par année</li>
+          <li>Livraison en 48-72h</li>
+          <li>Support par messagerie</li>
+        </ul>
+        <a href="https://cal.com/noviaai.contact/appel-de-configuration" target="_blank" class="pricing-cta">Commencer →</a>
       </div>
     </div>
     <p style="margin-top:32px; font-size:14px; color:var(--text-light);">
-      🎁 2 semaines gratuites, aucune carte requise. &nbsp;|&nbsp; 💡 Tarification flexible discutée lors de votre appel selon vos besoins.
+      🎁 Les 2 premières semaines du forfait IA sont <strong>100% gratuites</strong> — aucune carte de crédit requise. &nbsp;|&nbsp; 💡 Combinez les deux services pour une solution complète.
     </p>
-  </section>
-
-  <!-- SECTION OFFRE GRATUITE -->
-  <section class="offer">
-    <div class="section-tag">Offre de lancement</div>
-    <h2 class="section-title reveal">Zéro risque.<br/>Résultats d'abord.</h2>
-    <div class="offer-grid">
-      <div class="offer-step reveal">
-        <div class="offer-step-num">01</div>
-        <h3>On installe tout gratuitement</h3>
-        <p>Je configure votre assistant IA complet — chatbot, agenda, réponses personnalisées — sans que vous payiez un seul dollar. Aucune carte requise.</p>
-      </div>
-      <div class="offer-step reveal">
-        <div class="offer-step-num">02</div>
-        <h3>Vous voyez les résultats en 2 semaines</h3>
-        <p>Pendant 14 jours, votre système tourne à plein régime. Vous recevez vos rendez-vous automatiquement et vous constatez concrètement ce que ça change.</p>
-      </div>
-      <div class="offer-step reveal">
-        <div class="offer-step-num">03</div>
-        <h3>On continue seulement si vous êtes convaincu</h3>
-        <p>Si le système vous a apporté de la valeur, on continue ensemble. Sinon, on se sépare sans friction et sans frais. C'est aussi simple que ça.</p>
-      </div>
-    </div>
-    <div class="offer-cta-block">
-      <a href="https://cal.com/noviaai.contact/demo-gratuite" target="_blank" class="btn-offer">Commencer mon essai gratuit →</a>
-      <div class="offer-note">
-        <strong>Aucune carte de crédit. Aucun engagement.</strong><br/>
-        Offre limitée à 5 PME par mois pour garantir un service de qualité.
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION À PROPOS -->
-  <section class="about">
-    <div class="section-tag">À propos</div>
-    <h2 class="section-title reveal">Une personne réelle<br/>derrière le système.</h2>
-    <div class="about-inner">
-      <div class="about-text reveal">
-        <p>Je m'appelle <strong>Étienne</strong>, fondateur de NoviaAI. J'ai créé cette agence avec un objectif simple : donner aux petites entreprises accès aux mêmes outils d'automatisation que les grandes — à un prix accessible.</p>
-        <p>J'ai vu trop de propriétaires de PME perdre des clients simplement parce qu'ils n'avaient pas le temps de répondre à tous les messages. Ce n'est pas un manque de compétence — c'est un manque d'outils.</p>
-        <p><strong>NoviaAI corrige ça.</strong></p>
-        <div class="about-badge-list">
-          <div class="about-badge">
-            <div class="about-badge-icon">🤝</div>
-            <div class="about-badge-text">
-              <strong>Suivi personnalisé</strong>
-              Vous parlez directement avec moi — pas un centre d'appels, pas un bot de support.
-            </div>
-          </div>
-          <div class="about-badge">
-            <div class="about-badge-icon">⚡</div>
-            <div class="about-badge-text">
-              <strong>Livraison rapide</strong>
-              Votre système est en ligne rapidement après notre premier appel.
-            </div>
-          </div>
-          <div class="about-badge">
-            <div class="about-badge-icon">🇨🇦</div>
-            <div class="about-badge-text">
-              <strong>100% québécois</strong>
-              Basé à Québec, je comprends la réalité des PME d'ici.
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="about-visual reveal">
-        <div class="about-visual-stat">
-          <div class="num">5 ★</div>
-          <div class="label">Satisfaction garantie — résultats ou remboursé</div>
-        </div>
-        <div class="about-visual-stat">
-          <div class="num">24/7</div>
-          <div class="label">Votre assistant répond, même quand vous dormez</div>
-        </div>
-        <div class="about-visual-stat">
-          <div class="num">0$</div>
-          <div class="label">Pour tester pendant 2 semaines complètes</div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <section class="cta-section" id="contact">
@@ -530,29 +593,26 @@ Tu es une démo - ce chatbot illustre ce que NoviaAI peut bâtir pour les PME.`;
 
 Informations sur NoviaAI:
 - Nom de l'agence: NoviaAI
-- Fondateur: Étienne
+- Fondateur: Étienne Alexandre
 - Ville: Québec, Canada
 - Email: noviaai.contact@gmail.com
 - Téléphone: 581-909-5332
-- Site: noviaai.ca
+- Site: noviaai (en développement)
 
 Ce que fait NoviaAI:
-NoviaAI automatise la prise de rendez-vous et la gestion des messages des PME québécoises grâce à l'intelligence artificielle. On bâtit des assistants IA personnalisés qui répondent aux clients 24h/24, qualifient les demandes et bookent automatiquement les rendez-vous dans l'agenda du client. On crée aussi des sites web professionnels modernes et optimisés pour convertir des visiteurs en clients.
+NoviaAI automatise la prise de rendez-vous et la gestion des messages des PME québécoises grâce à l'intelligence artificielle. On bâtit des assistants IA personnalisés qui répondent aux clients 24h/24, qualifient les demandes et bookent automatiquement les rendez-vous dans l'agenda du client.
 
 Clientèle cible: Cliniques esthétiques, salons de coiffure, dentistes, massothérapeutes, coachs, restaurants, et toute PME qui reçoit beaucoup de demandes par messages.
 
-Ce qu'on offre:
-- Assistant IA personnalisé qui répond 24h/24
-- Prise de rendez-vous automatique reliée à Google Agenda
-- Site web professionnel moderne
-- Rappels automatiques aux clients
-- Confirmations par courriel automatiques
-- Support direct avec Étienne
+Forfaits offerts:
+1. Forfait Essentiel - 399$/mois (sans engagement)
+   Inclut: Assistant IA personnalisé, réservation automatique 24h/24, connexion Google Agenda, intégration site web, réponses aux FAQ, rappels automatiques 24h avant, confirmations courriel, modifications incluses, support par messagerie.
+   🎁 Les 2 premières semaines sont 100% gratuites — aucune carte requise.
 
-🎁 Essai gratuit 2 semaines — aucune carte, aucun engagement.
+2. Site Web Professionnel - 300$ one-time + 50$/année
+   Inclut: Site web 100% personnalisé, design moderne, optimisé mobile, domaine .ca inclus, hébergement inclus, 2-3 modifications/année, livraison en 48-72h.
 
-Tarification:
-Chaque projet est 100% personnalisé selon les besoins de l'entreprise. Le mieux c'est de réserver un appel gratuit de 15 minutes avec Étienne pour obtenir une proposition adaptée. Pas de prix fixe affiché — tout dépend de votre situation.
+💡 Les deux forfaits peuvent être combinés pour une solution complète.
 
 Comment ça fonctionne (3 étapes):
 1. Le client envoie un message (site, Instagram, Facebook) — peu importe l'heure
@@ -564,10 +624,10 @@ Pour booker une démo gratuite: https://cal.com/noviaai.contact/demo-gratuite
 Ton rôle:
 - Réponds en français avec un ton professionnel, chaleureux et confiant
 - Sois concis (max 3-4 phrases par réponse)
-- Quand quelqu'un demande le prix, dis que chaque projet est personnalisé et invite à réserver un appel gratuit via le lien Cal.com
-- Pour les demandes de démo ou de contact, partage le lien Cal.com ou propose noviaai.contact@gmail.com ou 581-909-5332
-- Si tu ne sais pas, invite la personne à contacter Étienne directement
-- N'invente pas de fonctionnalités ou de prix`;
+- Pour les demandes de démo ou de contact, partage le lien Cal.com ou propose noviaai.contact@gmail.com
+- Si quelqu'un veut voir un exemple, dis-lui qu'il peut tester le chatbot "Clinique Bella" sur cette page (le bouton noir en bas à droite)
+- Si tu ne sais pas, invite la personne à contacter Étienne directement par courriel ou téléphone (581-909-5332)
+- N'invente pas de fonctionnalités ou de prix qui ne sont pas listés ci-dessus`;
 
     const CONFIG = {
       demo: {
@@ -587,7 +647,7 @@ Ton rôle:
         errorMsg: "Désolé, une erreur technique s'est produite. Vous pouvez me joindre directement à noviaai.contact@gmail.com ou au 581-909-5332.",
         quickReplies: [
           { text: 'Nos services ⚡', msg: 'Quels sont vos services?' },
-          { text: 'C\'est combien? 💬', msg: 'Combien ça coûte?' },
+          { text: 'Nos tarifs 💰', msg: 'Quels sont vos tarifs?' },
           { text: 'Comment ça marche 🔧', msg: 'Comment ça fonctionne?' },
           { text: 'Démo gratuite 🎁', msg: 'Je veux une démo gratuite' }
         ]
