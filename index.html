@@ -221,7 +221,8 @@
       color: var(--text);
     }
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
       padding: 14px 16px;
@@ -232,8 +233,14 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       width: 100%;
     }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
     .form-group input:focus,
-    .form-group select:focus {
+    .form-group select:focus,
+    .form-group textarea:focus {
       border-color: var(--accent-dark);
       box-shadow: 0 0 0 3px rgba(200,241,53,0.25);
     }
@@ -491,7 +498,7 @@
         <ul class="pricing-features">
           <li>Assistant IA 100% personnalisé</li>
           <li>Réservation automatique 24h/24</li>
-          <li>Connecté à Google Agenda</li>
+          <li>Connecté à vos outils existants</li>
           <li>Intégration sur votre site web</li>
           <li>Réponses aux questions fréquentes</li>
           <li>Rappels automatiques 24h avant</li>
@@ -512,7 +519,7 @@
           <li>Domaine .ca inclus</li>
           <li>Hébergement inclus</li>
           <li>Renouvellement annuel géré</li>
-          <li>2-3 modifications par année</li>
+          <li>Modifications à tout moment</li>
           <li>Livraison en 48-72h</li>
           <li>Support par messagerie</li>
         </ul>
@@ -565,6 +572,10 @@
           <label for="courriel">Courriel</label>
           <input type="email" id="courriel" name="courriel" required placeholder="vous@entreprise.com" autocomplete="email">
         </div>
+      </div>
+      <div class="form-group">
+        <label for="besoins">Questions ou besoins particuliers <span style="font-weight:400;color:var(--text-light);">(optionnel)</span></label>
+        <textarea id="besoins" name="besoins" rows="4" placeholder="Décrivez votre situation, vos questions ou ce que vous recherchez..."></textarea>
       </div>
       <button type="submit" class="form-submit">Recevoir ma démo gratuite</button>
       <div class="form-success" id="form-success" role="status">
@@ -646,7 +657,8 @@
         `Entreprise: ${data.get('entreprise')}\n` +
         `Type: ${data.get('business')}\n` +
         `Téléphone: ${data.get('telephone')}\n` +
-        `Courriel: ${data.get('courriel')}`
+        `Courriel: ${data.get('courriel')}\n` +
+        `Besoins: ${data.get('besoins') || '(non précisé)'}`
       );
       window.location.href = `mailto:noviaai.contact@gmail.com?subject=${subject}&body=${body}`;
       document.getElementById('form-success').classList.add('visible');
