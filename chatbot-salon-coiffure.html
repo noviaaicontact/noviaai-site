@@ -435,30 +435,79 @@
   }
   .msg.user .msg-time { text-align: right; }
 
-  .booking-btn {
-    display: block;
-    width: 100%;
-    margin-top: 12px;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: var(--black);
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    box-shadow: 0 4px 20px var(--gold-glow);
-    transition: transform 0.2s, box-shadow 0.2s;
+  .msg-bubble .service-list {
+    margin: 10px 0 4px;
+    padding: 0;
+    list-style: none;
   }
-  .booking-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px var(--gold-glow);
+  .msg-bubble .service-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .msg-bubble .service-list li:last-child { border-bottom: none; }
+  .msg-bubble .service-list strong { color: var(--gold); font-weight: 500; }
+
+  .flow-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .flow-btns.row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .flow-btn {
+    background: rgba(201, 169, 98, 0.1);
+    border: 1px solid var(--border);
+    color: var(--gold-light);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .flow-btns.row .flow-btn {
+    width: auto;
+    flex: 1;
+    min-width: calc(50% - 4px);
+    text-align: center;
+  }
+  .flow-btn:hover {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    border-color: var(--gold);
     color: var(--black);
-    text-decoration: none;
+    font-weight: 500;
+  }
+  .flow-btn.slot-btn { font-weight: 500; }
+
+  .confirm-card {
+    margin-top: 10px;
+    padding: 14px;
+    background: rgba(201, 169, 98, 0.08);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .confirm-card strong { color: var(--gold); }
+
+  .step-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 100px;
+    margin-bottom: 8px;
   }
 
   .typing-wrap {
@@ -688,7 +737,14 @@
 
   <script>
     const MODEL = 'gpt-4o-mini';
-    const BOOKING_URL = 'https://cal.com/noviaai.contact';
+
+    const SERVICES = [
+      { id: 'coupe-femme', name: 'Coupe femme', price: 45 },
+      { id: 'coupe-homme', name: 'Coupe homme', price: 25 },
+      { id: 'coloration', name: 'Coloration complète', price: 120 },
+      { id: 'meches', name: 'Mèches', price: 95 },
+      { id: 'keratine', name: 'Traitement kératine', price: 150 }
+    ];
 
     const SYSTEM_PROMPT = `Tu es Élara, l'assistante virtuelle du Salon Élara, un salon de coiffure haut de gamme situé à Lévis, Québec.
 
@@ -711,8 +767,7 @@ HORAIRES:
 - Fermé dimanche et lundi
 
 PRISE DE RENDEZ-VOUS:
-- Dès qu'un client veut réserver, prendre un rendez-vous, booker ou avoir une place, réponds UNIQUEMENT avec cette phrase exacte, sans URL, sans crochets, sans parenthèses: « Parfait ! Cliquez ici pour choisir votre service et votre créneau 👇 »
-- N'ajoute aucun lien ni texte après — l'interface affiche automatiquement un bouton de réservation.
+- Si le client veut réserver, dis-lui simplement que tu vas le guider pas à pas pour la réservation (le système prend le relais automatiquement).
 
 TON ET LANGUE:
 - Réponds TOUJOURS en français québécois naturel (tu/vous selon le client, expressions comme « ben », « parfait », « c'est beau », « on se voit », etc. avec modération).
@@ -730,12 +785,15 @@ RÈGLES:
 
     const ERROR_MSG = `Oups, y'a eu un petit problème technique. Tu peux réessayer dans un instant ou nous appeler au (418) 555-0147.`;
 
-    const BOOKING_MSG = 'Parfait ! Cliquez ici pour choisir votre service et votre créneau 👇';
+    const JOURS_FR = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    const JOURS_FR_CAP = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
     let isOpen = false;
     let isTyping = false;
     let conversationHistory = [];
     let greeted = false;
+
+    let bookingFlow = { active: false, step: null, data: {} };
 
     function escapeHtml(text) {
       return text
@@ -752,26 +810,16 @@ RÈGLES:
       );
     }
 
-    function isBookingReply(text) {
-      return /cal\.com\/noviaai\.contact/i.test(text) ||
-        /cal\.com/i.test(text) ||
-        /\[BOOKING\]/i.test(text);
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    function processBotReply(text) {
-      if (isBookingReply(text)) {
-        return { text: BOOKING_MSG, showBooking: true };
-      }
-      let cleaned = text
-        .replace(/\[([^\]]*)\]\(https?:\/\/cal\.com[^\)]*\)/gi, '')
-        .replace(/https?:\/\/cal\.com\/noviaai\.contact[^\s]*/gi, '')
-        .replace(/\[BOOKING\]/gi, '')
-        .trim();
-      return { text: cleaned || text, showBooking: false };
+    function wantsBooking(text) {
+      return /\b(rdv|rendez-vous|rendez vous|réserver|reserver|booker|prendre un rendez-vous|je veux prendre|une place|disponibilité|créneau|creneau|appointment|faire une réservation|faire une reservation)\b/i.test(text);
     }
 
-    function bookingButtonHtml() {
-      return `<a class="booking-btn" href="${BOOKING_URL}" target="_blank" rel="noopener noreferrer">Réserver mon rendez-vous</a>`;
+    function wantsCancel(text) {
+      return /\b(annuler|annulation|cancel|recommencer|repartir|quitte)\b/i.test(text);
     }
 
     function getTime() {
@@ -788,21 +836,305 @@ RÈGLES:
       }
     }
 
-    function addBotMessage(text, showBooking = false) {
+    function addBotMessage(text, choices = null, htmlContent = null) {
       const messages = document.getElementById('messages');
       const wrap = document.createElement('div');
       wrap.className = 'msg bot';
-      const bubbleContent = showBooking
-        ? `${escapeHtml(text)}${bookingButtonHtml()}`
-        : linkify(text);
-      wrap.innerHTML = `
-        <div class="msg-avatar-sm" aria-hidden="true">É</div>
-        <div>
-          <div class="msg-bubble">${bubbleContent}</div>
-          <div class="msg-time">${getTime()}</div>
-        </div>`;
+
+      const body = document.createElement('div');
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+
+      if (htmlContent) {
+        bubble.innerHTML = htmlContent;
+      } else {
+        bubble.innerHTML = linkify(text).replace(/\n/g, '<br>');
+      }
+
+      if (choices && choices.length) {
+        const btns = document.createElement('div');
+        btns.className = 'flow-btns' + (choices.length <= 3 && choices[0]?.row ? ' row' : '');
+        choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'flow-btn' + (choice.slot ? ' slot-btn' : '');
+          btn.textContent = choice.label;
+          btn.addEventListener('click', () => handleFlowChoice(choice.value, choice.label));
+          btns.appendChild(btn);
+        });
+        bubble.appendChild(btns);
+      }
+
+      const time = document.createElement('div');
+      time.className = 'msg-time';
+      time.textContent = getTime();
+
+      body.appendChild(bubble);
+      body.appendChild(time);
+
+      wrap.innerHTML = '<div class="msg-avatar-sm" aria-hidden="true">É</div>';
+      wrap.appendChild(body);
       messages.appendChild(wrap);
       messages.scrollTop = messages.scrollHeight;
+    }
+
+    function flowHtml(step, ...paragraphs) {
+      const body = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      return `${stepBadge(step)}${body}`;
+    }
+
+    async function botReplyFlow(text, choices = null, htmlContent = null) {
+      showTyping();
+      await delay(550 + Math.random() * 350);
+      hideTyping();
+      addBotMessage(text, choices, htmlContent);
+    }
+
+    function servicesListHtml() {
+      const items = SERVICES.map(s =>
+        `<li>${s.name} — <strong>${s.price} $</strong></li>`
+      ).join('');
+      return `<ul class="service-list">${items}</ul>`;
+    }
+
+    function getAvailableDays() {
+      const days = [];
+      const cursor = new Date();
+      cursor.setHours(12, 0, 0, 0);
+      cursor.setDate(cursor.getDate() + 1);
+      while (days.length < 8) {
+        const dow = cursor.getDay();
+        if (dow >= 2 && dow <= 6) {
+          days.push({
+            date: new Date(cursor),
+            label: formatDayLabel(cursor),
+            dow
+          });
+        }
+        cursor.setDate(cursor.getDate() + 1);
+        if (days.length >= 5) break;
+      }
+      return days;
+    }
+
+    function formatDayLabel(date) {
+      const dow = date.getDay();
+      const jours = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+      const mois = ['jan.', 'fév.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+      return `${JOURS_FR_CAP[dow]} ${date.getDate()} ${mois[date.getMonth()]}`;
+    }
+
+    function formatDayLong(date) {
+      return `${JOURS_FR_CAP[date.getDay()]} le ${date.getDate()} ${['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][date.getMonth()]}`;
+    }
+
+    function getSlotsForDay(dow) {
+      if (dow === 6) return ['8 h 00', '10 h 30', '14 h 00'];
+      return ['9 h 30', '12 h 00', '16 h 00'];
+    }
+
+    function findService(text) {
+      const t = text.toLowerCase();
+      return SERVICES.find(s =>
+        t.includes(s.id.replace('-', ' ')) ||
+        t.includes(s.name.toLowerCase()) ||
+        (s.id === 'coupe-femme' && /coupe.*femme|femme.*coupe/i.test(t)) ||
+        (s.id === 'coupe-homme' && /coupe.*homme|homme.*coupe/i.test(t)) ||
+        (s.id === 'coloration' && /coloration|couleur complète/i.test(t)) ||
+        (s.id === 'meches' && /mèche|meche/i.test(t)) ||
+        (s.id === 'keratine' && /kératine|keratine/i.test(t))
+      );
+    }
+
+    function findDay(text) {
+      const t = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const available = getAvailableDays();
+      for (const d of available) {
+        const labelNorm = d.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const dayName = JOURS_FR[d.dow].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (t.includes(dayName) || t.includes(labelNorm) || t.includes(String(d.date.getDate()))) {
+          return d;
+        }
+      }
+      if (/mardi|mercredi|jeudi|vendredi|samedi/.test(t)) {
+        const map = { mardi: 2, mercredi: 3, jeudi: 4, vendredi: 5, samedi: 6 };
+        for (const [name, dow] of Object.entries(map)) {
+          if (t.includes(name)) return available.find(d => d.dow === dow);
+        }
+      }
+      if (/lundi|dimanche/.test(t)) return 'closed';
+      return null;
+    }
+
+    function findSlot(text) {
+      const t = text.toLowerCase();
+      const slots = bookingFlow.data.slots || [];
+      for (const slot of slots) {
+        if (t.includes(slot.toLowerCase())) return slot;
+        const hour = slot.match(/(\d+)/);
+        if (hour && t.includes(hour[1])) return slot;
+      }
+      return null;
+    }
+
+    function parseContact(text) {
+      const phoneMatch = text.match(/(?:\+?1[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}/);
+      const phone = phoneMatch ? phoneMatch[0].replace(/\D/g, '') : '';
+      if (phone.length < 10) return null;
+      let name = text.replace(phoneMatch[0], '').replace(/[,;|]/g, ' ').trim();
+      name = name.replace(/^(nom\s*:?\s*|je m'appelle\s*|c'est\s*)/i, '').trim();
+      if (name.length < 2) return null;
+      const formattedPhone = phone.length === 10
+        ? `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6)}`
+        : phone;
+      return { name, phone: formattedPhone };
+    }
+
+    function resetBookingFlow() {
+      bookingFlow = { active: false, step: null, data: {} };
+    }
+
+    function stepBadge(n) {
+      return `<span class="step-badge">Étape ${n} sur 5</span>`;
+    }
+
+    async function startBookingFlow() {
+      bookingFlow = { active: true, step: 'service', data: {} };
+      const html = `${stepBadge(1)}${escapeHtml("Parfait, c'est beau! On va te guider pour booker ton rendez-vous. ✨")}${servicesListHtml()}<p style="margin-top:8px;font-size:13.5px;">Choisis le service qui t'intéresse :</p>`;
+      const choices = SERVICES.map(s => ({
+        label: `${s.name} — ${s.price} $`,
+        value: s.id
+      }));
+      await botReplyFlow(null, choices, html);
+    }
+
+    async function showDayStep() {
+      bookingFlow.step = 'day';
+      const days = getAvailableDays();
+      bookingFlow.data.availableDays = days;
+      await botReplyFlow(null, days.map(d => ({ label: d.label, value: d.date.toISOString() })),
+        flowHtml(2,
+          `Excellent choix — ${bookingFlow.data.service.name} à ${bookingFlow.data.service.price} $! 💫`,
+          `Quelle journée vous conviendrait le mieux? (Ouvert du mardi au samedi.)`
+        )
+      );
+    }
+
+    async function showSlotsStep(dayEntry) {
+      bookingFlow.step = 'slot';
+      bookingFlow.data.day = dayEntry;
+      const slots = getSlotsForDay(dayEntry.dow);
+      bookingFlow.data.slots = slots;
+      await botReplyFlow(null, slots.map(s => ({ label: s, value: s, slot: true, row: true })),
+        flowHtml(3, `Super! Pour ${formatDayLong(dayEntry.date)}, voici 3 créneaux disponibles :`)
+      );
+    }
+
+    async function showContactStep() {
+      bookingFlow.step = 'contact';
+      await botReplyFlow(null, null,
+        flowHtml(4,
+          `Parfait, ${bookingFlow.data.slot} c'est noté! 📅`,
+          `Pour finaliser, j'ai besoin de votre nom complet et de votre numéro de téléphone.`,
+          `Exemple : Marie Tremblay, 418-555-1234`
+        )
+      );
+    }
+
+    async function showConfirmation() {
+      bookingFlow.step = 'done';
+      const { service, day, slot, name, phone } = bookingFlow.data;
+      const html = `
+        ${stepBadge(5)}
+        <p>C'est confirmé! On a hâte de vous accueillir au Salon Élara! ✅</p>
+        <div class="confirm-card">
+          <strong>📋 Récapitulatif de votre rendez-vous</strong><br><br>
+          <strong>Service :</strong> ${escapeHtml(service.name)} (${service.price} $)<br>
+          <strong>Date :</strong> ${escapeHtml(formatDayLong(day.date))}<br>
+          <strong>Heure :</strong> ${escapeHtml(slot)}<br>
+          <strong>Nom :</strong> ${escapeHtml(name)}<br>
+          <strong>Téléphone :</strong> ${escapeHtml(phone)}<br><br>
+          📍 1860 boul. Guillaume-Couture, Lévis<br>
+          Un rappel texte vous sera envoyé la veille (démo).
+        </div>
+        <p style="margin-top:10px;font-size:13px;">Merci ${escapeHtml(name.split(' ')[0])}! Pour modifier votre RDV, écrivez <em>annuler</em> ou appelez-nous au (418) 555-0147.</p>`;
+      resetBookingFlow();
+      await botReplyFlow(null, null, html);
+    }
+
+    async function handleFlowChoice(value, label) {
+      if (isTyping) return;
+      isTyping = true;
+      document.getElementById('send-btn').disabled = true;
+      addUserMessage(label);
+      await processBookingStep(value, label);
+      isTyping = false;
+      document.getElementById('send-btn').disabled = false;
+    }
+
+    async function processBookingStep(input, displayLabel) {
+      const text = (displayLabel || input || '').trim();
+
+      if (wantsCancel(text)) {
+        resetBookingFlow();
+        await botReplyFlow(`Pas de trouble, j'ai annulé la réservation. Si tu veux recommencer, écris « prendre un rendez-vous »! 😊`);
+        return;
+      }
+
+      switch (bookingFlow.step) {
+        case 'service': {
+          const service = SERVICES.find(s => s.id === input) || findService(text);
+          if (!service) {
+            await botReplyFlow(`Hmm, j'ai pas bien saisi le service. Clique sur un des choix ci-dessous ou écris le nom (ex. « mèches »).`, SERVICES.map(s => ({ label: `${s.name} — ${s.price} $`, value: s.id })));
+            return;
+          }
+          bookingFlow.data.service = service;
+          await showDayStep();
+          break;
+        }
+        case 'day': {
+          let dayEntry;
+          if (input && input.includes('T')) {
+            const date = new Date(input);
+            dayEntry = bookingFlow.data.availableDays?.find(d => d.date.toDateString() === date.toDateString());
+          } else {
+            dayEntry = findDay(text);
+          }
+          if (dayEntry === 'closed') {
+            await botReplyFlow(`Désolée, on est fermés le dimanche et le lundi. Choisis une autre journée parmi celles proposées! 🙂`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
+            return;
+          }
+          if (!dayEntry) {
+            await botReplyFlow(`Je n'ai pas reconnu cette journée. Clique sur un des jours disponibles ci-dessous.`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
+            return;
+          }
+          await showSlotsStep(dayEntry);
+          break;
+        }
+        case 'slot': {
+          const slot = bookingFlow.data.slots?.includes(input) ? input : findSlot(text);
+          if (!slot) {
+            await botReplyFlow(`Choisis un des 3 créneaux disponibles, s'il te plaît!`, bookingFlow.data.slots.map(s => ({ label: s, value: s, slot: true, row: true })));
+            return;
+          }
+          bookingFlow.data.slot = slot;
+          await showContactStep();
+          break;
+        }
+        case 'contact': {
+          const contact = parseContact(text);
+          if (!contact) {
+            await botReplyFlow(`J'ai besoin de ton nom complet et d'un numéro de téléphone valide (10 chiffres). Exemple : Jean Gagnon, 418-555-1234`);
+            return;
+          }
+          bookingFlow.data.name = contact.name;
+          bookingFlow.data.phone = contact.phone;
+          await showConfirmation();
+          break;
+        }
+        default:
+          resetBookingFlow();
+      }
     }
 
     function addUserMessage(text) {
@@ -852,10 +1184,34 @@ RÈGLES:
       document.getElementById('suggestions').style.display = 'none';
 
       addUserMessage(text);
-      conversationHistory.push({ role: 'user', content: text });
-
       isTyping = true;
       sendBtn.disabled = true;
+
+      if (bookingFlow.active) {
+        await processBookingStep(text);
+        isTyping = false;
+        sendBtn.disabled = false;
+        input.focus();
+        return;
+      }
+
+      if (wantsCancel(text)) {
+        hideTyping();
+        isTyping = false;
+        sendBtn.disabled = false;
+        input.focus();
+        return;
+      }
+
+      if (wantsBooking(text)) {
+        await startBookingFlow();
+        isTyping = false;
+        sendBtn.disabled = false;
+        input.focus();
+        return;
+      }
+
+      conversationHistory.push({ role: 'user', content: text });
       showTyping();
 
       try {
@@ -881,8 +1237,11 @@ RÈGLES:
         } else {
           const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
           conversationHistory.push({ role: 'assistant', content: reply });
-          const { text: displayText, showBooking } = processBotReply(reply);
-          addBotMessage(displayText, showBooking);
+          if (wantsBooking(reply)) {
+            await startBookingFlow();
+          } else {
+            addBotMessage(reply);
+          }
         }
       } catch (err) {
         hideTyping();
