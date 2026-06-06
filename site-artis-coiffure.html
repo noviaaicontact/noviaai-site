@@ -1296,6 +1296,9 @@
     const MODEL = 'gpt-4o-mini';
     const BOOKING_URL = 'https://artiscoiffure.enseigneweb.com';
     const BOOKING_MSG = 'Parfait ! Cliquez ici pour choisir votre service et votre coiffeuse 👇';
+    const CHAT_API = window.location.protocol === 'file:'
+      ? 'https://noviaai.ca/.netlify/functions/chat'
+      : '/.netlify/functions/chat';
 
     const SYSTEM_PROMPT = `Tu es l'Assistante Ärtis, l'assistante virtuelle d'Ärtis Coiffure, salon situé au 820 Route des Rivières, local 115, Saint-Nicolas (Lévis), Québec.
 
@@ -1351,6 +1354,45 @@ RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
     function getTime() {
       const n = new Date();
       return n.getHours().toString().padStart(2,'0') + 'h' + n.getMinutes().toString().padStart(2,'0');
+    }
+
+    function getLocalReply(text) {
+      const t = text.toLowerCase();
+      if (/\b(service|services|coiffure|offre|femme|hommes|enfant)\b/i.test(t)) {
+        return `Voici nos services :
+
+Femmes : coupe, balayage, coloration, mèches, extensions Waves certifiées, kératine, mise en plis, coiffure bal et mariage.
+
+Hommes : coupe stylisée, coupe classique, coupe rasée, deal coupe + barbe.
+
+Enfants : coupe ado 10-15 ans, coupe garçon moins de 10 ans.
+
+Produits professionnels Redken. Pour réserver, dites-moi « je veux un rendez-vous ».`;
+      }
+      if (/\b(horaire|horaires|heure|heures|ouvert|ouverture|ferm)\b/i.test(t)) {
+        return `Nos heures d'ouverture :
+• Lundi à jeudi : 6 h – 21 h
+• Vendredi : 6 h – 17 h
+• Samedi : 7 h – 14 h
+• Dimanche : fermé
+
+820 Route des Rivières, local 115, Saint-Nicolas (Lévis).`;
+      }
+      if (/\b(téléphone|telephone|tel|appeler|joindre|adresse|où|localisation|contact)\b/i.test(t)) {
+        return `Joignez-nous au 418-468-1007.
+
+820 Route des Rivières, local 115, Saint-Nicolas (Lévis).
+
+Instagram : @artis_coiffure`;
+      }
+      return null;
+    }
+
+    async function replyWithDelay(text, showBooking = false) {
+      showTyping();
+      await new Promise(r => setTimeout(r, 450));
+      hideTyping();
+      addBotMessage(text, showBooking);
     }
 
     function toggleChat() {
@@ -1421,10 +1463,21 @@ RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
         return;
       }
 
+      const localReply = getLocalReply(text);
+      if (localReply) {
+        conversationHistory.push({ role: 'user', content: text });
+        await replyWithDelay(localReply);
+        conversationHistory.push({ role: 'assistant', content: localReply });
+        isTyping = false;
+        btn.disabled = false;
+        input.focus();
+        return;
+      }
+
       conversationHistory.push({ role: 'user', content: text });
       showTyping();
       try {
-        const res = await fetch('/.netlify/functions/chat', {
+        const res = await fetch(CHAT_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1437,7 +1490,13 @@ RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
         const data = await res.json();
         hideTyping();
         if (!res.ok || data.error) {
-          addBotMessage(ERROR_MSG);
+          const fallback = getLocalReply(text);
+          if (fallback) {
+            addBotMessage(fallback);
+            conversationHistory.push({ role: 'assistant', content: fallback });
+          } else {
+            addBotMessage(ERROR_MSG);
+          }
         } else {
           const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
           conversationHistory.push({ role: 'assistant', content: reply });
@@ -1446,7 +1505,13 @@ RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
         }
       } catch {
         hideTyping();
-        addBotMessage(ERROR_MSG);
+        const fallback = getLocalReply(text);
+        if (fallback) {
+          addBotMessage(fallback);
+          conversationHistory.push({ role: 'assistant', content: fallback });
+        } else {
+          addBotMessage(ERROR_MSG);
+        }
       }
       isTyping = false;
       btn.disabled = false;
