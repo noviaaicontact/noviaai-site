@@ -1296,9 +1296,7 @@
     const MODEL = 'gpt-4o-mini';
     const BOOKING_URL = 'https://artiscoiffure.enseigneweb.com';
     const BOOKING_MSG = 'Parfait ! Cliquez ici pour choisir votre service et votre coiffeuse 👇';
-    const CHAT_API = window.location.protocol === 'file:'
-      ? 'https://noviaai.ca/.netlify/functions/chat'
-      : '/.netlify/functions/chat';
+    const CHAT_API = 'https://noviaai.ca/.netlify/functions/chat';
 
     const SYSTEM_PROMPT = `Tu es l'Assistante Ärtis, l'assistante virtuelle d'Ärtis Coiffure, salon situé au 820 Route des Rivières, local 115, Saint-Nicolas (Lévis), Québec.
 
@@ -1356,10 +1354,15 @@ RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
       return n.getHours().toString().padStart(2,'0') + 'h' + n.getMinutes().toString().padStart(2,'0');
     }
 
-    function getLocalReply(text) {
-      const t = text.toLowerCase();
-      if (/\b(service|services|coiffure|offre|femme|hommes|enfant)\b/i.test(t)) {
-        return `Voici nos services :
+    function getQuickReply(text) {
+      const t = text.toLowerCase().trim().replace(/[!?.…]+$/g, '');
+      if (wantsBooking(text)) return { booking: true };
+      if (t.includes('service')) return { text: SERVICES_REPLY };
+      if (t.includes('horaire')) return { text: HOURS_REPLY };
+      return null;
+    }
+
+    const SERVICES_REPLY = `Voici nos services :
 
 Femmes : coupe, balayage, coloration, mèches, extensions Waves certifiées, kératine, mise en plis, coiffure bal et mariage.
 
@@ -1367,25 +1370,52 @@ Hommes : coupe stylisée, coupe classique, coupe rasée, deal coupe + barbe.
 
 Enfants : coupe ado 10-15 ans, coupe garçon moins de 10 ans.
 
-Produits professionnels Redken. Pour réserver, dites-moi « je veux un rendez-vous ».`;
-      }
-      if (/\b(horaire|horaires|heure|heures|ouvert|ouverture|ferm)\b/i.test(t)) {
-        return `Nos heures d'ouverture :
+Produits professionnels Redken.`;
+
+    const HOURS_REPLY = `Nos heures d'ouverture :
 • Lundi à jeudi : 6 h – 21 h
 • Vendredi : 6 h – 17 h
 • Samedi : 7 h – 14 h
 • Dimanche : fermé
 
 820 Route des Rivières, local 115, Saint-Nicolas (Lévis).`;
-      }
-      if (/\b(téléphone|telephone|tel|appeler|joindre|adresse|où|localisation|contact)\b/i.test(t)) {
-        return `Joignez-nous au 418-468-1007.
 
-820 Route des Rivières, local 115, Saint-Nicolas (Lévis).
+    const FAQ = [
+      { keys: ['telephone', 'téléphone', 'tel', 'appeler', 'joindre', 'numero', 'numéro'], text: `Appelez-nous au 418-468-1007.` },
+      { keys: ['adresse', 'ou etes', 'où êtes', 'localisation', 'trouver', 'situé', 'situe', 'levé', 'levis', 'saint-nicolas'], text: `820 Route des Rivières, local 115, Saint-Nicolas (Lévis). Téléphone : 418-468-1007.` },
+      { keys: ['instagram', 'facebook', 'reseau', 'réseau'], text: `Instagram : @artis_coiffure\nFacebook : Ärtis coiffure` },
+      { keys: ['prix', 'tarif', 'cout', 'coût', 'combien', 'coute', 'coûte'], text: `Nos tarifs varient selon le service et la coiffeuse. Appelez-nous au 418-468-1007 ou réservez en ligne pour un prix précis.` },
+      { keys: ['melina', 'mélina', 'balayage'], text: `Mélina Camiré est notre spécialiste balayage.` },
+      { keys: ['marie', 'waves', 'extension'], text: `Marie-Hélène Barry est certifiée Extensions Waves.` },
+      { keys: ['chantale', 'coupe femme'], text: `Chantale Faucher est spécialisée en coupe femme.` },
+      { keys: ['jessie', 'meche', 'mèche'], text: `Jessie Dubé est notre spécialiste mèches.` },
+      { keys: ['suzanne', 'mariage', 'mariee', 'mariée', 'bal'], text: `Suzanne St-Laurent s'occupe des coiffures bal et mariage.` },
+      { keys: ['cathy', 'keratine', 'kératine'], text: `Cathy Lamontagne est spécialisée en traitement kératine.` },
+      { keys: ['elody', 'élody', 'homme', 'barbe'], text: `Élody Gallant s'occupe des coupes homme.` },
+      { keys: ['redken', 'produit'], text: `Nous utilisons les produits professionnels Redken.` },
+      { keys: ['equipe', 'équipe', 'coiffeuse', 'coiffeur', 'styliste'], text: `Notre équipe : Mélina (balayage), Marie-Hélène (Waves), Chantale (coupe femme), Jessie (mèches), Suzanne (mariage), Cathy (kératine), Élody (coupe homme).` },
+      { keys: ['bonjour', 'salut', 'allo', 'bonsoir', 'hello'], text: `Bonjour! Comment puis-je vous aider? Services, horaires, rendez-vous — demandez-moi.` },
+      { keys: ['merci', 'thanks'], text: `Avec plaisir! N'hésitez pas si vous avez d'autres questions.` },
+      { keys: ['novia', 'noviaai', 'robot', 'bot', 'ia', 'intelligence'], text: `Je suis propulsée par NoviaAI, une solution québécoise d'assistante virtuelle pour les PME.` },
+      { keys: ['enfant', 'ado', 'garcon', 'garçon', 'fille'], text: `Pour les enfants : coupe ado garçon 10-15 ans et coupe garçon moins de 10 ans.` },
+      { keys: ['homme', 'barbe', 'rasé', 'rase'], text: `Hommes : coupe stylisée, coupe classique, coupe rasée, deal coupe + barbe.` },
+      { keys: ['femme', 'coloration', 'couleur'], text: `Femmes : coupe, balayage, coloration, mèches, extensions Waves, kératine, mise en plis, coiffure bal et mariage.` },
+      { keys: ['dimanche', 'ferme', 'fermé', 'ouvert'], text: HOURS_REPLY },
+      { keys: ['parking', 'stationnement'], text: `Le salon est au 820 Route des Rivières, local 115, Saint-Nicolas. Appelez au 418-468-1007 si vous avez besoin d'indications.` },
+      { keys: ['carte', 'debit', 'débit', 'credit', 'crédit', 'paiement', 'interac'], text: `Pour les modes de paiement acceptés, contactez-nous au 418-468-1007.` }
+    ];
 
-Instagram : @artis_coiffure`;
+    function findFaqReply(text) {
+      const t = text.toLowerCase();
+      let best = null, bestScore = 0;
+      for (const item of FAQ) {
+        let score = 0;
+        for (const k of item.keys) {
+          if (t.includes(k)) score++;
+        }
+        if (score > bestScore) { bestScore = score; best = item.text; }
       }
-      return null;
+      return bestScore > 0 ? best : null;
     }
 
     async function replyWithDelay(text, showBooking = false) {
@@ -1393,6 +1423,33 @@ Instagram : @artis_coiffure`;
       await new Promise(r => setTimeout(r, 450));
       hideTyping();
       addBotMessage(text, showBooking);
+    }
+
+    async function callOpenAI() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      try {
+        const res = await fetch(CHAT_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...conversationHistory],
+            max_tokens: 300,
+            temperature: 0.72
+          })
+        });
+        const raw = await res.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { return null; }
+        if (!res.ok || data.error || !data.choices?.[0]?.message?.content) return null;
+        return data.choices[0].message.content;
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timer);
+      }
     }
 
     function toggleChat() {
@@ -1448,74 +1505,59 @@ Instagram : @artis_coiffure`;
       const btn = document.getElementById('send-btn');
       const text = input.value.trim();
       if (!text || isTyping) return;
-      input.value = '';
-      input.style.height = 'auto';
-      document.getElementById('suggestions').style.display = 'none';
-      addUserMessage(text);
+
       isTyping = true;
       btn.disabled = true;
+      input.value = '';
+      input.style.height = 'auto';
 
-      if (wantsBooking(text)) {
-        await showBookingMessage();
-        isTyping = false;
-        btn.disabled = false;
-        input.focus();
-        return;
-      }
+      const suggestions = document.getElementById('suggestions');
+      if (suggestions) suggestions.style.display = 'none';
 
-      const localReply = getLocalReply(text);
-      if (localReply) {
-        conversationHistory.push({ role: 'user', content: text });
-        await replyWithDelay(localReply);
-        conversationHistory.push({ role: 'assistant', content: localReply });
-        isTyping = false;
-        btn.disabled = false;
-        input.focus();
-        return;
-      }
-
+      addUserMessage(text);
       conversationHistory.push({ role: 'user', content: text });
-      showTyping();
+
       try {
-        const res = await fetch(CHAT_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: MODEL,
-            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...conversationHistory],
-            max_tokens: 300,
-            temperature: 0.72
-          })
-        });
-        const data = await res.json();
-        hideTyping();
-        if (!res.ok || data.error) {
-          const fallback = getLocalReply(text);
-          if (fallback) {
-            addBotMessage(fallback);
-            conversationHistory.push({ role: 'assistant', content: fallback });
-          } else {
-            addBotMessage(ERROR_MSG);
-          }
-        } else {
-          const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
-          conversationHistory.push({ role: 'assistant', content: reply });
-          const showBooking = isBookingReply(reply);
-          addBotMessage(showBooking ? BOOKING_MSG : reply, showBooking);
+        const quick = getQuickReply(text);
+
+        if (quick?.booking) {
+          await showBookingMessage();
+          return;
         }
-      } catch {
-        hideTyping();
-        const fallback = getLocalReply(text);
-        if (fallback) {
-          addBotMessage(fallback);
-          conversationHistory.push({ role: 'assistant', content: fallback });
-        } else {
-          addBotMessage(ERROR_MSG);
+
+        if (quick?.text) {
+          await replyWithDelay(quick.text);
+          conversationHistory.push({ role: 'assistant', content: quick.text });
+          return;
         }
+
+        showTyping();
+        const aiReply = await callOpenAI();
+        hideTyping();
+
+        if (aiReply) {
+          conversationHistory.push({ role: 'assistant', content: aiReply });
+          const showBooking = isBookingReply(aiReply);
+          addBotMessage(showBooking ? BOOKING_MSG : aiReply, showBooking);
+          return;
+        }
+
+        const faq = findFaqReply(text);
+        if (faq) {
+          conversationHistory.push({ role: 'assistant', content: faq });
+          addBotMessage(faq);
+          return;
+        }
+
+        addBotMessage(`Bonne question! Pour une réponse précise, appelez-nous au 418-468-1007 ou réservez en ligne.`);
+      } catch (err) {
+        hideTyping();
+        addBotMessage(ERROR_MSG);
+      } finally {
+        isTyping = false;
+        btn.disabled = false;
+        input.focus();
       }
-      isTyping = false;
-      btn.disabled = false;
-      input.focus();
     }
     function handleKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -1524,6 +1566,12 @@ Instagram : @artis_coiffure`;
       el.style.height = 'auto';
       el.style.height = Math.min(el.scrollHeight, 90) + 'px';
     }
+
+    window.toggleChat = toggleChat;
+    window.sendMessage = sendMessage;
+    window.sendSuggestion = sendSuggestion;
+    window.handleKey = handleKey;
+    window.autoResize = autoResize;
   </script>
 </body>
 </html>
