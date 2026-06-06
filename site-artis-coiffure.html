@@ -151,26 +151,45 @@
       position: absolute;
       inset: 0;
       z-index: 0;
+      background: #1a1210;
+      overflow: hidden;
     }
     .hero-bg img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      /* Photo portrait : ancrer en haut pour garder les visages visibles */
+      object-position: center top;
+    }
+    @media (max-aspect-ratio: 4/3) {
+      .hero-bg img {
+        object-fit: contain;
+        object-position: center center;
+      }
+    }
+    @media (min-width: 769px) and (max-aspect-ratio: 16/10) {
+      .hero-bg img {
+        object-fit: cover;
+        object-position: center 12%;
+      }
     }
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(18, 18, 18, 0.55) 0%,
-        rgba(18, 18, 18, 0.72) 50%,
-        rgba(18, 18, 18, 0.85) 100%
-      );
+      background:
+        linear-gradient(
+          180deg,
+          rgba(18, 18, 18, 0.35) 0%,
+          rgba(18, 18, 18, 0.5) 45%,
+          rgba(18, 18, 18, 0.72) 100%
+        ),
+        radial-gradient(ellipse at center, transparent 0%, rgba(18, 18, 18, 0.25) 100%);
     }
     .hero-content {
       position: relative;
       z-index: 1;
       max-width: 780px;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
     }
     .hero-eyebrow {
       font-size: 11px;
@@ -300,58 +319,46 @@
     }
     .service-panel { display: none; }
     .service-panel.active { display: block; }
-    .service-grid {
+    .service-list {
+      list-style: none;
+      max-width: 820px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
-    }
-    .service-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      aspect-ratio: 4/3;
-      group: service;
-    }
-    .service-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .service-item:hover img { transform: scale(1.06); }
-    .service-item-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(18, 18, 18, 0.88) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 24px;
-    }
-    .service-item h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem;
-      color: var(--white);
-      font-weight: 500;
-    }
-    .service-list-simple {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
-    .service-list-simple li {
-      list-style: none;
-      padding: 18px 20px;
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 400;
-      transition: border-color 0.2s, transform 0.2s;
+    .service-list--single {
+      grid-template-columns: 1fr;
+      max-width: 520px;
     }
-    .service-list-simple li:hover {
+    .service-list li {
+      padding: 22px 28px;
+      background: var(--white);
+      border: 1px solid rgba(196, 165, 116, 0.45);
+      border-radius: 2px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--black-soft);
+      text-align: center;
+      transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .service-list li:hover {
+      background: var(--cream);
       border-color: var(--gold);
-      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(196, 165, 116, 0.15);
+    }
+    .service-panel-note {
+      margin-top: 28px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 300;
+      text-align: center;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
     }
 
     /* Team */
@@ -364,49 +371,52 @@
     .team-card {
       background: var(--white);
       border-radius: 18px;
-      overflow: hidden;
       border: 1px solid var(--border);
-      transition: transform 0.3s, box-shadow 0.3s;
+      padding: 36px 28px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .team-card::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-light), var(--gold-dark));
+      margin: 0 auto 22px;
     }
     .team-card:hover {
       transform: translateY(-6px);
       box-shadow: var(--shadow);
+      border-color: var(--gold);
     }
-    .team-photo {
-      height: 280px;
-      overflow: hidden;
-      background: var(--cream-dark);
-    }
-    .team-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(15%);
-      transition: filter 0.4s, transform 0.5s;
-    }
-    .team-card:hover .team-photo img {
-      filter: grayscale(0%);
-      transform: scale(1.04);
-    }
-    .team-info { padding: 24px; }
+    .team-info { padding: 0; }
     .team-info h3 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.35rem;
       font-weight: 500;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     .team-info .specialty {
       font-size: 12px;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--gold-dark);
-      margin-bottom: 10px;
+      margin-bottom: 0;
     }
-    .team-info p {
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.6;
+
+    /* Instagram gallery */
+    .instagram { background: var(--cream); }
+    .insta-cta {
+      text-align: center;
+    }
+    .insta-cta p {
+      font-size: 15px;
       color: var(--muted);
+      margin-bottom: 20px;
+      font-weight: 300;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* Why us */
@@ -430,7 +440,27 @@
       border-color: var(--gold);
       background: rgba(196, 165, 116, 0.08);
     }
-    .why-icon { font-size: 32px; margin-bottom: 18px; }
+    .why-icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: rgba(196, 165, 116, 0.12);
+      border: 1px solid rgba(196, 165, 116, 0.28);
+      color: var(--gold-light);
+    }
+    .why-icon svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     .why-card h3 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.4rem;
@@ -466,8 +496,36 @@
       color: var(--black-soft);
       margin-bottom: 20px;
     }
-    .review-author { font-size: 13px; font-weight: 500; }
-    .review-author span { display: block; font-weight: 300; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .review-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .review-avatar--lm { background: linear-gradient(135deg, #c4a574, #9a7848); }
+    .review-avatar--ct { background: linear-gradient(135deg, #d4847a, #a85a52); }
+    .review-avatar--mb { background: linear-gradient(135deg, #7a9e8e, #4d7263); }
+    .review-author-info span {
+      display: block;
+      font-weight: 300;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
     .google-rating {
       display: inline-flex;
       align-items: center;
@@ -560,9 +618,18 @@
       margin: 20px 0;
     }
     footer .socials a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: 13px;
       color: var(--gold-light);
       text-decoration: none;
+    }
+    footer .socials a svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
     }
     footer .socials a:hover { color: var(--white); }
     footer .novia {
@@ -837,6 +904,7 @@
       section { padding: 70px 24px; }
       .contact-grid { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr 1fr; }
+      .service-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .team-grid { grid-template-columns: 1fr; }
@@ -857,6 +925,7 @@
     <ul class="nav-links" id="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#equipe">Équipe</a></li>
+      <li><a href="#galerie">Galerie</a></li>
       <li><a href="#pourquoi">À propos</a></li>
       <li><a href="#avis">Avis</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -870,7 +939,7 @@
   <!-- 1. HERO -->
   <header class="hero" id="accueil">
     <div class="hero-bg">
-      <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1920&q=80" alt="Cheveux colorés en salon de coiffure">
+      <img src="images/artis/hero-equipe.jpg" alt="L'équipe de coiffeuses Ärtis Coiffure">
       <div class="hero-overlay"></div>
     </div>
     <div class="hero-content">
@@ -904,21 +973,7 @@
       </div>
 
       <div class="service-panel active reveal" id="panel-femmes">
-        <div class="service-grid">
-          <div class="service-item">
-            <img src="https://images.unsplash.com/photo-1492106087820-71f1a00d5911?w=600&q=80" alt="Balayage">
-            <div class="service-item-overlay"><h3>Balayage</h3></div>
-          </div>
-          <div class="service-item">
-            <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80" alt="Coloration">
-            <div class="service-item-overlay"><h3>Coloration complète</h3></div>
-          </div>
-          <div class="service-item">
-            <img src="https://images.unsplash.com/photo-1595476108010-b334068cbf39?w=600&q=80" alt="Extensions">
-            <div class="service-item-overlay"><h3>Extensions Waves certifiées</h3></div>
-          </div>
-        </div>
-        <ul class="service-list-simple" style="margin-top:24px;">
+        <ul class="service-list">
           <li>Coupe femme</li>
           <li>Balayage</li>
           <li>Coloration complète</li>
@@ -931,17 +986,7 @@
       </div>
 
       <div class="service-panel reveal" id="panel-hommes">
-        <div class="service-grid">
-          <div class="service-item">
-            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&q=80" alt="Coupe homme">
-            <div class="service-item-overlay"><h3>Coupe homme stylisé</h3></div>
-          </div>
-          <div class="service-item">
-            <img src="https://images.unsplash.com/photo-1503951914875-1612599310-14?w=600&q=80" alt="Barbe">
-            <div class="service-item-overlay"><h3>Deal coupe + barbe</h3></div>
-          </div>
-        </div>
-        <ul class="service-list-simple" style="margin-top:24px;">
+        <ul class="service-list">
           <li>Coupe homme stylisé</li>
           <li>Coupe homme</li>
           <li>Coupe rasé</li>
@@ -950,11 +995,11 @@
       </div>
 
       <div class="service-panel reveal" id="panel-enfants">
-        <ul class="service-list-simple">
+        <ul class="service-list service-list--single">
           <li>Coupe ado garçon 10-15 ans</li>
           <li>Coupe garçon moins de 10 ans</li>
         </ul>
-        <p style="margin-top:20px;font-size:14px;color:var(--muted);font-weight:300;text-align:center;">
+        <p class="service-panel-note">
           Un environnement accueillant et patient pour les plus jeunes — l'ambiance familiale Ärtis, c'est aussi ça.
         </p>
       </div>
@@ -971,61 +1016,62 @@
       </div>
       <div class="team-grid">
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500&q=80" alt="Mélina Camiré"></div>
           <div class="team-info">
             <h3>Mélina Camiré</h3>
             <p class="specialty">Balayage & coloration</p>
-            <p>Experte en nuances lumineuses et colorations sur mesure avec Redken.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=500&q=80" alt="Marie-Hélène Barry"></div>
           <div class="team-info">
             <h3>Marie-Hélène Barry</h3>
             <p class="specialty">Extensions Waves certifiées</p>
-            <p>Spécialiste certifiée Waves pour des longueurs naturelles et durables.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1605497788041-5fecd946106d?w=500&q=80" alt="Chantale Faucher"></div>
           <div class="team-info">
             <h3>Chantale Faucher</h3>
             <p class="specialty">Coupe femme & mise en plis</p>
-            <p>Coupes structurées et coiffures élégantes pour le quotidien ou les grandes occasions.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1595476108010-b334068cbf39?w=500&q=80" alt="Jessie Dubé"></div>
           <div class="team-info">
             <h3>Jessie Dubé</h3>
             <p class="specialty">Mèches & coloration créative</p>
-            <p>Mèches précises et colorations audacieuses pour un look qui vous ressemble.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=500&q=80" alt="Suzanne St-Laurent"></div>
           <div class="team-info">
             <h3>Suzanne St-Laurent</h3>
             <p class="specialty">Coiffure bal & mariage</p>
-            <p>Chignons, coiffures de soirée et looks de mariée — élégance garantie.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1492106087820-71f1a00d5911?w=500&q=80" alt="Cathy Lamontagne"></div>
           <div class="team-info">
             <h3>Cathy Lamontagne</h3>
             <p class="specialty">Traitement kératine & soins</p>
-            <p>Soins profonds et kératine pour des cheveux sains, brillants et manageables.</p>
           </div>
         </article>
         <article class="team-card reveal">
-          <div class="team-photo"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=500&q=80" alt="Élody Gallant"></div>
           <div class="team-info">
             <h3>Élody Gallant</h3>
             <p class="specialty">Coupe homme & barbe</p>
-            <p>Coupes masculines stylisées, rasage et entretien de barbe avec précision.</p>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3b. GALERIE INSTAGRAM -->
+  <section class="instagram" id="galerie">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">@artis_coiffure</p>
+        <h2 class="section-title">Nos réalisations sur Instagram</h2>
+        <p class="section-desc">Balayages, blondes, extensions Waves et coupes — suivez notre travail au quotidien.</p>
+      </div>
+      <div class="insta-cta reveal">
+        <p>Découvrez nos transformations, astuces capillaires et nouveautés du salon sur Instagram.</p>
+        <a href="https://www.instagram.com/artis_coiffure/" target="_blank" rel="noopener noreferrer" class="btn btn-dark">Suivre @artis_coiffure sur Instagram</a>
       </div>
     </div>
   </section>
@@ -1038,24 +1084,33 @@
         <h2 class="section-title">L'expérience Ärtis</h2>
         <p class="section-desc">Un salon où expertise professionnelle rime avec accueil chaleureux — pour toute la famille.</p>
       </div>
+
       <div class="why-grid">
         <div class="why-card reveal">
-          <div class="why-icon">✨</div>
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 3h6l1 2h4v2H4V5h4l1-2z"/><path d="M6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/><path d="M12 11v4"/></svg>
+          </div>
           <h3>Produits Redken</h3>
           <p>Des produits professionnels de qualité supérieure pour des résultats durables et un cheveu en santé.</p>
         </div>
         <div class="why-card reveal">
-          <div class="why-icon">💫</div>
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3l1.2 3.6L17 8l-3.8 1.4L12 13l-1.2-3.6L7 8l3.8-1.4L12 3z"/><path d="M5 16l.8 2.4L8 19l-2.2.8L5 22l-.8-2.2L2 19l2.2-.6L5 16z"/><path d="M19 14l.6 1.8L21 17l-1.4.5L19 19l-.6-1.5L17 17l1.4-.5L19 14z"/></svg>
+          </div>
           <h3>Extensions Waves certifiées</h3>
           <p>Coiffeuses formées et certifiées Waves — la référence en extensions capillaires naturelles.</p>
         </div>
         <div class="why-card reveal">
-          <div class="why-icon">🏠</div>
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/><path d="M9 21v-6h6v6"/></svg>
+          </div>
           <h3>Ambiance familiale</h3>
           <p>Un salon chaleureux et accueillant où petits et grands se sentent à l'aise dès l'entrée.</p>
         </div>
         <div class="why-card reveal">
-          <div class="why-icon">🕐</div>
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+          </div>
           <h3>Horaires flexibles</h3>
           <p>Ouvert de 6 h à 21 h en semaine — parfait pour s'adapter à votre horaire, même tôt le matin.</p>
         </div>
@@ -1078,17 +1133,26 @@
         <div class="review-card reveal">
           <div class="review-stars">★★★★★</div>
           <p class="review-text">« Très satisfaite ! Cathy a été très gentille et elle m'écoutait. Elle a su trouver ce qui allait le mieux pour mon type de cheveux. Merci Cathy! »</p>
-          <p class="review-author">Laura Mack<span>Avis Google</span></p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--lm" aria-hidden="true">LM</span>
+            <div class="review-author-info">Laura Mack<span>Avis Google</span></div>
+          </div>
         </div>
         <div class="review-card reveal">
           <div class="review-stars">★★★★★</div>
           <p class="review-text">« On papote, on rit, on se fait coiffer et on repart le cœur plus léger et les cheveux parfaits! Accueil chaleureux 10/10, ambiance juste wow 11/10 et mon amie Jessie je te donne un gros 12/10. À bientôt xx »</p>
-          <p class="review-author">Catherine Turgeon<span>Avis Google</span></p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--ct" aria-hidden="true">CT</span>
+            <div class="review-author-info">Catherine Turgeon<span>Avis Google</span></div>
+          </div>
         </div>
         <div class="review-card reveal">
           <div class="review-stars">★★★★★</div>
           <p class="review-text">« J'ai adoré mon expérience chez Ärtis Coiffure ! L'équipe est chaleureuse et professionnelle. Je repars toujours aussi satisfaite ! »</p>
-          <p class="review-author">Marie-Hélène Barry<span>Avis Google</span></p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--mb" aria-hidden="true">MB</span>
+            <div class="review-author-info">Marie-Hélène Barry<span>Avis Google</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1115,7 +1179,7 @@
             <h4>Réseaux sociaux</h4>
             <p>
               <a href="https://www.instagram.com/artis_coiffure" target="_blank" rel="noopener noreferrer">Instagram @artis_coiffure</a><br>
-              Facebook — Ärtis coiffure
+              <a href="https://www.facebook.com/artiscoiffurestnicolas" target="_blank" rel="noopener noreferrer">Facebook — Ärtis coiffure</a>
             </p>
           </div>
           <div class="contact-block">
@@ -1155,6 +1219,10 @@
     <p>820 Route des Rivières, local 115 · Saint-Nicolas, Lévis<br>418-468-1007</p>
     <div class="socials">
       <a href="https://www.instagram.com/artis_coiffure" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://www.facebook.com/artiscoiffurestnicolas" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Ärtis coiffure sur Facebook
+      </a>
       <a href="tel:+14184681007">Téléphone</a>
       <a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer">Réservation</a>
     </div>
