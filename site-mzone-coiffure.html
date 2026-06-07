@@ -828,7 +828,8 @@ Suppléments selon densité, longueur, complexité. Diagnostic toujours offert.
 PRISE DE RENDEZ-VOUS (IMPORTANT — message officiel du salon):
 "En raison des délais de réponse, il ne nous est pas possible de prendre des rendez-vous en ligne. Merci de nous contacter au 418-834-9976."
 Consultations sur rendez-vous disponibles pour estimations personnalisées (extensions, prothèses, services complexes).
-Le chat peut préparer une demande, mais la confirmation se fait TOUJOURS par téléphone.
+Le chat peut préparer une demande de rendez-vous. À la fin, une confirmation est envoyée par texto ou courriel — le client doit répondre pour confirmer le RDV.
+Au début d'une demande de RDV, demander si c'est un nouveau client ou un client existant.
 
 TON: Français québécois, chaleureux, professionnel, vouvoiement. 2-4 phrases, 1 emoji max.
 
@@ -838,13 +839,15 @@ RÈGLES:
 - Extensions/prothèses → consultation ou appel
 - Démo propulsée par NoviaAI si demandé`;
 
-    const GREETING = `Bonjour! 👋 Bienvenue chez M Zone Coiffure à Lévis. Je peux vous renseigner sur nos services, tarifs, horaires ou vous aider à préparer une demande de rendez-vous. Les confirmations se font au 418-834-9976. Comment puis-je vous aider?`;
+    const GREETING = `Bonjour! 👋 Bienvenue chez M Zone Coiffure à Lévis. Je peux vous renseigner sur nos services, tarifs, horaires ou vous guider pour une demande de rendez-vous. Comment puis-je vous aider?`;
 
     const ERROR_MSG = `Désolée, petit problème technique. Appelez-nous au 418-834-9976 ou visitez mzonecoiffure.ca.`;
 
-    const RDV_ONLINE_REPLY = `En raison des délais de réponse, il ne nous est pas possible de prendre des rendez-vous en ligne. Merci de nous contacter directement au 418-834-9976.
+    const RDV_ONLINE_REPLY = `Je peux vous guider pour préparer votre demande de rendez-vous ici.
 
-Pour une estimation personnalisée selon votre type de cheveux, nous offrons des consultations sur rendez-vous. Je peux aussi vous guider pour préparer votre demande ici, puis vous pourrez confirmer par téléphone.`;
+À la fin du processus, une confirmation vous sera envoyée par texto ou courriel. Il sera nécessaire d'y répondre pour confirmer votre rendez-vous.
+
+Pour une estimation personnalisée, nous offrons aussi des consultations sur rendez-vous — appelez le 418-834-9976.`;
 
     const PRIX_REPLY = `Voici nos tarifs indicatifs (liste officielle M Zone):
 
@@ -904,7 +907,7 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
         return `Notre équipe réunit de jeunes talents et des coiffeurs expérimentés: coiffeurs, stylistes, coloristes et barbiers. Consultez « Notre équipe » sur mzonecoiffure.ca.`;
       }
       if (/service|coiffure|coloration|m[eè]che|couleur|coupe|visagiste|styliste/.test(t)) {
-        return `Nos services: coiffeur, barbier, coloriste, styliste, visagiste, extensions et prothèses capillaires, mèches, balayage, décoloration, soins, coiffures bal/mariage, tresses. Dites « tarifs » pour les prix ou « rendez-vous » pour préparer une demande (confirmation au 418-834-9976).`;
+        return `Nos services: coiffeur, barbier, coloriste, styliste, visagiste, extensions et prothèses capillaires, mèches, balayage, décoloration, soins, coiffures bal/mariage, tresses. Dites « tarifs » pour les prix ou « rendez-vous » pour préparer une demande.`;
       }
       if (/rdv|rendez-vous|rendez vous|r[eé]server|booker/.test(t)) return RDV_ONLINE_REPLY;
       if (/facebook|instagram|r[eé]seau/.test(t)) return `Facebook: MZoneCoiffure · Site: mzonecoiffure.ca · Tél. 418-834-9976`;
@@ -1132,12 +1135,42 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
     }
 
     function stepBadge(n) {
-      return `<span class="step-badge">Étape ${n} sur 5</span>`;
+      return `<span class="step-badge">Étape ${n} sur 6</span>`;
+    }
+
+    const CLIENT_TYPE_CHOICES = [
+      { label: 'Oui, c\'est ma première visite', value: 'new' },
+      { label: 'Non, je suis déjà client(e)', value: 'returning' }
+    ];
+
+    function parseClientType(input, text) {
+      if (input === 'new' || input === 'returning') return input;
+      const t = text.toLowerCase();
+      if (/nouveau|nouvelle|premi[eè]re visite|premi[eè]re fois|jamais (?:[ée]t[eé]|venu)|c'?est ma premi[eè]re/.test(t)) return 'new';
+      if (/d[eé]j[aà]|client existant|client[eè]?|habitu[eé]|r[eé]gulier|non.*premi[eè]re/.test(t)) return 'returning';
+      return null;
+    }
+
+    function clientTypeLabel(type) {
+      return type === 'new' ? 'Nouveau client — première visite' : 'Client existant';
     }
 
     async function startBookingFlow() {
-      bookingFlow = { active: true, step: 'service', data: {} };
-      const html = `${stepBadge(1)}<p>Je peux préparer votre demande de rendez-vous. <strong>Note importante :</strong> les rendez-vous se confirment par téléphone au 418-834-9976 (pas de réservation en ligne).</p>${servicesListHtml()}<p style="margin-top:8px;font-size:13.5px;">Un diagnostic est offert avant chaque prestation.</p>`;
+      bookingFlow = { active: true, step: 'clientType', data: {} };
+      await botReplyFlow(null, CLIENT_TYPE_CHOICES,
+        flowHtml(1,
+          `Parfait! Avant de commencer, une petite question :`,
+          `Est-ce votre première visite chez M Zone Coiffure?`
+        )
+      );
+    }
+
+    async function showServiceStep() {
+      bookingFlow.step = 'service';
+      const welcome = bookingFlow.data.clientType === 'new'
+        ? `Bienvenue! Nous avons hâte de vous accueillir. Un diagnostic est offert avant votre première prestation.`
+        : `Ravi de vous revoir!`;
+      const html = `${stepBadge(2)}<p>${escapeHtml(welcome)}</p><p>À la fin, une confirmation vous sera envoyée — il faudra y répondre pour confirmer le rendez-vous.</p>${servicesListHtml()}<p style="margin-top:8px;font-size:13.5px;">Choisissez le service souhaité :</p>`;
       const choices = SERVICES.map(s => ({
         label: `${s.name} — ${s.price} $`,
         value: s.id
@@ -1150,8 +1183,8 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       const days = getAvailableDays();
       bookingFlow.data.availableDays = days;
       await botReplyFlow(null, days.map(d => ({ label: d.label, value: d.date.toISOString() })),
-        flowHtml(2,
-          `Excellent choix — ${bookingFlow.data.service.name} à ${bookingFlow.data.service.price} $! 💫`,
+        flowHtml(3,
+          `Excellent choix — ${bookingFlow.data.service.name} à ${bookingFlow.data.service.price} $!`,
           `Quelle journée vous conviendrait? (Fermé le dimanche.)`
         )
       );
@@ -1163,16 +1196,17 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       const slots = getSlotsForDay(dayEntry.dow);
       bookingFlow.data.slots = slots;
       await botReplyFlow(null, slots.map(s => ({ label: s, value: s, slot: true, row: true })),
-        flowHtml(3, `Super! Pour ${formatDayLong(dayEntry.date)}, voici 3 créneaux disponibles :`)
+        flowHtml(4, `Pour ${formatDayLong(dayEntry.date)}, voici des créneaux disponibles :`)
       );
     }
 
     async function showContactStep() {
       bookingFlow.step = 'contact';
       await botReplyFlow(null, null,
-        flowHtml(4,
-          `Parfait, ${bookingFlow.data.slot} c'est noté! 📅`,
-          `Pour finaliser, indiquez votre nom complet et votre numéro de téléphone.`,
+        flowHtml(5,
+          `Parfait, ${bookingFlow.data.slot} c'est noté!`,
+          `Pour finaliser, indiquez votre nom complet et votre numéro de téléphone (texto).`,
+          `Une confirmation vous sera ensuite envoyée — il sera nécessaire d'y répondre pour confirmer le rendez-vous.`,
           `Exemple : Marie Tremblay, 418-834-9976`
         )
       );
@@ -1180,22 +1214,24 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
 
     async function showConfirmation() {
       bookingFlow.step = 'done';
-      const { service, day, slot, name, phone } = bookingFlow.data;
+      const { service, day, slot, name, phone, clientType } = bookingFlow.data;
       const html = `
-        ${stepBadge(5)}
-        <p>Merci! Votre demande est préparée. Comme indiqué sur notre site, les rendez-vous se confirment par téléphone au 418-834-9976.</p>
+        ${stepBadge(6)}
+        <p>Merci ${escapeHtml(name.split(' ')[0])}! Votre demande a bien été enregistrée.</p>
+        <p><strong>Prochaine étape :</strong> une confirmation vous sera envoyée par texto ou courriel à ${escapeHtml(phone)}. Il sera <strong>nécessaire d'y répondre</strong> pour confirmer votre rendez-vous.</p>
         <div class="confirm-card">
-          <strong>📋 Récapitulatif — confirmation par téléphone requise</strong><br><br>
+          <strong>📋 Récapitulatif — en attente de votre confirmation</strong><br><br>
+          <strong>Statut :</strong> ${escapeHtml(clientTypeLabel(clientType))}<br>
           <strong>Service :</strong> ${escapeHtml(service.name)} (${service.price} $)<br>
           <strong>Date souhaitée :</strong> ${escapeHtml(formatDayLong(day.date))}<br>
           <strong>Heure souhaitée :</strong> ${escapeHtml(slot)}<br>
           <strong>Nom :</strong> ${escapeHtml(name)}<br>
           <strong>Téléphone :</strong> ${escapeHtml(phone)}<br><br>
-          📍 940, chemin du Sault, Lévis (Saint-Romuald)<br>
-          Appelez le 418-834-9976 pour confirmer votre créneau.
+          📍 940, chemin du Sault, Lévis (Saint-Romuald)
         </div>
-        <a class="booking-btn" href="${PHONE_LINK}" style="display:inline-block;margin-top:12px;padding:10px 18px;background:var(--gold);color:var(--black);text-decoration:none;border-radius:10px;font-weight:600;">📞 Appeler le salon</a>
-        <p style="margin-top:10px;font-size:13px;">Merci ${escapeHtml(name.split(' ')[0])}! Écrivez <em>annuler</em> pour recommencer.</p>`;
+        <p style="margin-top:12px;font-size:13px;">Sans réponse de votre part, le créneau pourrait être libéré. Questions? Appelez le 418-834-9976.</p>
+        <a class="booking-btn" href="${PHONE_LINK}" style="display:inline-block;margin-top:10px;padding:10px 18px;background:var(--gold);color:var(--black);text-decoration:none;border-radius:10px;font-weight:600;">📞 Appeler le salon</a>
+        <p style="margin-top:10px;font-size:13px;">Écrivez <em>annuler</em> pour recommencer.</p>`;
       resetBookingFlow();
       await botReplyFlow(null, null, html);
     }
@@ -1220,6 +1256,19 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       }
 
       switch (bookingFlow.step) {
+        case 'clientType': {
+          const clientType = parseClientType(input, text);
+          if (!clientType) {
+            await botReplyFlow(
+              `Veuillez indiquer si c'est votre première visite chez M Zone, ou choisir une option ci-dessous.`,
+              CLIENT_TYPE_CHOICES
+            );
+            return;
+          }
+          bookingFlow.data.clientType = clientType;
+          await showServiceStep();
+          break;
+        }
         case 'service': {
           const service = SERVICES.find(s => s.id === input) || findService(text);
           if (!service) {
@@ -1243,7 +1292,7 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
             return;
           }
           if (!dayEntry) {
-            await botReplyFlow(`Je n'ai pas reconnu cette journée. Clique sur un des jours disponibles ci-dessous.`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
+            await botReplyFlow(`Je n'ai pas reconnu cette journée. Choisissez un des jours disponibles ci-dessous.`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
             return;
           }
           await showSlotsStep(dayEntry);
