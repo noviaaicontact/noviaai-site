@@ -608,52 +608,43 @@
       { label: '📋 Autre produit ou service', value: 'general', url: LINKS.soumission, desc: 'Formulaire général — thermopompes, accessoires, réparation, etc.' }
     ];
 
-    const SYSTEM_PROMPT = `Tu es l'Assistant Sansouci, l'assistant virtuel de Spas et Piscines Sansouci à Lévis (St-Rédempteur), Québec — entreprise locale fondée en 1964, plus de 60 ans d'expertise.
+    const SYSTEM_PROMPT = `Tu es l'Assistant Sansouci, un conseiller virtuel professionnel et chaleureux pour Spas et Piscines Sansouci, une entreprise locale à Lévis fondée en 1964.
+
+TON RÔLE: Aider les clients avec leurs questions sur les spas, piscines, produits chimiques, analyse d'eau, et services d'ouverture/fermeture.
 
 COORDONNÉES:
 - Adresse: 2655, route des Rivières, Lévis (St-Rédempteur), QC
 - Téléphone: 418-836-3138
 - Site: spasetpiscines.com
-- Facebook: spasetpiscines
-- Zone: région de Québec, rive sud
+- Soumission gratuite: spasetpiscines.com/soumission/
 
-HORAIRES MAGASIN:
-- Lundi à vendredi: 9h à 17h30
-- Samedi: 9h à 17h
-- Dimanche: 10h à 16h
+HORAIRES:
+- Lundi à vendredi: 9h à 17h30 · Samedi: 9h à 17h · Dimanche: 10h à 16h
 
-PRODUITS:
-- Spas (OWOW, etc.) — à partir d'environ 8 999 $
-- Piscines hors terre (résine, acier, hybride, démontables)
-- Piscines creusées (fibre de verre, acier — modèles La Bromont, Charlevoix, etc.)
-- Thermopompes (ex. TTIFAB 50 000 BTU ~1 499 $, MOOV série)
-- Produits chimiques (chlore, sel, pH, algicides, ouverture de piscine)
-- Accessoires et équipements
+SERVICES CLÉS:
+- Analyse d'eau GRATUITE en magasin (spas et piscines)
+- Ouverture et fermeture · Livraison et installation · Réparation et pièces
+- Spas, piscines hors terre et creusées, thermopompes, produits chimiques, accessoires
+- Boutique en ligne: livraison ou ramassage · Financement en magasin
 
-SERVICES:
-- Analyse d'eau GRATUITE en magasin (spas et piscines) — apportez un échantillon d'eau, nos conseillers recommandent les bons produits
-- Ouverture et fermeture de piscines et spas
-- Livraison, installation et mise en route
-- Réparation et pièces détachées
+RÈGLES IMPORTANTES (OBLIGATOIRES):
+1. URGENCE MÉDICALE: Si ingestion de produit chimique, douleur, brûlure, yeux irrités, ou urgence — réponds d'abord avec empathie. Dis d'appeler le 911 ou Info-Santé au 811 IMMÉDIATEMENT. Ne parle PAS de produits dans ce cas.
+2. Français québécois, ton chaleureux mais professionnel, vouvoiement.
+3. Maximum 3-4 phrases par réponse — sois concis.
+4. Si tu ne connais pas la réponse: appelez le 418-836-3138 ou visitez le magasin au 2655 route des Rivières, Lévis.
+5. Soumission ou achat → rediriger vers spasetpiscines.com/soumission (soumission gratuite).
+6. Ne jamais parler de concurrents.
+7. Ne JAMAIS inventer de prix — dis que les prix varient selon le modèle et qu'une soumission gratuite est disponible.
 
-SOUMISSIONS GRATUITES (rediriger vers le bon formulaire):
-- Spa: spasetpiscines.com/soumission-spas/
-- Piscine hors terre: spasetpiscines.com/soumission-piscines-hors-terre/
-- Piscine creusée: spasetpiscines.com/soumission-piscines-creusees/
-- Général (services, thermopompes, etc.): spasetpiscines.com/soumission/
-- Boutique en ligne: spasetpiscines.com/boutique/
-- Produits chimiques: spasetpiscines.com/categorie-produit/produits-chimiques/
+Démo propulsée par NoviaAI si demandé.`;
 
-POINTS FORTS: entreprise locale depuis 1964, ramassage rapide, livraison région Québec, conseils personnalisés, excellent rapport qualité-prix, financement disponible en magasin.
+    const GREETING = `Bonjour! Je suis l'Assistant Sansouci, votre conseiller chez Spas et Piscines Sansouci à Lévis. Je peux répondre à vos questions sur les spas, piscines, produits chimiques, l'analyse d'eau ou l'ouverture et la fermeture. Comment puis-je vous aider?`;
 
-Quand le client veut acheter, obtenir un prix ou une soumission → l'inviter à utiliser le formulaire approprié sur le site (ou dire qu'on peut le guider ici).
+    const MEDICAL_EMERGENCY_REPLY = `Je suis vraiment désolé d'apprendre cela — votre sécurité passe avant tout. Appelez le 911 immédiatement, ou Info-Santé au 811 pour des conseils médicaux urgents. N'ingérez aucun produit et attendez l'aide médicale.`;
 
-TON: Français québécois, professionnel, chaleureux, vouvoiement. 2-4 phrases max.
-Ne pas inventer de prix exacts non listés. Démo propulsée par NoviaAI si demandé.`;
+    const FALLBACK_REPLY = `Je n'ai pas la réponse précise à cette question. Appelez-nous au 418-836-3138 ou passez au magasin au 2655, route des Rivières, Lévis — nos conseillers seront ravis de vous aider.`;
 
-    const GREETING = `Bonjour! 👋 Je suis l'Assistant Sansouci de Spas et Piscines Sansouci. Je peux vous renseigner sur l'analyse d'eau, les produits chimiques, nos spas et piscines, ou l'ouverture et la fermeture. Besoin d'une soumission? Je vous dirige vers le bon formulaire. Comment puis-je vous aider?`;
-
-    const ERROR_MSG = `Désolé, petit problème technique. Appelez-nous au 418-836-3138 ou visitez spasetpiscines.com.`;
+    const ERROR_MSG = `Désolé, petit problème technique. Appelez-nous au 418-836-3138 ou visitez le magasin au 2655, route des Rivières, Lévis.`;
 
     let isOpen = false;
     let isTyping = false;
@@ -788,7 +779,8 @@ Ne pas inventer de prix exacts non listés. Démo propulsée par NoviaAI si dema
     async function startRedirectFlow() {
       redirectFlow = { active: true, step: 'choose' };
       await botReply(null, REDIRECT_OPTIONS.map(o => ({ label: o.label, value: o.value })),
-        `<p><strong>Soumission gratuite</strong> — choisissez ce qui vous intéresse et je vous dirige vers le bon formulaire sur spasetpiscines.com :</p>`
+        `<p><strong>Soumission gratuite</strong> — choisissez votre projet ou accédez directement au formulaire principal :</p>
+         <a class="redirect-btn" href="${LINKS.soumission}" target="_blank" rel="noopener noreferrer" style="margin-top:8px;">Soumission sur spasetpiscines.com →</a>`
       );
     }
 
@@ -818,84 +810,64 @@ Ne pas inventer de prix exacts non listés. Démo propulsée par NoviaAI si dema
       document.getElementById('send-btn').disabled = false;
     }
 
+    function isMedicalEmergency(text) {
+      const t = text.toLowerCase();
+      if (/ing[eé]r|avale|aval[eé]|mang[eé].*produit|produit.*(bouche|yeux|aval|ing)|intoxic|empoisonn|eau de javel.*(bu|boire)|chlore.*(bu|boire|yeux)|br[uû]lure|yeux.*(br[uû]|irrit|douleur)|mal aux yeux|difficult[eé].*respir|etouff|vom.*produit|urgence m[eé]dic|appeler le 911|besoin.*811/.test(t)) return true;
+      if (/douleur|mal\b|souffre|saign|inconscient/.test(t) && /produit|chimique|chlore|acide|javel|spa|piscine/.test(t)) return true;
+      return false;
+    }
+
     function getFaqReply(text) {
       const t = text.toLowerCase();
 
-      if (/analyse|eau|echantillon|échantillon|ph |chlore|test d'eau/.test(t)) {
-        return `L'analyse d'eau est GRATUITE en magasin pour vos spas et piscines. Apportez un échantillon d'eau — nos conseillers analysent et recommandent les produits adaptés pour optimiser la qualité de votre eau.
+      if (isMedicalEmergency(text)) return MEDICAL_EMERGENCY_REPLY;
 
-📍 2655, route des Rivières, Lévis · ${PHONE}
-En savoir plus: ${LINKS.services}`;
+      if (/prix|combien|co[uû]t|coute|\$|tarif/.test(t)) {
+        return `Les prix varient selon le modèle, la grandeur et les options choisies. Pour un prix exact, nous offrons une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
+      }
+
+      if (/analyse|eau|echantillon|échantillon|test d'eau/.test(t)) {
+        return `L'analyse d'eau est gratuite en magasin pour spas et piscines — apportez un échantillon et nos conseillers recommanderont les bons produits. Nous sommes au 2655, route des Rivières, Lévis · ${PHONE}.`;
       }
 
       if (/chimique|chlore|sel |ph |algicide|traitement|produit d'ouverture|entretien/.test(t)) {
-        return `Nous offrons une vaste gamme de produits chimiques pour piscines et spas : chlore, sel, ajusteurs de pH, algicides, produits d'ouverture et plus.
-
-🛒 Boutique en ligne: ${LINKS.chimiques}
-Livraison ou ramassage en magasin disponibles.
-
-Pour un conseil personnalisé, passez en magasin avec un échantillon d'eau (analyse gratuite).`;
+        return `Nous offrons chlore, sel, pH, algicides et produits d'ouverture — en magasin ou en ligne sur spasetpiscines.com. Livraison ou ramassage disponibles. Pour un conseil personnalisé, passez avec un échantillon d'eau (analyse gratuite).`;
       }
 
       if (/spa|owow|jacuzzi|bain tourbillon/.test(t) && !/soumission|acheter|devis/.test(t)) {
-        return `Nous proposons plusieurs modèles de spas de qualité (OWOW, etc.) — relaxation, thérapeutique ou nage sur place. Livraison et installation rapides, financement disponible en magasin.
-
-Exemples: OWOW 101 ~8 999 $ · OWOW 312 ~12 999 $
-Voir nos spas: ${LINKS.spas}
-Soumission gratuite: ${LINKS.spa}`;
+        return `Nous proposons plusieurs modèles de spas — relaxation, thérapeutique ou nage sur place. Livraison, installation et financement disponibles en magasin. Les prix varient — soumission gratuite sur ${LINKS.soumission}.`;
       }
 
       if (/piscine|hors.?terre|creus[eé]e|thermopompe/.test(t) && !/soumission|acheter|devis/.test(t)) {
-        return `Spas et Piscines Sansouci offre:
-• Piscines hors terre (résine, acier, hybride, démontables)
-• Piscines creusées (fibre de verre, acier)
-• Thermopompes (promotions fréquentes — ex. TTIFAB ~1 499 $)
-
-Livraison, installation et mise en route incluses selon le projet.
-Soumission gratuite: ${LINKS.soumission}`;
+        return `Nous offrons piscines hors terre, creusées et thermopompes, avec livraison et installation selon votre projet. Les prix varient selon le modèle — demandez une soumission gratuite sur ${LINKS.soumission}.`;
       }
 
       if (/ouverture|fermeture|hivern|mise en service/.test(t)) {
-        return `Nous offrons le service d'ouverture et de fermeture pour piscines et spas — nos techniciens s'occupent de la mise en service ou de l'hivernisation.
-
-Pour planifier une intervention, remplissez le formulaire de soumission (section Services → Ouverture ou Fermeture):
-${LINKS.soumission}
-
-Ou appelez-nous: ${PHONE}`;
+        return `Nous offrons l'ouverture et la fermeture de piscines et spas par nos techniciens. Pour planifier une intervention, remplissez une soumission sur ${LINKS.soumission} ou appelez le ${PHONE}.`;
       }
 
       if (/horaire|heure|ouvert|ferm|quand/.test(t)) {
-        return `Heures d'ouverture du magasin:
-• Lundi à vendredi : 9 h – 17 h 30
-• Samedi : 9 h – 17 h
-• Dimanche : 10 h – 16 h
-
-2655, route des Rivières, Lévis (St-Rédempteur) · ${PHONE}`;
+        return `Nos heures : lun–ven 9 h–17 h 30, sam 9 h–17 h, dim 10 h–16 h. 2655, route des Rivières, Lévis (St-Rédempteur) · ${PHONE}.`;
       }
 
       if (/adresse|o[uù]|situe|situé|direction|trouver/.test(t)) {
-        return `Nous sommes au 2655, route des Rivières, Lévis (St-Rédempteur), QC. Service partout dans la région de Québec.
-
-📞 ${PHONE}
-🌐 ${SITE}`;
+        return `Nous sommes au 2655, route des Rivières, Lévis (St-Rédempteur), avec service dans toute la région de Québec. ${PHONE} · spasetpiscines.com`;
       }
 
       if (/livraison|installation|ramassage|boutique|en ligne/.test(t)) {
-        return `Magasinez de chez vous! Boutique en ligne avec livraison ou ramassage rapide en magasin. Nous livrons et installons aussi spas et piscines dans la région de Québec.
-
-Boutique: ${LINKS.boutique}`;
+        return `Boutique en ligne avec livraison ou ramassage rapide en magasin. Nous livrons et installons aussi spas et piscines dans la région de Québec — ${LINKS.boutique}`;
       }
 
       if (/promo|rabais|solde|financement/.test(t)) {
-        return `Consultez nos promotions en cours et options de financement en magasin.
-
-Promotions: ${LINKS.promo}
-Soumission gratuite: ${LINKS.soumission}
-Financement disponible pour spas et piscines — renseignements en magasin ou via les formulaires de soumission.`;
+        return `Consultez nos promotions et options de financement en magasin ou sur spasetpiscines.com/promo. Pour un prix personnalisé, soumission gratuite sur ${LINKS.soumission}.`;
       }
 
       if (/1964|depuis|historique|local|sansouci/.test(t)) {
-        return `Spas et Piscines Sansouci est une entreprise locale de Lévis, fondée en 1964 — plus de 60 ans d'expertise en piscines et spas sur la rive sud de Québec. Conseils personnalisés, excellent rapport qualité-prix.`;
+        return `Spas et Piscines Sansouci est une entreprise locale de Lévis, fondée en 1964 — plus de 60 ans d'expertise en piscines et spas sur la rive sud de Québec.`;
+      }
+
+      if (/concurrent|compar|moins cher ailleurs|amazon|costco|homedepot|rona\b/.test(t)) {
+        return `Je ne peux pas commenter d'autres entreprises. Chez Sansouci, nous offrons conseils personnalisés, service local et expertise depuis 1964 — appelez le ${PHONE} pour en discuter.`;
       }
 
       if (/soumission|devis|estimation|acheter|commander/.test(t)) {
@@ -928,6 +900,14 @@ Financement disponible pour spas et piscines — renseignements en magasin ou vi
       addUserMessage(text);
       isTyping = true;
       sendBtn.disabled = true;
+
+      if (isMedicalEmergency(text)) {
+        await botReply(MEDICAL_EMERGENCY_REPLY);
+        isTyping = false;
+        sendBtn.disabled = false;
+        input.focus();
+        return;
+      }
 
       if (redirectFlow.active) {
         const direct = detectDirectRedirect(text) || REDIRECT_OPTIONS.find(o => text.toLowerCase().includes(o.value.replace('-', ' ')))?.value;
@@ -985,8 +965,8 @@ Financement disponible pour spas et piscines — renseignements en magasin ou vi
               { role: 'system', content: SYSTEM_PROMPT },
               ...conversationHistory
             ],
-            max_tokens: 280,
-            temperature: 0.72
+            max_tokens: 220,
+            temperature: 0.65
           })
         });
 
@@ -994,9 +974,9 @@ Financement disponible pour spas et piscines — renseignements en magasin ou vi
         hideTyping();
 
         if (!response.ok || data.error) {
-          addBotMessage(getFaqReply(text) || ERROR_MSG);
+          addBotMessage(getFaqReply(text) || FALLBACK_REPLY);
         } else {
-          const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
+          const reply = data.choices?.[0]?.message?.content || FALLBACK_REPLY;
           conversationHistory.push({ role: 'assistant', content: reply });
           if (wantsRedirect(reply)) {
             await startRedirectFlow();
@@ -1006,7 +986,7 @@ Financement disponible pour spas et piscines — renseignements en magasin ou vi
         }
       } catch (err) {
         hideTyping();
-        addBotMessage(getFaqReply(text) || ERROR_MSG);
+        addBotMessage(getFaqReply(text) || FALLBACK_REPLY);
       }
 
       isTyping = false;
