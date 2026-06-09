@@ -608,65 +608,86 @@
       { label: '📋 Autre (thermopompe, accessoires…)', value: 'general', url: LINKS.soumission, desc: 'Formulaire général pour thermopompes, réparation et autres demandes.' }
     ];
 
-    const SYSTEM_PROMPT = `Tu es l'Assistant Sansouci, un conseiller virtuel professionnel et chaleureux pour Spas et Piscines Sansouci, une entreprise locale à Lévis fondée en 1964.
+    const SYSTEM_PROMPT = `Tu es l'Assistant Sansouci, conseiller virtuel professionnel et chaleureux pour Spas et Piscines Sansouci (Lévis, fondée en 1964).
 
-TON RÔLE: Aider les clients avec leurs questions sur les spas, piscines, produits chimiques, analyse d'eau, et services d'ouverture/fermeture.
+COORDONNÉES: 2655 route des Rivières, Lévis (St-Rédempteur) · 418-836-3138 · spasetpiscines.com
+HORAIRES: lun–ven 9h–17h30 · sam 9h–17h · dim 10h–16h
 
-COORDONNÉES:
-- Adresse: 2655, route des Rivières, Lévis (St-Rédempteur), QC
-- Téléphone: 418-836-3138
-- Site: spasetpiscines.com
+═══ URGENCES MÉDICALES (PRIORITÉ ABSOLUE) ═══
+Réponds avec EMPATHIE. Ne recommande AUCUN produit chimique. Dirige vers 911 ou Info-Santé 811.
+• Eau de piscine bue: sécurité d'abord → 911 ou 811 immédiatement.
+• Yeux irrités par le chlore: rincer abondamment à l'eau claire 15 min, puis 811 si ça persiste; 911 si douleur intense.
+• Chlore renversé sur la peau: rincer à l'eau froide plusieurs minutes, retirer vêtements contaminés → 811 si brûlure.
+• Inhalation de produits chimiques: sortir à l'air frais → 911 si essoufflement, toux persistante ou malaise.
 
-HORAIRES:
-- Lundi à vendredi: 9h à 17h30 · Samedi: 9h à 17h · Dimanche: 10h à 16h
+═══ TECHNIQUE — RÉPONSES PRÉCISES (3-4 phrases max) ═══
+• Analyse d'eau: appareil électronique en magasin sur échantillon apporté; mesure pH, chlore, alcalinité, dureté calcique; gratuit, quelques minutes, rapport + produits recommandés.
+• Creusée vs hors-terre: creusée = permanente, valeur maison, installation longue; hors-terre = moins coûteuse, rapide, démontable.
+• Thermopompe: chauffe l'eau de la piscine, plus économique qu'un chauffe-eau électrique.
+• Ouverture printemps: retrait couverture, nettoyage, remise filtration, équilibrage eau — service disponible chez nous.
+• Fermeture hiver: nettoyage, vidange partielle, hivernage équipements, couverture — service disponible.
+• Quantité de chlore: dépend du volume, stabilisateur et analyse; apportez un échantillon (analyse gratuite) plutôt que deviner.
+• Eau verte: algues — choc d'algicide/chlore selon analyse, brossage, filtration continue; passez en magasin avec échantillon.
+• Eau trouble: clarifiant, filtration, équilibre pH/alcalinité; analyse gratuite recommandée pour cibler le traitement.
+• pH idéal piscine: entre 7,2 et 7,8 (zone optimale ~7,4–7,6); vérification par analyse d'eau.
 
-CONNAISSANCE TECHNIQUE:
+═══ ENTRETIEN ═══
+• Filtre piscine/spa: rincer toutes les 1-2 semaines en saison; nettoyage approfondi toutes les 4-6 semaines selon usage; remplacer selon usure (conseiller en magasin).
+• Spa en hiver (ouvert à l'année): maintenir chimie, filtration régulière, couverture bien ajustée; analyse d'eau gratuite recommandée.
+• Spa qui mousse: souvent résidus (savons, crèmes) ou eau saturée — produit anti-mousse, rincer filtres, douche avant bain; analyse en magasin.
+• Eau de spa qui sent mauvais: manque de désinfectant, filtres sales ou biofilm — choc sanitizer, nettoyer filtres, équilibrer l'eau; analyse gratuite.
 
-ANALYSE D'EAU:
-- Conseillers utilisent un appareil électronique sur échantillon apporté par le client
-- Mesure: pH, chlore, alcalinité, dureté calcique
-- Gratuit, quelques minutes, repart avec rapport complet et produits recommandés
+═══ ACHAT ═══
+• Installation piscine creusée: délai variable (semaines à quelques mois) selon permis, météo et complexité — soumission pour échéancier précis.
+• Financement: OUI, disponible en magasin pour spas et piscines.
+• Taille de piscine pour la cour: dépend des dimensions, règlementation et besoins — consultation en magasin ou soumission.
+• Modèles OWOW: différentes grandeurs et configurations (compact, familial, nage sur place) — détails en magasin ou soumission-spas.
 
-PRODUITS CHIMIQUES:
-- Chlore, pH+, pH-, algicide, stabilisateur, clarifiant
-- Disponibles en magasin et en ligne (spasetpiscines.com)
+═══ SAISONNIERS ═══
+• Début des ouvertures: généralement avril–mai selon la météo — appelez ou soumission pour réserver votre date.
+• Coût ouverture: varie selon la piscine — pas de prix fixe; soumission ou appel 418-836-3138.
+• Fermeture de spa: OUI — ouverture ET fermeture pour piscines et spas.
 
-OUVERTURE DE PISCINE:
-- Retrait couverture, nettoyage, remise en marche filtration, équilibrage de l'eau
+═══ PRODUITS ET PRIX ═══
+• Ne JAMAIS inventer de prix chiffrés.
+• Spa ou piscine creusée: prix varient selon modèle/options → soumission gratuite.
+• Marques spas: OWOW et autres modèles de qualité en magasin — conseiller en boutique pour les détails.
+• Promotions: spasetpiscines.com/promo ou en magasin.
 
-FERMETURE DE PISCINE:
-- Nettoyage, vidange partielle, hivernage équipements, installation couverture
+═══ SOUMISSIONS ET RENDEZ-VOUS ═══
+Demande ce que le client cherche, puis redirige:
+• Spa → spasetpiscines.com/soumission-spas/
+• Piscine hors-terre → spasetpiscines.com/soumission-piscines-hors-terre/
+• Piscine creusée → spasetpiscines.com/soumission-piscines-creusees/
+• Piscine (type non précisé): demander hors-terre ou creusée.
+• Rendez-vous: formulaire soumission ou appeler 418-836-3138.
 
-THERMOPOMPE:
-- Chauffe l'eau de la piscine, plus économique qu'un chauffe-eau électrique
+═══ LOGISTIQUE ═══
+• Dimanche: OUI, ouvert 10h–16h.
+• Livraison: région de Québec (produits en ligne + spas/piscines).
+• Installation: OUI — livraison et installation de spas et piscines.
+• Magasin: 2655 route des Rivières, Lévis (St-Rédempteur).
 
-PISCINE CREUSÉE:
-- Permanente, augmente la valeur de la maison, installation plus longue
-
-PISCINE HORS-TERRE:
-- Moins coûteuse, installation rapide, démontable
-
-SOUMISSIONS (quand le client veut une soumission ou acheter):
-1. Demande ce qu'il cherche (spa, hors-terre, creusée, autre)
-2. Redirige vers le bon formulaire:
-   - Spa → spasetpiscines.com/soumission-spas/
-   - Hors-terre → spasetpiscines.com/soumission-piscines-hors-terre/
-   - Creusée → spasetpiscines.com/soumission-piscines-creusees/
-   - Autre → spasetpiscines.com/soumission/
-
-RÈGLES IMPORTANTES (OBLIGATOIRES):
-1. URGENCE MÉDICALE: ingestion produit chimique, douleur, brûlure, urgence → empathie, 911 ou Info-Santé 811 IMMÉDIATEMENT. Ne parle PAS de produits.
-2. Français québécois, chaleureux, professionnel, vouvoiement.
-3. Maximum 3-4 phrases par réponse.
-4. Si tu ne connais pas: 418-836-3138 ou magasin 2655 route des Rivières, Lévis.
-5. Ne jamais parler de concurrents.
-6. Ne JAMAIS inventer de prix — prix varient, soumission gratuite disponible.
-
-Démo propulsée par NoviaAI si demandé.`;
+RÈGLES: français québécois, vouvoiement, 3-4 phrases max, pas de concurrents, inconnu → 418-836-3138 ou magasin. Démo NoviaAI si demandé.`;
 
     const GREETING = `Bonjour! Je suis l'Assistant Sansouci, votre conseiller chez Spas et Piscines Sansouci à Lévis. Je peux répondre à vos questions sur les spas, piscines, produits chimiques, l'analyse d'eau ou l'ouverture et la fermeture. Comment puis-je vous aider?`;
 
-    const MEDICAL_EMERGENCY_REPLY = `Je suis vraiment désolé d'apprendre cela — votre sécurité passe avant tout. Appelez le 911 immédiatement, ou Info-Santé au 811 pour des conseils médicaux urgents. N'ingérez aucun produit et attendez l'aide médicale.`;
+    function getMedicalEmergencyReply(text) {
+      const t = text.toLowerCase();
+      if (/inhal|respir|touss|essouff|vapeur|odeur.*fort|fumes/.test(t)) {
+        return `Je comprends que c'est inquiétant — votre santé passe avant tout. Sortez immédiatement à l'air frais et appelez le 911 si vous avez de la difficulté à respirer; sinon Info-Santé au 811 sans tarder.`;
+      }
+      if (/renvers|d[eé]vers|peau|corp|br[uû]l/.test(t) && /chlore|chimique|acide|javel|produit/.test(t)) {
+        return `Je suis désolé pour cette situation — rincez la zone à l'eau froide abondante pendant plusieurs minutes et retirez les vêtements touchés. Appelez Info-Santé au 811; composez le 911 si la douleur est intense ou persistante.`;
+      }
+      if (/yeux|oeil|œil|regard|vision/.test(t)) {
+        return `Je suis désolé — rincez vos yeux à l'eau claire tiède pendant 15 minutes, sans frotter. Appelez Info-Santé au 811 si l'irritation persiste, ou le 911 en cas de douleur importante.`;
+      }
+      if (/bu|boire|bue|aval[eé]|ing[eé]r|mang[eé]|eau de piscine|eau du spa/.test(t)) {
+        return `Je comprends votre inquiétude — ne prenez aucun autre produit. Appelez immédiatement Info-Santé au 811 ou le 911 selon la gravité des symptômes.`;
+      }
+      return `Je suis vraiment désolé d'apprendre cela — votre sécurité passe avant tout. Appelez le 911 immédiatement, ou Info-Santé au 811 pour des conseils médicaux urgents.`;
+    }
 
     const FALLBACK_REPLY = `Je n'ai pas la réponse précise à cette question. Appelez-nous au 418-836-3138 ou passez au magasin au 2655, route des Rivières, Lévis — nos conseillers seront ravis de vous aider.`;
 
@@ -786,17 +807,21 @@ Démo propulsée par NoviaAI si demandé.`;
 
     function wantsRedirect(text) {
       const t = text.toLowerCase();
-      if (/en ligne|comment fonctionne|qu['']est-ce|c'est quoi|explique|horaire|heure|analyse|chimique|produit|ouverture|fermeture|spa|piscine|tarif|prix combien/.test(t) && !/soumission|acheter|commander|devis|estimation|je veux|j'aimerais|obtenir un prix|magasiner/.test(t)) {
+      if (/en ligne|comment fonctionne|qu['']est-ce|c'est quoi|explique|analyse|verte|trouble|ph id|quantit[eé].*chlore|diff[eé]rence|thermopompe|filtre|mousse|odeur|entretien|owow|install/.test(t) && !/soumission|acheter|commander|devis|estimation|je veux|j'aimerais|obtenir un prix|magasiner|rendez/.test(t)) {
         return false;
       }
-      return /\b(soumission|devis|estimation|acheter|commander|magasiner|prêt à acheter|financement|je veux un|j'aimerais un|obtenir un prix|faire une demande)\b/i.test(text);
+      if (/horaire|heure|ouvert|dimanche|livrez|livraison|installez|magasin|adresse/.test(t) && !/soumission|rendez|devis|acheter/.test(t)) {
+        return false;
+      }
+      return /\b(soumission|devis|estimation|acheter|commander|magasiner|financement|je veux|j'aimerais|obtenir un prix|faire une demande|prendre un rendez-vous|prendre rendez-vous|planifier|réserver)\b/i.test(text);
     }
 
     function detectDirectRedirect(text) {
       const t = text.toLowerCase();
-      if (/spa|jacuzzi|bain tourbillon/.test(t) && /soumission|devis|acheter|budget|prix|veux un|aimerais/.test(t)) return 'spa';
-      if (/hors.?terre|above.?ground|d[eé]montable/.test(t) && /soumission|devis|acheter|piscine|veux|aimerais/.test(t)) return 'hors-terre';
+      if (/spa|jacuzzi|bain tourbillon/.test(t) && /soumission|devis|acheter|budget|prix|veux|aimerais|rendez/.test(t)) return 'spa';
+      if (/hors.?terre|d[eé]montable/.test(t) && /soumission|devis|acheter|piscine|veux|aimerais/.test(t)) return 'hors-terre';
       if (/creus[eé]e|inground|fibre de verre|permanente/.test(t) && /soumission|devis|acheter|piscine|veux|aimerais/.test(t)) return 'creusee';
+      if (/soumission|devis|estimation/.test(t) && /piscine/.test(t) && !/hors|creus|terre/.test(t)) return 'piscine-choice';
       if (/chimique|chlore|ph\+|ph-|algicide|clarifiant|stabilisateur/.test(t) && /acheter|commander|magasin|boutique/.test(t)) return 'chimiques';
       if (/ouverture|fermeture|hivern/.test(t) && /service|demande|rendez|soumission|planifier/.test(t)) return 'service';
       if (/thermopompe/.test(t) && /soumission|devis|acheter|prix/.test(t)) return 'general';
@@ -812,6 +837,14 @@ Démo propulsée par NoviaAI si demandé.`;
       if (/ouverture|fermeture|hivern/.test(t)) return 'service';
       if (/thermopompe|accessoire|r[eé]paration|autre/.test(t)) return 'general';
       return detectDirectRedirect(text);
+    }
+
+    async function startPiscineChoiceFlow() {
+      redirectFlow = { active: true, step: 'piscine-type' };
+      await botReply(null, [
+        { label: '🏊 Piscine hors terre', value: 'hors-terre' },
+        { label: '🏗️ Piscine creusée', value: 'creusee' }
+      ], `<p>Pour votre soumission piscine, quel type vous intéresse?</p>`);
     }
 
     async function startRedirectFlow() {
@@ -851,90 +884,179 @@ Démo propulsée par NoviaAI si demandé.`;
 
     function isMedicalEmergency(text) {
       const t = text.toLowerCase();
-      if (/ing[eé]r|avale|aval[eé]|mang[eé].*produit|produit.*(bouche|yeux|aval|ing)|intoxic|empoisonn|eau de javel.*(bu|boire)|chlore.*(bu|boire|yeux)|br[uû]lure|yeux.*(br[uû]|irrit|douleur)|mal aux yeux|difficult[eé].*respir|etouff|vom.*produit|urgence m[eé]dic|appeler le 911|besoin.*811/.test(t)) return true;
-      if (/douleur|mal\b|souffre|saign|inconscient/.test(t) && /produit|chimique|chlore|acide|javel|spa|piscine/.test(t)) return true;
+      if (/ing[eé]r|avale|aval[eé]|mang[eé]|bu |bue |boire|eau de piscine|eau du spa|eau de ma piscine/.test(t)) return true;
+      if (/renvers|d[eé]vers|d[eé]verse/.test(t) && /chlore|chimique|acide|javel|produit|peau/.test(t)) return true;
+      if (/inhal|respir|vapeur|fum[eé]e|odeur.*(fort|chim)|essouff/.test(t) && /chlore|chimique|produit|acide/.test(t)) return true;
+      if (/mal aux yeux|yeux.*(br[uû]|irrit|picot|douleur|rouge)|chlore.*yeux|yeux.*chlore/.test(t)) return true;
+      if (/intoxic|empoison|urgence m[eé]dic/.test(t)) return true;
+      if (/douleur|mal\b|souffre|br[uû]l/.test(t) && /produit|chimique|chlore|acide|javel/.test(t)) return true;
       return false;
     }
 
     function getFaqReply(text) {
       const t = text.toLowerCase();
 
-      if (isMedicalEmergency(text)) return MEDICAL_EMERGENCY_REPLY;
+      if (isMedicalEmergency(text)) return getMedicalEmergencyReply(text);
 
-      if (/prix|combien|co[uû]t|coute|\$|tarif/.test(t)) {
-        return `Les prix varient selon le modèle, la grandeur et les options choisies. Pour un prix exact, nous offrons une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
+      // ── Saisonniers ──
+      if (/combien|prix|co[uû]t|coute|\$|tarif/.test(t) && /ouverture/.test(t)) {
+        return `Le coût d'ouverture varie selon la taille de votre piscine ou spa et l'état de l'eau — nous ne pouvons pas donner un prix fixe ici. Demandez une soumission sur ${LINKS.soumission} (section Services) ou appelez le ${PHONE}.`;
+      }
+      if (/quand|commenc|d[eé]but|date|calendrier|saison/.test(t) && /ouverture/.test(t)) {
+        return `Nous commençons généralement les ouvertures de piscine en avril–mai, selon la météo. Réservez tôt en appelant le ${PHONE} ou via ${LINKS.soumission} — les dates partent vite au printemps.`;
+      }
+      if (/fermeture.*spa|fermer.*spa|hivern.*spa|spa.*fermeture|spa.*hivern/.test(t)) {
+        return `Oui, nous offrons la fermeture de spas ainsi que de piscines — nettoyage, vidange partielle, hivernage et couverture. Planifiez via ${LINKS.soumission} (section Services → Fermeture) ou ${PHONE}.`;
       }
 
-      if (/analyse|eau|echantillon|échantillon|test d'eau|ph |alcalinit|duret[eé] calcique|appareil/.test(t)) {
-        return `Nos conseillers analysent votre échantillon d'eau avec un appareil électronique — pH, chlore, alcalinité et dureté calcique. C'est gratuit, prend quelques minutes, et vous repartez avec un rapport complet et les produits recommandés. Apportez votre échantillon au 2655, route des Rivières, Lévis.`;
+      // ── Entretien ──
+      if (/mousse|mouss|foam|bulle.*eau/.test(t) && /spa|bain/.test(t)) {
+        return `La mousse au spa vient souvent de résidus (savons, lotions, détergents) ou d'une eau saturée. Utilisez un anti-mousse, rincez les filtres et encouragez une douche avant le bain. Apportez un échantillon pour analyse gratuite — nous ciblerons le bon traitement.`;
+      }
+      if (/sent.*mauvais|odeur|puant|mal.*sent|sent.*fort/.test(t) && /spa|bain tourbillon|jacuzzi/.test(t) && !/inhal|produit chimique/.test(t)) {
+        return `Une mauvaise odeur au spa indique souvent un manque de désinfectant, des filtres encrassés ou du biofilm. Un choc de sanitizer, un nettoyage de filtres et un équilibrage de l'eau règlent souvent le problème — analyse gratuite recommandée au ${PHONE}.`;
+      }
+      if (/entretien.*hiver|hiver.*spa|spa.*hiver|garder.*ouvert.*ann[eé]e/.test(t)) {
+        return `Si votre spa reste ouvert en hiver, maintenez la chimie régulièrement, faites tourner la filtration et gardez la couverture bien fermée. Passez en magasin avec un échantillon — notre analyse gratuite vous indique exactement quoi ajuster.`;
+      }
+      if (/filtre|filtration/.test(t) && /nettoy|entretien|fr[eé]quence|combien.*souvent|quand.*nettoy|rincer/.test(t)) {
+        return `En saison, rincez le filtre toutes les 1 à 2 semaines et faites un nettoyage en profondeur aux 4 à 6 semaines selon l'usage. Un filtre encrassé réduit la filtration et trouble l'eau — nos conseillers peuvent vous guider selon votre équipement au ${PHONE}.`;
       }
 
-      if (/chimique|chlore|ph\+|ph-|algicide|stabilisateur|clarifiant|traitement|entretien/.test(t) && !/ing[eé]r|avale|urgence/.test(t)) {
-        return `Nous offrons chlore, pH+, pH-, algicide, stabilisateur et clarifiant — disponibles en magasin et en ligne sur spasetpiscines.com. Livraison ou ramassage possible. Pour un conseil sur mesure, passez avec un échantillon d'eau (analyse gratuite).`;
+      // ── Achat ──
+      if (/combien.*temps|dur[eé]e|d[eé]lai|semaine|mois/.test(t) && /install|creus[eé]e/.test(t)) {
+        return `L'installation d'une piscine creusée prend généralement plusieurs semaines à quelques mois, selon les permis, la météo et la complexité du projet. Pour un échéancier précis adapté à votre cour, demandez une soumission : ${LINKS.creusee}`;
+      }
+      if (/taille|dimension|grande|petit|espace|cour|terrain/.test(t) && /piscine/.test(t) && !/spa|owow/.test(t)) {
+        return `La bonne taille dépend de votre cour, de la réglementation locale et de vos besoins (famille, baignade, espace libre). Nos conseillers évaluent votre projet en magasin ou via soumission — ${LINKS.soumission} ou ${PHONE}.`;
+      }
+      if (/diff[eé]rence|compar|versus|vs|mod[eè]le/.test(t) && /owow/.test(t)) {
+        return `Les spas OWOW se déclinent en différentes grandeurs et configurations — compact pour couples, familial avec plus de places, ou nage sur place selon le modèle. Passez en magasin pour les essayer ou demandez une soumission : ${LINKS.spa}`;
+      }
+      if (/financement|financer|cr[eé]dit|paiement|mensualit/.test(t)) {
+        return `Oui, nous offrons du financement en magasin pour l'achat de spas et de piscines. Renseignements et options disponibles via ${LINKS.soumission} ou en appelant le ${PHONE}.`;
       }
 
-      if (/thermopompe|chauff.*piscine|chauffe.*eau/.test(t) && !/soumission|devis|acheter/.test(t)) {
-        return `Une thermopompe chauffe l'eau de votre piscine de façon efficace — c'est plus économique qu'un chauffe-eau électrique. Les modèles et options varient; demandez une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
+      // ── Soumissions ciblées ──
+      if (/soumission|devis|estimation/.test(t) && /spa|jacuzzi/.test(t)) return null;
+      if (/soumission|devis|estimation/.test(t) && /creus[eé]e/.test(t)) return null;
+      if (/soumission|devis|estimation/.test(t) && /hors.?terre/.test(t)) return null;
+      if (/soumission|devis|estimation/.test(t) && /piscine/.test(t)) return null;
+
+      if (/rendez-vous|rendez vous|prendre un rdv|planifier|réserver/.test(t) && !/ouverture|fermeture|hivern/.test(t)) {
+        return `Pour planifier un rendez-vous ou une visite, remplissez une soumission sur ${LINKS.soumission} ou appelez-nous au ${PHONE}. Nos conseillers vous contacteront selon vos disponibilités.`;
       }
 
-      if (/hors.?terre|d[eé]montable/.test(t) && !/soumission|devis|acheter|creus/.test(t)) {
-        return `La piscine hors terre est une option moins coûteuse, à installation rapide et démontable — idéale pour profiter de l'été sans travaux majeurs. Soumission gratuite : ${LINKS.horsTerre}`;
+      // ── Prix ──
+      if (/combien|prix|co[uû]t|coute|\$|tarif/.test(t) && /spa|jacuzzi/.test(t)) {
+        return `Le prix d'un spa varie selon le modèle, la grandeur et les options (OWOW et autres marques en magasin). Pour un prix exact, demandez une soumission gratuite : ${LINKS.spa}`;
+      }
+      if (/combien|prix|co[uû]t|coute|\$|tarif/.test(t) && /creus[eé]e/.test(t)) {
+        return `Une piscine creusée est un investissement personnalisé — le prix dépend de la forme, du matériau et de l'installation. Soumission gratuite : ${LINKS.creusee}`;
+      }
+      if (/combien|prix|co[uû]t|coute|\$|tarif/.test(t) && !/ouverture/.test(t)) {
+        return `Les prix varient selon le produit et le projet. Pour un prix exact, nous offrons une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
       }
 
-      if (/creus[eé]e|fibre de verre|permanente/.test(t) && !/soumission|devis|acheter/.test(t)) {
-        return `La piscine creusée est permanente, augmente la valeur de la maison, mais demande une installation plus longue. Nous offrons des modèles fibre de verre et acier — soumission gratuite : ${LINKS.creusee}`;
+      // ── Marques & promos ──
+      if (/diff[eé]rence|compar|versus|vs/.test(t) && /owow|mod[eè]le.*spa/.test(t)) {
+        return `Les spas OWOW se déclinent en différentes grandeurs et configurations — compact, familial ou nage sur place selon le modèle. Détails en magasin ou soumission : ${LINKS.spa}`;
+      }
+      if (/marque|owow|mod[eè]le.*spa|quelle.*spa/.test(t)) {
+        return `Nous proposons notamment la marque OWOW et d'autres spas de qualité en magasin. Passez nous voir ou demandez une soumission sur ${LINKS.spa} — nos conseillers vous guideront selon vos besoins.`;
+      }
+      if (/promo|rabais|solde|r[eé]duction/.test(t)) {
+        return `Nous avons régulièrement des promotions sur spas, piscines et thermopompes. Consultez ${LINKS.promo} ou passez en magasin — nos conseillers connaissent les offres en cours.`;
       }
 
-      if (/spa|owow|jacuzzi|bain tourbillon/.test(t) && !/soumission|acheter|devis/.test(t)) {
-        return `Nous proposons plusieurs modèles de spas — relaxation, thérapeutique ou nage sur place, avec livraison, installation et financement en magasin. Les prix varient selon le modèle — soumission gratuite : ${LINKS.spa}`;
+      // ── Logistique ──
+      if (/dimanche/.test(t)) {
+        return `Oui, nous sommes ouverts le dimanche de 10 h à 16 h. En semaine : lun–ven 9 h–17 h 30, samedi 9 h–17 h. ${PHONE}`;
+      }
+      if (/livrez|livraison|livrer|o[uù] livr/.test(t)) {
+        return `Nous livrons dans la région de Québec — produits chimiques et accessoires en ligne (livraison ou ramassage), plus livraison et installation de spas et piscines. ${PHONE} pour confirmer votre secteur.`;
+      }
+      if (/installez|installation|installer|mettre en place/.test(t) && !/ouverture|fermeture/.test(t)) {
+        return `Oui, nous livrons et installons spas et piscines — mise en place, raccordements et mise en route par nos techniciens. Renseignements et soumission : ${LINKS.soumission} ou ${PHONE}.`;
+      }
+      if (/magasin|c'est o[uù]|adresse|situe|situé|direction|trouver/.test(t)) {
+        return `Notre magasin est au 2655, route des Rivières, Lévis (St-Rédempteur). ${PHONE} · spasetpiscines.com`;
       }
 
-      if (/piscine/.test(t) && !/soumission|acheter|devis|hors|creus|thermo/.test(t)) {
-        return `Nous offrons piscines hors terre (rapides, démontables) et creusées (permanentes, valeur ajoutée), plus thermopompes et services complets. Indiquez ce qui vous intéresse pour une soumission gratuite, ou appelez le ${PHONE}.`;
+      // ── Technique eau ──
+      if (/verte|verd[eâ]tre|algue/.test(t)) {
+        return `Une eau verte indique généralement des algues — un choc d'algicide/chlore adapté, brossage des parois et filtration continue sont souvent nécessaires. Apportez un échantillon pour notre analyse gratuite; nous recommanderons le traitement exact.`;
+      }
+      if (/trouble|laiteux|laiteuse|brouill|pas clair/.test(t)) {
+        return `L'eau trouble peut venir d'un déséquilibre chimique, d'une filtration insuffisante ou de particules en suspension. Un clarifiant et une bonne filtration aident, mais une analyse gratuite en magasin permet de cibler la cause exacte.`;
+      }
+      if (/ph id[eé]al|bon ph|niveau de ph|quel ph/.test(t)) {
+        return `Le pH idéal d'une piscine se situe entre 7,2 et 7,8; la zone optimale est environ 7,4 à 7,6. Apportez un échantillon — notre analyse gratuite mesure le pH précisément et indique les produits à ajuster.`;
+      }
+      if (/quantit[eé].*chlore|combien.*chlore|mettre.*chlore|dosage.*chlore/.test(t)) {
+        return `La quantité de chlore dépend du volume de votre piscine, du stabilisateur et de l'analyse actuelle — il ne faut pas deviner. Apportez un échantillon d'eau : analyse gratuite en quelques minutes avec produits recommandés au 2655, route des Rivières.`;
+      }
+
+      // ── Technique générale ──
+      if (/diff[eé]rence|creus[eé]e.*hors|hors.*creus[eé]e|versus|vs/.test(t) && /piscine/.test(t)) {
+        return `La piscine creusée est permanente, augmente la valeur de la maison et demande une installation plus longue. La hors-terre est moins coûteuse, s'installe rapidement et est démontable. Soumissions gratuites : ${LINKS.creusee} ou ${LINKS.horsTerre}.`;
+      }
+      if (/comment.*analyse|faite.*analyse|faire.*analyse|analyse.*comment|appareil/.test(t)) {
+        return `Nos conseillers testent votre échantillon avec un appareil électronique qui mesure le pH, le chlore, l'alcalinité et la dureté calcique. C'est gratuit, prend quelques minutes, et vous repartez avec un rapport complet et les produits recommandés.`;
+      }
+      if (/analyse|echantillon|échantillon|test d'eau/.test(t)) {
+        return `Apportez un échantillon d'eau de votre piscine ou spa — analyse gratuite en magasin (pH, chlore, alcalinité, dureté calcique). 2655, route des Rivières, Lévis · ${PHONE}.`;
+      }
+
+      if (/ouvr.*printemps|ouvrir.*piscine|ouverture.*printemps|d[eé]marre.*piscine/.test(t) || (/ouverture/.test(t) && /printemps|mai|avril/.test(t))) {
+        return `Pour ouvrir votre piscine au printemps : retrait de la couverture, nettoyage, remise en marche de la filtration et équilibrage de l'eau. Nos techniciens offrent ce service complet — soumission sur ${LINKS.soumission} ou ${PHONE}.`;
+      }
+      if (/ferm.*hiver|fermer.*piscine|fermeture.*hiver|hivern/.test(t)) {
+        return `Pour fermer en hiver : nettoyage, vidange partielle, hivernage des équipements et installation de la couverture. Nous offrons ce service — planifiez via ${LINKS.soumission} (section Services) ou ${PHONE}.`;
+      }
+
+      if (/thermopompe|chauff.*piscine/.test(t) && !/soumission|devis|acheter|prix/.test(t)) {
+        return `Une thermopompe extrait la chaleur de l'air pour chauffer l'eau de votre piscine — c'est nettement plus économique qu'un chauffe-eau électrique. Modèles et soumission : ${LINKS.soumission} ou ${PHONE}.`;
+      }
+
+      if (/chimique|chlore|ph\+|ph-|algicide|stabilisateur|clarifiant/.test(t) && !/ing[eé]r|avale|urgence|verte|trouble|quantit/.test(t)) {
+        return `Nous offrons chlore, pH+, pH-, algicide, stabilisateur et clarifiant — en magasin et en ligne. Pour le bon produit selon votre eau, apportez un échantillon (analyse gratuite).`;
+      }
+
+      if (/hors.?terre|d[eé]montable/.test(t) && !/soumission|devis|acheter|creus|diff/.test(t)) {
+        return `Piscine hors terre : moins coûteuse, installation rapide et démontable. Soumission gratuite : ${LINKS.horsTerre}`;
+      }
+      if (/creus[eé]e|fibre de verre|permanente/.test(t) && !/soumission|devis|acheter|prix|diff/.test(t)) {
+        return `Piscine creusée : permanente, valeur ajoutée à la maison, installation plus longue (fibre de verre ou acier). Soumission : ${LINKS.creusee}`;
+      }
+      if (/spa|jacuzzi/.test(t) && !/soumission|acheter|devis|prix|marque/.test(t)) {
+        return `Plusieurs modèles de spas en magasin — relaxation, thérapeutique ou nage sur place, avec livraison, installation et financement. Soumission gratuite : ${LINKS.spa}`;
       }
 
       if (/ouverture/.test(t) && !/fermeture/.test(t)) {
-        return `Notre service d'ouverture inclut le retrait de la couverture, le nettoyage, la remise en marche de la filtration et l'équilibrage de l'eau. Pour planifier : ${LINKS.soumission} (section Services) ou ${PHONE}.`;
+        return `Service d'ouverture : retrait couverture, nettoyage, filtration et équilibrage. ${LINKS.soumission} ou ${PHONE}.`;
       }
 
-      if (/fermeture|hivern|hivernage/.test(t)) {
-        return `Notre service de fermeture comprend le nettoyage, la vidange partielle, l'hivernage des équipements et l'installation de la couverture. Pour réserver : ${LINKS.soumission} ou appelez le ${PHONE}.`;
+      if (/horaire|heure|ouvert|ferm|quand/.test(t) && !/dimanche/.test(t)) {
+        return `Heures : lun–ven 9 h–17 h 30, sam 9 h–17 h, dim 10 h–16 h. 2655, route des Rivières, Lévis · ${PHONE}.`;
       }
 
-      if (/ouverture|fermeture|mise en service/.test(t)) {
-        return `Nous offrons ouverture (retrait couverture, nettoyage, filtration, équilibrage) et fermeture (vidange partielle, hivernage, couverture). Soumission sur ${LINKS.soumission} ou ${PHONE}.`;
-      }
-
-      if (/horaire|heure|ouvert|ferm|quand/.test(t)) {
-        return `Nos heures : lun–ven 9 h–17 h 30, sam 9 h–17 h, dim 10 h–16 h. 2655, route des Rivières, Lévis (St-Rédempteur) · ${PHONE}.`;
-      }
-
-      if (/adresse|o[uù]|situe|situé|direction|trouver/.test(t)) {
-        return `Nous sommes au 2655, route des Rivières, Lévis (St-Rédempteur), avec service dans toute la région de Québec. ${PHONE} · spasetpiscines.com`;
-      }
-
-      if (/livraison|installation|ramassage|boutique|en ligne/.test(t)) {
-        return `Boutique en ligne avec livraison ou ramassage rapide en magasin. Nous livrons et installons aussi spas et piscines dans la région de Québec — ${LINKS.boutique}`;
-      }
-
-      if (/promo|rabais|solde|financement/.test(t)) {
-        return `Consultez nos promotions et options de financement en magasin ou sur spasetpiscines.com/promo. Pour un prix personnalisé, soumission gratuite sur ${LINKS.soumission}.`;
+      if (/livraison|ramassage|boutique|en ligne/.test(t) && !/livrez|installez/.test(t)) {
+        return `Boutique en ligne avec livraison ou ramassage : ${LINKS.boutique}. ${PHONE}`;
       }
 
       if (/1964|depuis|historique|local|sansouci/.test(t)) {
-        return `Spas et Piscines Sansouci est une entreprise locale de Lévis, fondée en 1964 — plus de 60 ans d'expertise en piscines et spas sur la rive sud de Québec.`;
+        return `Entreprise locale de Lévis, fondée en 1964 — plus de 60 ans d'expertise piscines et spas sur la rive sud de Québec.`;
       }
 
-      if (/concurrent|compar|moins cher ailleurs|amazon|costco|homedepot|rona\b/.test(t)) {
-        return `Je ne peux pas commenter d'autres entreprises. Chez Sansouci, nous offrons conseils personnalisés, service local et expertise depuis 1964 — appelez le ${PHONE} pour en discuter.`;
+      if (/concurrent|compar|amazon|costco|homedepot|rona\b/.test(t)) {
+        return `Je ne peux pas commenter d'autres entreprises. Chez Sansouci : conseils personnalisés, service local depuis 1964 — ${PHONE}.`;
       }
 
-      if (/soumission|devis|estimation|acheter|commander/.test(t)) {
-        return null;
-      }
+      if (/soumission|devis|estimation|acheter|commander/.test(t)) return null;
 
-      if (/novia|bot|ia\b|robot|assistant/.test(t)) {
-        return `Je suis l'Assistant Sansouci, propulsé par NoviaAI — démo d'assistant virtuel pour entreprises québécoises.`;
+      if (/novia|bot|ia\b|robot/.test(t)) {
+        return `Je suis l'Assistant Sansouci, propulsé par NoviaAI — démo pour entreprises québécoises.`;
       }
 
       if (/bonjour|salut|allo|bonsoir/.test(t)) return GREETING;
@@ -961,11 +1083,30 @@ Démo propulsée par NoviaAI si demandé.`;
       sendBtn.disabled = true;
 
       if (isMedicalEmergency(text)) {
-        await botReply(MEDICAL_EMERGENCY_REPLY);
+        await botReply(getMedicalEmergencyReply(text));
         isTyping = false;
         sendBtn.disabled = false;
         input.focus();
         return;
+      }
+
+      const direct = detectDirectRedirect(text);
+      if (direct === 'piscine-choice') {
+        await startPiscineChoiceFlow();
+        isTyping = false;
+        sendBtn.disabled = false;
+        input.focus();
+        return;
+      }
+      if (direct && direct !== 'piscine-choice') {
+        const option = REDIRECT_OPTIONS.find(o => o.value === direct);
+        if (option) {
+          await showRedirectLink(option);
+          isTyping = false;
+          sendBtn.disabled = false;
+          input.focus();
+          return;
+        }
       }
 
       if (redirectFlow.active) {
@@ -982,18 +1123,6 @@ Démo propulsée par NoviaAI si demandé.`;
         sendBtn.disabled = false;
         input.focus();
         return;
-      }
-
-      const direct = detectDirectRedirect(text);
-      if (direct) {
-        const option = REDIRECT_OPTIONS.find(o => o.value === direct);
-        if (option) {
-          await showRedirectLink(option);
-          isTyping = false;
-          sendBtn.disabled = false;
-          input.focus();
-          return;
-        }
       }
 
       if (wantsRedirect(text)) {
