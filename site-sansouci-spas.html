@@ -600,12 +600,12 @@
     };
 
     const REDIRECT_OPTIONS = [
-      { label: '🛁 Soumission — Spa', value: 'spa', url: LINKS.spa, desc: 'Formulaire détaillé pour l\'achat d\'un spa (budget, grandeur, financement).' },
-      { label: '🏊 Piscine hors terre', value: 'hors-terre', url: LINKS.horsTerre, desc: 'Soumission pour piscine hors terre (résine, acier, hybride).' },
-      { label: '🏗️ Piscine creusée', value: 'creusee', url: LINKS.creusee, desc: 'Soumission pour piscine creusée (fibre de verre ou acier).' },
-      { label: '🧪 Produits chimiques / boutique', value: 'chimiques', url: LINKS.chimiques, desc: 'Acheter en ligne — livraison ou ramassage en magasin.' },
-      { label: '🔧 Ouverture ou fermeture', value: 'service', url: LINKS.soumission, desc: 'Demande de service — sélectionnez Ouverture ou Fermeture dans le formulaire.' },
-      { label: '📋 Autre produit ou service', value: 'general', url: LINKS.soumission, desc: 'Formulaire général — thermopompes, accessoires, réparation, etc.' }
+      { label: '🛁 Spa', value: 'spa', url: LINKS.spa, desc: 'Soumission gratuite pour l\'achat d\'un spa — budget, grandeur, financement.' },
+      { label: '🏊 Piscine hors terre', value: 'hors-terre', url: LINKS.horsTerre, desc: 'Piscine hors terre — installation rapide, modèles résine, acier ou hybride.' },
+      { label: '🏗️ Piscine creusée', value: 'creusee', url: LINKS.creusee, desc: 'Piscine creusée permanente — fibre de verre ou acier, valeur ajoutée à la maison.' },
+      { label: '🧪 Produits chimiques / boutique', value: 'chimiques', url: LINKS.chimiques, desc: 'Acheter en ligne — chlore, pH, algicide, clarifiant. Livraison ou ramassage.' },
+      { label: '🔧 Ouverture ou fermeture', value: 'service', url: LINKS.soumission, desc: 'Service technique — sélectionnez Ouverture ou Fermeture dans le formulaire.' },
+      { label: '📋 Autre (thermopompe, accessoires…)', value: 'general', url: LINKS.soumission, desc: 'Formulaire général pour thermopompes, réparation et autres demandes.' }
     ];
 
     const SYSTEM_PROMPT = `Tu es l'Assistant Sansouci, un conseiller virtuel professionnel et chaleureux pour Spas et Piscines Sansouci, une entreprise locale à Lévis fondée en 1964.
@@ -616,25 +616,51 @@ COORDONNÉES:
 - Adresse: 2655, route des Rivières, Lévis (St-Rédempteur), QC
 - Téléphone: 418-836-3138
 - Site: spasetpiscines.com
-- Soumission gratuite: spasetpiscines.com/soumission/
 
 HORAIRES:
 - Lundi à vendredi: 9h à 17h30 · Samedi: 9h à 17h · Dimanche: 10h à 16h
 
-SERVICES CLÉS:
-- Analyse d'eau GRATUITE en magasin (spas et piscines)
-- Ouverture et fermeture · Livraison et installation · Réparation et pièces
-- Spas, piscines hors terre et creusées, thermopompes, produits chimiques, accessoires
-- Boutique en ligne: livraison ou ramassage · Financement en magasin
+CONNAISSANCE TECHNIQUE:
+
+ANALYSE D'EAU:
+- Conseillers utilisent un appareil électronique sur échantillon apporté par le client
+- Mesure: pH, chlore, alcalinité, dureté calcique
+- Gratuit, quelques minutes, repart avec rapport complet et produits recommandés
+
+PRODUITS CHIMIQUES:
+- Chlore, pH+, pH-, algicide, stabilisateur, clarifiant
+- Disponibles en magasin et en ligne (spasetpiscines.com)
+
+OUVERTURE DE PISCINE:
+- Retrait couverture, nettoyage, remise en marche filtration, équilibrage de l'eau
+
+FERMETURE DE PISCINE:
+- Nettoyage, vidange partielle, hivernage équipements, installation couverture
+
+THERMOPOMPE:
+- Chauffe l'eau de la piscine, plus économique qu'un chauffe-eau électrique
+
+PISCINE CREUSÉE:
+- Permanente, augmente la valeur de la maison, installation plus longue
+
+PISCINE HORS-TERRE:
+- Moins coûteuse, installation rapide, démontable
+
+SOUMISSIONS (quand le client veut une soumission ou acheter):
+1. Demande ce qu'il cherche (spa, hors-terre, creusée, autre)
+2. Redirige vers le bon formulaire:
+   - Spa → spasetpiscines.com/soumission-spas/
+   - Hors-terre → spasetpiscines.com/soumission-piscines-hors-terre/
+   - Creusée → spasetpiscines.com/soumission-piscines-creusees/
+   - Autre → spasetpiscines.com/soumission/
 
 RÈGLES IMPORTANTES (OBLIGATOIRES):
-1. URGENCE MÉDICALE: Si ingestion de produit chimique, douleur, brûlure, yeux irrités, ou urgence — réponds d'abord avec empathie. Dis d'appeler le 911 ou Info-Santé au 811 IMMÉDIATEMENT. Ne parle PAS de produits dans ce cas.
-2. Français québécois, ton chaleureux mais professionnel, vouvoiement.
-3. Maximum 3-4 phrases par réponse — sois concis.
-4. Si tu ne connais pas la réponse: appelez le 418-836-3138 ou visitez le magasin au 2655 route des Rivières, Lévis.
-5. Soumission ou achat → rediriger vers spasetpiscines.com/soumission (soumission gratuite).
-6. Ne jamais parler de concurrents.
-7. Ne JAMAIS inventer de prix — dis que les prix varient selon le modèle et qu'une soumission gratuite est disponible.
+1. URGENCE MÉDICALE: ingestion produit chimique, douleur, brûlure, urgence → empathie, 911 ou Info-Santé 811 IMMÉDIATEMENT. Ne parle PAS de produits.
+2. Français québécois, chaleureux, professionnel, vouvoiement.
+3. Maximum 3-4 phrases par réponse.
+4. Si tu ne connais pas: 418-836-3138 ou magasin 2655 route des Rivières, Lévis.
+5. Ne jamais parler de concurrents.
+6. Ne JAMAIS inventer de prix — prix varient, soumission gratuite disponible.
 
 Démo propulsée par NoviaAI si demandé.`;
 
@@ -768,19 +794,32 @@ Démo propulsée par NoviaAI si demandé.`;
 
     function detectDirectRedirect(text) {
       const t = text.toLowerCase();
-      if (/spa/.test(t) && /soumission|devis|acheter|prix|budget/.test(t)) return 'spa';
-      if (/hors.?terre|above.?ground/.test(t)) return 'hors-terre';
-      if (/creus[eé]e|inground|fibre|acier/.test(t) && /piscine|soumission|devis/.test(t)) return 'creusee';
-      if (/chimique|chlore|ph |algicide|produit d'ouverture|boutique/.test(t) && /acheter|commander|magasin/.test(t)) return 'chimiques';
-      if (/ouverture|fermeture|hivern/.test(t) && /service|demande|rendez|soumission/.test(t)) return 'service';
+      if (/spa|jacuzzi|bain tourbillon/.test(t) && /soumission|devis|acheter|budget|prix|veux un|aimerais/.test(t)) return 'spa';
+      if (/hors.?terre|above.?ground|d[eé]montable/.test(t) && /soumission|devis|acheter|piscine|veux|aimerais/.test(t)) return 'hors-terre';
+      if (/creus[eé]e|inground|fibre de verre|permanente/.test(t) && /soumission|devis|acheter|piscine|veux|aimerais/.test(t)) return 'creusee';
+      if (/chimique|chlore|ph\+|ph-|algicide|clarifiant|stabilisateur/.test(t) && /acheter|commander|magasin|boutique/.test(t)) return 'chimiques';
+      if (/ouverture|fermeture|hivern/.test(t) && /service|demande|rendez|soumission|planifier/.test(t)) return 'service';
+      if (/thermopompe/.test(t) && /soumission|devis|acheter|prix/.test(t)) return 'general';
       return null;
+    }
+
+    function resolveRedirectChoice(text) {
+      const t = text.toLowerCase();
+      if (/^spa\b|jacuzzi|bain tourbillon/.test(t) || (/spa/.test(t) && !/piscine/.test(t))) return 'spa';
+      if (/hors.?terre|d[eé]montable/.test(t)) return 'hors-terre';
+      if (/creus[eé]e|fibre de verre|inground|permanente/.test(t)) return 'creusee';
+      if (/chimique|chlore|ph\+|ph-|algicide|clarifiant|stabilisateur|boutique/.test(t)) return 'chimiques';
+      if (/ouverture|fermeture|hivern/.test(t)) return 'service';
+      if (/thermopompe|accessoire|r[eé]paration|autre/.test(t)) return 'general';
+      return detectDirectRedirect(text);
     }
 
     async function startRedirectFlow() {
       redirectFlow = { active: true, step: 'choose' };
-      await botReply(null, REDIRECT_OPTIONS.map(o => ({ label: o.label, value: o.value })),
-        `<p><strong>Soumission gratuite</strong> — choisissez votre projet ou accédez directement au formulaire principal :</p>
-         <a class="redirect-btn" href="${LINKS.soumission}" target="_blank" rel="noopener noreferrer" style="margin-top:8px;">Soumission sur spasetpiscines.com →</a>`
+      const mainChoices = REDIRECT_OPTIONS.slice(0, 3).map(o => ({ label: o.label, value: o.value }));
+      await botReply(null, mainChoices,
+        `<p><strong>Soumission gratuite</strong> — qu'est-ce que vous recherchez?</p>
+         <p style="font-size:13px;margin-top:6px;">Choisissez ci-dessous ou précisez en écrivant (spa, piscine hors terre, piscine creusée…).</p>`
       );
     }
 
@@ -826,24 +865,44 @@ Démo propulsée par NoviaAI si demandé.`;
         return `Les prix varient selon le modèle, la grandeur et les options choisies. Pour un prix exact, nous offrons une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
       }
 
-      if (/analyse|eau|echantillon|échantillon|test d'eau/.test(t)) {
-        return `L'analyse d'eau est gratuite en magasin pour spas et piscines — apportez un échantillon et nos conseillers recommanderont les bons produits. Nous sommes au 2655, route des Rivières, Lévis · ${PHONE}.`;
+      if (/analyse|eau|echantillon|échantillon|test d'eau|ph |alcalinit|duret[eé] calcique|appareil/.test(t)) {
+        return `Nos conseillers analysent votre échantillon d'eau avec un appareil électronique — pH, chlore, alcalinité et dureté calcique. C'est gratuit, prend quelques minutes, et vous repartez avec un rapport complet et les produits recommandés. Apportez votre échantillon au 2655, route des Rivières, Lévis.`;
       }
 
-      if (/chimique|chlore|sel |ph |algicide|traitement|produit d'ouverture|entretien/.test(t)) {
-        return `Nous offrons chlore, sel, pH, algicides et produits d'ouverture — en magasin ou en ligne sur spasetpiscines.com. Livraison ou ramassage disponibles. Pour un conseil personnalisé, passez avec un échantillon d'eau (analyse gratuite).`;
+      if (/chimique|chlore|ph\+|ph-|algicide|stabilisateur|clarifiant|traitement|entretien/.test(t) && !/ing[eé]r|avale|urgence/.test(t)) {
+        return `Nous offrons chlore, pH+, pH-, algicide, stabilisateur et clarifiant — disponibles en magasin et en ligne sur spasetpiscines.com. Livraison ou ramassage possible. Pour un conseil sur mesure, passez avec un échantillon d'eau (analyse gratuite).`;
+      }
+
+      if (/thermopompe|chauff.*piscine|chauffe.*eau/.test(t) && !/soumission|devis|acheter/.test(t)) {
+        return `Une thermopompe chauffe l'eau de votre piscine de façon efficace — c'est plus économique qu'un chauffe-eau électrique. Les modèles et options varient; demandez une soumission gratuite sur ${LINKS.soumission} ou au ${PHONE}.`;
+      }
+
+      if (/hors.?terre|d[eé]montable/.test(t) && !/soumission|devis|acheter|creus/.test(t)) {
+        return `La piscine hors terre est une option moins coûteuse, à installation rapide et démontable — idéale pour profiter de l'été sans travaux majeurs. Soumission gratuite : ${LINKS.horsTerre}`;
+      }
+
+      if (/creus[eé]e|fibre de verre|permanente/.test(t) && !/soumission|devis|acheter/.test(t)) {
+        return `La piscine creusée est permanente, augmente la valeur de la maison, mais demande une installation plus longue. Nous offrons des modèles fibre de verre et acier — soumission gratuite : ${LINKS.creusee}`;
       }
 
       if (/spa|owow|jacuzzi|bain tourbillon/.test(t) && !/soumission|acheter|devis/.test(t)) {
-        return `Nous proposons plusieurs modèles de spas — relaxation, thérapeutique ou nage sur place. Livraison, installation et financement disponibles en magasin. Les prix varient — soumission gratuite sur ${LINKS.soumission}.`;
+        return `Nous proposons plusieurs modèles de spas — relaxation, thérapeutique ou nage sur place, avec livraison, installation et financement en magasin. Les prix varient selon le modèle — soumission gratuite : ${LINKS.spa}`;
       }
 
-      if (/piscine|hors.?terre|creus[eé]e|thermopompe/.test(t) && !/soumission|acheter|devis/.test(t)) {
-        return `Nous offrons piscines hors terre, creusées et thermopompes, avec livraison et installation selon votre projet. Les prix varient selon le modèle — demandez une soumission gratuite sur ${LINKS.soumission}.`;
+      if (/piscine/.test(t) && !/soumission|acheter|devis|hors|creus|thermo/.test(t)) {
+        return `Nous offrons piscines hors terre (rapides, démontables) et creusées (permanentes, valeur ajoutée), plus thermopompes et services complets. Indiquez ce qui vous intéresse pour une soumission gratuite, ou appelez le ${PHONE}.`;
       }
 
-      if (/ouverture|fermeture|hivern|mise en service/.test(t)) {
-        return `Nous offrons l'ouverture et la fermeture de piscines et spas par nos techniciens. Pour planifier une intervention, remplissez une soumission sur ${LINKS.soumission} ou appelez le ${PHONE}.`;
+      if (/ouverture/.test(t) && !/fermeture/.test(t)) {
+        return `Notre service d'ouverture inclut le retrait de la couverture, le nettoyage, la remise en marche de la filtration et l'équilibrage de l'eau. Pour planifier : ${LINKS.soumission} (section Services) ou ${PHONE}.`;
+      }
+
+      if (/fermeture|hivern|hivernage/.test(t)) {
+        return `Notre service de fermeture comprend le nettoyage, la vidange partielle, l'hivernage des équipements et l'installation de la couverture. Pour réserver : ${LINKS.soumission} ou appelez le ${PHONE}.`;
+      }
+
+      if (/ouverture|fermeture|mise en service/.test(t)) {
+        return `Nous offrons ouverture (retrait couverture, nettoyage, filtration, équilibrage) et fermeture (vidange partielle, hivernage, couverture). Soumission sur ${LINKS.soumission} ou ${PHONE}.`;
       }
 
       if (/horaire|heure|ouvert|ferm|quand/.test(t)) {
@@ -910,12 +969,14 @@ Démo propulsée par NoviaAI si demandé.`;
       }
 
       if (redirectFlow.active) {
-        const direct = detectDirectRedirect(text) || REDIRECT_OPTIONS.find(o => text.toLowerCase().includes(o.value.replace('-', ' ')))?.value;
-        const option = REDIRECT_OPTIONS.find(o => o.value === direct);
+        const key = resolveRedirectChoice(text);
+        const option = REDIRECT_OPTIONS.find(o => o.value === key);
         if (option) {
           await showRedirectLink(option);
         } else {
-          await startRedirectFlow();
+          await botReply(null, REDIRECT_OPTIONS.map(o => ({ label: o.label, value: o.value })),
+            `<p>Je n'ai pas bien compris — précisez ce que vous recherchez :</p>`
+          );
         }
         isTyping = false;
         sendBtn.disabled = false;
