@@ -237,6 +237,225 @@
     }
     .powered strong { color: var(--gold); font-weight: 500; }
 
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .hero-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--black);
+      box-shadow: 0 8px 28px var(--gold-glow);
+    }
+    .hero-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px var(--gold-glow);
+    }
+    .hero-btn-secondary {
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--border);
+    }
+    .hero-btn-secondary:hover {
+      border-color: var(--gold);
+      background: rgba(201, 169, 98, 0.08);
+    }
+
+    /* ===== BOOKING WIZARD (page) ===== */
+    .booking-section {
+      margin-bottom: 48px;
+      scroll-margin-top: 24px;
+    }
+    .booking-panel {
+      background: linear-gradient(135deg, var(--black-card) 0%, var(--black-soft) 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+    }
+    .booking-panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .booking-panel-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.85rem;
+      font-weight: 500;
+      color: var(--cream);
+    }
+    .booking-panel-header p {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 300;
+      margin-top: 4px;
+    }
+    #booking-progress {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    #booking-content {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: rgba(245, 240, 230, 0.9);
+      margin-bottom: 20px;
+    }
+    #booking-content p + p { margin-top: 10px; }
+    #booking-content .service-list {
+      margin: 16px 0;
+      padding: 0;
+      list-style: none;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+    }
+    #booking-content .service-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+    }
+    #booking-content .service-list li:last-child { border-bottom: none; }
+    #booking-content .service-list strong { color: var(--gold); }
+    #booking-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    #booking-choices.grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    #booking-choices.row-slots {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    #booking-choices.row-slots .page-flow-btn {
+      flex: 1;
+      min-width: calc(50% - 5px);
+      text-align: center;
+    }
+    .page-flow-btn {
+      background: rgba(201, 169, 98, 0.1);
+      border: 1px solid var(--border);
+      color: var(--gold-light);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 400;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    .page-flow-btn:hover {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-color: var(--gold);
+      color: var(--black);
+      font-weight: 500;
+    }
+    .page-flow-btn-start {
+      max-width: 280px;
+      text-align: center;
+      font-weight: 500;
+    }
+    #booking-contact-form {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 420px;
+    }
+    #booking-contact-form.visible { display: flex; }
+    #booking-contact-form label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    #booking-contact-form input {
+      background: var(--black-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      color: var(--cream);
+      outline: none;
+    }
+    #booking-contact-form input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.12);
+    }
+    #booking-contact-form button[type="submit"] {
+      margin-top: 8px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--black);
+    }
+    .booking-reset-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .booking-reset-link:hover { color: var(--gold); }
+    .booking-call-link {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 12px 20px;
+      background: var(--gold);
+      color: var(--black);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
     /* ===== CHAT WIDGET ===== */
   #chat-toggle {
     position: fixed;
@@ -640,11 +859,15 @@
       <p class="hero-tagline">Révélez la beauté de vos cheveux</p>
       <p class="hero-location">Salon de coiffure · Saint-Romuald, Lévis</p>
       <p class="hero-desc">
-        Pour changer de coupe, colorer vos cheveux ou tailler votre barbe — coiffeur, coloriste, styliste, barbier, extensions et prothèses capillaires. Hommes, femmes et enfants. Notre assistante répond à vos questions 24 h sur 24.
+        Pour changer de coupe, colorer vos cheveux ou tailler votre barbe — coiffeur, coloriste, styliste, barbier, extensions et prothèses capillaires. Hommes, femmes et enfants. Prenez rendez-vous en quelques clics ou posez vos questions à notre assistante.
       </p>
+      <div class="hero-actions">
+        <button type="button" class="hero-btn hero-btn-primary" onclick="scrollToRdv()">Prendre rendez-vous</button>
+        <button type="button" class="hero-btn hero-btn-secondary" onclick="toggleChat()">Poser une question</button>
+      </div>
       <p class="hero-cta-hint">
         <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-        Ouvrez le chat en bas à droite
+        Rendez-vous ci-dessous · Chat en bas à droite
       </p>
     </header>
 
@@ -691,6 +914,28 @@
       <article class="service-card"><span class="service-icon">💃</span><div class="service-name">Hit The Floor</div><div class="service-price" style="font-size:13px;color:var(--muted);">Événement coiffure</div></article>
       <article class="service-card"><span class="service-icon">🎁</span><div class="service-name">Carte cadeau &amp; membre</div><div class="service-price" style="font-size:13px;color:var(--muted);">Disponible au salon</div></article>
     </div>
+
+    <section id="rdv" class="booking-section" aria-labelledby="rdv-title">
+      <div class="booking-panel">
+        <div class="booking-panel-header">
+          <div>
+            <h2 id="rdv-title">Demande de rendez-vous</h2>
+            <p>Choisissez votre service et votre créneau — confirmation par texto ou courriel</p>
+          </div>
+          <div id="booking-progress">Étape 0 sur 6</div>
+        </div>
+        <div id="booking-content"></div>
+        <div id="booking-choices"></div>
+        <form id="booking-contact-form" onsubmit="handlePageContactSubmit(event)">
+          <label for="booking-name">Nom complet</label>
+          <input id="booking-name" name="name" type="text" required autocomplete="name" placeholder="Ex. Marie Tremblay">
+          <label for="booking-phone">Téléphone (texto)</label>
+          <input id="booking-phone" name="phone" type="tel" required autocomplete="tel" placeholder="Ex. 418-834-9976">
+          <button type="submit">Envoyer ma demande</button>
+        </form>
+        <button type="button" class="booking-reset-link" id="booking-reset" style="display:none" onclick="resetPageBooking()">Recommencer</button>
+      </div>
+    </section>
 
     <div class="hours-bar">
       <div class="hours-item">
@@ -743,7 +988,7 @@
     <div class="chat-messages" id="messages"></div>
 
     <div class="chat-suggestions" id="suggestions">
-      <button class="suggestion-btn" type="button" onclick="sendSuggestion('Je veux prendre un rendez-vous')">Prendre un RDV</button>
+      <button class="suggestion-btn" type="button" onclick="scrollToRdvFromChat()">Prendre un RDV</button>
       <button class="suggestion-btn" type="button" onclick="sendSuggestion('Quels sont vos tarifs?')">Tarifs</button>
       <button class="suggestion-btn" type="button" onclick="sendSuggestion('Quels sont vos horaires?')">Horaires</button>
       <button class="suggestion-btn" type="button" onclick="sendSuggestion('Quels services offrez-vous?')">Services</button>
@@ -825,11 +1070,10 @@ Forfaits: coloration+coupe 110$, coloration+coupe+mise en plis 120$, camo+coupe 
 Tresses: jusqu'à 6 = 32$, jusqu'à 12 = 60$
 Suppléments selon densité, longueur, complexité. Diagnostic toujours offert.
 
-PRISE DE RENDEZ-VOUS (IMPORTANT — message officiel du salon):
-"En raison des délais de réponse, il ne nous est pas possible de prendre des rendez-vous en ligne. Merci de nous contacter au 418-834-9976."
-Consultations sur rendez-vous disponibles pour estimations personnalisées (extensions, prothèses, services complexes).
-Le chat peut préparer une demande de rendez-vous. À la fin, une confirmation est envoyée par texto ou courriel — le client doit répondre pour confirmer le RDV.
-Au début d'une demande de RDV, demander si c'est un nouveau client ou un client existant.
+PRISE DE RENDEZ-VOUS (IMPORTANT):
+La prise de rendez-vous se fait sur la page du site via le formulaire « Demande de rendez-vous » (section avec boutons, 6 étapes). Oriente le client vers cette section — ne lance pas le processus dans le chat.
+Message officiel du salon : les rendez-vous ne sont pas confirmés instantanément en ligne; une confirmation est envoyée par texto ou courriel et le client doit y répondre.
+Consultations sur rendez-vous pour estimations (extensions, prothèses). Tél. 418-834-9976.
 
 TON: Français québécois, chaleureux, professionnel, vouvoiement. 2-4 phrases, 1 emoji max.
 
@@ -839,15 +1083,15 @@ RÈGLES:
 - Extensions/prothèses → consultation ou appel
 - Démo propulsée par NoviaAI si demandé`;
 
-    const GREETING = `Bonjour! 👋 Bienvenue chez M Zone Coiffure à Lévis. Je peux vous renseigner sur nos services, tarifs, horaires ou vous guider pour une demande de rendez-vous. Comment puis-je vous aider?`;
+    const GREETING = `Bonjour! 👋 Bienvenue chez M Zone Coiffure à Lévis. Utilisez le formulaire « Demande de rendez-vous » sur la page pour réserver, ou posez-moi vos questions sur services, tarifs et horaires.`;
 
     const ERROR_MSG = `Désolée, petit problème technique. Appelez-nous au 418-834-9976 ou visitez mzonecoiffure.ca.`;
 
-    const RDV_ONLINE_REPLY = `Je peux vous guider pour préparer votre demande de rendez-vous ici.
+    const RDV_PAGE_REPLY = `Pour prendre rendez-vous, utilisez le formulaire « Demande de rendez-vous » sur cette page — choisissez votre service et votre créneau en cliquant sur les boutons.
 
-À la fin du processus, une confirmation vous sera envoyée par texto ou courriel. Il sera nécessaire d'y répondre pour confirmer votre rendez-vous.
+À la fin, une confirmation vous sera envoyée par texto ou courriel. Il faudra y répondre pour confirmer le rendez-vous.`;
 
-Pour une estimation personnalisée, nous offrons aussi des consultations sur rendez-vous — appelez le 418-834-9976.`;
+    const RDV_CHAT_REDIRECT = `Parfait! Faites défiler la page jusqu'à la section « Demande de rendez-vous » et suivez les étapes en cliquant sur les boutons. Je reste disponible pour vos autres questions.`;
 
     const PRIX_REPLY = `Voici nos tarifs indicatifs (liste officielle M Zone):
 
@@ -873,7 +1117,7 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
 
     function getFaqReply(text) {
       const t = text.toLowerCase();
-      if (/en ligne|online|internet|site web.*rdv|site web.*rendez/.test(t) && /rdv|rendez|r[eé]serv/.test(t)) return RDV_ONLINE_REPLY;
+      if (/en ligne|online|internet|site web.*rdv|site web.*rendez/.test(t) && /rdv|rendez|r[eé]serv/.test(t)) return RDV_PAGE_REPLY;
       if (/prix|tarif|combien|co[uû]t|coute|liste/.test(t)) return PRIX_REPLY;
       if (/horaire|heure|ouvert|ferm|quand/.test(t)) return HORAIRES_REPLY;
       if (/adresse|o[uù]|situe|situé|trouver|stationnement|parking|sainte-foy|charny|saint-nicolas|qu[eé]bec/.test(t)) {
@@ -907,9 +1151,9 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
         return `Notre équipe réunit de jeunes talents et des coiffeurs expérimentés: coiffeurs, stylistes, coloristes et barbiers. Consultez « Notre équipe » sur mzonecoiffure.ca.`;
       }
       if (/service|coiffure|coloration|m[eè]che|couleur|coupe|visagiste|styliste/.test(t)) {
-        return `Nos services: coiffeur, barbier, coloriste, styliste, visagiste, extensions et prothèses capillaires, mèches, balayage, décoloration, soins, coiffures bal/mariage, tresses. Dites « tarifs » pour les prix ou « rendez-vous » pour préparer une demande.`;
+        return `Nos services: coiffeur, barbier, coloriste, styliste, visagiste, extensions et prothèses capillaires, mèches, balayage, décoloration, soins, coiffures bal/mariage, tresses. Dites « tarifs » pour les prix ou utilisez le formulaire de rendez-vous sur la page.`;
       }
-      if (/rdv|rendez-vous|rendez vous|r[eé]server|booker/.test(t)) return RDV_ONLINE_REPLY;
+      if (/rdv|rendez-vous|rendez vous|r[eé]server|booker/.test(t)) return RDV_PAGE_REPLY;
       if (/facebook|instagram|r[eé]seau/.test(t)) return `Facebook: MZoneCoiffure · Site: mzonecoiffure.ca · Tél. 418-834-9976`;
       if (/novia|bot|ia\b|robot/.test(t)) return `Je suis propulsée par NoviaAI — assistante virtuelle pour entreprises québécoises. Ceci est une démo pour M Zone Coiffure.`;
       if (/bonjour|salut|allo/.test(t)) return GREETING;
@@ -924,7 +1168,7 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
     let conversationHistory = [];
     let greeted = false;
 
-    let bookingFlow = { active: false, step: null, data: {} };
+    let pageBooking = { step: null, data: {} };
 
     function escapeHtml(text) {
       return text
@@ -951,10 +1195,6 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       return /\b(rdv|rendez-vous|rendez vous|réserver|reserver|booker|prendre un rendez-vous|je veux prendre|une place|disponibilité|créneau|creneau|appointment|faire une réservation|faire une reservation|planifier une rencontre)\b/i.test(text);
     }
 
-    function wantsCancel(text) {
-      return /\b(annuler|annulation|cancel|recommencer|repartir|quitte)\b/i.test(text);
-    }
-
     function getTime() {
       const n = new Date();
       return n.getHours().toString().padStart(2, '0') + 'h' + n.getMinutes().toString().padStart(2, '0');
@@ -969,7 +1209,7 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       }
     }
 
-    function addBotMessage(text, choices = null, htmlContent = null) {
+    function addBotMessage(text, htmlContent = null) {
       const messages = document.getElementById('messages');
       const wrap = document.createElement('div');
       wrap.className = 'msg bot';
@@ -984,20 +1224,6 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
         bubble.innerHTML = linkify(text).replace(/\n/g, '<br>');
       }
 
-      if (choices && choices.length) {
-        const btns = document.createElement('div');
-        btns.className = 'flow-btns' + (choices.length <= 3 && choices[0]?.row ? ' row' : '');
-        choices.forEach(choice => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'flow-btn' + (choice.slot ? ' slot-btn' : '');
-          btn.textContent = choice.label;
-          btn.addEventListener('click', () => handleFlowChoice(choice.value, choice.label));
-          btns.appendChild(btn);
-        });
-        bubble.appendChild(btns);
-      }
-
       const time = document.createElement('div');
       time.className = 'msg-time';
       time.textContent = getTime();
@@ -1009,18 +1235,6 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       wrap.appendChild(body);
       messages.appendChild(wrap);
       messages.scrollTop = messages.scrollHeight;
-    }
-
-    function flowHtml(step, ...paragraphs) {
-      const body = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
-      return `${stepBadge(step)}${body}`;
-    }
-
-    async function botReplyFlow(text, choices = null, htmlContent = null) {
-      showTyping();
-      await delay(550 + Math.random() * 350);
-      hideTyping();
-      addBotMessage(text, choices, htmlContent);
     }
 
     function servicesListHtml() {
@@ -1106,10 +1320,9 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       return null;
     }
 
-    function findSlot(text) {
+    function findSlot(text, slots) {
       const t = text.toLowerCase();
-      const slots = bookingFlow.data.slots || [];
-      for (const slot of slots) {
+      for (const slot of slots || []) {
         if (t.includes(slot.toLowerCase())) return slot;
         const hour = slot.match(/(\d+)/);
         if (hour && t.includes(hour[1])) return slot;
@@ -1130,14 +1343,6 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       return { name, phone: formattedPhone };
     }
 
-    function resetBookingFlow() {
-      bookingFlow = { active: false, step: null, data: {} };
-    }
-
-    function stepBadge(n) {
-      return `<span class="step-badge">Étape ${n} sur 6</span>`;
-    }
-
     const CLIENT_TYPE_CHOICES = [
       { label: 'Oui, c\'est ma première visite', value: 'new' },
       { label: 'Non, je suis déjà client(e)', value: 'returning' }
@@ -1155,69 +1360,130 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       return type === 'new' ? 'Nouveau client — première visite' : 'Client existant';
     }
 
-    async function startBookingFlow() {
-      bookingFlow = { active: true, step: 'clientType', data: {} };
-      await botReplyFlow(null, CLIENT_TYPE_CHOICES,
-        flowHtml(1,
-          `Parfait! Avant de commencer, une petite question :`,
-          `Est-ce votre première visite chez M Zone Coiffure?`
-        )
+    function scrollToRdv() {
+      document.getElementById('rdv').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToRdvFromChat() {
+      if (isOpen) toggleChat();
+      scrollToRdv();
+      if (!pageBooking.step) startPageBooking();
+    }
+
+    function setBookingProgress(n) {
+      document.getElementById('booking-progress').textContent = n ? `Étape ${n} sur 6` : 'Étape 0 sur 6';
+    }
+
+    function clearBookingChoices() {
+      const el = document.getElementById('booking-choices');
+      el.innerHTML = '';
+      el.className = '';
+    }
+
+    function renderBookingChoices(choices, className = '') {
+      const el = document.getElementById('booking-choices');
+      el.className = className;
+      el.innerHTML = '';
+      choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'page-flow-btn';
+        btn.textContent = choice.label;
+        btn.addEventListener('click', () => handlePageBookingChoice(choice.value, choice.label));
+        el.appendChild(btn);
+      });
+    }
+
+    function hideContactForm() {
+      const form = document.getElementById('booking-contact-form');
+      form.classList.remove('visible');
+      form.reset();
+    }
+
+    function showContactForm() {
+      hideContactForm();
+      clearBookingChoices();
+      document.getElementById('booking-contact-form').classList.add('visible');
+      document.getElementById('booking-reset').style.display = 'inline-block';
+    }
+
+    function resetPageBooking() {
+      pageBooking = { step: null, data: {} };
+      hideContactForm();
+      clearBookingChoices();
+      document.getElementById('booking-reset').style.display = 'none';
+      renderPageBookingWelcome();
+    }
+
+    function renderPageBookingWelcome() {
+      setBookingProgress(0);
+      document.getElementById('booking-content').innerHTML =
+        '<p>Préparez votre demande en quelques clics. Une confirmation vous sera envoyée par texto ou courriel — il faudra y répondre pour confirmer le rendez-vous.</p>';
+      renderBookingChoices([{ label: 'Commencer ma demande', value: 'start' }]);
+      document.querySelector('#booking-choices .page-flow-btn')?.classList.add('page-flow-btn-start');
+    }
+
+    function startPageBooking() {
+      pageBooking = { step: 'clientType', data: {} };
+      hideContactForm();
+      setBookingProgress(1);
+      document.getElementById('booking-content').innerHTML =
+        '<p><strong>Est-ce votre première visite chez M Zone Coiffure?</strong></p>';
+      renderBookingChoices(CLIENT_TYPE_CHOICES);
+      document.getElementById('booking-reset').style.display = 'inline-block';
+    }
+
+    function renderPageServiceStep() {
+      pageBooking.step = 'service';
+      setBookingProgress(2);
+      const welcome = pageBooking.data.clientType === 'new'
+        ? 'Bienvenue! Nous avons hâte de vous accueillir. Un diagnostic est offert avant votre première prestation.'
+        : 'Ravi de vous revoir!';
+      document.getElementById('booking-content').innerHTML =
+        `<p>${escapeHtml(welcome)}</p><p>Choisissez le service souhaité :</p>${servicesListHtml()}`;
+      renderBookingChoices(
+        SERVICES.map(s => ({ label: `${s.name} — ${s.price} $`, value: s.id })),
+        'grid-2'
       );
     }
 
-    async function showServiceStep() {
-      bookingFlow.step = 'service';
-      const welcome = bookingFlow.data.clientType === 'new'
-        ? `Bienvenue! Nous avons hâte de vous accueillir. Un diagnostic est offert avant votre première prestation.`
-        : `Ravi de vous revoir!`;
-      const html = `${stepBadge(2)}<p>${escapeHtml(welcome)}</p><p>À la fin, une confirmation vous sera envoyée — il faudra y répondre pour confirmer le rendez-vous.</p>${servicesListHtml()}<p style="margin-top:8px;font-size:13.5px;">Choisissez le service souhaité :</p>`;
-      const choices = SERVICES.map(s => ({
-        label: `${s.name} — ${s.price} $`,
-        value: s.id
-      }));
-      await botReplyFlow(null, choices, html);
-    }
-
-    async function showDayStep() {
-      bookingFlow.step = 'day';
+    function renderPageDayStep() {
+      pageBooking.step = 'day';
+      setBookingProgress(3);
       const days = getAvailableDays();
-      bookingFlow.data.availableDays = days;
-      await botReplyFlow(null, days.map(d => ({ label: d.label, value: d.date.toISOString() })),
-        flowHtml(3,
-          `Excellent choix — ${bookingFlow.data.service.name} à ${bookingFlow.data.service.price} $!`,
-          `Quelle journée vous conviendrait? (Fermé le dimanche.)`
-        )
-      );
+      pageBooking.data.availableDays = days;
+      document.getElementById('booking-content').innerHTML =
+        `<p>Excellent choix — <strong>${escapeHtml(pageBooking.data.service.name)}</strong> à ${pageBooking.data.service.price} $!</p><p>Quelle journée vous conviendrait? (Fermé le dimanche.)</p>`;
+      renderBookingChoices(days.map(d => ({ label: d.label, value: d.date.toISOString() })));
     }
 
-    async function showSlotsStep(dayEntry) {
-      bookingFlow.step = 'slot';
-      bookingFlow.data.day = dayEntry;
+    function renderPageSlotStep(dayEntry) {
+      pageBooking.step = 'slot';
+      setBookingProgress(4);
+      pageBooking.data.day = dayEntry;
       const slots = getSlotsForDay(dayEntry.dow);
-      bookingFlow.data.slots = slots;
-      await botReplyFlow(null, slots.map(s => ({ label: s, value: s, slot: true, row: true })),
-        flowHtml(4, `Pour ${formatDayLong(dayEntry.date)}, voici des créneaux disponibles :`)
-      );
+      pageBooking.data.slots = slots;
+      document.getElementById('booking-content').innerHTML =
+        `<p>Pour <strong>${escapeHtml(formatDayLong(dayEntry.date))}</strong>, voici des créneaux disponibles :</p>`;
+      renderBookingChoices(slots.map(s => ({ label: s, value: s })), 'row-slots');
     }
 
-    async function showContactStep() {
-      bookingFlow.step = 'contact';
-      await botReplyFlow(null, null,
-        flowHtml(5,
-          `Parfait, ${bookingFlow.data.slot} c'est noté!`,
-          `Pour finaliser, indiquez votre nom complet et votre numéro de téléphone (texto).`,
-          `Une confirmation vous sera ensuite envoyée — il sera nécessaire d'y répondre pour confirmer le rendez-vous.`,
-          `Exemple : Marie Tremblay, 418-834-9976`
-        )
-      );
+    function renderPageContactStep() {
+      pageBooking.step = 'contact';
+      setBookingProgress(5);
+      document.getElementById('booking-content').innerHTML =
+        `<p>Parfait, <strong>${escapeHtml(pageBooking.data.slot)}</strong> c'est noté!</p><p>Pour finaliser, indiquez votre nom et votre numéro de téléphone (texto). Une confirmation vous sera ensuite envoyée — il faudra y répondre pour confirmer le rendez-vous.</p>`;
+      showContactForm();
     }
 
-    async function showConfirmation() {
-      bookingFlow.step = 'done';
-      const { service, day, slot, name, phone, clientType } = bookingFlow.data;
-      const html = `
-        ${stepBadge(6)}
-        <p>Merci ${escapeHtml(name.split(' ')[0])}! Votre demande a bien été enregistrée.</p>
+    function renderPageConfirmation() {
+      pageBooking.step = 'done';
+      setBookingProgress(6);
+      hideContactForm();
+      const { service, day, slot, name, phone, clientType } = pageBooking.data;
+      const firstName = escapeHtml(name.split(' ')[0]);
+      document.getElementById('booking-content').innerHTML = `
+        <p>Merci ${firstName}! Votre demande a bien été enregistrée.</p>
         <p><strong>Prochaine étape :</strong> une confirmation vous sera envoyée par texto ou courriel à ${escapeHtml(phone)}. Il sera <strong>nécessaire d'y répondre</strong> pour confirmer votre rendez-vous.</p>
         <div class="confirm-card">
           <strong>📋 Récapitulatif — en attente de votre confirmation</strong><br><br>
@@ -1230,99 +1496,76 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
           📍 940, chemin du Sault, Lévis (Saint-Romuald)
         </div>
         <p style="margin-top:12px;font-size:13px;">Sans réponse de votre part, le créneau pourrait être libéré. Questions? Appelez le 418-834-9976.</p>
-        <a class="booking-btn" href="${PHONE_LINK}" style="display:inline-block;margin-top:10px;padding:10px 18px;background:var(--gold);color:var(--black);text-decoration:none;border-radius:10px;font-weight:600;">📞 Appeler le salon</a>
-        <p style="margin-top:10px;font-size:13px;">Écrivez <em>annuler</em> pour recommencer.</p>`;
-      resetBookingFlow();
-      await botReplyFlow(null, null, html);
+        <a class="booking-call-link" href="${PHONE_LINK}">📞 Appeler le salon</a>`;
+      clearBookingChoices();
+      document.getElementById('booking-reset').style.display = 'inline-block';
     }
 
-    async function handleFlowChoice(value, label) {
-      if (isTyping) return;
-      isTyping = true;
-      document.getElementById('send-btn').disabled = true;
-      addUserMessage(label);
-      await processBookingStep(value, label);
-      isTyping = false;
-      document.getElementById('send-btn').disabled = false;
-    }
-
-    async function processBookingStep(input, displayLabel) {
-      const text = (displayLabel || input || '').trim();
-
-      if (wantsCancel(text)) {
-        resetBookingFlow();
-        await botReplyFlow(`Pas de problème, la demande a été annulée. Pour recommencer, écrivez « prendre un rendez-vous ».`);
+    function handlePageBookingChoice(value, label) {
+      if (value === 'start') {
+        startPageBooking();
         return;
       }
+      processPageBookingStep(value, label);
+    }
 
-      switch (bookingFlow.step) {
+    function handlePageContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('booking-name').value.trim();
+      const phoneRaw = document.getElementById('booking-phone').value.trim();
+      const contact = parseContact(`${name}, ${phoneRaw}`) || parseContact(`${name} ${phoneRaw}`);
+      if (!contact) {
+        alert('Veuillez entrer un nom complet et un numéro de téléphone valide (10 chiffres).');
+        return;
+      }
+      pageBooking.data.name = contact.name;
+      pageBooking.data.phone = contact.phone;
+      renderPageConfirmation();
+    }
+
+    function processPageBookingStep(input, displayLabel) {
+      const text = (displayLabel || input || '').trim();
+
+      switch (pageBooking.step) {
         case 'clientType': {
           const clientType = parseClientType(input, text);
-          if (!clientType) {
-            await botReplyFlow(
-              `Veuillez indiquer si c'est votre première visite chez M Zone, ou choisir une option ci-dessous.`,
-              CLIENT_TYPE_CHOICES
-            );
-            return;
-          }
-          bookingFlow.data.clientType = clientType;
-          await showServiceStep();
+          if (!clientType) return;
+          pageBooking.data.clientType = clientType;
+          renderPageServiceStep();
           break;
         }
         case 'service': {
           const service = SERVICES.find(s => s.id === input) || findService(text);
-          if (!service) {
-            await botReplyFlow(`Je n'ai pas bien identifié le service. Choisissez une option ci-dessous ou écrivez le nom (ex. « mèches »).`, SERVICES.map(s => ({ label: `${s.name} — ${s.price} $`, value: s.id })));
-            return;
-          }
-          bookingFlow.data.service = service;
-          await showDayStep();
+          if (!service) return;
+          pageBooking.data.service = service;
+          renderPageDayStep();
           break;
         }
         case 'day': {
           let dayEntry;
           if (input && input.includes('T')) {
             const date = new Date(input);
-            dayEntry = bookingFlow.data.availableDays?.find(d => d.date.toDateString() === date.toDateString());
+            dayEntry = pageBooking.data.availableDays?.find(d => d.date.toDateString() === date.toDateString());
           } else {
             dayEntry = findDay(text);
           }
-          if (dayEntry === 'closed') {
-            await botReplyFlow(`Nous sommes fermés le dimanche. Veuillez choisir une autre journée parmi celles proposées.`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
-            return;
-          }
-          if (!dayEntry) {
-            await botReplyFlow(`Je n'ai pas reconnu cette journée. Choisissez un des jours disponibles ci-dessous.`, bookingFlow.data.availableDays?.map(d => ({ label: d.label, value: d.date.toISOString() })));
-            return;
-          }
-          await showSlotsStep(dayEntry);
+          if (dayEntry === 'closed' || !dayEntry) return;
+          renderPageSlotStep(dayEntry);
           break;
         }
         case 'slot': {
-          const slot = bookingFlow.data.slots?.includes(input) ? input : findSlot(text);
-          if (!slot) {
-            await botReplyFlow(`Veuillez choisir l'un des créneaux proposés.`, bookingFlow.data.slots.map(s => ({ label: s, value: s, slot: true, row: true })));
-            return;
-          }
-          bookingFlow.data.slot = slot;
-          await showContactStep();
-          break;
-        }
-        case 'contact': {
-          const contact = parseContact(text);
-          if (!contact) {
-            await botReplyFlow(`J'ai besoin de votre nom complet et d'un numéro de téléphone valide (10 chiffres). Exemple : Jean Gagnon, 418-834-9976`);
-            return;
-          }
-          bookingFlow.data.name = contact.name;
-          bookingFlow.data.phone = contact.phone;
-          await showConfirmation();
+          const slot = pageBooking.data.slots?.includes(input) ? input : findSlot(text, pageBooking.data.slots);
+          if (!slot) return;
+          pageBooking.data.slot = slot;
+          renderPageContactStep();
           break;
         }
         default:
-          resetBookingFlow();
+          break;
       }
     }
+
+    document.addEventListener('DOMContentLoaded', renderPageBookingWelcome);
 
     function addUserMessage(text) {
       const messages = document.getElementById('messages');
@@ -1374,24 +1617,11 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
       isTyping = true;
       sendBtn.disabled = true;
 
-      if (bookingFlow.active) {
-        await processBookingStep(text);
-        isTyping = false;
-        sendBtn.disabled = false;
-        input.focus();
-        return;
-      }
-
-      if (wantsCancel(text)) {
-        hideTyping();
-        isTyping = false;
-        sendBtn.disabled = false;
-        input.focus();
-        return;
-      }
-
       if (wantsBooking(text)) {
-        await startBookingFlow();
+        hideTyping();
+        addBotMessage(RDV_CHAT_REDIRECT);
+        scrollToRdv();
+        if (!pageBooking.step) startPageBooking();
         isTyping = false;
         sendBtn.disabled = false;
         input.focus();
@@ -1438,7 +1668,9 @@ Liste complète: mzonecoiffure.ca/liste-prix.php`;
           const reply = data.choices?.[0]?.message?.content || ERROR_MSG;
           conversationHistory.push({ role: 'assistant', content: reply });
           if (wantsBooking(reply)) {
-            await startBookingFlow();
+            addBotMessage(RDV_CHAT_REDIRECT);
+            scrollToRdv();
+            if (!pageBooking.step) startPageBooking();
           } else {
             addBotMessage(reply);
           }
