@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ärtis Coiffure — Salon à Saint-Nicolas, Lévis</title>
+  <meta name="description" content="Ärtis Coiffure — extensions Waves certifiées, balayage, coloration et coiffure pour toute la famille. Saint-Nicolas, Lévis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #121212;
+      --black-soft: #1e1e1e;
+      --cream: #faf8f5;
+      --cream-dark: #f0ebe3;
+      --white: #ffffff;
+      --gold: #c4a574;
+      --gold-light: #dfc9a0;
+      --gold-dark: #9a7848;
+      --muted: #8a8278;
+      --border: rgba(196, 165, 116, 0.25);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--cream);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      transition: background 0.3s, box-shadow 0.3s, padding 0.3s;
+    }
+    .nav.scrolled {
+      background: rgba(250, 248, 245, 0.96);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 var(--border);
+      padding: 12px 48px;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold-dark); font-style: italic; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--black-soft);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold-dark); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 28px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      color: var(--black);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(196, 165, 116, 0.4);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: var(--white);
+    }
+    .btn-outline:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+    .btn-dark {
+      background: var(--black);
+      color: var(--cream);
+    }
+    .btn-dark:hover {
+      background: var(--black-soft);
+      transform: translateY(-2px);
+    }
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--black);
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: 120px 24px 80px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: #1a1210;
+      overflow: hidden;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Photo portrait : ancrer en haut pour garder les visages visibles */
+      object-position: center top;
+    }
+    @media (max-aspect-ratio: 4/3) {
+      .hero-bg img {
+        object-fit: contain;
+        object-position: center center;
+      }
+    }
+    @media (min-width: 769px) and (max-aspect-ratio: 16/10) {
+      .hero-bg img {
+        object-fit: cover;
+        object-position: center 12%;
+      }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(18, 18, 18, 0.35) 0%,
+          rgba(18, 18, 18, 0.5) 45%,
+          rgba(18, 18, 18, 0.72) 100%
+        ),
+        radial-gradient(ellipse at center, transparent 0%, rgba(18, 18, 18, 0.25) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.2s forwards;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .hero-tagline {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SECTIONS ===== */
+    section { padding: 100px 48px; }
+    .container { max-width: 1140px; margin: 0 auto; }
+
+    .section-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 560px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-header .section-desc { margin: 0 auto; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Services */
+    .services { background: var(--white); }
+    .service-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .service-tab {
+      padding: 10px 22px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--black-soft);
+    }
+    .service-tab.active,
+    .service-tab:hover {
+      background: var(--black);
+      color: var(--gold-light);
+      border-color: var(--black);
+    }
+    .service-panel { display: none; }
+    .service-panel.active { display: block; }
+    .service-list {
+      list-style: none;
+      max-width: 820px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .service-list--single {
+      grid-template-columns: 1fr;
+      max-width: 520px;
+    }
+    .service-list li {
+      padding: 22px 28px;
+      background: var(--white);
+      border: 1px solid rgba(196, 165, 116, 0.45);
+      border-radius: 2px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--black-soft);
+      text-align: center;
+      transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .service-list li:hover {
+      background: var(--cream);
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(196, 165, 116, 0.15);
+    }
+    .service-panel-note {
+      margin-top: 28px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 300;
+      text-align: center;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* Team */
+    .team { background: var(--cream); }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 28px;
+    }
+    .team-card {
+      background: var(--white);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 36px 28px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .team-card::before {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-light), var(--gold-dark));
+      margin: 0 auto 22px;
+    }
+    .team-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+      border-color: var(--gold);
+    }
+    .team-info { padding: 0; }
+    .team-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .team-info .specialty {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 0;
+    }
+
+    /* Instagram gallery */
+    .instagram { background: var(--cream); }
+    .insta-cta {
+      text-align: center;
+    }
+    .insta-cta p {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-weight: 300;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Why us */
+    .why { background: var(--black); color: var(--cream); }
+    .why .section-eyebrow { color: var(--gold-light); }
+    .why .section-title { color: var(--white); }
+    .why .section-desc { color: rgba(250, 248, 245, 0.6); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .why-card {
+      padding: 36px 28px;
+      border: 1px solid rgba(196, 165, 116, 0.2);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .why-card:hover {
+      border-color: var(--gold);
+      background: rgba(196, 165, 116, 0.08);
+    }
+    .why-icon {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: rgba(196, 165, 116, 0.12);
+      border: 1px solid rgba(196, 165, 116, 0.28);
+      color: var(--gold-light);
+    }
+    .why-icon svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .why-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+    .why-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(250, 248, 245, 0.65);
+      font-weight: 300;
+    }
+
+    /* Reviews */
+    .reviews { background: var(--white); }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .review-card {
+      padding: 32px;
+      background: var(--cream);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .review-stars { color: var(--gold-dark); font-size: 14px; letter-spacing: 2px; margin-bottom: 16px; }
+    .review-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      line-height: 1.65;
+      color: var(--black-soft);
+      margin-bottom: 20px;
+    }
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .review-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .review-avatar--lm { background: linear-gradient(135deg, #c4a574, #9a7848); }
+    .review-avatar--ct { background: linear-gradient(135deg, #d4847a, #a85a52); }
+    .review-avatar--mb { background: linear-gradient(135deg, #7a9e8e, #4d7263); }
+    .review-author-info span {
+      display: block;
+      font-weight: 300;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .google-rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .google-rating strong { color: var(--gold-dark); font-weight: 600; }
+    .google-rating .g-stars { color: var(--gold-dark); letter-spacing: 1px; }
+
+    /* Contact */
+    .contact { background: var(--cream-dark); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .contact-info { display: flex; flex-direction: column; gap: 28px; }
+    .contact-block h4 {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 10px;
+    }
+    .contact-block p,
+    .contact-block a {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--black-soft);
+      text-decoration: none;
+      font-weight: 300;
+    }
+    .contact-block a:hover { color: var(--gold-dark); }
+    .hours-table { width: 100%; font-size: 14px; }
+    .hours-table tr { border-bottom: 1px solid var(--border); }
+    .hours-table td { padding: 10px 0; }
+    .hours-table td:last-child { text-align: right; color: var(--muted); }
+    .map-wrap {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      min-height: 380px;
+    }
+    .map-wrap iframe { width: 100%; height: 380px; border: 0; display: block; }
+
+    /* CTA band */
+    .cta-band {
+      background: linear-gradient(135deg, var(--black-soft) 0%, var(--black) 100%);
+      text-align: center;
+      padding: 80px 48px;
+    }
+    .cta-band h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .cta-band p {
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--black);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 48px;
+      text-align: center;
+    }
+    footer .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    footer p { font-size: 13px; line-height: 1.8; }
+    footer .socials {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 20px 0;
+    }
+    footer .socials a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+    footer .socials a svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    footer .socials a:hover { color: var(--white); }
+    footer .novia {
+      margin-top: 24px;
+      font-size: 11px;
+      opacity: 0.4;
+    }
+
+    /* ===== CHAT ===== */
+    #chat-toggle {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 62px;
+      height: 62px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 0 2px var(--gold);
+      transition: transform 0.25s;
+    }
+    #chat-toggle:hover { transform: scale(1.07); }
+    #chat-toggle svg { width: 26px; height: 26px; fill: var(--gold-light); }
+    #chat-toggle .badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 13px;
+      height: 13px;
+      background: #4ade80;
+      border: 2px solid var(--white);
+      border-radius: 50%;
+    }
+
+    #chat-window {
+      position: fixed;
+      bottom: 104px;
+      right: 28px;
+      width: 390px;
+      max-width: calc(100vw - 32px);
+      height: 560px;
+      max-height: calc(100vh - 130px);
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      transform: translateY(16px) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.32s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+    #chat-window.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .chat-header {
+      background: var(--black);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .chat-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--black);
+    }
+    .chat-header-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--white);
+      font-weight: 500;
+    }
+    .chat-status {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; }
+    .chat-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .chat-close:hover { color: var(--gold-light); }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--cream);
+    }
+    .msg { display: flex; gap: 8px; animation: msgIn 0.3s ease; }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar-sm {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .msg-bubble {
+      max-width: 82%;
+      padding: 11px 14px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      font-weight: 300;
+    }
+    .msg.bot .msg-bubble {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 5px;
+    }
+    .msg.user .msg-bubble {
+      background: var(--black);
+      color: var(--cream);
+      border-bottom-right-radius: 5px;
+    }
+    .msg-time { font-size: 10px; color: var(--muted); margin-top: 3px; padding: 0 4px; }
+    .msg.user .msg-time { text-align: right; }
+
+    .booking-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 13px 18px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    .booking-btn:hover { transform: translateY(-2px); color: var(--black); }
+
+    .typing-wrap { display: flex; gap: 4px; padding: 3px 0; }
+    .typing-wrap span {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-wrap span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-wrap span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .chat-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 14px 10px;
+      background: var(--cream);
+      flex-shrink: 0;
+    }
+    .suggestion-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--gold-dark);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .suggestion-btn:hover { background: var(--black); color: var(--gold-light); border-color: var(--black); }
+
+    .chat-input-area {
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--cream-dark);
+      background: var(--white);
+      flex-shrink: 0;
+    }
+    .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+    #user-input {
+      flex: 1;
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      resize: none;
+      outline: none;
+      min-height: 44px;
+      max-height: 90px;
+    }
+    #user-input:focus { border-color: var(--gold); }
+    #send-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 12px;
+      background: var(--black);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #send-btn:disabled { opacity: 0.45; }
+    #send-btn svg { width: 18px; height: 18px; fill: var(--gold-light); }
+    .chat-footer {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .chat-footer strong { color: var(--gold-dark); }
+
+    @media (max-width: 900px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--cream);
+        padding: 24px;
+        gap: 20px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+      .nav-toggle { display: block; }
+      section { padding: 70px 24px; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .service-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .team-grid { grid-template-columns: 1fr; }
+      #chat-window {
+        right: 16px;
+        bottom: 92px;
+        width: calc(100vw - 32px);
+        height: calc(100vh - 110px);
+      }
+      #chat-toggle { bottom: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">Ärtis <span>Coiffure</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#equipe">Équipe</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#pourquoi">À propos</a></li>
+      <li><a href="#avis">Avis</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="padding:10px 18px;font-size:11px;">Prendre RDV</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- 1. HERO -->
+  <header class="hero" id="accueil">
+    <div class="hero-bg">
+      <img src="https://i.imgur.com/HR9jmnAh.jpg" alt="L'équipe de coiffeuses Ärtis Coiffure">
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Saint-Nicolas · Lévis</p>
+      <h1>Votre beauté, <em>notre art</em></h1>
+      <p class="hero-tagline">
+        Extensions Waves certifiées, balayages lumineux et ambiance familiale chaleureuse.
+        Un salon où chaque membre de la famille se sent accueilli.
+      </p>
+      <div class="hero-actions">
+        <a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Prendre rendez-vous</a>
+        <a href="#services" class="btn btn-outline">Découvrir nos services</a>
+      </div>
+    </div>
+    <p class="hero-scroll">Défiler</p>
+  </header>
+
+  <!-- 2. SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">Nos services</p>
+        <h2 class="section-title">Pour femmes, hommes et enfants</h2>
+        <p class="section-desc">Des coupes précises aux transformations capillaires — avec les produits professionnels Redken.</p>
+      </div>
+
+      <div class="service-tabs reveal">
+        <button class="service-tab active" data-tab="femmes">Femmes</button>
+        <button class="service-tab" data-tab="hommes">Hommes</button>
+        <button class="service-tab" data-tab="enfants">Enfants</button>
+      </div>
+
+      <div class="service-panel active reveal" id="panel-femmes">
+        <ul class="service-list">
+          <li>Coupe femme</li>
+          <li>Balayage</li>
+          <li>Coloration complète</li>
+          <li>Mèches</li>
+          <li>Extensions Waves certifiées</li>
+          <li>Traitement kératine</li>
+          <li>Mise en plis</li>
+          <li>Coiffure bal et mariage</li>
+        </ul>
+      </div>
+
+      <div class="service-panel reveal" id="panel-hommes">
+        <ul class="service-list">
+          <li>Coupe homme stylisé</li>
+          <li>Coupe homme</li>
+          <li>Coupe rasé</li>
+          <li>Deal coupe + taille de barbe</li>
+        </ul>
+      </div>
+
+      <div class="service-panel reveal" id="panel-enfants">
+        <ul class="service-list service-list--single">
+          <li>Coupe ado garçon 10-15 ans</li>
+          <li>Coupe garçon moins de 10 ans</li>
+        </ul>
+        <p class="service-panel-note">
+          Un environnement accueillant et patient pour les plus jeunes — l'ambiance familiale Ärtis, c'est aussi ça.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ÉQUIPE -->
+  <section class="team" id="equipe">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">Notre équipe</p>
+        <h2 class="section-title">Sept coiffeuses passionnées</h2>
+        <p class="section-desc">Chacune apporte son expertise pour sublimer votre style, du balayage aux extensions certifiées.</p>
+      </div>
+      <div class="team-grid">
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Mélina Camiré</h3>
+            <p class="specialty">Balayage & coloration</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Marie-Hélène Barry</h3>
+            <p class="specialty">Extensions Waves certifiées</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Chantale Faucher</h3>
+            <p class="specialty">Coupe femme & mise en plis</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Jessie Dubé</h3>
+            <p class="specialty">Mèches & coloration créative</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Suzanne St-Laurent</h3>
+            <p class="specialty">Coiffure bal & mariage</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Cathy Lamontagne</h3>
+            <p class="specialty">Traitement kératine & soins</p>
+          </div>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-info">
+            <h3>Élody Gallant</h3>
+            <p class="specialty">Coupe homme & barbe</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3b. GALERIE INSTAGRAM -->
+  <section class="instagram" id="galerie">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">@artis_coiffure</p>
+        <h2 class="section-title">Nos réalisations sur Instagram</h2>
+        <p class="section-desc">Balayages, blondes, extensions Waves et coupes — suivez notre travail au quotidien.</p>
+      </div>
+      <div class="insta-cta reveal">
+        <p>Découvrez nos transformations, astuces capillaires et nouveautés du salon sur Instagram.</p>
+        <a href="https://www.instagram.com/artis_coiffure/" target="_blank" rel="noopener noreferrer" class="btn btn-dark">Suivre @artis_coiffure sur Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. POURQUOI NOUS -->
+  <section class="why" id="pourquoi">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">Pourquoi nous choisir</p>
+        <h2 class="section-title">L'expérience Ärtis</h2>
+        <p class="section-desc">Un salon où expertise professionnelle rime avec accueil chaleureux — pour toute la famille.</p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 3h6l1 2h4v2H4V5h4l1-2z"/><path d="M6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/><path d="M12 11v4"/></svg>
+          </div>
+          <h3>Produits Redken</h3>
+          <p>Des produits professionnels de qualité supérieure pour des résultats durables et un cheveu en santé.</p>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3l1.2 3.6L17 8l-3.8 1.4L12 13l-1.2-3.6L7 8l3.8-1.4L12 3z"/><path d="M5 16l.8 2.4L8 19l-2.2.8L5 22l-.8-2.2L2 19l2.2-.6L5 16z"/><path d="M19 14l.6 1.8L21 17l-1.4.5L19 19l-.6-1.5L17 17l1.4-.5L19 14z"/></svg>
+          </div>
+          <h3>Extensions Waves certifiées</h3>
+          <p>Coiffeuses formées et certifiées Waves — la référence en extensions capillaires naturelles.</p>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/><path d="M9 21v-6h6v6"/></svg>
+          </div>
+          <h3>Ambiance familiale</h3>
+          <p>Un salon chaleureux et accueillant où petits et grands se sentent à l'aise dès l'entrée.</p>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+          </div>
+          <h3>Horaires flexibles</h3>
+          <p>Ouvert de 6 h à 21 h en semaine — parfait pour s'adapter à votre horaire, même tôt le matin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. AVIS -->
+  <section class="reviews" id="avis">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">Avis clients</p>
+        <h2 class="section-title">Ce qu'on dit de nous</h2>
+        <div class="google-rating">
+          <span class="g-stars">★★★★★</span>
+          <span><strong>4,8/5</strong> sur Google · 67 avis</span>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">« Très satisfaite ! Cathy a été très gentille et elle m'écoutait. Elle a su trouver ce qui allait le mieux pour mon type de cheveux. Merci Cathy! »</p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--lm" aria-hidden="true">LM</span>
+            <div class="review-author-info">Laura Mack<span>Avis Google</span></div>
+          </div>
+        </div>
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">« On papote, on rit, on se fait coiffer et on repart le cœur plus léger et les cheveux parfaits! Accueil chaleureux 10/10, ambiance juste wow 11/10 et mon amie Jessie je te donne un gros 12/10. À bientôt xx »</p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--ct" aria-hidden="true">CT</span>
+            <div class="review-author-info">Catherine Turgeon<span>Avis Google</span></div>
+          </div>
+        </div>
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">« J'ai adoré mon expérience chez Ärtis Coiffure ! L'équipe est chaleureuse et professionnelle. Je repars toujours aussi satisfaite ! »</p>
+          <div class="review-author">
+            <span class="review-avatar review-avatar--mb" aria-hidden="true">MB</span>
+            <div class="review-author-info">Marie-Hélène Barry<span>Avis Google</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-eyebrow">Nous trouver</p>
+        <h2 class="section-title">Heures et contact</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="contact-block">
+            <h4>Adresse</h4>
+            <p>820 Route des Rivières, local 115<br>Saint-Nicolas, Lévis (QC)</p>
+          </div>
+          <div class="contact-block">
+            <h4>Téléphone</h4>
+            <a href="tel:+14184681007">418-468-1007</a>
+          </div>
+          <div class="contact-block">
+            <h4>Réseaux sociaux</h4>
+            <p>
+              <a href="https://www.instagram.com/artis_coiffure" target="_blank" rel="noopener noreferrer">Instagram @artis_coiffure</a><br>
+              <a href="https://www.facebook.com/artiscoiffurestnicolas" target="_blank" rel="noopener noreferrer">Facebook — Ärtis coiffure</a>
+            </p>
+          </div>
+          <div class="contact-block">
+            <h4>Heures d'ouverture</h4>
+            <table class="hours-table">
+              <tr><td>Lundi – jeudi</td><td>6 h – 21 h</td></tr>
+              <tr><td>Vendredi</td><td>6 h – 17 h</td></tr>
+              <tr><td>Samedi</td><td>7 h – 14 h</td></tr>
+              <tr><td>Dimanche</td><td>Fermé</td></tr>
+            </table>
+          </div>
+          <a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Prendre rendez-vous</a>
+        </div>
+        <div class="map-wrap reveal">
+          <iframe
+            title="Carte Ärtis Coiffure"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=820+Route+des+Rivi%C3%A8res+local+115+Saint-Nicolas+L%C3%A9vis+QC&hl=fr&z=15&output=embed">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <div class="container reveal">
+      <h2>Prête à vous faire belle?</h2>
+      <p>Réservez en ligne en quelques clics — choisissez votre service et votre coiffeuse préférée.</p>
+      <a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold">Prendre rendez-vous</a>
+    </div>
+  </section>
+
+  <footer>
+    <p class="footer-logo">Ärtis Coiffure</p>
+    <p>820 Route des Rivières, local 115 · Saint-Nicolas, Lévis<br>418-468-1007</p>
+    <div class="socials">
+      <a href="https://www.instagram.com/artis_coiffure" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="https://www.facebook.com/artiscoiffurestnicolas" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Ärtis coiffure sur Facebook
+      </a>
+      <a href="tel:+14184681007">Téléphone</a>
+      <a href="https://artiscoiffure.enseigneweb.com" target="_blank" rel="noopener noreferrer">Réservation</a>
+    </div>
+    <p>© 2026 Ärtis Coiffure. Tous droits réservés.</p>
+    <p class="novia">Site avec assistant IA propulsé par NoviaAI</p>
+  </footer>
+
+  <!-- CHATBOT -->
+  <button id="chat-toggle" type="button" onclick="toggleChat()" aria-label="Ouvrir le chat">
+    <span class="badge" aria-hidden="true"></span>
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+  </button>
+
+  <div id="chat-window" role="dialog" aria-label="Assistante Ärtis">
+    <header class="chat-header">
+      <div class="chat-avatar" aria-hidden="true">Ä</div>
+      <div class="chat-header-info">
+        <h3>Assistante Ärtis</h3>
+        <p class="chat-status"><span class="status-dot"></span>En ligne</p>
+      </div>
+      <button class="chat-close" type="button" onclick="toggleChat()" aria-label="Fermer">×</button>
+    </header>
+    <div class="chat-messages" id="messages"></div>
+    <div class="chat-suggestions" id="suggestions">
+      <button class="suggestion-btn" type="button" onclick="sendSuggestion('Je veux prendre un rendez-vous')">Prendre un RDV</button>
+      <button class="suggestion-btn" type="button" onclick="sendSuggestion('Quels sont vos services?')">Nos services</button>
+      <button class="suggestion-btn" type="button" onclick="sendSuggestion('Quels sont vos horaires?')">Horaires</button>
+    </div>
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <textarea id="user-input" rows="1" placeholder="Écrivez votre message…" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button id="send-btn" type="button" onclick="sendMessage()" aria-label="Envoyer">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <p class="chat-footer">Propulsé par <strong>NoviaAI</strong></p>
+    </div>
+  </div>
+
+  <script>
+    /* Nav scroll + mobile */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('nav-links').classList.toggle('open');
+    });
+
+    /* Reveal on scroll */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    /* Service tabs */
+    document.querySelectorAll('.service-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.service-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ===== CHATBOT ===== */
+    const MODEL = 'gpt-4o-mini';
+    const BOOKING_URL = 'https://artiscoiffure.enseigneweb.com';
+    const BOOKING_MSG = 'Parfait ! Cliquez ici pour choisir votre service et votre coiffeuse 👇';
+    const CHAT_API = 'https://noviaai.ca/.netlify/functions/chat';
+
+    const SYSTEM_PROMPT = `Tu es l'Assistante Ärtis, l'assistante virtuelle d'Ärtis Coiffure, salon situé au 820 Route des Rivières, local 115, Saint-Nicolas (Lévis), Québec.
+
+INFORMATIONS:
+- Téléphone: 418-468-1007
+- Instagram: @artis_coiffure
+- Facebook: Ärtis coiffure
+- Produits: Redken
+- Spécialités: Extensions Waves certifiées, balayage, mèches, coloration
+- Ambiance: familiale, chaleureuse, accueillante
+
+HORAIRES:
+- Lundi à jeudi: 6h à 21h
+- Vendredi: 6h à 17h
+- Samedi: 7h à 14h
+- Dimanche: fermé
+
+SERVICES FEMMES: Coupe femme, Balayage, Coloration complète, Mèches, Extensions Waves certifiées, Traitement kératine, Mise en plis, Coiffure bal et mariage
+
+SERVICES HOMMES: Coupe homme stylisé, Coupe homme, Coupe rasé, Deal coupe + taille de barbe
+
+SERVICES ENFANTS: Coupe ado garçon 10-15 ans, Coupe garçon moins de 10 ans
+
+COIFFEUSES: Mélina Camiré (balayage), Marie-Hélène Barry (extensions Waves), Chantale Faucher (coupe femme), Jessie Dubé (mèches), Suzanne St-Laurent (mariage), Cathy Lamontagne (kératine), Élody Gallant (coupe homme)
+
+PRISE DE RENDEZ-VOUS:
+- Quand le client veut réserver, réponds UNIQUEMENT: « ${BOOKING_MSG} » sans URL.
+
+TON: Français québécois, chaleureux, professionnel. Réponses concises (2-4 phrases). 1 emoji max.
+RÈGLES: Ne pas inventer de prix. Démo NoviaAI si demandé.`;
+
+    const GREETING = `Bonjour! 👋 Bienvenue chez Ärtis Coiffure. Je peux vous renseigner sur nos services, nos heures ou vous aider à prendre un rendez-vous. Comment puis-je vous aider?`;
+    const ERROR_MSG = `Désolée, petit problème technique. Appelez-nous au 418-468-1007.`;
+
+    let isOpen = false, isTyping = false, greeted = false;
+    let conversationHistory = [];
+
+    function escapeHtml(t) {
+      return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function linkify(t) {
+      return escapeHtml(t).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    }
+    function bookingBtn() {
+      return `<a class="booking-btn" href="${BOOKING_URL}" target="_blank" rel="noopener">Réserver en ligne</a>`;
+    }
+    function wantsBooking(t) {
+      return /\b(rdv|rendez-vous|réserver|reserver|booker|prendre un rendez-vous|créneau|disponibilit|réservation)\b/i.test(t);
+    }
+    function isBookingReply(t) {
+      return wantsBooking(t) || /enseigneweb/i.test(t) || t.includes('choisir votre service');
+    }
+    function getTime() {
+      const n = new Date();
+      return n.getHours().toString().padStart(2,'0') + 'h' + n.getMinutes().toString().padStart(2,'0');
+    }
+
+    function getQuickReply(text) {
+      const t = text.toLowerCase().trim().replace(/[!?.…]+$/g, '');
+      if (wantsBooking(text)) return { booking: true };
+      if (t.includes('service')) return { text: SERVICES_REPLY };
+      if (t.includes('horaire')) return { text: HOURS_REPLY };
+      return null;
+    }
+
+    const SERVICES_REPLY = `Voici nos services :
+
+Femmes : coupe, balayage, coloration, mèches, extensions Waves certifiées, kératine, mise en plis, coiffure bal et mariage.
+
+Hommes : coupe stylisée, coupe classique, coupe rasée, deal coupe + barbe.
+
+Enfants : coupe ado 10-15 ans, coupe garçon moins de 10 ans.
+
+Produits professionnels Redken.`;
+
+    const HOURS_REPLY = `Nos heures d'ouverture :
+• Lundi à jeudi : 6 h – 21 h
+• Vendredi : 6 h – 17 h
+• Samedi : 7 h – 14 h
+• Dimanche : fermé
+
+820 Route des Rivières, local 115, Saint-Nicolas (Lévis).`;
+
+    const FAQ = [
+      { keys: ['telephone', 'téléphone', 'tel', 'appeler', 'joindre', 'numero', 'numéro'], text: `Appelez-nous au 418-468-1007.` },
+      { keys: ['adresse', 'ou etes', 'où êtes', 'localisation', 'trouver', 'situé', 'situe', 'levé', 'levis', 'saint-nicolas'], text: `820 Route des Rivières, local 115, Saint-Nicolas (Lévis). Téléphone : 418-468-1007.` },
+      { keys: ['instagram', 'facebook', 'reseau', 'réseau'], text: `Instagram : @artis_coiffure\nFacebook : Ärtis coiffure` },
+      { keys: ['prix', 'tarif', 'cout', 'coût', 'combien', 'coute', 'coûte'], text: `Nos tarifs varient selon le service et la coiffeuse. Appelez-nous au 418-468-1007 ou réservez en ligne pour un prix précis.` },
+      { keys: ['melina', 'mélina', 'balayage'], text: `Mélina Camiré est notre spécialiste balayage.` },
+      { keys: ['marie', 'waves', 'extension'], text: `Marie-Hélène Barry est certifiée Extensions Waves.` },
+      { keys: ['chantale', 'coupe femme'], text: `Chantale Faucher est spécialisée en coupe femme.` },
+      { keys: ['jessie', 'meche', 'mèche'], text: `Jessie Dubé est notre spécialiste mèches.` },
+      { keys: ['suzanne', 'mariage', 'mariee', 'mariée', 'bal'], text: `Suzanne St-Laurent s'occupe des coiffures bal et mariage.` },
+      { keys: ['cathy', 'keratine', 'kératine'], text: `Cathy Lamontagne est spécialisée en traitement kératine.` },
+      { keys: ['elody', 'élody', 'homme', 'barbe'], text: `Élody Gallant s'occupe des coupes homme.` },
+      { keys: ['redken', 'produit'], text: `Nous utilisons les produits professionnels Redken.` },
+      { keys: ['equipe', 'équipe', 'coiffeuse', 'coiffeur', 'styliste'], text: `Notre équipe : Mélina (balayage), Marie-Hélène (Waves), Chantale (coupe femme), Jessie (mèches), Suzanne (mariage), Cathy (kératine), Élody (coupe homme).` },
+      { keys: ['bonjour', 'salut', 'allo', 'bonsoir', 'hello'], text: `Bonjour! Comment puis-je vous aider? Services, horaires, rendez-vous — demandez-moi.` },
+      { keys: ['merci', 'thanks'], text: `Avec plaisir! N'hésitez pas si vous avez d'autres questions.` },
+      { keys: ['novia', 'noviaai', 'robot', 'bot', 'ia', 'intelligence'], text: `Je suis propulsée par NoviaAI, une solution québécoise d'assistante virtuelle pour les PME.` },
+      { keys: ['enfant', 'ado', 'garcon', 'garçon', 'fille'], text: `Pour les enfants : coupe ado garçon 10-15 ans et coupe garçon moins de 10 ans.` },
+      { keys: ['homme', 'barbe', 'rasé', 'rase'], text: `Hommes : coupe stylisée, coupe classique, coupe rasée, deal coupe + barbe.` },
+      { keys: ['femme', 'coloration', 'couleur'], text: `Femmes : coupe, balayage, coloration, mèches, extensions Waves, kératine, mise en plis, coiffure bal et mariage.` },
+      { keys: ['dimanche', 'ferme', 'fermé', 'ouvert'], text: HOURS_REPLY },
+      { keys: ['parking', 'stationnement'], text: `Le salon est au 820 Route des Rivières, local 115, Saint-Nicolas. Appelez au 418-468-1007 si vous avez besoin d'indications.` },
+      { keys: ['carte', 'debit', 'débit', 'credit', 'crédit', 'paiement', 'interac'], text: `Pour les modes de paiement acceptés, contactez-nous au 418-468-1007.` }
+    ];
+
+    function findFaqReply(text) {
+      const t = text.toLowerCase();
+      let best = null, bestScore = 0;
+      for (const item of FAQ) {
+        let score = 0;
+        for (const k of item.keys) {
+          if (t.includes(k)) score++;
+        }
+        if (score > bestScore) { bestScore = score; best = item.text; }
+      }
+      return bestScore > 0 ? best : null;
+    }
+
+    async function replyWithDelay(text, showBooking = false) {
+      showTyping();
+      await new Promise(r => setTimeout(r, 450));
+      hideTyping();
+      addBotMessage(text, showBooking);
+    }
+
+    async function callOpenAI() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+      try {
+        const res = await fetch(CHAT_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...conversationHistory],
+            max_tokens: 300,
+            temperature: 0.72
+          })
+        });
+        const raw = await res.text();
+        let data;
+        try { data = JSON.parse(raw); } catch { return null; }
+        if (!res.ok || data.error || !data.choices?.[0]?.message?.content) return null;
+        return data.choices[0].message.content;
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function toggleChat() {
+      isOpen = !isOpen;
+      document.getElementById('chat-window').classList.toggle('open', isOpen);
+      if (isOpen && !greeted) {
+        greeted = true;
+        setTimeout(() => addBotMessage(GREETING), 350);
+      }
+    }
+
+    function addBotMessage(text, showBooking = false) {
+      const el = document.getElementById('messages');
+      const w = document.createElement('div');
+      w.className = 'msg bot';
+      w.innerHTML = `<div class="msg-avatar-sm">Ä</div><div><div class="msg-bubble">${showBooking ? escapeHtml(text)+bookingBtn() : linkify(text).replace(/\n/g,'<br>')}</div><div class="msg-time">${getTime()}</div></div>`;
+      el.appendChild(w);
+      el.scrollTop = el.scrollHeight;
+    }
+    function addUserMessage(text) {
+      const el = document.getElementById('messages');
+      const w = document.createElement('div');
+      w.className = 'msg user';
+      w.innerHTML = `<div><div class="msg-bubble">${escapeHtml(text)}</div><div class="msg-time">${getTime()}</div></div>`;
+      el.appendChild(w);
+      el.scrollTop = el.scrollHeight;
+    }
+    function showTyping() {
+      const el = document.getElementById('messages');
+      const w = document.createElement('div');
+      w.className = 'msg bot';
+      w.id = 'typing-indicator';
+      w.innerHTML = `<div class="msg-avatar-sm">Ä</div><div class="msg-bubble"><div class="typing-wrap"><span></span><span></span><span></span></div></div>`;
+      el.appendChild(w);
+      el.scrollTop = el.scrollHeight;
+    }
+    function hideTyping() {
+      const t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+    }
+    async function showBookingMessage() {
+      showTyping();
+      await new Promise(r => setTimeout(r, 500));
+      hideTyping();
+      addBotMessage(BOOKING_MSG, true);
+    }
+    function sendSuggestion(text) {
+      document.getElementById('user-input').value = text;
+      sendMessage();
+    }
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const btn = document.getElementById('send-btn');
+      const text = input.value.trim();
+      if (!text || isTyping) return;
+
+      isTyping = true;
+      btn.disabled = true;
+      input.value = '';
+      input.style.height = 'auto';
+
+      const suggestions = document.getElementById('suggestions');
+      if (suggestions) suggestions.style.display = 'none';
+
+      addUserMessage(text);
+      conversationHistory.push({ role: 'user', content: text });
+
+      try {
+        const quick = getQuickReply(text);
+
+        if (quick?.booking) {
+          await showBookingMessage();
+          return;
+        }
+
+        if (quick?.text) {
+          await replyWithDelay(quick.text);
+          conversationHistory.push({ role: 'assistant', content: quick.text });
+          return;
+        }
+
+        showTyping();
+        const aiReply = await callOpenAI();
+        hideTyping();
+
+        if (aiReply) {
+          conversationHistory.push({ role: 'assistant', content: aiReply });
+          const showBooking = isBookingReply(aiReply);
+          addBotMessage(showBooking ? BOOKING_MSG : aiReply, showBooking);
+          return;
+        }
+
+        const faq = findFaqReply(text);
+        if (faq) {
+          conversationHistory.push({ role: 'assistant', content: faq });
+          addBotMessage(faq);
+          return;
+        }
+
+        addBotMessage(`Bonne question! Pour une réponse précise, appelez-nous au 418-468-1007 ou réservez en ligne.`);
+      } catch (err) {
+        hideTyping();
+        addBotMessage(ERROR_MSG);
+      } finally {
+        isTyping = false;
+        btn.disabled = false;
+        input.focus();
+      }
+    }
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    }
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+    }
+
+    window.toggleChat = toggleChat;
+    window.sendMessage = sendMessage;
+    window.sendSuggestion = sendSuggestion;
+    window.handleKey = handleKey;
+    window.autoResize = autoResize;
+  </script>
+</body>
+</html>

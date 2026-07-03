@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuration | NoviaAI Rattrapeur</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body>
+<nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
+<div class="wizard-wrap">
+  <div class="form-box" style="max-width:520px">
+    <h1>Créez votre ligne pro</h1>
+    <p class="muted">~3 minutes — on vous donne un numéro local. Vous le mettez sur Google. C'est actif.</p>
+
+    <form id="form">
+      <label for="business_name">Nom du commerce *</label>
+      <input id="business_name" required placeholder="Salon Éclat">
+
+      <label for="business_phone">Cellulaire où vous répondez *</label>
+      <input id="business_phone" type="tel" required placeholder="581-909-5332">
+      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
+
+      <label for="missed_call_sms">Message SMS si appel manqué *</label>
+      <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
+
+      <label for="area_code">Indicatif de votre ligne pro</label>
+      <select id="area_code">
+        <option value="418">418 — Québec</option>
+        <option value="581">581 — Québec</option>
+        <option value="514">514 — Montréal</option>
+        <option value="438">438 — Montréal</option>
+        <option value="450">450 — Rive-Sud</option>
+        <option value="819">819 — Est</option>
+      </select>
+
+      <label for="agent_name">Prénom de votre agente SMS</label>
+      <input id="agent_name" placeholder="Léa" value="Léa">
+
+      <label for="contact_email">Courriel alertes (optionnel)</label>
+      <input id="contact_email" type="email" placeholder="vous@commerce.com">
+
+      <button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px">Obtenir mon numéro →</button>
+      <p id="err" class="err" hidden></p>
+    </form>
+  </div>
+</div>
+<script>
+(async () => { await NoviaApp.requireAuth('/login.html'); })();
+
+document.getElementById('form').onsubmit = async (e) => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  err.hidden = true;
+  const name = document.getElementById('business_name').value.trim();
+  const phone = document.getElementById('business_phone').value.trim();
+  const sms = document.getElementById('missed_call_sms').value.trim();
+  if (!name || !phone || !sms) {
+    err.textContent = 'Remplissez tous les champs obligatoires.';
+    err.hidden = false;
+    return;
+  }
+  try {
+    const res = await NoviaApp.api('api-tenant', {
+      method: 'POST',
+      body: JSON.stringify({
+        onboarding: true,
+        business_name: name,
+        phone_forward: phone,
+        agent_name: document.getElementById('agent_name').value.trim() || 'Léa',
+        missed_call_sms: sms,
+        area_code: document.getElementById('area_code').value,
+        contact_email: document.getElementById('contact_email').value.trim(),
+        line_mode: 'new',
+      }),
+    });
+    if (res.error) throw new Error(res.error);
+    sessionStorage.setItem('novia_provisioning', '1');
+    sessionStorage.setItem('novia_show_link_guide', '1');
+    location.href = '/dashboard.html?activating=1';
+  } catch (ex) {
+    err.textContent = ex.message || 'Erreur';
+    err.hidden = false;
+  }
+};
+</script>
+</body>
+</html>

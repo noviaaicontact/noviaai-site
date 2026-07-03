@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup NoviaAI | Checklist</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<style>
+body{background:#eef2f7}
+.hero{background:linear-gradient(135deg,#13325b,#1c4a86);color:#fff;padding:32px 20px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:1.5rem}
+.wrap{max-width:720px;margin:24px auto;padding:0 16px 60px}
+.step{background:#fff;border:1px solid #e3e8f0;border-radius:14px;padding:20px;margin-bottom:14px}
+.step h2{margin:0 0 8px;font-size:1.05rem;color:#13325b;display:flex;align-items:center;gap:10px}
+.step h2 .n{background:#13325b;color:#fff;width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem}
+.step p{margin:0;color:#5b667a;font-size:.92rem;line-height:1.5}
+.step .status{margin-top:10px;font-weight:700;font-size:.88rem}
+.step.done{border-color:#bfe3cd;background:#f8fffb}
+.step.done .status{color:#1c7a4a}
+.step.pending .status{color:#b25e00}
+.step.wait .status{color:#5b667a}
+code{background:#f0f3f8;padding:2px 6px;border-radius:4px;font-size:.85rem}
+.actions{margin-top:24px;text-align:center}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🔧 Setup NoviaAI Rattrapeur</h1>
+  <p>Suivez les étapes dans l'ordre. Collez vos clés dans le fichier <code>.env</code>.</p>
+</div>
+<div class="wrap">
+  <div id="steps"></div>
+  <div class="actions">
+    <a href="/" class="btn btn-ghost">← Landing</a>
+    <a href="/dashboard.html?demo=1" class="btn btn-primary" style="margin-left:8px">Démo SMS</a>
+  </div>
+  <p class="muted" style="text-align:center;margin-top:20px;font-size:.85rem">
+    Terminal : <code>npm run setup-check</code> · Dev : <code>npm run dev</code> → <code>http://localhost:8888</code>
+  </p>
+</div>
+<script>
+const STEPS = [
+  {
+    title: 'Supabase — base de données + auth',
+    pending: 'Créez un projet sur supabase.com, exécutez schema.sql, collez URL + clés dans .env',
+    done: 'Supabase connecté',
+    check: (c) => c.supabaseUrl && c.supabaseAnonKey,
+  },
+  {
+    title: 'Stripe — paiements',
+    pending: '3 produits récurrents (149/299/499 $), clés + Price ID dans .env',
+    done: 'Stripe configuré',
+    check: (c) => c.stripeConfigured,
+  },
+  {
+    title: 'Twilio — SMS + appels',
+    pending: 'Account SID + Auth Token dans .env, ~20 $ de crédit',
+    done: 'Twilio configuré (auto-provision ' + (true ? 'ON' : 'OFF') + ')',
+    check: (c) => c.twilioConfigured,
+  },
+  {
+    title: 'Resend — courriels (optionnel)',
+    pending: 'RESEND_API_KEY dans .env pour alertes courriel',
+    done: 'Resend configuré',
+    check: (c) => c.resendConfigured,
+  },
+  {
+    title: 'Lancer en local',
+    pending: 'npm run dev → tester inscription sur /signup.html',
+    done: 'Prêt à tester localement',
+    check: (c) => c.supabaseUrl && c.stripeConfigured && c.twilioConfigured,
+  },
+];
+
+async function load() {
+  let cfg = {};
+  try {
+    const res = await fetch('/.netlify/functions/api-config');
+    cfg = await res.json();
+  } catch (e) {
+    cfg = { error: true };
+  }
+  const el = document.getElementById('steps');
+  el.innerHTML = STEPS.map((s, i) => {
+    const pass = s.check(cfg);
+    const cls = pass ? 'done' : (i === 0 || STEPS[i-1].check(cfg) ? 'pending' : 'wait');
+    return `<div class="step ${cls}">
+      <h2><span class="n">${i+1}</span> ${s.title}</h2>
+      <p>${pass ? s.done : s.pending}</p>
+      <div class="status">${pass ? '✅ Fait' : (cls === 'wait' ? '⏳ En attente de l\'étape précédente' : '➡️ À faire maintenant')}</div>
+    </div>`;
+  }).join('');
+}
+load();
+setInterval(load, 5000);
+</script>
+</body>
+</html>

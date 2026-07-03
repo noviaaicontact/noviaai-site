@@ -1,0 +1,838 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau de bord | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+<script src="/assets/chatbot-kb.js"></script>
+</head>
+<body>
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="/" class="logo">Novia<span>AI</span></a>
+    <p id="bizName" style="font-weight:700;margin:0 0 4px;font-size:.95rem">…</p>
+    <p id="liveStatus" class="live-badge" style="display:none;margin-bottom:20px">Ligne active</p>
+    <nav class="dash-nav">
+      <a href="#" id="tabHome" class="active"> Accueil</a>
+      <a href="#" id="tabInstall"> Publier</a>
+      <a href="#" id="tabChatbot"> Chatbot</a>
+      <a href="#" id="tabMsgs"> Conversations</a>
+      <a href="#" id="tabSettings"> Paramètres</a>
+    </nav>
+    <div style="flex:1"></div>
+    <a href="#" id="logout" style="color:rgba(255,255,255,.5);font-size:.85rem;padding:10px 14px">Déconnexion</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Tableau de bord</h1>
+      <p class="muted" style="margin:0">Rattrapeur d'appels manqués — SMS auto + inbox</p>
+    </div>
+
+    <div id="provBox" class="prov-box" hidden>
+      <strong id="provTitle">⏳ Activation en cours…</strong>
+      <p id="provMsg" class="muted" style="margin:8px 0 0;font-size:.92rem">Achat de votre numéro local (~1–2 min).</p>
+      <button class="btn btn-ghost btn-sm" id="btnRetryProv" style="margin-top:12px;display:none">Réessayer</button>
+    </div>
+
+    <div id="billingBanner" class="prov-box" hidden style="margin-bottom:16px">
+      <strong id="billingTitle">Essai gratuit</strong>
+      <p id="billingMsg" class="muted" style="margin:8px 0 12px;font-size:.92rem"></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button type="button" class="btn btn-accent btn-sm" id="btnSubscribe">Activer mon abonnement</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnManageBilling" hidden>Gérer la facturation</button>
+      </div>
+    </div>
+
+    <div class="checklist" id="checklist">
+      <h3>Pour bien démarrer</h3>
+      <div class="check-item" id="chk1"><span class="check"></span> Configurer votre commerce</div>
+      <div class="check-item" id="chk2"><span class="check"></span> Ligne SMS NoviaAI créée</div>
+      <div class="check-item" id="chk3"><span class="check"></span> Mettre votre numéro sur Google</div>
+      <div class="check-item" id="chk4"><span class="check"></span> Tester un appel manqué</div>
+    </div>
+
+    <div class="roi-card" id="roiBox" style="display:none">
+      <div style="opacity:.75;font-size:.85rem">Revenus estimés récupérés (30 j)</div>
+      <div class="big" id="roiVal">0 $ – 0 $</div>
+      <div style="opacity:.85;font-size:.9rem;margin-top:8px"><span id="leadCount">0</span> leads · <span id="missedCount">0</span> appels rattrapés</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="label">Statut</div><div class="n" id="statStatus" style="font-size:1rem">—</div></div>
+      <div class="stat"><div class="label">Forfait</div><div class="n" id="statPlan" style="font-size:1rem">—</div></div>
+      <div class="stat"><div class="label">Messages (30j)</div><div class="n" id="statMsgs">0</div></div>
+      <div class="stat"><div class="label">Votre ligne</div><div class="n" id="statPhone" style="font-size:.85rem;word-break:break-all">—</div></div>
+    </div>
+
+    <div class="card" id="panelHome">
+      <h2 style="margin-top:0;font-size:1.1rem">Votre ligne pro NoviaAI</h2>
+      <p class="muted" id="phonePanelDesc">Mettez ce numéro sur Google, Facebook et votre site. Vos clients appellent ici — votre cellulaire sonne.</p>
+      <div class="number-display">
+        <div class="muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Numéro à publier en ligne</div>
+        <div class="num" id="bigPublicPhone">En activation…</div>
+      </div>
+      <p class="muted" id="cellRingHint" style="font-size:.85rem;margin:12px 0 0" hidden></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+        <button class="btn btn-accent" id="btnOpenInstall">Publier mon numéro</button>
+        <button class="btn btn-ghost" id="btnOpenChatbot">Configurer chatbot</button>
+        <button class="btn btn-ghost" id="btnOpenSettings">Paramètres</button>
+      </div>
+    </div>
+
+    <div class="card" id="panelInstall" hidden>
+      <h2 style="margin-top:0;font-size:1.1rem">Publier votre numéro</h2>
+      <p class="muted" style="margin:0 0 20px">Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.</p>
+
+      <div class="install-plan recommended">
+        <span class="install-plan-badge">2 minutes · Zéro config téléphone</span>
+        <h3>Votre numéro pro</h3>
+        <div class="install-code-row">
+          <code id="installTwilioNumA">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioA">Copier</button>
+        </div>
+        <ol class="forward-steps" style="margin:12px 0;font-size:.9rem">
+          <li>Copiez le numéro ci-dessus</li>
+          <li><strong>Google Business</strong> → Modifier → Téléphone → collez ce numéro</li>
+          <li>Faites pareil sur Facebook, votre site web ou carte d'affaires</li>
+          <li>Test : appelez ce numéro depuis un autre téléphone, ne répondez pas → SMS auto au client</li>
+        </ol>
+        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneA">C'est fait — j'ai publié mon numéro</button>
+      </div>
+
+      <details class="install-advanced" style="margin-top:20px">
+        <summary>Je veux garder mon ancien numéro (581, 418…) — option avancée</summary>
+        <p class="muted" style="font-size:.88rem;margin:12px 0">Nécessite un renvoi d'appel chez votre opérateur. Contactez-nous pour le portage (recommandé) ou suivez les codes ci-dessous.</p>
+        <div class="install-code-row">
+          <div style="flex:1"><div class="muted" style="font-size:.75rem">Réinitialiser</div><code>#21#</code></div>
+          <button type="button" class="btn btn-ghost btn-sm" data-copy-code="#21#">Copier</button>
+        </div>
+        <div class="install-code-row">
+          <div style="flex:1"><div class="muted" style="font-size:.75rem">Renvoi si pas de réponse</div><code id="installMmiCode">—</code></div>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyMmi">Copier</button>
+        </div>
+        <p class="install-warn">Ne pas utiliser Réglages → Renvoi d'appel sur iPhone.</p>
+      </details>
+    </div>
+
+    <div class="card" id="panelSettings" hidden>
+      <h2 style="margin-top:0;font-size:1.1rem">Paramètres</h2>
+      <p class="muted" style="margin:0 0 24px;font-size:.9rem">Nom du commerce, numéros et message SMS de rattrapage.</p>
+
+      <form id="settingsForm">
+        <div class="settings-section">
+          <h3>Commerce</h3>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="setBusinessName">Nom du commerce *</label>
+              <input id="setBusinessName" required>
+            </div>
+            <div class="settings-field">
+              <label for="setBusinessPhone">Cellulaire où vous répondez *</label>
+              <input id="setBusinessPhone" type="tel" required placeholder="581-909-5332">
+              <small class="settings-hint">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setContactEmail">Courriel alertes</label>
+              <input id="setContactEmail" type="email">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setMissedSms">Message SMS appel manqué *</label>
+              <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Désolé, on a manqué votre appel…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <button type="submit" class="btn btn-primary" id="btnSaveSettings">Enregistrer les paramètres</button>
+          <p id="settingsOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0"> Paramètres enregistrés</p>
+          <p id="settingsErr" class="err" hidden style="margin:0"></p>
+        </div>
+      </form>
+    </div>
+
+    <div class="card" id="panelChatbot" hidden>
+      <h2 style="margin-top:0;font-size:1.1rem">Chatbot SMS</h2>
+      <p class="muted" style="margin:0 0 24px;font-size:.9rem">Comme Tidio ou GoHighLevel — configurez votre agente, importez votre site, testez avant de publier.</p>
+
+      <form id="chatbotForm">
+        <div class="settings-section">
+          <h3>Personnalité</h3>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="setAgentName">Prénom de l'agente *</label>
+              <input id="setAgentName" required placeholder="Léa">
+            </div>
+            <div class="settings-field">
+              <label for="setBusinessType">Type de commerce</label>
+              <input id="setBusinessType" placeholder="Salon de coiffure">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setAgentTone">Ton / personnalité</label>
+              <input id="setAgentTone" placeholder="Français québécois, chaleureux et professionnel">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setWelcomeSms">Message d'accueil SMS</label>
+              <textarea id="setWelcomeSms" rows="2" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Commerce & horaires</h3>
+          <div class="settings-grid">
+            <div class="settings-field settings-field-wide">
+              <label for="setWebsiteUrl">Site web (référence)</label>
+              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
+              <small class="settings-hint">Optionnel — importez les pages ci-dessous pour entraîner l'IA</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setReservationUrl">Lien de réservation</label>
+              <input id="setReservationUrl" type="url" placeholder="https://calendly.com/votre-commerce">
+            </div>
+            <div class="settings-field">
+              <label for="setAddress">Adresse</label>
+              <input id="setAddress" placeholder="245, rue Principale">
+            </div>
+            <div class="settings-field">
+              <label for="setCity">Ville</label>
+              <input id="setCity" placeholder="Lévis">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label>Horaires d'ouverture</label>
+              <div class="hours-grid" id="hoursGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Services</h3>
+          <div id="servicesList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnAddService" style="margin-top:8px">+ Ajouter un service</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>FAQ</h3>
+          <div id="faqList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnAddFaq" style="margin-top:8px">+ Ajouter une question</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Politiques</h3>
+          <div class="settings-field settings-field-wide">
+            <textarea id="setPolicies" rows="3" placeholder="Annulation 24 h à l'avance&#10;Paiement: carte, Interac"></textarea>
+            <small class="settings-hint">Une politique par ligne</small>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Sources — site web & documents</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Importez votre site ou uploadez un menu tarifs (PDF, Word, TXT). L'IA indexe le contenu automatiquement.</p>
+          <div id="kbMigrationWarn" class="install-warn" hidden>Migration Supabase requise pour l'import URL — exécutez <code>supabase/schema-v6-knowledge-base.sql</code></div>
+          <div class="kb-sources-box">
+            <div class="kb-import-row">
+              <input type="url" id="kbUrlInput" placeholder="https://votre-site.ca/services">
+              <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Importer URL</button>
+            </div>
+            <div class="kb-import-row" style="margin-top:10px">
+              <input type="file" id="kbFileInput" accept=".pdf,.doc,.docx,.txt,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnImportFile">Uploader fichier</button>
+            </div>
+            <small class="settings-hint" style="display:block;margin:6px 0 10px">PDF, DOCX, DOC, TXT, CSV — max 4 Mo</small>
+            <p id="kbImportErr" class="err" hidden style="margin:0 0 8px"></p>
+            <ul class="kb-sources-list" id="kbSourcesList"></ul>
+          </div>
+        </div>
+
+        <div class="settings-section kb-tester">
+          <h3>Tester le chatbot</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Posez une question comme un client — voyez la réponse et les sources utilisées.</p>
+          <div class="kb-tester-row">
+            <input type="text" id="kbTestQuestion" placeholder="C'est combien une coupe femme?">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnKbTest">Tester</button>
+          </div>
+          <div id="kbTestResult" class="kb-test-result" hidden></div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <button type="submit" class="btn btn-primary" id="btnSaveChatbot">Enregistrer le chatbot</button>
+          <p id="chatbotOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0"> Chatbot enregistré</p>
+          <p id="chatbotErr" class="err" hidden style="margin:0"></p>
+        </div>
+      </form>
+    </div>
+
+    <div class="card" id="panelMsgs" hidden>
+      <h2 style="margin-top:0;font-size:1.1rem">Inbox — conversations centralisées</h2>
+      <p class="muted" style="margin:0 0 16px;font-size:.88rem">Appels manqués, réponses clients — répondez ici par SMS.</p>
+      <div class="inbox-layout">
+        <div class="inbox-list" id="inboxList"><div class="inbox-empty">Chargement…</div></div>
+        <div class="inbox-thread" id="inboxThread"><div class="inbox-empty">Sélectionnez une conversation</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+let tenant = null;
+let pollTimer = null;
+const DEMO = new URLSearchParams(location.search).get('demo') === '1';
+
+function parseServices(text) {
+  return text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+    const parts = line.split('—').map(s => s.trim());
+    return { nom: parts[0], prix: parts[1] || '', description_courte: parts[0] };
+  });
+}
+
+function servicesToText(services) {
+  if (!Array.isArray(services) || !services.length) return '';
+  return services.map(s => (s.prix ? `${s.nom || s.description_courte} — ${s.prix}` : (s.nom || s.description_courte || ''))).filter(Boolean).join('\n');
+}
+
+function faqToText(faq) {
+  if (!Array.isArray(faq) || !faq.length) return '';
+  return faq.map(f => `Q: ${f.question}\nR: ${f.reponse}`).join('\n\n');
+}
+
+function policiesToText(policies) {
+  if (!Array.isArray(policies) || !policies.length) return '';
+  return policies.join('\n');
+}
+
+function populateSettingsForm(t) {
+  if (!t) return;
+  document.getElementById('setBusinessName').value = t.business_name || '';
+  document.getElementById('setBusinessPhone').value = t.phone_forward || '';
+  document.getElementById('setContactEmail').value = t.contact_email || t.email || '';
+  document.getElementById('setMissedSms').value = t.missed_call_sms || '';
+}
+
+function populateChatbotForm(t) {
+  if (window.NoviaChatbot) NoviaChatbot.populateChatbotForm(t);
+}
+
+function publicPhoneDisplay(t) {
+  if (!t) return 'Activation…';
+  if (t.twilio_number && t.provisioning_status === 'active') return formatDial(t.twilio_number);
+  return 'En activation…';
+}
+
+function displayPhone(t) {
+  return publicPhoneDisplay(t);
+}
+
+function applyTenantToUI() {
+  if (!tenant) return;
+  document.getElementById('bizName').textContent = tenant.business_name;
+  document.getElementById('statStatus').textContent = tenant.subscription_status;
+  document.getElementById('statPlan').textContent = (tenant.plan || 'pro').toUpperCase();
+  const pub = publicPhoneDisplay(tenant);
+  document.getElementById('statPhone').textContent = pub;
+  document.getElementById('bigPublicPhone').textContent = pub;
+  const ringHint = document.getElementById('cellRingHint');
+  if (tenant.phone_forward && tenant.provisioning_status === 'active') {
+    ringHint.hidden = false;
+    ringHint.textContent = 'Votre cellulaire sonne quand on appelle ce numéro : ' + formatDial(tenant.phone_forward);
+  } else {
+    ringHint.hidden = true;
+  }
+  populateSettingsForm(tenant);
+  populateChatbotForm(tenant);
+  updateBillingUI(tenant);
+  const live = tenant.provisioning_status === 'active' && tenant.twilio_number;
+  document.getElementById('liveStatus').style.display = live ? 'inline-flex' : 'none';
+  document.getElementById('phonePanelDesc').textContent =
+    'Mettez ce numéro sur Google, Facebook et votre site. Vos clients appellent ici — votre cellulaire sonne.';
+  updateInstallWizard();
+  updateChecklist();
+  if (sessionStorage.getItem('novia_show_link_guide') === '1' && live) {
+    sessionStorage.removeItem('novia_show_link_guide');
+    show('panelInstall');
+  }
+}
+
+function mmiNoAnswerCode(twilioNumber) {
+  const d = digitsOnly(twilioNumber);
+  const dial = d.length === 10 ? `1${d}` : d;
+  return `*61*${dial}#`;
+}
+
+function markInstallDone() {
+  localStorage.setItem(forwardDoneKey(), '1');
+  localStorage.setItem(installPrefsKey() + '_tested', '1');
+  markCheck('chk3', true);
+  markCheck('chk4', true);
+}
+
+function updateInstallWizard() {
+  if (!tenant || !tenant.twilio_number) return;
+  const num = formatDial(tenant.twilio_number);
+  const mmi = mmiNoAnswerCode(tenant.twilio_number);
+  const elA = document.getElementById('installTwilioNumA');
+  const elMmi = document.getElementById('installMmiCode');
+  if (elA) elA.textContent = num;
+  if (elMmi) elMmi.textContent = mmi;
+}
+
+function initInstallWizard() {
+  async function copyText(text, btn, okLabel) {
+    try {
+      await navigator.clipboard.writeText(text);
+      if (btn) { btn.textContent = okLabel || 'Copié!'; setTimeout(() => { btn.textContent = 'Copier'; }, 2000); }
+    } catch { alert(text); }
+  }
+  document.getElementById('btnCopyTwilioA').onclick = () => {
+    copyText(document.getElementById('installTwilioNumA').textContent.trim(), document.getElementById('btnCopyTwilioA'));
+  };
+  document.getElementById('btnCopyMmi').onclick = () => {
+    copyText(document.getElementById('installMmiCode').textContent.trim(), document.getElementById('btnCopyMmi'));
+  };
+  document.querySelectorAll('[data-copy-code]').forEach((btn) => {
+    btn.onclick = () => copyText(btn.dataset.copyCode, btn);
+  });
+  document.getElementById('btnInstallDoneA').onclick = () => {
+    markInstallDone();
+    document.getElementById('btnInstallDoneA').textContent = 'Terminé';
+    document.getElementById('btnInstallDoneA').disabled = true;
+  };
+  document.getElementById('btnOpenInstall').onclick = (e) => {
+    e.preventDefault();
+    show('panelInstall');
+  };
+}
+
+function installPrefsKey() {
+  return tenant && tenant.id ? `novia_install_prefs_${tenant.id}` : '';
+}
+
+initInstallWizard();
+
+function digitsOnly(raw) {
+  return String(raw || '').replace(/\D/g, '');
+}
+
+function formatDial(raw) {
+  const d = digitsOnly(raw);
+  if (d.length === 11 && d.startsWith('1')) {
+    return `+1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+  }
+  if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+  return raw || '—';
+}
+
+function forwardDoneKey() {
+  return tenant && tenant.id ? `novia_forward_done_${tenant.id}` : '';
+}
+
+function needsForwardSetup() {
+  return !!(tenant && tenant.twilio_number && tenant.provisioning_status === 'active');
+}
+
+function updateChecklist() {
+  if (!tenant) return;
+  markCheck('chk1', tenant.onboarding_done);
+  markCheck('chk2', tenant.provisioning_status === 'active' && tenant.twilio_number);
+  markCheck('chk3', !needsForwardSetup() || localStorage.getItem(forwardDoneKey()) === '1');
+  markCheck('chk4', localStorage.getItem(installPrefsKey() + '_tested') === '1');
+}
+
+function updateBillingUI(t) {
+  if (!t || DEMO) return;
+  const box = document.getElementById('billingBanner');
+  const title = document.getElementById('billingTitle');
+  const msg = document.getElementById('billingMsg');
+  const btnSub = document.getElementById('btnSubscribe');
+  const btnPortal = document.getElementById('btnManageBilling');
+  if (!box) return;
+
+  const status = t.subscription_status || 'trialing';
+  const hasStripe = !!t.stripe_customer_id;
+  const trialEnd = t.trial_ends_at ? new Date(t.trial_ends_at) : null;
+  const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 14;
+
+  if (status === 'active' && hasStripe) {
+    box.hidden = true;
+    if (btnPortal) btnPortal.hidden = false;
+    return;
+  }
+
+  box.hidden = false;
+  if (['canceled', 'inactive'].includes(status)) {
+    box.className = 'prov-box';
+    title.textContent = 'Abonnement inactif';
+    msg.textContent = 'Votre ligne NoviaAI est suspendue. Réactivez votre forfait pour continuer.';
+    btnSub.textContent = 'Réactiver mon abonnement';
+  } else {
+    box.className = 'prov-box success';
+    title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
+    msg.textContent = `Forfait ${(t.plan || 'pro').toUpperCase()} · Ajoutez votre carte pour continuer après l'essai.`;
+    btnSub.textContent = 'Ajouter ma carte';
+  }
+  if (btnPortal) btnPortal.hidden = !hasStripe;
+}
+
+async function startCheckout() {
+  const plan = (tenant && tenant.plan) || 'pro';
+  const res = await NoviaApp.api('api-stripe-checkout', {
+    method: 'POST',
+    body: JSON.stringify({ plan }),
+  });
+  if (res.error) throw new Error(res.error);
+  if (res.url) location.href = res.url;
+}
+
+async function openBillingPortal() {
+  const res = await NoviaApp.api('api-stripe-portal', { method: 'POST', body: '{}' });
+  if (res.error) throw new Error(res.error);
+  if (res.url) location.href = res.url;
+}
+
+function loadDemoData() {
+  tenant = {
+    business_name: 'Salon Éclat',
+    business_type: 'Salon de coiffure',
+    welcome_sms: 'Bonjour! Ici Léa, du Salon Éclat. Comment puis-je vous aider?',
+    onboarding_done: true,
+    provisioning_status: 'active',
+    website_url: 'https://exemple-saloneclat.ca',
+    existing_business_number: '+1 (581) 909-5332',
+    twilio_number: '+1 (418) 555-0142',
+    phone_forward: '581-909-5332',
+    area_code: '418',
+    contact_email: 'contact@saloneclat.ca',
+    agent_name: 'Léa',
+    agent_tone: 'Français québécois, chaleureux et professionnel',
+    services: [
+      { nom: 'Coupe femme', prix: 'Ã  partir de 45 $', description_courte: 'Coupe femme' },
+      { nom: 'Balayage', prix: 'Ã  partir de 120 $', description_courte: 'Balayage' },
+    ],
+    reservation_url: 'https://calendly.com/exemple',
+    address_line: '245, rue Principale',
+    city: 'Lévis',
+    faq: [{ question: 'Faut-il un rendez-vous?', reponse: 'Oui, on fonctionne sur rendez-vous.' }],
+    hours: {
+      lundi: { ouvert: true, debut: '9h', fin: '18h' },
+      mardi: { ouvert: true, debut: '9h', fin: '18h' },
+      mercredi: { ouvert: true, debut: '9h', fin: '18h' },
+      jeudi: { ouvert: true, debut: '9h', fin: '21h' },
+      vendredi: { ouvert: true, debut: '9h', fin: '21h' },
+      samedi: { ouvert: true, debut: '9h', fin: '16h' },
+      dimanche: { ouvert: false, debut: '9h', fin: '16h' },
+    },
+    policies: ['Annulation 24h Ã  l\'avance', 'Paiement: carte, argent, Interac'],
+    missed_call_sms: 'Bonjour! Désolée, on a manqué votre appel Ã  Salon Éclat 😊',
+    subscription_status: 'trialing',
+    plan: 'pro',
+    avg_client_value: 75,
+  };
+  applyTenantToUI();
+  markCheck('chk1', true);
+  markCheck('chk2', true);
+  markCheck('chk3', true);
+  markCheck('chk4', true);
+  document.getElementById('roiBox').style.display = 'block';
+  document.getElementById('roiVal').textContent = '1 125 $ – 2 850 $';
+  document.getElementById('statMsgs').textContent = '47';
+  document.getElementById('missedCount').textContent = '12';
+  document.getElementById('leadCount').textContent = '8';
+  inboxData = [
+    { caller_phone: '+1 (418) 555-7821', last_preview: 'Oui jeudi 15 h pour une coupe', has_lead: true, missed_calls: 1, last_at: new Date().toISOString(), lead_summary: 'RDV jeudi 15 h â€” coupe femme' },
+    { caller_phone: '+1 (581) 555-3390', last_preview: 'C\'est combien un balayage?', has_lead: false, missed_calls: 2, last_at: new Date(Date.now() - 86400000).toISOString() },
+    { caller_phone: '+1 (514) 555-9012', last_preview: 'Merci, je passe samedi', has_lead: true, missed_calls: 0, last_at: new Date(Date.now() - 172800000).toISOString(), lead_summary: 'Visite samedi AM' },
+  ];
+  renderInboxList();
+  openThreadDemo('+1 (418) 555-7821');
+  if (!document.getElementById('demoBanner')) {
+    const banner = document.createElement('div');
+    banner.id = 'demoBanner';
+    banner.className = 'prov-box success';
+    banner.style.marginBottom = '16px';
+    banner.innerHTML = '<strong>Mode démo</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Données fictives pour voir le SaaS complet. <a href="/signup.html?plan=pro">Créer un vrai compte →</a></p>';
+    document.querySelector('.dash-main').insertBefore(banner, document.querySelector('.dash-main').firstChild.nextSibling);
+  }
+}
+
+function showOfflineBanner() {
+  if (document.getElementById('offlineBanner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'offlineBanner';
+  banner.className = 'prov-box';
+  banner.style.marginBottom = '16px';
+  banner.style.borderColor = 'var(--err, #c0392b)';
+  banner.innerHTML = '<strong>Serveur local arrêté</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Relancez <code>OUVRIR-NOVIAAI.bat</code> et gardez la fenêtre ouverte, puis rechargez cette page.</p>';
+  document.querySelector('.dash-main').prepend(banner);
+}
+
+function openThreadDemo(phone) {
+  selectedPhone = phone;
+  renderInboxList();
+  const thread = document.getElementById('inboxThread');
+  const msgs = phone.includes('7821') ? [
+    { direction: 'outbound', body: 'Bonjour! Désolée, on a manqué votre appel Ã  Salon Éclat 😊 On peut vous aider par texto â€” qu\'est-ce que vous cherchiez?', created_at: new Date(Date.now() - 3600000).toISOString() },
+    { direction: 'inbound', body: 'C\'est combien une coupe femme?', created_at: new Date(Date.now() - 3500000).toISOString() },
+    { direction: 'outbound', body: 'Coupe femme Ã  partir de 45 $. On a des places jeudi PM â€” voulez-vous qu\'on vous réserve?', created_at: new Date(Date.now() - 3400000).toISOString() },
+    { direction: 'inbound', body: 'Oui jeudi 15 h', created_at: new Date(Date.now() - 3300000).toISOString() },
+    { direction: 'outbound', body: 'Parfait! Je note jeudi 15 h. Quel est votre prénom?', created_at: new Date(Date.now() - 3200000).toISOString() },
+  ] : [
+    { direction: 'outbound', body: 'Bonjour! Salon Éclat ici â€” comment puis-je vous aider?', created_at: new Date().toISOString() },
+    { direction: 'inbound', body: 'Horaires samedi?', created_at: new Date().toISOString() },
+  ];
+  thread.innerHTML = msgs.map(m => {
+    const cls = m.direction === 'inbound' ? 'in' : 'out';
+    const label = m.direction === 'inbound' ? 'Client' : 'NoviaAI';
+    return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${m.body.replace(/</g,'&lt;')}</div>`;
+  }).join('');
+}
+
+(async () => {
+  try {
+    if (window.NoviaChatbot) {
+      NoviaChatbot.initChatbotPanel({
+        demo: DEMO,
+        onSaved: (t) => { tenant = t || tenant; applyTenantToUI(); },
+      });
+    }
+    if (DEMO) {
+      loadDemoData();
+      return;
+    }
+    const session = await NoviaApp.requireAuth('/login.html');
+    if (!session) return;
+    if (location.search.includes('paid=1')) alert('Merci! Votre abonnement est actif.');
+    await loadTenant();
+    await loadStats();
+    if (location.search.includes('activating=1') || sessionStorage.getItem('novia_provisioning')) {
+      startProvisioningPoll();
+    }
+  } catch (ex) {
+    console.error(ex);
+    showOfflineBanner();
+    document.getElementById('bizName').textContent = 'Connexion impossible';
+  }
+})();
+
+function markCheck(id, done) {
+  const el = document.getElementById(id);
+  if (done) { el.classList.add('done'); el.querySelector('.check').textContent = 'âœ“'; }
+}
+
+function startProvisioningPoll() {
+  document.getElementById('provBox').hidden = false;
+  pollTimer = setInterval(async () => {
+    await loadTenant();
+    if (tenant && tenant.provisioning_status === 'active' && tenant.twilio_number) {
+      clearInterval(pollTimer);
+      sessionStorage.removeItem('novia_provisioning');
+      document.getElementById('provBox').className = 'prov-box success';
+      document.getElementById('provTitle').textContent = '✅ Ligne NoviaAI prête';
+      document.getElementById('provMsg').textContent = 'Copiez votre numéro et publiez-le sur Google.';
+      updateChecklist();
+      show('panelInstall');
+    }
+    if (tenant && tenant.provisioning_status === 'failed') {
+      document.getElementById('provTitle').textContent = 'Activation echouee';
+      document.getElementById('provMsg').textContent = tenant.provisioning_error || 'Erreur inconnue';
+      document.getElementById('btnRetryProv').style.display = 'inline-flex';
+    }
+  }, 5000);
+}
+
+async function loadTenant() {
+  const data = await NoviaApp.api('api-tenant');
+  if (!data.tenant) return;
+  tenant = data.tenant;
+  if (!tenant.onboarding_done) { location.href = '/onboarding.html'; return; }
+
+  applyTenantToUI();
+
+  if (tenant.provisioning_status === 'provisioning' || tenant.provisioning_status === 'pending') {
+    document.getElementById('provBox').hidden = false;
+  }
+}
+
+async function loadStats() {
+  const s = await NoviaApp.api('api-stats');
+  if (s.error) return;
+  document.getElementById('statMsgs').textContent = s.messages_30d || 0;
+  document.getElementById('missedCount').textContent = s.missed_calls_30d || 0;
+  document.getElementById('leadCount').textContent = s.leads_total || 0;
+  if (s.roi_estimated) {
+    document.getElementById('roiBox').style.display = 'block';
+    document.getElementById('roiVal').textContent = s.roi_estimated.low + ' $ – ' + s.roi_estimated.high + ' $';
+  }
+  const msgs = await NoviaApp.api('api-messages');
+  renderMsgs(msgs.messages || []);
+  await loadInbox();
+}
+
+let inboxData = [];
+let selectedPhone = null;
+
+async function loadInbox() {
+  const data = await NoviaApp.api('api-conversations');
+  inboxData = data.conversations || [];
+  renderInboxList();
+}
+
+function renderInboxList() {
+  const list = document.getElementById('inboxList');
+  if (!inboxData.length) {
+    list.innerHTML = '<div class="inbox-empty">Aucune conversation.<br>Partagez votre numéro NoviaAI.</div>';
+    return;
+  }
+  list.innerHTML = inboxData.map(c => {
+    const active = selectedPhone === c.caller_phone ? ' active' : '';
+    const badge = c.has_lead ? '<span class="inbox-badge lead">Lead</span>' : '';
+    const missed = c.missed_calls ? `<span class="inbox-badge">${c.missed_calls} appel(s)</span>` : '';
+    const when = c.last_at ? new Date(c.last_at).toLocaleString('fr-CA', { dateStyle: 'short', timeStyle: 'short' }) : '';
+    return `<div class="inbox-item${active}" data-phone="${c.caller_phone.replace(/"/g,'')}">
+      <div class="phone">${c.caller_phone}</div>
+      <div class="preview">${(c.last_preview || c.lead_summary || '…').replace(/</g,'&lt;')}</div>
+      <div class="meta">${badge}${missed}<span>${when}</span></div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.inbox-item').forEach(el => {
+    el.onclick = () => openThread(el.dataset.phone);
+  });
+}
+
+async function openThread(phone) {
+  if (DEMO) { openThreadDemo(phone); return; }
+  selectedPhone = phone;
+  renderInboxList();
+  const thread = document.getElementById('inboxThread');
+  thread.innerHTML = '<div class="inbox-empty">Chargement…</div>';
+  const data = await NoviaApp.api('api-conversations?phone=' + encodeURIComponent(phone));
+  const msgs = (data.conversation && data.conversation.messages) || [];
+  renderThread(phone, msgs);
+}
+
+function renderThread(phone, msgs) {
+  const thread = document.getElementById('inboxThread');
+  const bubbles = msgs.length
+    ? msgs.map(m => {
+        const cls = m.direction === 'inbound' ? 'in' : 'out';
+        const label = m.direction === 'inbound' ? 'Client' : 'NoviaAI';
+        return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${m.body.replace(/</g,'&lt;')}</div>`;
+      }).join('')
+    : '<div class="inbox-empty" style="padding:24px">Aucun message — écrivez au client ci-dessous.</div>';
+  thread.innerHTML = `
+    <div class="inbox-thread-wrap">
+      <div class="inbox-messages" id="inboxMessages">${bubbles}</div>
+      <form class="inbox-reply" id="inboxReplyForm">
+        <input type="text" id="inboxReplyInput" placeholder="Répondre par SMS…" maxlength="1600" required autocomplete="off">
+        <button type="submit" class="btn btn-accent btn-sm">Envoyer</button>
+      </form>
+    </div>`;
+  const box = document.getElementById('inboxMessages');
+  if (box) box.scrollTop = box.scrollHeight;
+  document.getElementById('inboxReplyForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('inboxReplyInput');
+    const text = input.value.trim();
+    if (!text || !phone) return;
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      const res = await NoviaApp.api('api-sms-reply', {
+        method: 'POST',
+        body: JSON.stringify({ phone, body: text }),
+      });
+      if (res.error) throw new Error(res.error);
+      input.value = '';
+      await openThread(phone);
+      await loadInbox();
+    } catch (ex) {
+      alert(ex.message || 'Envoi échoué');
+    } finally {
+      btn.disabled = false;
+    }
+  };
+}
+
+function renderMsgs(msgs) {
+  /* legacy flat list â€” inbox preferred */
+}
+
+function setActiveTab(id) {
+  document.querySelectorAll('.dash-nav a').forEach(a => a.classList.remove('active'));
+  if (id === 'panelHome') document.getElementById('tabHome').classList.add('active');
+  if (id === 'panelInstall') document.getElementById('tabInstall').classList.add('active');
+  if (id === 'panelChatbot') document.getElementById('tabChatbot').classList.add('active');
+  if (id === 'panelMsgs') document.getElementById('tabMsgs').classList.add('active');
+  if (id === 'panelSettings') document.getElementById('tabSettings').classList.add('active');
+}
+
+document.getElementById('tabHome').onclick = e => { e.preventDefault(); show('panelHome'); };
+document.getElementById('tabInstall').onclick = e => { e.preventDefault(); show('panelInstall'); updateInstallWizard(); };
+document.getElementById('tabChatbot').onclick = e => { e.preventDefault(); show('panelChatbot'); if (tenant) populateChatbotForm(tenant); };
+document.getElementById('tabMsgs').onclick = e => { e.preventDefault(); show('panelMsgs'); if (!DEMO) loadStats(); };
+document.getElementById('tabSettings').onclick = e => { e.preventDefault(); show('panelSettings'); if (tenant) populateSettingsForm(tenant); };
+document.getElementById('btnOpenSettings').onclick = () => {
+  show('panelSettings');
+  if (tenant) populateSettingsForm(tenant);
+};
+document.getElementById('btnOpenChatbot').onclick = () => {
+  show('panelChatbot');
+  if (tenant) populateChatbotForm(tenant);
+};
+function show(id) {
+  ['panelHome','panelInstall','panelChatbot','panelMsgs','panelSettings'].forEach(p => document.getElementById(p).hidden = p !== id);
+  setActiveTab(id);
+}
+if (DEMO) {
+  document.getElementById('logout').onclick = e => { e.preventDefault(); location.href = '/portail.html'; };
+  document.getElementById('settingsForm').onsubmit = e => {
+    e.preventDefault();
+    document.getElementById('settingsOk').hidden = false;
+  };
+} else {
+document.getElementById('logout').onclick = e => { e.preventDefault(); NoviaApp.signOut(); };
+document.getElementById('btnSubscribe').onclick = async () => {
+  try { await startCheckout(); } catch (ex) { alert(ex.message || 'Erreur Stripe'); }
+};
+document.getElementById('btnManageBilling').onclick = async () => {
+  try { await openBillingPortal(); } catch (ex) { alert(ex.message || 'Erreur portail'); }
+};
+document.getElementById('btnRetryProv').onclick = async () => {
+  await NoviaApp.api('api-provision', { method: 'POST', body: '{}' });
+  startProvisioningPoll();
+};
+document.getElementById('settingsForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const ok = document.getElementById('settingsOk');
+  const err = document.getElementById('settingsErr');
+  ok.hidden = true;
+  err.hidden = true;
+  if (!document.getElementById('setBusinessName').value.trim() || !document.getElementById('setBusinessPhone').value.trim()) {
+    err.textContent = 'Nom du commerce et numéro de téléphone sont requis.';
+    err.hidden = false;
+    return;
+  }
+  try {
+    const phone = document.getElementById('setBusinessPhone').value.trim();
+    const payload = {
+      settings: true,
+      business_name: document.getElementById('setBusinessName').value.trim(),
+      phone_forward: phone,
+      contact_email: document.getElementById('setContactEmail').value.trim(),
+      missed_call_sms: document.getElementById('setMissedSms').value.trim(),
+    };
+    const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });
+    if (res.error) throw new Error(res.error);
+    tenant = res.tenant || tenant;
+    applyTenantToUI();
+    ok.hidden = false;
+    loadStats();
+  } catch (ex) {
+    err.textContent = ex.message || 'Erreur enregistrement';
+    err.hidden = false;
+  }
+};
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmation | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body>
+<nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
+<div class="auth-split">
+  <div class="auth-panel">
+    <div class="form-box" style="text-align:center">
+      <h1>Confirmation en cours…</h1>
+      <p class="muted">Un instant, nous activons votre compte.</p>
+      <p id="msg" class="ok" hidden></p>
+      <p id="err" class="err" hidden></p>
+      <p class="muted" style="margin-top:20px"><a href="/login.html">Retour à la connexion</a></p>
+    </div>
+  </div>
+</div>
+<script>
+(async () => {
+  const errEl = document.getElementById('err');
+  const okEl = document.getElementById('msg');
+  try {
+    const sb = await NoviaApp.getSupabase();
+    if (!sb) throw new Error('Service indisponible — réessayez dans un instant.');
+
+    const q = new URLSearchParams(location.search);
+    const code = q.get('code');
+    if (code) {
+      const { error } = await sb.auth.exchangeCodeForSession(code);
+      if (error) throw error;
+    }
+
+    const { data: { session }, error: sessErr } = await sb.auth.getSession();
+    if (sessErr) throw sessErr;
+
+    if (session) {
+      okEl.textContent = 'Courriel confirmé! Redirection…';
+      okEl.hidden = false;
+      const plan = sessionStorage.getItem('novia_plan') || 'pro';
+      try {
+        await NoviaApp.api('api-tenant?plan=' + encodeURIComponent(plan), { method: 'GET' });
+      } catch (_) { /* tenant créé au login si besoin */ }
+      const data = await NoviaApp.api('api-tenant');
+      const dest = (data.tenant && data.tenant.onboarding_done) ? '/dashboard.html' : '/onboarding.html';
+      location.replace(dest);
+      return;
+    }
+
+    if (q.get('error_description')) throw new Error(q.get('error_description'));
+    location.replace('/login.html?confirmed=1');
+  } catch (ex) {
+    errEl.textContent = ex.message || 'Lien invalide ou expiré. Connectez-vous ou recommencez l\'inscription.';
+    errEl.hidden = false;
+  }
+})();
+</script>
+</body>
+</html>

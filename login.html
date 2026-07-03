@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body>
+<nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
+<div class="auth-split">
+  <div class="auth-panel">
+    <div class="form-box">
+      <h1>Bon retour 👋</h1>
+      <p class="muted">Accédez à votre tableau de bord</p>
+      <form id="form">
+        <label for="email">Courriel</label>
+        <input id="email" type="email" required autocomplete="email">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" required autocomplete="current-password">
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:24px">Se connecter</button>
+        <p id="ok" class="ok" hidden></p>
+        <p id="err" class="err" hidden></p>
+      </form>
+      <p class="muted" style="margin-top:20px">Pas de compte? <a href="/signup.html">Essai gratuit 14 jours</a></p>
+    </div>
+  </div>
+  <div class="auth-side">
+    <h2>Vos clients vous attendent.</h2>
+    <p style="opacity:.85;margin:0">Chaque appel manqué est une vente perdue. Votre ligne NoviaAI travaille pendant que vous êtes occupé.</p>
+    <ul>
+      <li>Conversations SMS en temps réel</li>
+      <li>Leads qualifiés dans votre courriel</li>
+      <li>ROI estimé dans le dashboard</li>
+    </ul>
+  </div>
+</div>
+<script>
+if (new URLSearchParams(location.search).get('confirmed') === '1') {
+  const ok = document.getElementById('ok');
+  ok.textContent = 'Courriel confirmé! Connectez-vous avec votre mot de passe.';
+  ok.hidden = false;
+}
+document.getElementById('form').onsubmit = async (e) => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  err.hidden = true;
+  try {
+    const { error } = await NoviaApp.signIn(
+      document.getElementById('email').value.trim(),
+      document.getElementById('password').value
+    );
+    if (error) throw error;
+    const data = await NoviaApp.api('api-tenant');
+    if (data.tenant && data.tenant.onboarding_done) location.href = '/dashboard.html';
+    else location.href = '/onboarding.html';
+  } catch (ex) {
+    err.textContent = ex.message || 'Courriel ou mot de passe incorrect';
+    err.hidden = false;
+  }
+};
+</script>
+</body>
+</html>

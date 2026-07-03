@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NoviaAI — Portail SaaS</title>
+  <link rel="stylesheet" href="/assets/saas.css">
+  <style>
+    body { background: #eef2f7; }
+    .portail-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 64px; }
+    .portail-hero {
+      background: linear-gradient(135deg, #13325b, #1c4a86);
+      color: #fff; text-align: center; border-radius: 16px;
+      padding: 36px 24px; margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(16,40,80,.15);
+    }
+    .portail-hero h1 { font-family: 'Syne', sans-serif; margin: 0 0 8px; font-size: 1.75rem; }
+    .portail-hero p { margin: 0; opacity: .9; }
+    .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .card-link {
+      display: block; padding: 20px; border-radius: 14px;
+      background: #fff; border: 1px solid var(--line);
+      text-decoration: none; color: inherit;
+      box-shadow: 0 4px 16px rgba(16,40,80,.06);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .card-link:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,40,80,.1); text-decoration: none; }
+    .card-link strong { display: block; font-size: 1.05rem; color: var(--navy); margin-bottom: 6px; }
+    .card-link span { font-size: .875rem; color: var(--muted); }
+    .card-link.featured { border: 2px solid var(--navy2); }
+    .note { font-size: .85rem; color: var(--muted); text-align: center; margin-top: 24px; }
+    #fileWarn { display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:14px;border-radius:12px;margin-bottom:20px;font-size:.9rem; }
+  </style>
+</head>
+<body>
+  <div class="portail-wrap">
+    <div id="fileWarn">
+      ⚠️ Ouvrez via <strong>OUVRIR-NOVIAAI.bat</strong> — pas en double-cliquant ce fichier.
+    </div>
+    <div class="portail-hero">
+      <div class="badge" style="margin-bottom:12px">SaaS NoviaAI · Rattrapeur SMS</div>
+      <h1>Choisissez une page</h1>
+      <p>Numéro pro · Appel manqué → SMS auto · Inbox</p>
+    </div>
+    <div class="grid">
+      <a class="card-link featured" href="/index.html">
+        <strong>🏠 Landing produit</strong>
+        <span>« Votre ligne pro. Appel manqué → SMS auto. »</span>
+      </a>
+      <a class="card-link featured" href="/dashboard.html?demo=1">
+        <strong>📥 Dashboard + Inbox</strong>
+        <span>Tableau de bord, conversations, stats (démo)</span>
+      </a>
+      <a class="card-link" href="/comment-ca-marche.html">
+        <strong>📋 Comment ça marche</strong>
+        <span>Schémas pour présenter aux PME</span>
+      </a>
+      <a class="card-link" href="/onboarding.html">
+        <strong>⚙️ Onboarding</strong>
+        <span>Config commerce (connexion requise)</span>
+      </a>
+      <a class="card-link" href="/signup.html?plan=pro">
+        <strong>✨ Inscription</strong>
+        <span>Créer un vrai compte client</span>
+      </a>
+      <a class="card-link" href="/login.html">
+        <strong>🔐 Connexion</strong>
+        <span>Accéder à votre tableau de bord</span>
+      </a>
+    </div>
+    <p class="note">Lancez <code>OUVRIR-NOVIAAI.bat</code> pour tester les appels/SMS en local.</p>
+  </div>
+  <script>
+    if (location.protocol === 'file:') document.getElementById('fileWarn').style.display = 'block';
+  </script>
+</body>
+</html>

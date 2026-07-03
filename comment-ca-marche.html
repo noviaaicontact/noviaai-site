@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comment ça marche — NoviaAI</title>
+<meta name="description" content="Schémas simples : votre problème d'appels manqués, la solution NoviaAI, et comment le système fonctionne étape par étape.">
+<link rel="stylesheet" href="/assets/saas.css">
+<link rel="stylesheet" href="/assets/flows.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="logo">Novia<span>AI</span></a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Accueil</a>
+    <a href="/dashboard.html?demo=1" class="btn btn-ghost btn-sm btn-demo">Démo live</a>
+    <a href="/signup.html?plan=pro" class="btn btn-accent btn-sm">Essai gratuit →</a>
+  </div>
+</nav>
+
+<header class="flow-page-hero">
+  <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Pour propriétaires de PME</span>
+  <h1>Votre problème. Notre solution. Comment ça fonctionne.</h1>
+  <p class="lead">Des schémas simples — pas de jargon technique. Comprenez pourquoi vous perdez des clients et comment NoviaAI les rattrape automatiquement.</p>
+  <div class="hero-actions">
+    <a href="/dashboard.html?demo=1" class="btn btn-accent">Essayer la démo (2 min)</a>
+    <a href="#probleme" class="btn btn-ghost" style="border-color:rgba(255,255,255,.3);color:#fff">Voir les schémas ↓</a>
+  </div>
+</header>
+
+<!-- ═══ 1. LE PROBLÈME ═══ -->
+<section class="flow-section alt" id="probleme">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag problem">Étape 1 — Votre problème aujourd'hui</span>
+      <h2>Ce qui se passe quand vous ne pouvez pas répondre</h2>
+      <p>Vous êtes en service, en rendez-vous, ou fermé le soir. Le téléphone sonne. Voici la chaîne — sans NoviaAI.</p>
+    </div>
+
+    <div class="flow-schema">
+      <div class="flow-node neutral">
+        <div class="ico">📞</div>
+        <h4>Un client appelle</h4>
+        <p>Il veut un RDV, un prix, une place</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node bad">
+        <div class="ico">✂️</div>
+        <h4>Vous êtes occupé</h4>
+        <p>En client, en pause, ou fermé</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node bad">
+        <div class="ico">📵</div>
+        <h4>Personne ne répond</h4>
+        <p>Boîte vocale ou rien</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node bad">
+        <div class="ico">🏃</div>
+        <h4>Il appelle ailleurs</h4>
+        <p>80&nbsp;% ne rappellent jamais</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node bad">
+        <div class="ico">💸</div>
+        <h4>Vous perdez l'argent</h4>
+        <p>Client + bouche-à-oreille</p>
+      </div>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-box">
+        <div class="num">3–5</div>
+        <p>appels manqués par jour (moyenne salon / clinique)</p>
+      </div>
+      <div class="impact-box">
+        <div class="num">80&nbsp;%</div>
+        <p>des gens ne laissent pas de message et ne rappellent pas</p>
+      </div>
+      <div class="impact-box">
+        <div class="num">≈ 2 400&nbsp;$</div>
+        <p>perdus par mois si 3 RDV/semaine vous échappent à 80&nbsp;$</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 2. AVANT / APRÈS ═══ -->
+<section class="flow-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag solution">Étape 2 — Ce que NoviaAI change</span>
+      <h2>Avant vs Après</h2>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-col before">
+        <h3>❌ Sans NoviaAI</h3>
+        <ol>
+          <li>Client appelle → pas de réponse</li>
+          <li>Boîte vocale ignorée</li>
+          <li>Client frustré, part chez le compétiteur</li>
+          <li>Vous ne savez même pas que vous avez perdu quelqu'un</li>
+          <li>0&nbsp;$ de revenu de cet appel</li>
+        </ol>
+      </div>
+      <div class="compare-col after">
+        <h3>✅ Avec NoviaAI</h3>
+        <ol>
+          <li>Client appelle votre ligne NoviaAI → votre cellulaire sonne</li>
+          <li>Vous ne répondez pas → SMS auto en ~5 secondes</li>
+          <li>Le client répond par texto dans votre inbox</li>
+          <li>Vous recevez une alerte courriel</li>
+          <li>Client converti — même quand vous étiez occupé</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. SCHÉMA APPEL MANQUÉ ═══ -->
+<section class="flow-section alt" id="schema-appel">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag how">Schéma A — Appel manqué</span>
+      <h2>Quand un client vous appelle et que vous ne répondez pas</h2>
+      <p>Vos clients appellent <strong>votre ligne NoviaAI</strong> (418, 581, 514…) — celle publiée sur Google. Votre cellulaire sonne. Voici le flux automatique.</p>
+    </div>
+
+    <div class="flow-schema">
+      <div class="flow-node accent">
+        <div class="ico">1</div>
+        <h4>Client appelle</h4>
+        <p>Votre ligne NoviaAI (418, 581…)</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node neutral">
+        <div class="ico">2</div>
+        <h4>Votre cellulaire sonne</h4>
+        <p>20 secondes pour répondre</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node neutral">
+        <div class="ico">3</div>
+        <h4>Pas de réponse</h4>
+        <p>Automatique</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node good">
+        <div class="ico">4</div>
+        <h4>SMS auto au client</h4>
+        <p>« Désolé, on a manqué votre appel… »</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node good">
+        <div class="ico">5</div>
+        <h4>Inbox SMS</h4>
+        <p>Toutes les conversations au même endroit</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node accent">
+        <div class="ico">6</div>
+        <h4>Vous êtes alerté</h4>
+        <p>Courriel + conversation dans le tableau de bord</p>
+      </div>
+    </div>
+
+    <div class="flow-phone">
+      <div class="flow-phone-head">📱 Ce que voit votre client</div>
+      <div class="flow-phone-body">
+        <div class="b out">Bonjour! Désolée, on a manqué votre appel 😊 Comment puis-je vous aider?</div>
+        <div class="b in">Je voudrais un RDV jeudi</div>
+        <div class="b out">Parfait! Jeudi PM est disponible — quel service souhaitez-vous?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 4. SCHÉMA SMS DIRECT ═══ -->
+<section class="flow-section" id="schema-sms">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag how">Schéma B — Texto direct</span>
+      <h2>Quand un client vous texte</h2>
+      <p>Les SMS de rattrapage et les réponses clients passent par votre ligne NoviaAI. Tout est centralisé dans votre inbox.</p>
+    </div>
+
+    <div class="flow-schema-v">
+      <div class="flow-node accent">
+        <div class="ico">💬</div>
+        <h4>Client envoie un SMS</h4>
+        <p>« C'est combien une coupe? »</p>
+      </div>
+      <div class="flow-arrow down">→</div>
+      <div class="flow-node good">
+        <div class="ico">📥</div>
+        <h4>Message dans votre inbox</h4>
+        <p>Notification courriel si configurée</p>
+      </div>
+      <div class="flow-arrow down">→</div>
+      <div class="flow-node good">
+        <div class="ico">💬</div>
+        <h4>Vous répondez</h4>
+        <p>Depuis le tableau de bord ou votre téléphone</p>
+      </div>
+      <div class="flow-arrow down">→</div>
+      <div class="flow-node accent">
+        <div class="ico">🎯</div>
+        <h4>Lead converti</h4>
+        <p>Historique complet conservé</p>
+      </div>
+    </div>
+
+    <p style="text-align:center;margin-top:24px">
+      <a href="/dashboard.html?demo=1" class="btn btn-accent">Tester vous-même — démo interactive →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 5. GUIDE PUBLICATION ═══ -->
+<section class="flow-section alt" id="lien">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag how">Guide — Publier votre numéro</span>
+      <h2>Mettez votre ligne NoviaAI en ligne en 2 minutes.</h2>
+      <p>Aucune config dans les Réglages du téléphone. Copiez votre numéro et publiez-le là où vos clients vous cherchent.</p>
+    </div>
+
+    <div class="big-steps">
+      <div class="big-step">
+        <div class="n">1</div>
+        <div>
+          <h4>NoviaAI crée votre ligne locale</h4>
+          <p>Automatique (~30 sec) — 418, 581, 514 selon votre région</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">2</div>
+        <div>
+          <h4>Copiez votre numéro NoviaAI</h4>
+          <p>Dans votre tableau de bord → onglet « Publier »</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">3</div>
+        <div>
+          <h4>Mettez-le sur Google Business</h4>
+          <p>Facebook, site web, carte d'affaires — même numéro partout</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">4</div>
+        <div>
+          <h4>Testez</h4>
+          <p>Appelez ce numéro depuis un autre téléphone, ne répondez pas → SMS auto au client</p>
+        </div>
+      </div>
+    </div>
+
+    <p style="text-align:center;margin-top:28px">
+      <a href="/signup.html?plan=pro" class="btn btn-accent">Commencer — essai gratuit →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 6. CE QUE VOUS FAITES (SETUP) ═══ -->
+<section class="flow-section" id="setup">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag how">Schéma C — Votre part (~5 minutes)</span>
+      <h2>Ce que VOUS devez faire — c'est tout</h2>
+      <p>Formulaire en ligne + copier-coller votre numéro sur Google. Pas de technicien. Pas de codes opérateur.</p>
+    </div>
+
+    <div class="big-steps">
+      <div class="big-step">
+        <div class="n">1</div>
+        <div>
+          <h4>Créez votre compte</h4>
+          <p>2 minutes · courriel + mot de passe · essai 14 jours sans engagement</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">2</div>
+        <div>
+          <h4>Entrez votre cellulaire</h4>
+          <p>Le numéro où vous répondez quand un client appelle votre ligne NoviaAI</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">3</div>
+        <div>
+          <h4>On crée votre ligne NoviaAI</h4>
+          <p>Numéro local automatique en ~30 secondes</p>
+        </div>
+      </div>
+      <div class="big-step">
+        <div class="n">4</div>
+        <div>
+          <h4>Publiez sur Google</h4>
+          <p>Copiez le numéro dans votre fiche Google Business — 2 minutes</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-schema" style="margin-top:40px">
+      <div class="flow-node accent"><div class="ico">📝</div><h4>Vous : formulaire</h4><p>5 min</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node neutral"><div class="ico">⚙️</div><h4>NoviaAI : numéro + SMS</h4><p>Automatique</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node good"><div class="ico">✅</div><h4>C'est en ligne</h4><p>24/7</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6. CE QUE VOUS VOYEZ (DASHBOARD) ═══ -->
+<section class="flow-section dark" id="dashboard">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag solution">Schéma D — Votre tableau de bord</span>
+      <h2>Ce que VOUS voyez chaque jour</h2>
+      <p>Comme un petit Stripe — simple, en français, sur votre téléphone ou ordinateur.</p>
+    </div>
+
+    <div class="dash-mock">
+      <div style="font-size:.75rem;opacity:.6;margin-bottom:12px">Votre commerce · Ligne active ✓</div>
+      <div class="dash-mock-row">
+        <div class="dash-mock-stat"><div class="v">12</div><div class="l">Leads ce mois</div></div>
+        <div class="dash-mock-stat"><div class="v">8</div><div class="l">Appels rattrapés</div></div>
+        <div class="dash-mock-stat"><div class="v">≈ 960&nbsp;$</div><div class="l">Revenus estimés récupérés</div></div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:14px;font-size:.82rem">
+        <strong>Dernier lead</strong><br>
+        « RDV coupe jeudi 15 h » — Marie · (418) 555-0123
+      </div>
+    </div>
+
+    <div class="big-steps" style="margin-top:32px">
+      <div class="big-step" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#fff">
+        <div class="n" style="background:var(--accent);color:var(--navy)">💬</div>
+        <div><h4 style="color:#fff">Conversations</h4><p style="color:rgba(255,255,255,.65)">Tous les SMS échangés avec vos clients</p></div>
+      </div>
+      <div class="big-step" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#fff">
+        <div class="n" style="background:var(--accent);color:var(--navy)">🎯</div>
+        <div><h4 style="color:#fff">Leads</h4><p style="color:rgba(255,255,255,.65)">Demandes de RDV et contacts qualifiés</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 7. RÉSUMÉ VISUEL ═══ -->
+<section class="flow-section alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="flow-tag solution">En résumé</span>
+      <h2>Le système en une image</h2>
+    </div>
+    <div class="flow-schema">
+      <div class="flow-node bad"><div class="ico">😰</div><h4>Problème</h4><p>Appels manqués</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node accent"><div class="ico">📱</div><h4>NoviaAI</h4><p>SMS auto 24/7</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node good"><div class="ico">🎯</div><h4>Résultat</h4><p>Leads + RDV</p></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node good"><div class="ico">💰</div><h4>Pour vous</h4><p>Revenus récupérés</p></div>
+    </div>
+
+    <div class="flow-cta">
+      <h3>Prêt à arrêter de perdre des clients?</h3>
+      <p class="muted" style="margin-bottom:20px">Essai 14 jours · Sans contrat · Setup en 5 minutes · Support en français</p>
+      <a href="/dashboard.html?demo=1" class="btn btn-ghost" style="margin-right:8px">Voir la démo</a>
+      <a href="/signup.html?plan=pro" class="btn btn-accent">Commencer gratuitement</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  NoviaAI · Québec · <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a> · 581-909-5332
+  · <a href="?vente=1">Mode présentation</a> (tablette porte-à-porte)
+</footer>
+
+<div class="sticky-vente">
+  <a href="/dashboard.html?demo=1" class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3)">Démo</a>
+  <a href="/signup.html?plan=pro" class="btn btn-accent btn-sm">Essai 14 jours →</a>
+</div>
+
+<script>
+if (location.search.includes('vente=1')) document.body.classList.add('mode-vente');
+</script>
+</body>
+</html>

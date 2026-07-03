@@ -1,0 +1,29 @@
+{
+  "name": "noviaai-rattrapeur-saas",
+  "version": "2.0.0",
+  "private": true,
+  "description": "SaaS NoviaAI — Rattrapeur d'appels manqués par SMS",
+  "scripts": {
+    "dev": "netlify dev",
+    "test:twilio": "node scripts/start-test-twilio.mjs",
+    "test:twilio:stop": "node scripts/stop-test-twilio.mjs",
+    "diagnose": "node scripts/diagnose-call-flow.mjs",
+    "setup-check": "node scripts/setup-check.mjs",
+    "stripe:bootstrap": "node scripts/stripe-bootstrap.mjs",
+    "stripe:webhook": "node scripts/stripe-webhook-setup.mjs",
+    "stripe:webhook:create": "node scripts/stripe-webhook-setup.mjs --create",
+    "stripe:webhook:test": "node scripts/stripe-webhook-test.mjs",
+    "netlify:env": "node scripts/export-netlify-env.mjs",
+    "configure:prod": "node scripts/configure-production.mjs",
+    "configure:prod:local": "node scripts/configure-production.mjs http://localhost:8888"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^7.3.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "cheerio": "^1.2.0",
+    "mammoth": "^1.12.0",
+    "pdf-parse": "^1.1.4",
+    "stripe": "^16.2.0",
+    "twilio": "^4.19.0"
+  }
+}

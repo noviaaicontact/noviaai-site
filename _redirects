@@ -1,0 +1,8 @@
+# www → domaine principal
+https://www.noviaai.ca/*  https://noviaai.ca/:splat  301!
+
+# Fallback SPA (pages HTML statiques)
+/dashboard  /dashboard.html  200
+/login      /login.html      200
+/signup     /signup.html     200
+/auth/callback  /auth/callback.html  200

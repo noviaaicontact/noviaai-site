@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aperçu NoviaAI Rattrapeur — SaaS Premium</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<style>
+body{background:#eef2f7}
+.banner{background:linear-gradient(135deg,#13325b,#1c4a86);color:#fff;text-align:center;padding:28px 20px}
+.banner h1{margin:0 0 8px;font-size:1.5rem}
+.banner p{margin:0;opacity:.9;font-size:.95rem}
+.section{max-width:1100px;margin:32px auto;padding:0 16px}
+.section h2{color:#13325b;margin:0 0 16px;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+.section h2 span{background:#13325b;color:#fff;font-size:.75rem;padding:4px 10px;border-radius:999px;font-weight:700}
+.screen{background:#fff;border:1px solid #e3e8f0;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(16,40,80,.1)}
+.screen-label{background:#f6f8fb;padding:10px 16px;font-size:.78rem;font-weight:700;color:#5b667a;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #e3e8f0}
+.mock-nav{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid #e3e8f0}
+.mock-hero{background:linear-gradient(160deg,#0a1628,#13325b 55%,#1c4a86);color:#fff;padding:40px 24px;text-align:center}
+.mock-hero h3{margin:0 0 10px;font-size:1.4rem}
+.mock-hero p{margin:0 0 20px;opacity:.9;font-size:.95rem;max-width:520px;margin-left:auto;margin-right:auto}
+.btn-sm{display:inline-block;padding:10px 18px;border-radius:9px;font-weight:700;font-size:.88rem;text-decoration:none}
+.btn-lime{background:#c8f135;color:#13325b}
+.btn-ghost-w{border:1px solid rgba(255,255,255,.4);color:#fff;margin-left:8px}
+.grid2{display:grid;grid-template-columns:1fr 380px;min-height:420px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.dash-side{background:#13325b;color:#fff;padding:20px;font-size:.9rem}
+.dash-side .live{color:#46d18a;font-weight:700;font-size:.82rem;margin:8px 0 16px}
+.dash-side a{color:rgba(255,255,255,.8);display:block;padding:8px 0;text-decoration:none}
+.dash-main{padding:20px;background:#f6f8fb}
+.roi-mock{background:linear-gradient(135deg,#13325b,#1c4a86);color:#fff;border-radius:12px;padding:18px;margin-bottom:14px}
+.roi-mock .big{font-size:1.8rem;font-weight:800}
+.stat-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat-mini div{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:12px;text-align:center}
+.stat-mini .n{font-weight:800;color:#13325b;font-size:1.1rem}
+.stat-mini .l{font-size:.68rem;color:#5b667a}
+.phone-mock{max-width:340px;margin:0 auto;background:#dfe6ee;border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.phone-bar{background:#13325b;color:#fff;padding:12px 16px;font-weight:700;font-size:.9rem}
+.phone-feed{padding:14px;display:flex;flex-direction:column;gap:8px;min-height:280px}
+.bubble{max-width:82%;padding:9px 12px;border-radius:14px;font-size:.88rem;line-height:1.35}
+.b-in{align-self:flex-start;background:#fff;border:1px solid #e3e8f0}
+.b-out{align-self:flex-end;background:#1c4a86;color:#fff}
+.flow{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.flow span{background:#eaf6ef;border:1px solid #bfe3cd;color:#1c7a4a;padding:8px 14px;border-radius:999px;font-size:.82rem;font-weight:700}
+.cta-box{text-align:center;padding:40px 20px 60px}
+.cta-box a{font-size:1.05rem}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>👀 NoviaAI SaaS — aperçu visuel (catalogue)</h1>
+  <p>Maquettes statiques · Pour le vrai SaaS interactif → <a href="/portail.html" style="color:#c8f135">portail.html</a> ou <a href="/index.html" style="color:#c8f135">index.html</a></p>
+  <p style="margin-top:14px;font-size:.85rem;opacity:.95">Inspiré Tidio + ManyChat + Intercom — canal SMS/appels Québec</p>
+</div>
+
+<!-- NOUVEAU MVP -->
+<div class="section">
+  <h2><span>★</span> Ce que tu as demandé → ce qui est codé</h2>
+  <div class="screen" style="padding:24px">
+    <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+      <tr style="background:#f6f8fb"><th style="text-align:left;padding:10px;border:1px solid #e3e8f0">Fonction</th><th style="text-align:left;padding:10px;border:1px solid #e3e8f0">Fichier / page</th></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0">Compte PME + Stripe</td><td style="padding:10px;border:1px solid #e3e8f0"><a href="/signup.html">signup.html</a> · api-stripe-*</td></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0">Config commerce (services, FAQ, horaires)</td><td style="padding:10px;border:1px solid #e3e8f0"><a href="/onboarding.html">onboarding.html</a> · dossier-builder.js</td></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0">Agent IA personnalisé auto</td><td style="padding:10px;border:1px solid #e3e8f0">rowToDossier() → ai.js + agent-tools.js</td></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0">Chatbot répond SMS</td><td style="padding:10px;border:1px solid #e3e8f0">netlify/functions/sms.js</td></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0"><strong>Inbox conversations centralisées</strong></td><td style="padding:10px;border:1px solid #e3e8f0"><a href="/dashboard.html">dashboard.html</a> · api-conversations.js · inbox.js</td></tr>
+      <tr><td style="padding:10px;border:1px solid #e3e8f0">Appel manqué → SMS → chatbot</td><td style="padding:10px;border:1px solid #e3e8f0">voice-status.js → sms-send.js → sms.js · events.js</td></tr>
+    </table>
+    <div class="flow" style="margin-top:20px;justify-content:center">
+      <span>📞 Appel manqué</span><span>→</span><span>⚡ event missed_call</span><span>→</span><span>💬 SMS auto</span><span>→</span><span>🤖 Agent IA</span><span>→</span><span>🎯 Lead</span><span>→</span><span>📥 Inbox</span>
+    </div>
+  </div>
+</div>
+
+<!-- INBOX NOUVEAU -->
+<div class="section">
+  <h2><span>★</span> Inbox centralisée (nouveau dashboard)</h2>
+  <div class="screen">
+    <div class="screen-label">dashboard.html → onglet Conversations — style Intercom</div>
+    <div style="display:grid;grid-template-columns:280px 1fr;min-height:320px;background:#fff">
+      <div style="border-right:1px solid #e3e8f0;padding:12px;background:#fafbfc">
+        <div style="padding:12px;background:#fff;border:1px solid #c8f135;border-left:3px solid #c8f135;border-radius:8px;margin-bottom:8px">
+          <strong>418-555-2847</strong><div style="font-size:.78rem;color:#64748b;margin-top:4px">Je veux un RDV jeudi…</div>
+          <span style="font-size:.65rem;background:#c8f135;padding:2px 6px;border-radius:4px;font-weight:800">LEAD</span>
+        </div>
+        <div style="padding:12px;border-bottom:1px solid #e3e8f0;font-size:.88rem">
+          <strong>581-999-1203</strong><div style="font-size:.78rem;color:#64748b">C'est combien une coupe?</div>
+        </div>
+        <div style="padding:12px;font-size:.88rem;opacity:.7">
+          <strong>418-555-9012</strong><div style="font-size:.78rem;color:#64748b">Appel manqué · texto envoyé</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:#f6f8fb">
+        <div class="bubble b-out" style="max-width:75%">Bonjour! Désolée, on a manqué votre appel. Répondez à ce texto — Léa vous répondra tout de suite.</div>
+        <div class="bubble b-in" style="max-width:75%">Je veux un RDV jeudi PM</div>
+        <div class="bubble b-out" style="max-width:75%">Parfait! Quel prénom puis-je noter pour jeudi après-midi?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1 LANDING -->
+<div class="section">
+  <h2><span>1</span> Page d'accueil (landing)</h2>
+  <div class="screen">
+    <div class="screen-label">index.html — Ce que voient vos prospects</div>
+    <div class="mock-nav">
+      <strong style="color:#13325b">NoviaAI</strong>
+      <span><span class="btn-sm btn-ghost-w" style="color:#13325b;border-color:#e3e8f0">Démo</span> <span class="btn-sm btn-lime">Essai 14 jours</span></span>
+    </div>
+    <div class="mock-hero">
+      <h3>Votre ligne intelligente.<br>Active en 5 minutes. Sans intervention.</h3>
+      <p>Numéro local acheté et branché automatiquement → appels manqués rattrapés → IA SMS 24/7</p>
+      <a class="btn-sm btn-lime" href="/signup.html">Démarrer mon essai gratuit</a>
+      <a class="btn-sm btn-ghost-w" href="/dashboard.html?demo=1">Voir la démo live →</a>
+    </div>
+    <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;font-size:.85rem">
+      <div><strong>149 $</strong><br><span class="muted">Essentiel</span></div>
+      <div style="border:2px solid #1c4a86;border-radius:10px;padding:8px"><strong>299 $ ⭐</strong><br><span class="muted">Pro</span></div>
+      <div><strong>499 $</strong><br><span class="muted">Entreprise</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 2 ONBOARDING -->
+<div class="section">
+  <h2><span>2</span> Configuration (2 minutes)</h2>
+  <div class="screen">
+    <div class="screen-label">onboarding.html — Le client remplit son commerce</div>
+    <div style="padding:24px;max-width:480px;margin:0 auto">
+      <h3 style="color:#13325b;margin:0 0 4px">Configurez votre commerce</h3>
+      <p class="muted" style="font-size:.9rem;margin:0 0 16px">L'IA utilisera ces infos pour répondre par texto.</p>
+      <div style="background:#f6f8fb;border-radius:10px;padding:14px;font-size:.88rem;line-height:1.8">
+        Nom : <strong>Salon Éclat</strong><br>
+        Indicatif : <strong>418 — Québec</strong><br>
+        Transfert appels → <strong>418-555-1234</strong><br>
+        Services : Coupe, Coloration…
+      </div>
+      <div class="flow">
+        <span>✓ Enregistrer</span>
+        <span>→ Activation auto</span>
+        <span>→ Numéro acheté</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 DASHBOARD -->
+<div class="section">
+  <h2><span>3</span> Tableau de bord client</h2>
+  <div class="screen">
+    <div class="screen-label">dashboard.html — ROI, ligne active, leads</div>
+    <div class="grid2">
+      <div class="dash-side">
+        <strong>Salon Éclat</strong>
+        <div class="live">● Ligne active</div>
+        <a>🏠 Accueil</a>
+        <a>💬 Messages</a>
+        <a>🎯 Leads</a>
+      </div>
+      <div class="dash-main">
+        <div style="background:#eaf6ef;border:1px solid #bfe3cd;border-radius:10px;padding:12px;margin-bottom:12px;font-size:.9rem">
+          ✅ Votre ligne est active! Numéro assigné automatiquement.
+        </div>
+        <div class="roi-mock">
+          <div style="opacity:.8;font-size:.78rem">Revenus estimés récupérés (30 j)</div>
+          <div class="big">225 $ – 750 $</div>
+          <div style="opacity:.85;font-size:.82rem;margin-top:4px">7 leads · 12 appels rattrapés</div>
+        </div>
+        <div class="stat-mini">
+          <div><div class="l">Statut</div><div class="n" style="font-size:.85rem">Actif</div></div>
+          <div><div class="l">Forfait</div><div class="n" style="font-size:.85rem">PRO</div></div>
+          <div><div class="l">Ligne</div><div class="n" style="font-size:.75rem">+1 418…</div></div>
+          <div><div class="l">SMS</div><div class="n">48</div></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:16px;text-align:center">
+          <div class="muted" style="font-size:.72rem">VOTRE NUMÉRO NOVIAI</div>
+          <strong style="font-size:1.3rem;color:#13325b">+1 (418) 555-0192</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4 SMS -->
+<div class="section">
+  <h2><span>4</span> Conversation SMS (ce que vit le client final)</h2>
+  <div class="screen" style="max-width:400px;margin:0 auto">
+    <div class="screen-label">Automatique après appel manqué</div>
+    <div class="phone-mock">
+      <div class="phone-bar">Salon Éclat — Léa</div>
+      <div class="phone-feed">
+        <div class="bubble b-out">Bonjour! Désolée, on a manqué votre appel 😊 Comment peut-on vous aider?</div>
+        <div class="bubble b-in">Salut, j'aimerais une coupe demain après-midi</div>
+        <div class="bubble b-out">Avec plaisir! On a de la place demain après 14 h. Voulez-vous réserver?</div>
+        <div class="bubble b-in">Oui parfait, c'est Marie</div>
+        <div class="bubble b-out">Noté Marie! On vous attend demain après 14 h ✨</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:.82rem;color:#5b667a;padding:12px">↳ Le commerçant reçoit un courriel : « Nouveau lead — Marie veut une coupe demain »</p>
+  </div>
+</div>
+
+<!-- 5 AUTO -->
+<div class="section">
+  <h2><span>5</span> Ce qui se passe automatiquement (sans vous)</h2>
+  <div class="screen" style="padding:24px">
+    <div class="flow" style="justify-content:center">
+      <span>1 Inscription</span>
+      <span>→</span>
+      <span>2 Config 2 min</span>
+      <span>→</span>
+      <span>3 🤖 Numéro Twilio acheté</span>
+      <span>→</span>
+      <span>4 🤖 Webhooks branchés</span>
+      <span>→</span>
+      <span>5 🤖 Courriel bienvenue</span>
+      <span>→</span>
+      <span>6 💰 Client actif</span>
+    </div>
+    <p style="text-align:center;color:#5b667a;font-size:.9rem;margin:16px 0 0">Vous encaissez 149–499 $/mois. Coût réel : ~10–25 $/client.</p>
+  </div>
+</div>
+
+<div class="cta-box">
+  <p style="color:#13325b;font-weight:700;font-size:1.1rem;margin-bottom:16px">Ouvrir le vrai SaaS (pages interactives)</p>
+  <a href="/dashboard.html?demo=1" class="btn btn-primary" style="margin:6px">📱 Démo chatbot IA</a>
+  <a href="/onboarding.html" class="btn btn-primary" style="margin:6px">⚙️ Config PME (wizard)</a>
+  <a href="/dashboard.html?demo=1" class="btn btn-primary" style="margin:6px">📥 Dashboard + Inbox (démo)</a>
+  <a href="/comment-ca-marche.html" class="btn btn-ghost" style="margin:6px">📋 Schémas</a>
+  <a href="/index.html" class="btn btn-ghost" style="margin:6px">🏠 Landing</a>
+  <p style="margin-top:24px;font-size:.85rem;color:#5b667a">Doc architecture : <code>rattrapeur-sms/docs/ARCHITECTURE.md</code></p>
+</div>
+
+</body>
+</html>

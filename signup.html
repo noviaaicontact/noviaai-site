@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body>
+<nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
+<div class="auth-split">
+  <div class="auth-panel">
+    <div class="form-box">
+      <h1>Créez votre compte</h1>
+      <p class="muted">Essai gratuit 14 jours · Activez en ~5 minutes</p>
+      <form id="form">
+        <label for="email">Courriel professionnel</label>
+        <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" required minlength="8" autocomplete="new-password" placeholder="8 caractères minimum">
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:24px">Continuer →</button>
+        <p id="ok" class="ok" hidden></p>
+        <p id="err" class="err" hidden></p>
+      </form>
+      <p class="muted" style="margin-top:20px;font-size:.88rem">Déjà inscrit? <a href="/login.html">Connexion</a></p>
+    </div>
+  </div>
+  <div class="auth-side">
+    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Rejoignez 100+ PME québécoises*</span>
+    <h2>Votre ligne pro, prête aujourd'hui.</h2>
+    <p style="opacity:.85;margin:0">Inscrivez-vous, configurez en 2 minutes, publiez sur Google. Sans appel de vente.</p>
+    <ul>
+      <li>Numéro local 418 / 514 / 581 automatique</li>
+      <li>Appels manqués → texto en 5 sec</li>
+      <li>Inbox SMS centralisée</li>
+      <li>Alertes par courriel</li>
+      <li>Tableau de bord ROI</li>
+    </ul>
+    <p style="opacity:.5;font-size:.75rem;margin-top:32px">* Objectif lancement · témoignages démo</p>
+  </div>
+</div>
+<script>
+const plan = new URLSearchParams(location.search).get('plan') || 'pro';
+sessionStorage.setItem('novia_plan', plan);
+document.getElementById('form').onsubmit = async (e) => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  const ok = document.getElementById('ok');
+  err.hidden = true;
+  ok.hidden = true;
+  try {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const { data, error } = await NoviaApp.signUp(email, password);
+    if (error) throw error;
+    if (data.session) {
+      const plan = sessionStorage.getItem('novia_plan') || 'pro';
+      await NoviaApp.api(`api-tenant?plan=${encodeURIComponent(plan)}`, { method: 'GET' });
+      await NoviaApp.api('api-tenant', {
+        method: 'PATCH',
+        body: JSON.stringify({ settings: true, plan }),
+      });
+      location.href = '/onboarding.html';
+    } else {
+      document.getElementById('form').querySelector('button[type=submit]').disabled = true;
+      ok.innerHTML = '<strong>Compte créé!</strong> Consultez votre courriel et cliquez sur le lien de confirmation. Vous serez redirigé automatiquement vers NoviaAI.';
+      ok.hidden = false;
+    }
+  } catch (ex) {
+    err.textContent = ex.message || 'Erreur inscription';
+    err.hidden = false;
+  }
+};
+</script>
+</body>
+</html>
