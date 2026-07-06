@@ -10,6 +10,7 @@ async function autoProvision(tenantId) {
 }
 
 exports.handler = async (event) => {
+  try {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders(), body: '' };
   }
@@ -55,6 +56,10 @@ exports.handler = async (event) => {
     return json(405, { error: 'Méthode non supportée' });
   } catch (e) {
     console.error('api-tenant', e);
+    return json(500, { error: e.message || 'Erreur serveur' });
+  }
+  } catch (e) {
+    console.error('api-tenant fatal', e);
     return json(500, { error: e.message || 'Erreur serveur' });
   }
 };

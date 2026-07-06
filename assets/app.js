@@ -40,7 +40,12 @@ async function api(fn, opts, accessToken) {
   const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
   let data = {};
   try { data = await res.json(); } catch (_) { /* réponse non-JSON */ }
-  if (!res.ok) throw new Error((data && data.error) || ('Erreur serveur (' + res.status + ')'));
+  if (!res.ok) {
+    if (res.status === 502 || res.status === 503) {
+      throw new Error('Serveur occupé — attendez 30 secondes et réessayez.');
+    }
+    throw new Error((data && data.error) || ('Erreur serveur (' + res.status + ')'));
+  }
   return data;
 }
 
