@@ -48,14 +48,15 @@ document.getElementById('form').onsubmit = async (e) => {
   const err = document.getElementById('err');
   err.hidden = true;
   try {
-    const { error } = await NoviaApp.signIn(
+    const { data: authData, error } = await NoviaApp.signIn(
       document.getElementById('email').value.trim(),
       document.getElementById('password').value
     );
     if (error) throw error;
-    await NoviaApp.ensureTenant(sessionStorage.getItem('novia_plan') || 'pro');
-    const data = await NoviaApp.api('api-tenant');
-    if (data.tenant && data.tenant.onboarding_done) location.href = '/dashboard.html';
+    if (!authData.session) throw new Error('Courriel non confirmé — cliquez le lien reçu par courriel.');
+    const plan = sessionStorage.getItem('novia_plan') || 'pro';
+    const { tenant } = await NoviaApp.ensureTenant(plan, authData.session.access_token);
+    if (tenant.onboarding_done) location.href = '/dashboard.html';
     else location.href = '/onboarding.html';
   } catch (ex) {
     err.textContent = ex.message || 'Courriel ou mot de passe incorrect';

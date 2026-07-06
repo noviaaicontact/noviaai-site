@@ -57,7 +57,7 @@ document.getElementById('form').onsubmit = async (e) => {
     if (error) throw error;
     if (data.session) {
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
-      await NoviaApp.ensureTenant(plan);
+      await NoviaApp.ensureTenant(plan, data.session.access_token);
       location.href = '/onboarding.html';
     } else {
       document.getElementById('form').querySelector('button[type=submit]').disabled = true;

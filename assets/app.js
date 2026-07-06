@@ -32,21 +32,22 @@ async function requireAuth(redirectTo) {
   return session;
 }
 
-async function api(fn, opts) {
+async function api(fn, opts, accessToken) {
   opts = opts || {};
-  const session = await getSession();
+  const token = accessToken || (await getSession())?.access_token;
   const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
-  if (session) headers.Authorization = 'Bearer ' + session.access_token;
+  if (token) headers.Authorization = 'Bearer ' + token;
   const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
-  const data = await res.json();
-  if (!res.ok && data && data.error) throw new Error(data.error);
+  let data = {};
+  try { data = await res.json(); } catch (_) { /* réponse non-JSON */ }
+  if (!res.ok) throw new Error((data && data.error) || ('Erreur serveur (' + res.status + ')'));
   return data;
 }
 
-async function ensureTenant(plan) {
+async function ensureTenant(plan, accessToken) {
   const p = plan || sessionStorage.getItem('novia_plan') || 'pro';
-  const data = await api('api-tenant?plan=' + encodeURIComponent(p), { method: 'GET' });
-  if (!data.tenant) throw new Error('Impossible de créer votre commerce — réessayez.');
+  const data = await api('api-tenant?plan=' + encodeURIComponent(p), { method: 'GET' }, accessToken);
+  if (!data.tenant) throw new Error((data && data.error) || 'Impossible de créer votre commerce — réessayez.');
   return data;
 }
 

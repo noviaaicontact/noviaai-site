@@ -31,22 +31,23 @@
 
     const q = new URLSearchParams(location.search);
     const code = q.get('code');
+    let accessToken = null;
     if (code) {
-      const { error } = await sb.auth.exchangeCodeForSession(code);
+      const { data: authData, error } = await sb.auth.exchangeCodeForSession(code);
       if (error) throw error;
+      accessToken = authData.session?.access_token || null;
     }
 
     const { data: { session }, error: sessErr } = await sb.auth.getSession();
     if (sessErr) throw sessErr;
+    const token = accessToken || session?.access_token;
 
-    if (session) {
+    if (token) {
       okEl.textContent = 'Courriel confirmé! Redirection…';
       okEl.hidden = false;
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
-      await NoviaApp.ensureTenant(plan);
-      const data = await NoviaApp.api('api-tenant');
-      const dest = (data.tenant && data.tenant.onboarding_done) ? '/dashboard.html' : '/onboarding.html';
-      location.replace(dest);
+      const { tenant } = await NoviaApp.ensureTenant(plan, token);
+      location.replace(tenant.onboarding_done ? '/dashboard.html' : '/onboarding.html');
       return;
     }
 
