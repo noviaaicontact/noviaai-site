@@ -324,6 +324,42 @@ function displayPhone(t) {
   return publicPhoneDisplay(t);
 }
 
+function updateProvBox() {
+  const box = document.getElementById('provBox');
+  const title = document.getElementById('provTitle');
+  const msg = document.getElementById('provMsg');
+  const retry = document.getElementById('btnRetryProv');
+  if (!tenant) return;
+
+  if (tenant.provisioning_status === 'active' && tenant.twilio_number) {
+    clearInterval(pollTimer);
+    sessionStorage.removeItem('novia_provisioning');
+    box.hidden = false;
+    box.className = 'prov-box success';
+    title.textContent = '✅ Ligne NoviaAI prête';
+    msg.textContent = 'Copiez votre numéro et publiez-le sur Google.';
+    retry.style.display = 'none';
+    return;
+  }
+
+  if (tenant.provisioning_status === 'failed') {
+    box.hidden = false;
+    box.className = 'prov-box';
+    title.textContent = 'Activation échouée';
+    msg.textContent = tenant.provisioning_error || 'Erreur inconnue — cliquez Réessayer.';
+    retry.style.display = 'inline-flex';
+    return;
+  }
+
+  if (tenant.provisioning_status === 'provisioning' || tenant.provisioning_status === 'pending') {
+    box.hidden = false;
+    box.className = 'prov-box';
+    title.textContent = '⏳ Activation en cours…';
+    msg.textContent = 'Achat de votre numéro local (~1–2 min). Si ça traîne, cliquez Réessayer.';
+    retry.style.display = 'inline-flex';
+  }
+}
+
 function applyTenantToUI() {
   if (!tenant) return;
   document.getElementById('bizName').textContent = tenant.business_name;
@@ -342,6 +378,7 @@ function applyTenantToUI() {
   populateSettingsForm(tenant);
   populateChatbotForm(tenant);
   updateBillingUI(tenant);
+  updateProvBox();
   const live = tenant.provisioning_status === 'active' && tenant.twilio_number;
   document.getElementById('liveStatus').style.display = live ? 'inline-flex' : 'none';
   document.getElementById('phonePanelDesc').textContent =
@@ -619,25 +656,36 @@ function markCheck(id, done) {
   if (done) { el.classList.add('done'); el.querySelector('.check').textContent = 'âœ“'; }
 }
 
+let provRetrySent = false;
+
+async function tickProvisioning() {
+  await loadTenant();
+  if (tenant && tenant.provisioning_status === 'active' && tenant.twilio_number) {
+    updateProvBox();
+    updateChecklist();
+    if (sessionStorage.getItem('novia_provisioning')) show('panelInstall');
+    return;
+  }
+  if (tenant && tenant.provisioning_status === 'failed') {
+    updateProvBox();
+    return;
+  }
+  if (tenant && ['pending', 'provisioning'].includes(tenant.provisioning_status) && !provRetrySent) {
+    provRetrySent = true;
+    try {
+      await NoviaApp.api('api-provision', { method: 'POST', body: '{}' });
+      await loadTenant();
+    } catch (e) {
+      console.warn('provision retry', e);
+    }
+  }
+  updateProvBox();
+}
+
 function startProvisioningPoll() {
   document.getElementById('provBox').hidden = false;
-  pollTimer = setInterval(async () => {
-    await loadTenant();
-    if (tenant && tenant.provisioning_status === 'active' && tenant.twilio_number) {
-      clearInterval(pollTimer);
-      sessionStorage.removeItem('novia_provisioning');
-      document.getElementById('provBox').className = 'prov-box success';
-      document.getElementById('provTitle').textContent = '✅ Ligne NoviaAI prête';
-      document.getElementById('provMsg').textContent = 'Copiez votre numéro et publiez-le sur Google.';
-      updateChecklist();
-      show('panelInstall');
-    }
-    if (tenant && tenant.provisioning_status === 'failed') {
-      document.getElementById('provTitle').textContent = 'Activation echouee';
-      document.getElementById('provMsg').textContent = tenant.provisioning_error || 'Erreur inconnue';
-      document.getElementById('btnRetryProv').style.display = 'inline-flex';
-    }
-  }, 5000);
+  tickProvisioning();
+  pollTimer = setInterval(tickProvisioning, 5000);
 }
 
 async function loadTenant() {
@@ -648,8 +696,8 @@ async function loadTenant() {
 
   applyTenantToUI();
 
-  if (tenant.provisioning_status === 'provisioning' || tenant.provisioning_status === 'pending') {
-    document.getElementById('provBox').hidden = false;
+  if (['pending', 'provisioning'].includes(tenant.provisioning_status) && !pollTimer) {
+    startProvisioningPoll();
   }
 }
 
@@ -798,8 +846,12 @@ document.getElementById('btnManageBilling').onclick = async () => {
   try { await openBillingPortal(); } catch (ex) { alert(ex.message || 'Erreur portail'); }
 };
 document.getElementById('btnRetryProv').onclick = async () => {
+  provRetrySent = false;
+  document.getElementById('provTitle').textContent = '⏳ Activation en cours…';
+  document.getElementById('provMsg').textContent = 'Nouvelle tentative…';
   await NoviaApp.api('api-provision', { method: 'POST', body: '{}' });
-  startProvisioningPoll();
+  if (!pollTimer) startProvisioningPoll();
+  else await tickProvisioning();
 };
 document.getElementById('settingsForm').onsubmit = async (e) => {
   e.preventDefault();
