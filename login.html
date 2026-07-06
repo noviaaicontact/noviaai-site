@@ -53,6 +53,7 @@ document.getElementById('form').onsubmit = async (e) => {
       document.getElementById('password').value
     );
     if (error) throw error;
+    await NoviaApp.ensureTenant(sessionStorage.getItem('novia_plan') || 'pro');
     const data = await NoviaApp.api('api-tenant');
     if (data.tenant && data.tenant.onboarding_done) location.href = '/dashboard.html';
     else location.href = '/onboarding.html';

@@ -38,7 +38,16 @@ async function api(fn, opts) {
   const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
   if (session) headers.Authorization = 'Bearer ' + session.access_token;
   const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
-  return res.json();
+  const data = await res.json();
+  if (!res.ok && data && data.error) throw new Error(data.error);
+  return data;
+}
+
+async function ensureTenant(plan) {
+  const p = plan || sessionStorage.getItem('novia_plan') || 'pro';
+  const data = await api('api-tenant?plan=' + encodeURIComponent(p), { method: 'GET' });
+  if (!data.tenant) throw new Error('Impossible de créer votre commerce — réessayez.');
+  return data;
 }
 
 function authRedirectUrl() {
@@ -67,4 +76,4 @@ async function signOut() {
   location.href = '/login.html';
 }
 
-window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, signUp, signIn, signOut };
+window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut };

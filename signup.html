@@ -57,11 +57,7 @@ document.getElementById('form').onsubmit = async (e) => {
     if (error) throw error;
     if (data.session) {
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
-      await NoviaApp.api(`api-tenant?plan=${encodeURIComponent(plan)}`, { method: 'GET' });
-      await NoviaApp.api('api-tenant', {
-        method: 'PATCH',
-        body: JSON.stringify({ settings: true, plan }),
-      });
+      await NoviaApp.ensureTenant(plan);
       location.href = '/onboarding.html';
     } else {
       document.getElementById('form').querySelector('button[type=submit]').disabled = true;
