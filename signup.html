@@ -55,6 +55,12 @@ document.getElementById('form').onsubmit = async (e) => {
     const password = document.getElementById('password').value;
     const { data, error } = await NoviaApp.signUp(email, password);
     if (error) throw error;
+    if (NoviaApp.isDuplicateSignUpAttempt(data)) {
+      document.getElementById('form').querySelector('button[type=submit]').disabled = true;
+      ok.innerHTML = '<strong>Ce courriel est déjà utilisé.</strong><br>Un compte existe déjà avec cette adresse — vous ne pouvez pas créer un second compte avec le même courriel.<br><br><a href="/login.html">Se connecter</a> · <a href="/login.html">Mot de passe oublié? (page connexion)</a><br><br><span style="font-size:.85rem;color:var(--muted)">Si vous venez de vous inscrire, vérifiez aussi vos courriers indésirables.</span>';
+      ok.hidden = false;
+      return;
+    }
     if (data.session) {
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
       await NoviaApp.ensureTenant(plan, data.session.access_token);

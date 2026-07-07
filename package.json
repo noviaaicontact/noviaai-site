@@ -15,6 +15,7 @@
     "stripe:webhook:sync-netlify": "node scripts/sync-webhook-secret-netlify.mjs",
     "resend:sync-netlify": "node scripts/sync-resend-netlify.mjs",
     "resend:setup": "node scripts/setup-resend.mjs",
+    "auth:email-guide": "node scripts/configure-supabase-auth-email.mjs",
     "stripe:webhook:test": "node scripts/stripe-webhook-test.mjs",
     "netlify:env": "node scripts/export-netlify-env.mjs",
     "configure:prod": "node scripts/configure-production.mjs",

@@ -60,6 +60,16 @@ function authRedirectUrl() {
   return `${window.location.origin}/auth/callback.html`;
 }
 
+/** Supabase renvoie un faux succès (identities vide) si le courriel existe déjà. */
+function isDuplicateSignUpAttempt(data) {
+  return !!(
+    data?.user &&
+    !data.session &&
+    Array.isArray(data.user.identities) &&
+    data.user.identities.length === 0
+  );
+}
+
 async function signUp(email, password) {
   const sb = await getSupabase();
   if (!sb) throw new Error('Supabase non configuré — voir README');
@@ -82,4 +92,4 @@ async function signOut() {
   location.href = '/login.html';
 }
 
-window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut };
+window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, isDuplicateSignUpAttempt };
