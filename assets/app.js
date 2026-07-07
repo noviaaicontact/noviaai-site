@@ -73,7 +73,10 @@ function isDuplicateSignUpAttempt(data) {
 function formatSignUpError(err) {
   const msg = (err?.message || String(err || '')).toLowerCase();
   if (msg.includes('rate limit') || err?.status === 429) {
-    return 'Limite d\'envoi de courriels atteinte (trop de tests ce soir). Attendez 10–15 minutes, puis réessayez. Si ça persiste, on augmente la limite dans Supabase.';
+    return 'Limite d\'envoi de courriels atteinte. Attendez 10–15 minutes, puis réessayez.';
+  }
+  if (msg.includes('error sending confirmation') || msg.includes('550')) {
+    return 'Courriel non envoyé : en mode test Resend, seul noviaai.contact@gmail.com peut recevoir les confirmations. Utilisez cette adresse pour tester, ou vérifiez le domaine noviaai.ca sur resend.com.';
   }
   return err?.message || 'Erreur inscription';
 }
