@@ -491,7 +491,11 @@ function updateBillingUI(t) {
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 14;
 
   if (status === 'active' && hasStripe) {
-    box.hidden = true;
+    box.hidden = false;
+    box.className = 'prov-box success';
+    title.textContent = 'Abonnement actif';
+    msg.textContent = `Forfait ${(t.plan || 'pro').toUpperCase()} · Gérez votre carte et vos factures.`;
+    if (btnSub) btnSub.hidden = true;
     if (btnPortal) btnPortal.hidden = false;
     return;
   }
