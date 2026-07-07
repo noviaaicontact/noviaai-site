@@ -1,4 +1,3 @@
-// Ligne NoviaAI (Option A) : client appelle → sonne le cellulaire du proprio → SMS si pas de réponse.
 const { parseBody, escapeXml, xmlResponse, validateTwilioRequest, twilioUnauthorized } = require('../../lib/twilio-util');
 const { resolveClient } = require('../../lib/tenant');
 const { sendTextback } = require('../../lib/sms-send');
@@ -23,12 +22,12 @@ exports.handler = async (event) => {
   const forwardRaw = co.telephone_reel && !/COMPLÉTER/i.test(co.telephone_reel) ? co.telephone_reel : null;
   const forwardTo = forwardRaw ? toE164(forwardRaw) : null;
 
-  const base = process.env.PUBLIC_BASE_URL || '';
-  const action = base + '/.netlify/functions/voice-status';
+  const base = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+  const action = `${base}/.netlify/functions/voice-status?tn=${encodeURIComponent(to || '')}`;
 
   let inner;
   if (forwardTo) {
-    inner = `<Dial timeout="20" answerOnBridge="true" action="${escapeXml(action)}" method="POST"><Number>${escapeXml(forwardTo)}</Number></Dial>`;
+    inner = `<Dial timeout="25" answerOnBridge="true" action="${escapeXml(action)}" method="POST"><Number>${escapeXml(forwardTo)}</Number></Dial>`;
   } else {
     try { await sendTextback(to, from); } catch (e) { console.error('textback (no-forward)', e); }
     inner = '<Hangup/>';
