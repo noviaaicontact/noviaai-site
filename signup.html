@@ -71,7 +71,7 @@ document.getElementById('form').onsubmit = async (e) => {
       ok.hidden = false;
     }
   } catch (ex) {
-    err.textContent = ex.message || 'Erreur inscription';
+    err.textContent = NoviaApp.formatSignUpError(ex);
     err.hidden = false;
   }
 };

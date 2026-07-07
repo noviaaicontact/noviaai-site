@@ -70,6 +70,14 @@ function isDuplicateSignUpAttempt(data) {
   );
 }
 
+function formatSignUpError(err) {
+  const msg = (err?.message || String(err || '')).toLowerCase();
+  if (msg.includes('rate limit') || err?.status === 429) {
+    return 'Limite d\'envoi de courriels atteinte (trop de tests ce soir). Attendez 10–15 minutes, puis réessayez. Si ça persiste, on augmente la limite dans Supabase.';
+  }
+  return err?.message || 'Erreur inscription';
+}
+
 async function signUp(email, password) {
   const sb = await getSupabase();
   if (!sb) throw new Error('Supabase non configuré — voir README');
@@ -92,4 +100,4 @@ async function signOut() {
   location.href = '/login.html';
 }
 
-window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, isDuplicateSignUpAttempt };
+window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, isDuplicateSignUpAttempt, formatSignUpError };
