@@ -61,7 +61,7 @@ document.getElementById('form').onsubmit = async (e) => {
       location.href = '/onboarding.html';
     } else {
       document.getElementById('form').querySelector('button[type=submit]').disabled = true;
-      ok.innerHTML = '<strong>Compte créé!</strong> Consultez votre courriel et cliquez sur le lien de confirmation. Vous serez redirigé automatiquement vers NoviaAI.';
+      ok.innerHTML = '<strong>Compte créé!</strong> Un courriel de <strong>NoviaAI</strong> vous a été envoyé.<br><br>Cliquez sur <strong>« Confirmer mon compte NoviaAI »</strong> dans le message.<br>Vérifiez aussi les <strong>courriers indésirables</strong>.<br><br><span style="font-size:.85rem;color:var(--muted)">Après confirmation → vous serez redirigé vers <strong>noviaai.ca</strong></span>';
       ok.hidden = false;
     }
   } catch (ex) {
