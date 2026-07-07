@@ -84,11 +84,38 @@ function formatSignUpError(err) {
 async function signUp(email, password) {
   const sb = await getSupabase();
   if (!sb) throw new Error('Supabase non configuré — voir README');
-  return sb.auth.signUp({
+  const result = await sb.auth.signUp({
     email,
     password,
     options: { emailRedirectTo: authRedirectUrl() },
   });
+  if (result.error) {
+    const msg = (result.error.message || '').toLowerCase();
+    if (msg.includes('error sending confirmation') || msg.includes('rate limit')) {
+      const backup = await sendConfirmationBackup(email);
+      if (backup.ok) {
+        return { data: result.data, error: null, confirmationSentViaBackup: true };
+      }
+    }
+    return result;
+  }
+  if (result.data?.user && !result.data.session && !isDuplicateSignUpAttempt(result.data)) {
+    await sendConfirmationBackup(email);
+  }
+  return result;
+}
+
+async function sendConfirmationBackup(email) {
+  try {
+    const res = await fetch('/.netlify/functions/api-auth-send-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    return { ok: res.ok };
+  } catch {
+    return { ok: false };
+  }
 }
 
 async function signIn(email, password) {
