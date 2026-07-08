@@ -105,7 +105,7 @@ async function signUp(email, password) {
   return {
     data: { user: payload.user || { email: normalized }, session: null },
     error: null,
-    confirmationSentViaBackup: true,
+    autoConfirmed: !!payload.autoConfirmed,
   };
 }
 

@@ -5,6 +5,7 @@ const { sendSignupConfirmationEmail } = require('../../lib/confirmation-email');
 const REDIRECT = () => `${process.env.PUBLIC_BASE_URL || 'https://noviaai.ca'}/auth/callback.html`;
 
 function resendSandboxHint(email) {
+  if (process.env.SIGNUP_AUTO_CONFIRM === 'true') return null;
   const allowed = (process.env.ADMIN_EMAIL || 'noviaai.contact@gmail.com').toLowerCase();
   if (email.toLowerCase() === allowed) return null;
   return `En mode test, seul ${allowed} peut recevoir les courriels. Utilisez cette adresse ou vérifiez le domaine noviaai.ca sur resend.com.`;
@@ -30,10 +31,11 @@ exports.handler = async (event) => {
   if (sandboxHint) return json(400, { error: sandboxHint });
 
   try {
+    const autoConfirm = process.env.SIGNUP_AUTO_CONFIRM === 'true';
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
       email: normalized,
       password: String(password),
-      email_confirm: false,
+      email_confirm: autoConfirm,
     });
     if (createErr) {
       const msg = (createErr.message || '').toLowerCase();
@@ -41,6 +43,14 @@ exports.handler = async (event) => {
         return json(409, { error: 'EXISTING_ACCOUNT', message: 'Ce courriel est déjà utilisé.' });
       }
       throw createErr;
+    }
+
+    if (autoConfirm) {
+      return json(200, {
+        ok: true,
+        autoConfirmed: true,
+        user: created?.user ? { id: created.user.id, email: created.user.email } : null,
+      });
     }
 
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({

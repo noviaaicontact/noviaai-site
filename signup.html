@@ -53,8 +53,16 @@ document.getElementById('form').onsubmit = async (e) => {
   try {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    const { data, error } = await NoviaApp.signUp(email, password);
+    const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password);
     if (error) throw error;
+    if (autoConfirmed) {
+      const { data: authData, error: signInErr } = await NoviaApp.signIn(email, password);
+      if (signInErr) throw signInErr;
+      const plan = sessionStorage.getItem('novia_plan') || 'pro';
+      await NoviaApp.ensureTenant(plan, authData.session.access_token);
+      location.href = '/onboarding.html';
+      return;
+    }
     if (NoviaApp.isDuplicateSignUpAttempt(data)) {
       document.getElementById('form').querySelector('button[type=submit]').disabled = true;
       ok.innerHTML = '<strong>Ce courriel est déjà utilisé.</strong><br>Un compte existe déjà avec cette adresse — vous ne pouvez pas créer un second compte avec le même courriel.<br><br><a href="/login.html">Se connecter</a> · <a href="/login.html">Mot de passe oublié? (page connexion)</a><br><br><span style="font-size:.85rem;color:var(--muted)">Si vous venez de vous inscrire, vérifiez aussi vos courriers indésirables.</span>';
