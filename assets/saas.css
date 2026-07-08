@@ -682,6 +682,9 @@ a:hover { text-decoration: underline; }
   margin-bottom: 24px;
 }
 .prov-box.success { background: #f0fdf4; border-color: #bbf7d0; }
+.prov-box.billing-urgent { background: #fff7ed; border-color: #fdba74; }
+.prov-box.billing-banner-compact { padding: 14px 18px; margin-bottom: 16px; }
+.prov-box.billing-banner-compact #billingMsg { margin-bottom: 8px !important; }
 
 /* Demo page */
 .demo-layout {

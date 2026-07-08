@@ -42,7 +42,7 @@
       <strong id="billingTitle">Essai gratuit</strong>
       <p id="billingMsg" class="muted" style="margin:8px 0 12px;font-size:.92rem"></p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button type="button" class="btn btn-accent btn-sm" id="btnSubscribe">Activer mon abonnement</button>
+        <button type="button" class="btn btn-accent btn-sm" id="btnSubscribe" hidden>Ajouter ma carte</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnManageBilling" hidden>Gérer la facturation</button>
       </div>
     </div>
@@ -324,6 +324,54 @@ function displayPhone(t) {
   return publicPhoneDisplay(t);
 }
 
+function hasBillingSetup(t) {
+  return !!(t && (t.stripe_customer_id || t.stripe_subscription_id));
+}
+
+function isPaidSubscription(t) {
+  return !!(t && t.subscription_status === 'active' && hasBillingSetup(t));
+}
+
+function formatSubStatus(status) {
+  const labels = {
+    trialing: 'Essai gratuit',
+    active: 'Actif',
+    canceled: 'Annulé',
+    inactive: 'Inactif',
+    past_due: 'Paiement en retard',
+  };
+  return labels[status] || status || '—';
+}
+
+function showFlashBanner(id, html, className) {
+  if (document.getElementById(id)) return;
+  const banner = document.createElement('div');
+  banner.id = id;
+  banner.className = className || 'prov-box success';
+  banner.style.marginBottom = '16px';
+  banner.innerHTML = html;
+  const anchor = document.getElementById('billingBanner');
+  document.querySelector('.dash-main').insertBefore(banner, anchor || document.querySelector('.dash-header').nextSibling);
+}
+
+function handleBillingReturn() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('paid') === '1') {
+    showFlashBanner(
+      'paidSuccessBanner',
+      '<strong>Merci!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Votre carte est enregistrée. Votre abonnement est actif.</p>'
+    );
+    history.replaceState({}, '', location.pathname);
+  } else if (params.get('cancel') === '1') {
+    showFlashBanner(
+      'checkoutCancelBanner',
+      '<strong>Paiement annulé</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Aucun frais. Vous pouvez ajouter votre carte quand vous voulez.</p>',
+      'prov-box'
+    );
+    history.replaceState({}, '', location.pathname);
+  }
+}
+
 function updateProvBox() {
   const box = document.getElementById('provBox');
   const title = document.getElementById('provTitle');
@@ -334,10 +382,17 @@ function updateProvBox() {
   if (tenant.provisioning_status === 'active' && tenant.twilio_number) {
     clearInterval(pollTimer);
     sessionStorage.removeItem('novia_provisioning');
+    const published = localStorage.getItem(forwardDoneKey()) === '1';
+    if (published && (isPaidSubscription(tenant) || hasBillingSetup(tenant))) {
+      box.hidden = true;
+      return;
+    }
     box.hidden = false;
     box.className = 'prov-box success';
-    title.textContent = '✅ Ligne NoviaAI prête';
-    msg.textContent = 'Copiez votre numéro et publiez-le sur Google.';
+    title.textContent = 'Ligne NoviaAI prête';
+    msg.textContent = published
+      ? 'Testez un appel manqué depuis un autre téléphone.'
+      : 'Copiez votre numéro et publiez-le sur Google.';
     retry.style.display = 'none';
     return;
   }
@@ -363,7 +418,7 @@ function updateProvBox() {
 function applyTenantToUI() {
   if (!tenant) return;
   document.getElementById('bizName').textContent = tenant.business_name;
-  document.getElementById('statStatus').textContent = tenant.subscription_status;
+  document.getElementById('statStatus').textContent = formatSubStatus(tenant.subscription_status);
   document.getElementById('statPlan').textContent = (tenant.plan || 'pro').toUpperCase();
   const pub = publicPhoneDisplay(tenant);
   document.getElementById('statPhone').textContent = pub;
@@ -486,36 +541,72 @@ function updateBillingUI(t) {
   if (!box) return;
 
   const status = t.subscription_status || 'trialing';
-  const hasStripe = !!t.stripe_customer_id;
+  const hasBilling = hasBillingSetup(t);
+  const planLabel = (t.plan || 'pro').toUpperCase();
   const trialEnd = t.trial_ends_at ? new Date(t.trial_ends_at) : null;
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 14;
+  const trialEndStr = trialEnd
+    ? trialEnd.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
 
-  if (status === 'active' && hasStripe) {
+  if (btnSub) {
+    btnSub.hidden = false;
+    btnSub.disabled = false;
+  }
+  if (btnPortal) btnPortal.hidden = true;
+
+  if (isPaidSubscription(t)) {
+    box.hidden = false;
+    box.className = 'prov-box success billing-banner-compact';
+    title.textContent = 'Abonnement actif';
+    msg.textContent = `Forfait ${planLabel} · Gérez votre carte et vos factures dans Stripe.`;
+    if (btnSub) btnSub.hidden = true;
+    if (btnPortal) btnPortal.hidden = false;
+    return;
+  }
+
+  if (status === 'trialing' && hasBilling) {
     box.hidden = false;
     box.className = 'prov-box success';
-    title.textContent = 'Abonnement actif';
-    msg.textContent = `Forfait ${(t.plan || 'pro').toUpperCase()} · Gérez votre carte et vos factures.`;
+    title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit — carte enregistrée';
+    msg.textContent = trialEndStr
+      ? `Forfait ${planLabel} · Premier prélèvement après le ${trialEndStr}.`
+      : `Forfait ${planLabel} · Votre carte est enregistrée pour la fin de l'essai.`;
     if (btnSub) btnSub.hidden = true;
     if (btnPortal) btnPortal.hidden = false;
     return;
   }
 
   box.hidden = false;
-  if (['canceled', 'inactive'].includes(status)) {
-    box.className = 'prov-box';
-    title.textContent = 'Abonnement inactif';
-    msg.textContent = 'Votre ligne NoviaAI est suspendue. Réactivez votre forfait pour continuer.';
-    btnSub.textContent = 'Réactiver mon abonnement';
-  } else {
-    box.className = 'prov-box success';
-    title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
-    msg.textContent = `Forfait ${(t.plan || 'pro').toUpperCase()} · Ajoutez votre carte pour continuer après l'essai.`;
+  if (['canceled', 'inactive', 'past_due'].includes(status)) {
+    box.className = 'prov-box billing-urgent';
+    title.textContent = status === 'past_due' ? 'Paiement en retard' : 'Abonnement inactif';
+    msg.textContent = status === 'past_due'
+      ? 'Mettez à jour votre carte pour éviter la suspension de votre ligne.'
+      : 'Votre ligne NoviaAI est suspendue. Réactivez votre forfait pour continuer.';
+    if (btnSub) {
+      btnSub.hidden = false;
+      btnSub.textContent = hasBilling ? 'Mettre à jour la carte' : 'Réactiver mon abonnement';
+    }
+    if (btnPortal) btnPortal.hidden = !hasBilling;
+    return;
+  }
+
+  box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
+  title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
+  msg.textContent = trialEndStr
+    ? `Forfait ${planLabel} · Ajoutez votre carte avant le ${trialEndStr}.`
+    : `Forfait ${planLabel} · Ajoutez votre carte pour continuer après l'essai.`;
+  if (btnSub) {
+    btnSub.hidden = false;
     btnSub.textContent = 'Ajouter ma carte';
   }
-  if (btnPortal) btnPortal.hidden = !hasStripe;
 }
 
 async function startCheckout() {
+  if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive'].includes(tenant.subscription_status)) {
+    return openBillingPortal();
+  }
   const plan = (tenant && tenant.plan) || 'pro';
   const res = await NoviaApp.api('api-stripe-checkout', {
     method: 'POST',
@@ -642,8 +733,8 @@ function openThreadDemo(phone) {
     }
     const session = await NoviaApp.requireAuth('/login.html');
     if (!session) return;
-    if (location.search.includes('paid=1')) alert('Merci! Votre abonnement est actif.');
     await loadTenant();
+    handleBillingReturn();
     await loadStats();
     if (location.search.includes('activating=1') || sessionStorage.getItem('novia_provisioning')) {
       startProvisioningPoll();
@@ -844,7 +935,19 @@ if (DEMO) {
 } else {
 document.getElementById('logout').onclick = e => { e.preventDefault(); NoviaApp.signOut(); };
 document.getElementById('btnSubscribe').onclick = async () => {
-  try { await startCheckout(); } catch (ex) { alert(ex.message || 'Erreur Stripe'); }
+  const btn = document.getElementById('btnSubscribe');
+  btn.disabled = true;
+  try {
+    if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive', 'past_due'].includes(tenant.subscription_status)) {
+      await openBillingPortal();
+      return;
+    }
+    await startCheckout();
+  } catch (ex) {
+    alert(ex.message || 'Erreur Stripe');
+  } finally {
+    btn.disabled = false;
+  }
 };
 document.getElementById('btnManageBilling').onclick = async () => {
   try { await openBillingPortal(); } catch (ex) { alert(ex.message || 'Erreur portail'); }
