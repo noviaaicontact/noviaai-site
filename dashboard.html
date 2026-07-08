@@ -458,6 +458,19 @@ function updateProvBox() {
   const retry = document.getElementById('btnRetryProv');
   if (!tenant) return;
 
+  if (tenant.line_mode === 'hosted' && tenant.hosted_status !== 'active') {
+    clearInterval(pollTimer);
+    box.hidden = false;
+    box.className = 'prov-box';
+    title.textContent = '📱 Portage de numéro en cours';
+    const num = tenant.existing_business_number || tenant.phone_forward || '';
+    msg.textContent = num
+      ? `Nous portons ${num} sur NoviaAI. Notre équipe vous contacte sous 48h ouvrables.`
+      : 'Notre équipe finalise le portage de votre ligne — vous serez avisé par courriel.';
+    retry.style.display = 'none';
+    return;
+  }
+
   if (tenant.provisioning_status === 'active' && tenant.twilio_number) {
     clearInterval(pollTimer);
     sessionStorage.removeItem('novia_provisioning');

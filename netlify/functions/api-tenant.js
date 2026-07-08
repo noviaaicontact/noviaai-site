@@ -4,6 +4,7 @@ const { getTenantByUserId, createTenantForUser, updateTenant } = require('../../
 const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
 const { normalizePlan } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
+const { startHostedRequest } = require('../../lib/hosted-sms');
 
 exports.handler = async (event) => {
   try {
@@ -36,6 +37,10 @@ exports.handler = async (event) => {
           : null;
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
       const updated = await updateTenant(user.id, patch);
+
+      if (body.onboarding && updated.onboarding_done && updated.line_mode === 'hosted') {
+        await startHostedRequest(updated);
+      }
 
       const fresh = await getTenantByUserId(user.id);
       if (fresh) await ensureWidgetPublicId(fresh);

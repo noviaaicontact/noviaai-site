@@ -19,7 +19,8 @@
     "stripe:webhook:test": "node scripts/stripe-webhook-test.mjs",
     "netlify:env": "node scripts/export-netlify-env.mjs",
     "configure:prod": "node scripts/configure-production.mjs",
-    "configure:prod:local": "node scripts/configure-production.mjs http://localhost:8888"
+    "configure:prod:local": "node scripts/configure-production.mjs http://localhost:8888",
+    "resend:prod": "node scripts/configure-resend-production.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^7.3.0",

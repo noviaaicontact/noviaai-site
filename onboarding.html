@@ -23,10 +23,25 @@
       <input id="business_phone" type="tel" required placeholder="581-909-5332">
       <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
 
-      <label for="missed_call_sms">Message SMS si appel manqué *</label>
-      <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
+      <label>Votre ligne professionnelle</label>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
+          <input type="radio" name="line_mode" value="new" checked style="margin-top:4px">
+          <span><strong>Nouveau numéro NoviaAI</strong> (recommandé)<br><span class="muted" style="font-size:.85rem">On vous donne un 418/581/514 — vous le publiez sur Google</span></span>
+        </label>
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
+          <input type="radio" name="line_mode" value="hosted" style="margin-top:4px">
+          <span><strong>Garder mon numéro actuel</strong> (portage)<br><span class="muted" style="font-size:.85rem">On porte votre ligne existante — activation sous 48h ouvrables</span></span>
+        </label>
+      </div>
 
-      <label for="area_code">Indicatif de votre ligne pro</label>
+      <div id="hostedFields" hidden>
+        <label for="existing_number">Numéro à porter (celui sur Google) *</label>
+        <input id="existing_number" type="tel" placeholder="581-555-1234">
+      </div>
+
+      <div id="newLineFields">
+      <label for="area_code">Indicatif de votre nouvelle ligne</label>
       <select id="area_code">
         <option value="418">418 — Québec</option>
         <option value="581">581 — Québec</option>
@@ -35,6 +50,10 @@
         <option value="450">450 — Rive-Sud</option>
         <option value="819">819 — Est</option>
       </select>
+      </div>
+
+      <label for="missed_call_sms">Message SMS si appel manqué *</label>
+      <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
 
       <label for="agent_name">Prénom de votre agente SMS</label>
       <input id="agent_name" placeholder="Léa" value="Léa">
@@ -50,6 +69,16 @@
 <script>
 (async () => { await NoviaApp.requireAuth('/login.html'); })();
 
+function syncLineModeUI() {
+  const hosted = document.querySelector('input[name="line_mode"]:checked')?.value === 'hosted';
+  document.getElementById('hostedFields').hidden = !hosted;
+  document.getElementById('newLineFields').hidden = hosted;
+  document.getElementById('existing_number').required = hosted;
+}
+document.querySelectorAll('input[name="line_mode"]').forEach((el) => {
+  el.addEventListener('change', syncLineModeUI);
+});
+
 document.getElementById('form').onsubmit = async (e) => {
   e.preventDefault();
   const err = document.getElementById('err');
@@ -57,8 +86,15 @@ document.getElementById('form').onsubmit = async (e) => {
   const name = document.getElementById('business_name').value.trim();
   const phone = document.getElementById('business_phone').value.trim();
   const sms = document.getElementById('missed_call_sms').value.trim();
+  const lineMode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
+  const existingNum = document.getElementById('existing_number').value.trim();
   if (!name || !phone || !sms) {
     err.textContent = 'Remplissez tous les champs obligatoires.';
+    err.hidden = false;
+    return;
+  }
+  if (lineMode === 'hosted' && !existingNum) {
+    err.textContent = 'Indiquez le numéro à porter.';
     err.hidden = false;
     return;
   }
@@ -73,7 +109,8 @@ document.getElementById('form').onsubmit = async (e) => {
         missed_call_sms: sms,
         area_code: document.getElementById('area_code').value,
         contact_email: document.getElementById('contact_email').value.trim(),
-        line_mode: 'new',
+        line_mode: lineMode,
+        existing_business_number: lineMode === 'hosted' ? existingNum : '',
       }),
     });
     if (res.error) throw new Error(res.error);

@@ -58,6 +58,15 @@ exports.handler = async (event) => {
       return xmlResponse(twimlMessage(OPTED_OUT_MSG));
     }
 
+    if (tenantId && client.tenant) {
+      const { checkSmsQuota } = require('../../lib/usage-limits');
+      const quota = await checkSmsQuota(client.tenant);
+      if (!quota.ok) {
+        await logMessage(tenantId, from, 'inbound', body);
+        return xmlResponse(twimlMessage('Limite mensuelle de textos atteinte. Appelez-nous ou réessayez le mois prochain.'));
+      }
+    }
+
     if (tenantId && body) {
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160) });
