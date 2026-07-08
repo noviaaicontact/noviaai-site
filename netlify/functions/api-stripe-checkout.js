@@ -3,6 +3,7 @@ const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId, createTenantForUser } = require('../../lib/tenant');
 const { createCheckoutSession, PLANS } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
+const { normalizePlan } = require('../../lib/plans');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {

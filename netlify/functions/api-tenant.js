@@ -3,6 +3,8 @@ const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId, createTenantForUser, updateTenant } = require('../../lib/tenant');
 const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
 const { provisionTenant } = require('../../lib/provision');
+const { normalizePlan } = require('../../lib/plans');
+const { ensureWidgetPublicId } = require('../../lib/widget');
 
 async function autoProvision(tenantId) {
   if (process.env.TWILIO_AUTO_PROVISION === 'false') return null;
@@ -22,9 +24,10 @@ exports.handler = async (event) => {
     if (event.httpMethod === 'GET') {
       let tenant = await getTenantByUserId(user.id);
       if (!tenant) {
-        const plan = (event.queryStringParameters && event.queryStringParameters.plan) || 'starter';
+        const plan = normalizePlan(event.queryStringParameters && event.queryStringParameters.plan);
         tenant = await createTenantForUser(user, { plan });
       }
+      await ensureWidgetPublicId(tenant);
       return json(200, { tenant, dossier: rowToDossier(tenant) });
     }
 
@@ -46,6 +49,7 @@ exports.handler = async (event) => {
       }
 
       const fresh = await getTenantByUserId(user.id);
+      if (fresh) await ensureWidgetPublicId(fresh);
       return json(200, {
         tenant: fresh || updated,
         dossier: rowToDossier(fresh || updated),

@@ -5,6 +5,7 @@ const { touchThread } = require('../../lib/inbox');
 const { loadHistory, saveHistory } = require('../../lib/store');
 const { generateReply } = require('../../lib/ai');
 const { processInboundActions } = require('../../lib/agent-tools');
+const { maybeAutoReviewRequest } = require('../../lib/review-request');
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const SUSPENDED_MSG = 'Ce service NoviaAI est temporairement suspendu. Veuillez rappeler plus tard.';
@@ -63,6 +64,11 @@ exports.handler = async (event) => {
           userMessage: body,
           aiReply: reply,
         }).catch((e) => console.error('agent-tools', e.message));
+        maybeAutoReviewRequest({
+          tenant: client.tenant,
+          callerPhone: from,
+          userMessage: body,
+        }).catch((e) => console.error('auto-review', e.message));
       }
     }
 

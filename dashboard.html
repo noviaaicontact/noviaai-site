@@ -104,6 +104,15 @@
       </div>
 
       <details class="install-advanced" style="margin-top:20px">
+        <summary>Chatbot sur mon site web</summary>
+        <p class="muted" style="font-size:.88rem;margin:12px 0">Widget NoviaAI — vos visiteurs chattent sur votre site avec la même IA que le SMS.</p>
+        <div class="install-code-row">
+          <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
+        </div>
+      </details>
+
+      <details class="install-advanced" style="margin-top:20px">
         <summary>Je veux garder mon ancien numéro (581, 418…) — option avancée</summary>
         <p class="muted" style="font-size:.88rem;margin:12px 0">Nécessite un renvoi d'appel chez votre opérateur. Contactez-nous pour le portage (recommandé) ou suivez les codes ci-dessous.</p>
         <div class="install-code-row">
@@ -143,6 +152,42 @@
               <label for="setMissedSms">Message SMS appel manqué *</label>
               <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Désolé, on a manqué votre appel…"></textarea>
             </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Avis Google</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Demandez automatiquement un avis après une bonne conversation SMS, ou envoyez-le manuellement depuis l'inbox.</p>
+          <div class="settings-grid">
+            <div class="settings-field settings-field-wide">
+              <label for="setGoogleReviewUrl">Lien avis Google</label>
+              <input id="setGoogleReviewUrl" type="url" placeholder="https://g.page/r/XXXXX/review">
+              <small class="settings-hint">Google Business → Accueil → « Obtenir plus d'avis » → copier le lien</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setReviewRequestSms">Message SMS avis (optionnel)</label>
+              <textarea id="setReviewRequestSms" rows="2" placeholder="Merci d'avoir choisi {{commerce}}! Un petit avis Google nous aide: {{lien}}"></textarea>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer">
+                <input type="checkbox" id="setAutoReviewRequest" style="margin-top:4px">
+                <span>Envoyer automatiquement quand le client dit « merci » (1 fois par conversation)</span>
+              </label>
+            </div>
+          </div>
+          <p class="muted" style="font-size:.85rem;margin:8px 0 0"><span id="statReviewSent">0</span> demandes d'avis envoyées</p>
+        </div>
+
+        <div class="settings-section">
+          <h3>Chatbot sur votre site web</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Collez ce code avant &lt;/body&gt; sur votre site — même IA que le SMS.</p>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;margin-bottom:12px">
+            <input type="checkbox" id="setWidgetEnabled" style="margin-top:4px" checked>
+            <span>Activer le widget web</span>
+          </label>
+          <div class="install-code-row">
+            <code id="widgetEmbedCode" style="font-size:.75rem;word-break:break-all">Chargement…</code>
+            <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidget">Copier</button>
           </div>
         </div>
 
@@ -308,6 +353,27 @@ function populateSettingsForm(t) {
   document.getElementById('setBusinessPhone').value = t.phone_forward || '';
   document.getElementById('setContactEmail').value = t.contact_email || t.email || '';
   document.getElementById('setMissedSms').value = t.missed_call_sms || '';
+  document.getElementById('setGoogleReviewUrl').value = t.google_review_url || '';
+  document.getElementById('setReviewRequestSms').value = t.review_request_sms || '';
+  document.getElementById('setAutoReviewRequest').checked = !!t.auto_review_request;
+  document.getElementById('setWidgetEnabled').checked = t.widget_enabled !== false;
+  const revStat = document.getElementById('statReviewSent');
+  if (revStat) revStat.textContent = String(t.review_requests_sent || 0);
+  updateWidgetEmbedUI(t);
+}
+
+function widgetEmbedCode(t) {
+  if (!t || !t.widget_public_id) return 'Enregistrez vos paramètres pour générer le code.';
+  const base = location.origin.replace(/\/$/, '');
+  return `<script src="${base}/widget.js" data-widget-id="${t.widget_public_id}" async><\/script>`;
+}
+
+function updateWidgetEmbedUI(t) {
+  const code = widgetEmbedCode(t);
+  const el = document.getElementById('widgetEmbedCode');
+  const el2 = document.getElementById('widgetEmbedCodeInstall');
+  if (el) el.textContent = code;
+  if (el2) el2.textContent = code;
 }
 
 function populateChatbotForm(t) {
@@ -432,6 +498,7 @@ function applyTenantToUI() {
   }
   populateSettingsForm(tenant);
   populateChatbotForm(tenant);
+  updateWidgetEmbedUI(tenant);
   updateBillingUI(tenant);
   updateProvBox();
   const live = tenant.provisioning_status === 'active' && tenant.twilio_number;
@@ -482,6 +549,15 @@ function initInstallWizard() {
   document.getElementById('btnCopyMmi').onclick = () => {
     copyText(document.getElementById('installMmiCode').textContent.trim(), document.getElementById('btnCopyMmi'));
   };
+  async function copyWidgetCode(btn) {
+    const code = (document.getElementById('widgetEmbedCodeInstall') || {}).textContent || '';
+    if (!code || code === '—') return alert('Code widget non disponible — enregistrez vos paramètres.');
+    await copyText(code, btn, 'Copié!');
+  }
+  const btnW = document.getElementById('btnCopyWidget');
+  const btnWI = document.getElementById('btnCopyWidgetInstall');
+  if (btnW) btnW.onclick = () => copyWidgetCode(btnW);
+  if (btnWI) btnWI.onclick = () => copyWidgetCode(btnWI);
   document.querySelectorAll('[data-copy-code]').forEach((btn) => {
     btn.onclick = () => copyText(btn.dataset.copyCode, btn);
   });
@@ -855,6 +931,8 @@ async function openThread(phone) {
 
 function renderThread(phone, msgs) {
   const thread = document.getElementById('inboxThread');
+  const isWeb = String(phone).startsWith('web:');
+  const canReview = !isWeb && tenant && tenant.google_review_url;
   const bubbles = msgs.length
     ? msgs.map(m => {
         const cls = m.direction === 'inbound' ? 'in' : 'out';
@@ -862,17 +940,45 @@ function renderThread(phone, msgs) {
         return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${m.body.replace(/</g,'&lt;')}</div>`;
       }).join('')
     : '<div class="inbox-empty" style="padding:24px">Aucun message — écrivez au client ci-dessous.</div>';
+  const reviewBtn = canReview
+    ? `<div style="padding:8px 12px;border-top:1px solid var(--line)"><button type="button" class="btn btn-ghost btn-sm" id="btnSendReview">Demander un avis Google</button></div>`
+    : '';
+  const replyForm = isWeb
+    ? '<p class="muted" style="padding:12px;font-size:.85rem">Conversation web — le client peut aussi vous texter sur votre ligne NoviaAI.</p>'
+    : `<form class="inbox-reply" id="inboxReplyForm">
+        <input type="text" id="inboxReplyInput" placeholder="Répondre par SMS…" maxlength="1600" required autocomplete="off">
+        <button type="submit" class="btn btn-accent btn-sm">Envoyer</button>
+      </form>`;
   thread.innerHTML = `
     <div class="inbox-thread-wrap">
       <div class="inbox-messages" id="inboxMessages">${bubbles}</div>
-      <form class="inbox-reply" id="inboxReplyForm">
-        <input type="text" id="inboxReplyInput" placeholder="Répondre par SMS…" maxlength="1600" required autocomplete="off">
-        <button type="submit" class="btn btn-accent btn-sm">Envoyer</button>
-      </form>
+      ${reviewBtn}
+      ${replyForm}
     </div>`;
   const box = document.getElementById('inboxMessages');
   if (box) box.scrollTop = box.scrollHeight;
-  document.getElementById('inboxReplyForm').onsubmit = async (e) => {
+  const reviewEl = document.getElementById('btnSendReview');
+  if (reviewEl) {
+    reviewEl.onclick = async () => {
+      reviewEl.disabled = true;
+      try {
+        const res = await NoviaApp.api('api-review-request', {
+          method: 'POST',
+          body: JSON.stringify({ phone }),
+        });
+        if (res.error) throw new Error(res.error);
+        alert('Demande d\'avis envoyée!');
+        await openThread(phone);
+        await loadTenant();
+      } catch (ex) {
+        alert(ex.message || 'Envoi impossible');
+      } finally {
+        reviewEl.disabled = false;
+      }
+    };
+  }
+  const replyFormEl = document.getElementById('inboxReplyForm');
+  if (replyFormEl) replyFormEl.onsubmit = async (e) => {
     e.preventDefault();
     const input = document.getElementById('inboxReplyInput');
     const text = input.value.trim();
@@ -979,6 +1085,10 @@ document.getElementById('settingsForm').onsubmit = async (e) => {
       phone_forward: phone,
       contact_email: document.getElementById('setContactEmail').value.trim(),
       missed_call_sms: document.getElementById('setMissedSms').value.trim(),
+      google_review_url: document.getElementById('setGoogleReviewUrl').value.trim(),
+      review_request_sms: document.getElementById('setReviewRequestSms').value.trim(),
+      auto_review_request: document.getElementById('setAutoReviewRequest').checked,
+      widget_enabled: document.getElementById('setWidgetEnabled').checked,
     };
     const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });
     if (res.error) throw new Error(res.error);
