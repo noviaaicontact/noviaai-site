@@ -121,4 +121,19 @@ async function signOut() {
   location.href = '/login.html';
 }
 
-window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, isDuplicateSignUpAttempt, formatSignUpError };
+async function resetPassword(email) {
+  const sb = await getSupabase();
+  if (!sb) throw new Error('Supabase non configuré');
+  const redirectTo = `${window.location.origin}/auth/reset-password.html`;
+  const { error } = await sb.auth.resetPasswordForEmail(String(email).trim().toLowerCase(), { redirectTo });
+  if (error) throw error;
+}
+
+async function updatePassword(newPassword) {
+  const sb = await getSupabase();
+  if (!sb) throw new Error('Supabase non configuré');
+  const { error } = await sb.auth.updateUser({ password: newPassword });
+  if (error) throw error;
+}
+
+window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, resetPassword, updatePassword, isDuplicateSignUpAttempt, formatSignUpError };

@@ -2,14 +2,8 @@ const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId, createTenantForUser, updateTenant } = require('../../lib/tenant');
 const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
-const { provisionTenant } = require('../../lib/provision');
 const { normalizePlan } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
-
-async function autoProvision(tenantId) {
-  if (process.env.TWILIO_AUTO_PROVISION === 'false') return null;
-  return provisionTenant(tenantId);
-}
 
 exports.handler = async (event) => {
   try {
@@ -43,17 +37,12 @@ exports.handler = async (event) => {
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
       const updated = await updateTenant(user.id, patch);
 
-      let provision = null;
-      if (body.onboarding && updated.onboarding_done) {
-        provision = await autoProvision(updated.id);
-      }
-
       const fresh = await getTenantByUserId(user.id);
       if (fresh) await ensureWidgetPublicId(fresh);
       return json(200, {
         tenant: fresh || updated,
         dossier: rowToDossier(fresh || updated),
-        provision,
+        needsCheckout: !!(fresh || updated).onboarding_done && !(fresh || updated).stripe_subscription_id,
       });
     }
 

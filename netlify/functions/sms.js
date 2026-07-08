@@ -7,8 +7,18 @@ const { generateReply } = require('../../lib/ai');
 const { processInboundActions } = require('../../lib/agent-tools');
 const { maybeAutoReviewRequest, clearReviewPending } = require('../../lib/review-request');
 const { hasNegativeInboundText } = require('../../lib/review-eligibility');
+const {
+  isOptOutMessage,
+  isOptInMessage,
+  isOptedOut,
+  recordOptOut,
+  clearOptOut,
+  OPT_OUT_ACK,
+  OPT_IN_ACK,
+} = require('../../lib/sms-compliance');
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
+const OPTED_OUT_MSG = 'Vous êtes désinscrit(e) des textos. Répondez OUI pour vous réabonner, ou appelez-nous directement.';
 const SUSPENDED_MSG = 'Ce service NoviaAI est temporairement suspendu. Veuillez rappeler plus tard.';
 
 exports.handler = async (event) => {
@@ -27,6 +37,26 @@ exports.handler = async (event) => {
     const tenantId = client && client.tenant && client.tenant.id;
     const dossier = client && client.dossier;
     const key = convoKey(to, from);
+
+    if (tenantId && body && isOptOutMessage(body)) {
+      await recordOptOut(tenantId, from);
+      await logMessage(tenantId, from, 'inbound', body);
+      await logEvent(tenantId, from, 'sms_opt_out', { body: body.slice(0, 80) });
+      return xmlResponse(twimlMessage(OPT_OUT_ACK));
+    }
+
+    if (tenantId && body && isOptInMessage(body)) {
+      await clearOptOut(tenantId, from);
+      await logMessage(tenantId, from, 'inbound', body);
+      await logEvent(tenantId, from, 'sms_opt_in', { body: body.slice(0, 80) });
+      return xmlResponse(twimlMessage(OPT_IN_ACK));
+    }
+
+    if (tenantId && body && (await isOptedOut(tenantId, from))) {
+      await logMessage(tenantId, from, 'inbound', body);
+      await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160), opted_out: true });
+      return xmlResponse(twimlMessage(OPTED_OUT_MSG));
+    }
 
     if (tenantId && body) {
       await logMessage(tenantId, from, 'inbound', body);

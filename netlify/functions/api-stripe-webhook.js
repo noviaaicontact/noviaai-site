@@ -30,8 +30,17 @@ exports.handler = async (event) => {
         const session = stripeEvent.data.object;
         const tenantId = session.metadata && session.metadata.tenant_id;
         if (tenantId) {
+          let subStatus = 'active';
+          if (session.subscription) {
+            try {
+              const sub = await stripe.subscriptions.retrieve(session.subscription);
+              subStatus = sub.status === 'trialing' ? 'trialing' : 'active';
+            } catch (e) {
+              console.warn('webhook subscription retrieve', e.message);
+            }
+          }
           await db.from('tenants').update({
-            subscription_status: 'active',
+            subscription_status: subStatus,
             stripe_customer_id: session.customer,
             stripe_subscription_id: session.subscription,
             plan: (session.metadata && session.metadata.plan) || 'pro',
@@ -49,7 +58,7 @@ exports.handler = async (event) => {
           subscription_status: status,
           stripe_subscription_id: sub.id,
         }).eq('stripe_customer_id', sub.customer).select('id');
-        if (status === 'active' && tenants && tenants[0]) {
+        if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
           await provisionTenant(tenants[0].id);
         }
         if (['canceled', 'inactive'].includes(status) && tenants && tenants[0]) {

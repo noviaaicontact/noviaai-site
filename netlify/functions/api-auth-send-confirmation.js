@@ -1,6 +1,7 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getAdmin } = require('../../lib/db');
 const { sendSignupConfirmationEmail } = require('../../lib/confirmation-email');
+const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
 
 const REDIRECT = () => `${process.env.PUBLIC_BASE_URL || 'https://noviaai.ca'}/auth/callback.html`;
 
@@ -19,16 +20,28 @@ exports.handler = async (event) => {
     return json(400, { error: 'Courriel invalide' });
   }
 
+  const ip = clientIp(event);
+  const rl = await checkRateLimit(`confirm:${normalized}:${ip}`, { maxAttempts: 3, windowMinutes: 60 });
+  if (!rl.ok) {
+    return json(429, { error: 'Trop de tentatives — réessayez dans une heure.' });
+  }
+
   try {
     const { data, error } = await admin.auth.admin.generateLink({
       type: 'signup',
       email: normalized,
       options: { redirectTo: REDIRECT() },
     });
-    if (error) throw error;
+    if (error) {
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('not found') || msg.includes('user not')) {
+        return json(200, { ok: true });
+      }
+      throw error;
+    }
 
     const link = data?.properties?.action_link;
-    if (!link) throw new Error('Lien de confirmation indisponible');
+    if (!link) return json(200, { ok: true });
 
     await sendSignupConfirmationEmail(normalized, link);
     return json(200, { ok: true });

@@ -202,6 +202,12 @@
           <p id="settingsErr" class="err" hidden style="margin:0"></p>
         </div>
       </form>
+
+      <div class="settings-section" style="margin-top:40px;padding-top:24px;border-top:1px solid var(--border)">
+        <h3 style="color:var(--err,#c0392b)">Zone dangereuse</h3>
+        <p class="muted" style="font-size:.88rem">Supprime définitivement votre compte, vos conversations et libère votre numéro NoviaAI.</p>
+        <button type="button" class="btn btn-ghost" id="btnDeleteAccount" style="border-color:var(--err,#c0392b);color:var(--err,#c0392b)">Supprimer mon compte</button>
+      </div>
     </div>
 
     <div class="card" id="panelChatbot" hidden>
@@ -397,7 +403,7 @@ function displayPhone(t) {
 }
 
 function hasBillingSetup(t) {
-  return !!(t && (t.stripe_customer_id || t.stripe_subscription_id));
+  return !!(t && t.stripe_subscription_id);
 }
 
 function isPaidSubscription(t) {
@@ -429,9 +435,10 @@ function showFlashBanner(id, html, className) {
 function handleBillingReturn() {
   const params = new URLSearchParams(location.search);
   if (params.get('paid') === '1') {
+    sessionStorage.setItem('novia_provisioning', '1');
     showFlashBanner(
       'paidSuccessBanner',
-      '<strong>Merci!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Votre carte est enregistrée. Votre abonnement est actif.</p>'
+      '<strong>Merci!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Votre carte est enregistrée. Activation de votre ligne en cours (~1–2 min).</p>'
     );
     history.replaceState({}, '', location.pathname);
   } else if (params.get('cancel') === '1') {
@@ -720,8 +727,8 @@ function loadDemoData() {
     agent_name: 'Léa',
     agent_tone: 'Français québécois, chaleureux et professionnel',
     services: [
-      { nom: 'Coupe femme', prix: 'Ã  partir de 45 $', description_courte: 'Coupe femme' },
-      { nom: 'Balayage', prix: 'Ã  partir de 120 $', description_courte: 'Balayage' },
+      { nom: 'Coupe femme', prix: 'à partir de 45 $', description_courte: 'Coupe femme' },
+      { nom: 'Balayage', prix: 'à partir de 120 $', description_courte: 'Balayage' },
     ],
     reservation_url: 'https://calendly.com/exemple',
     address_line: '245, rue Principale',
@@ -736,8 +743,8 @@ function loadDemoData() {
       samedi: { ouvert: true, debut: '9h', fin: '16h' },
       dimanche: { ouvert: false, debut: '9h', fin: '16h' },
     },
-    policies: ['Annulation 24h Ã  l\'avance', 'Paiement: carte, argent, Interac'],
-    missed_call_sms: 'Bonjour! Désolée, on a manqué votre appel Ã  Salon Éclat 😊',
+    policies: ['Annulation 24h à l\'avance', 'Paiement: carte, argent, Interac'],
+    missed_call_sms: 'Bonjour! Désolée, on a manqué votre appel à Salon Éclat 😊',
     subscription_status: 'trialing',
     plan: 'pro',
     avg_client_value: 75,
@@ -753,7 +760,7 @@ function loadDemoData() {
   document.getElementById('missedCount').textContent = '12';
   document.getElementById('leadCount').textContent = '8';
   inboxData = [
-    { caller_phone: '+1 (418) 555-7821', last_preview: 'Oui jeudi 15 h pour une coupe', has_lead: true, missed_calls: 1, last_at: new Date().toISOString(), lead_summary: 'RDV jeudi 15 h â€” coupe femme' },
+    { caller_phone: '+1 (418) 555-7821', last_preview: 'Oui jeudi 15 h pour une coupe', has_lead: true, missed_calls: 1, last_at: new Date().toISOString(), lead_summary: 'RDV jeudi 15 h — coupe femme' },
     { caller_phone: '+1 (581) 555-3390', last_preview: 'C\'est combien un balayage?', has_lead: false, missed_calls: 2, last_at: new Date(Date.now() - 86400000).toISOString() },
     { caller_phone: '+1 (514) 555-9012', last_preview: 'Merci, je passe samedi', has_lead: true, missed_calls: 0, last_at: new Date(Date.now() - 172800000).toISOString(), lead_summary: 'Visite samedi AM' },
   ];
@@ -785,13 +792,13 @@ function openThreadDemo(phone) {
   renderInboxList();
   const thread = document.getElementById('inboxThread');
   const msgs = phone.includes('7821') ? [
-    { direction: 'outbound', body: 'Bonjour! Désolée, on a manqué votre appel Ã  Salon Éclat 😊 On peut vous aider par texto â€” qu\'est-ce que vous cherchiez?', created_at: new Date(Date.now() - 3600000).toISOString() },
+    { direction: 'outbound', body: 'Bonjour! Désolée, on a manqué votre appel à Salon Éclat 😊 On peut vous aider par texto — qu\'est-ce que vous cherchiez?', created_at: new Date(Date.now() - 3600000).toISOString() },
     { direction: 'inbound', body: 'C\'est combien une coupe femme?', created_at: new Date(Date.now() - 3500000).toISOString() },
-    { direction: 'outbound', body: 'Coupe femme Ã  partir de 45 $. On a des places jeudi PM â€” voulez-vous qu\'on vous réserve?', created_at: new Date(Date.now() - 3400000).toISOString() },
+    { direction: 'outbound', body: 'Coupe femme à partir de 45 $. On a des places jeudi PM — voulez-vous qu\'on vous réserve?', created_at: new Date(Date.now() - 3400000).toISOString() },
     { direction: 'inbound', body: 'Oui jeudi 15 h', created_at: new Date(Date.now() - 3300000).toISOString() },
     { direction: 'outbound', body: 'Parfait! Je note jeudi 15 h. Quel est votre prénom?', created_at: new Date(Date.now() - 3200000).toISOString() },
   ] : [
-    { direction: 'outbound', body: 'Bonjour! Salon Éclat ici â€” comment puis-je vous aider?', created_at: new Date().toISOString() },
+    { direction: 'outbound', body: 'Bonjour! Salon Éclat ici — comment puis-je vous aider?', created_at: new Date().toISOString() },
     { direction: 'inbound', body: 'Horaires samedi?', created_at: new Date().toISOString() },
   ];
   thread.innerHTML = msgs.map(m => {
@@ -817,8 +824,20 @@ function openThreadDemo(phone) {
     if (!session) return;
     await loadTenant();
     handleBillingReturn();
+    const params = new URLSearchParams(location.search);
+    if (params.get('checkout') === '1') {
+      history.replaceState({}, '', location.pathname);
+      if (tenant && !tenant.stripe_subscription_id) {
+        try { await startCheckout(); } catch (e) { console.warn('checkout', e); }
+      }
+    }
     await loadStats();
-    if (location.search.includes('activating=1') || sessionStorage.getItem('novia_provisioning')) {
+    if (params.get('activating') === '1' || sessionStorage.getItem('novia_provisioning')) {
+      if (tenant && tenant.stripe_subscription_id) startProvisioningPoll();
+      else if (tenant && tenant.onboarding_done && !tenant.stripe_subscription_id) {
+        showFlashBanner('checkoutNeededBanner', '<strong>Presque fini!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Ajoutez votre carte pour activer votre ligne NoviaAI (essai 14 jours).</p>');
+      }
+    } else if (sessionStorage.getItem('novia_provisioning') && tenant?.stripe_subscription_id) {
       startProvisioningPoll();
     }
   } catch (ex) {
@@ -830,7 +849,7 @@ function openThreadDemo(phone) {
 
 function markCheck(id, done) {
   const el = document.getElementById(id);
-  if (done) { el.classList.add('done'); el.querySelector('.check').textContent = 'âœ“'; }
+  if (done) { el.classList.add('done'); el.querySelector('.check').textContent = '✓'; }
 }
 
 let provRetrySent = false;
@@ -1106,6 +1125,17 @@ document.getElementById('settingsForm').onsubmit = async (e) => {
   } catch (ex) {
     err.textContent = ex.message || 'Erreur enregistrement';
     err.hidden = false;
+  }
+};
+document.getElementById('btnDeleteAccount').onclick = async () => {
+  if (!confirm('Supprimer définitivement votre compte NoviaAI? Cette action est irréversible.')) return;
+  const typed = prompt('Tapez SUPPRIMER pour confirmer');
+  if (typed !== 'SUPPRIMER') return;
+  try {
+    await NoviaApp.api('api-delete-account', { method: 'DELETE' });
+    await NoviaApp.signOut();
+  } catch (ex) {
+    alert(ex.message || 'Suppression impossible');
   }
 };
 }

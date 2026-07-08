@@ -42,7 +42,7 @@
       <label for="contact_email">Courriel alertes (optionnel)</label>
       <input id="contact_email" type="email" placeholder="vous@commerce.com">
 
-      <button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px">Obtenir mon numéro →</button>
+      <button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px">Continuer vers la facturation →</button>
       <p id="err" class="err" hidden></p>
     </form>
   </div>
@@ -79,7 +79,7 @@ document.getElementById('form').onsubmit = async (e) => {
     if (res.error) throw new Error(res.error);
     sessionStorage.setItem('novia_provisioning', '1');
     sessionStorage.setItem('novia_show_link_guide', '1');
-    location.href = '/dashboard.html?activating=1';
+    location.href = '/dashboard.html?checkout=1';
   } catch (ex) {
     err.textContent = ex.message || 'Erreur';
     err.hidden = false;

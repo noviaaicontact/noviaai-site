@@ -24,3 +24,6 @@
 
 [functions."review-queue-processor"]
   schedule = "*/1 * * * *"
+
+[functions."trial-expiry-processor"]
+  schedule = "0 6 * * *"

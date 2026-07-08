@@ -18,7 +18,7 @@ exports.handler = async (event) => {
     let tenant = await getTenantByUserId(user.id);
     if (!tenant) tenant = await createTenantForUser(user);
     const body = parseJson(event);
-    const plan = body.plan || tenant.plan || 'pro';
+    const plan = normalizePlan(body.plan || tenant.plan);
     if (!PLANS[plan]) return json(400, { error: 'Forfait invalide' });
 
     const base = process.env.PUBLIC_BASE_URL || 'http://localhost:8888';
@@ -33,7 +33,7 @@ exports.handler = async (event) => {
       const db = getAdmin();
       await db.from('tenants').update({
         stripe_customer_id: customerId,
-        plan: ['starter', 'pro', 'business'].includes(plan) ? plan : tenant.plan,
+        plan: normalizePlan(plan),
         updated_at: new Date().toISOString(),
       }).eq('user_id', user.id);
     }

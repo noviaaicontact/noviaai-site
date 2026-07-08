@@ -21,6 +21,7 @@
         <label for="password">Mot de passe</label>
         <input id="password" type="password" required autocomplete="current-password">
         <button type="submit" class="btn btn-accent btn-block" style="margin-top:24px">Se connecter</button>
+        <p style="margin-top:12px;font-size:.9rem"><a href="#" id="forgotLink">Mot de passe oublié?</a></p>
         <p id="ok" class="ok" hidden></p>
         <p id="err" class="err" hidden></p>
       </form>
@@ -43,6 +44,27 @@ if (new URLSearchParams(location.search).get('confirmed') === '1') {
   ok.textContent = 'Courriel confirmé! Connectez-vous avec votre mot de passe.';
   ok.hidden = false;
 }
+document.getElementById('forgotLink').onclick = async (e) => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  const ok = document.getElementById('ok');
+  err.hidden = true;
+  ok.hidden = true;
+  const email = document.getElementById('email').value.trim();
+  if (!email) {
+    err.textContent = 'Entrez votre courriel ci-dessus, puis cliquez Mot de passe oublié.';
+    err.hidden = false;
+    return;
+  }
+  try {
+    await NoviaApp.resetPassword(email);
+    ok.textContent = 'Courriel envoyé! Cliquez le lien pour choisir un nouveau mot de passe.';
+    ok.hidden = false;
+  } catch (ex) {
+    err.textContent = ex.message || 'Envoi impossible';
+    err.hidden = false;
+  }
+};
 document.getElementById('form').onsubmit = async (e) => {
   e.preventDefault();
   const err = document.getElementById('err');

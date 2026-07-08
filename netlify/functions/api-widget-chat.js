@@ -8,6 +8,7 @@ const { logMessage } = require('../../lib/tenant');
 const { logEvent } = require('../../lib/events');
 const { touchThread } = require('../../lib/inbox');
 const { processInboundActions } = require('../../lib/agent-tools');
+const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -25,6 +26,12 @@ exports.handler = async (event) => {
 
   const tenant = await getTenantByWidgetId(widgetId);
   if (!tenant) return json(404, { error: 'Widget introuvable ou inactif' });
+
+  const rl = await checkRateLimit(`widget:${widgetId}:${sessionId}`, { maxAttempts: 40, windowMinutes: 60 });
+  if (!rl.ok) return json(429, { error: 'Trop de messages — réessayez plus tard.' });
+
+  const ipRl = await checkRateLimit(`widget-ip:${clientIp(event)}`, { maxAttempts: 120, windowMinutes: 60 });
+  if (!ipRl.ok) return json(429, { error: 'Limite atteinte — réessayez plus tard.' });
 
   const dossier = rowToDossier(tenant);
   const callerPhone = webCallerId(sessionId);
