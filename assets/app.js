@@ -76,46 +76,37 @@ function formatSignUpError(err) {
     return 'Limite d\'envoi de courriels atteinte. Attendez 10–15 minutes, puis réessayez.';
   }
   if (msg.includes('error sending confirmation') || msg.includes('550')) {
-    return 'Courriel non envoyé : en mode test Resend, seul noviaai.contact@gmail.com peut recevoir les confirmations. Utilisez cette adresse pour tester, ou vérifiez le domaine noviaai.ca sur resend.com.';
+    return 'Courriel non envoyé en mode test. Utilisez noviaai.contact@gmail.com pour tester, ou vérifiez le domaine noviaai.ca sur resend.com.';
   }
   return err?.message || 'Erreur inscription';
 }
 
 async function signUp(email, password) {
-  const sb = await getSupabase();
-  if (!sb) throw new Error('Supabase non configuré — voir README');
-  const result = await sb.auth.signUp({
-    email,
-    password,
-    options: { emailRedirectTo: authRedirectUrl() },
+  const normalized = String(email || '').trim().toLowerCase();
+  const res = await fetch('/.netlify/functions/api-auth-signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: normalized, password }),
   });
-  if (result.error) {
-    const msg = (result.error.message || '').toLowerCase();
-    if (msg.includes('error sending confirmation') || msg.includes('rate limit')) {
-      const backup = await sendConfirmationBackup(email);
-      if (backup.ok) {
-        return { data: result.data, error: null, confirmationSentViaBackup: true };
-      }
-    }
-    return result;
-  }
-  if (result.data?.user && !result.data.session && !isDuplicateSignUpAttempt(result.data)) {
-    await sendConfirmationBackup(email);
-  }
-  return result;
-}
+  let payload = {};
+  try { payload = await res.json(); } catch (_) { /* non-JSON */ }
 
-async function sendConfirmationBackup(email) {
-  try {
-    const res = await fetch('/.netlify/functions/api-auth-send-confirmation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    return { ok: res.ok };
-  } catch {
-    return { ok: false };
+  if (res.status === 409 || payload.error === 'EXISTING_ACCOUNT') {
+    return {
+      data: { user: { identities: [] }, session: null },
+      error: null,
+    };
   }
+
+  if (!res.ok) {
+    return { data: { user: null, session: null }, error: { message: payload.error || 'Erreur inscription', status: res.status } };
+  }
+
+  return {
+    data: { user: payload.user || { email: normalized }, session: null },
+    error: null,
+    confirmationSentViaBackup: true,
+  };
 }
 
 async function signIn(email, password) {
