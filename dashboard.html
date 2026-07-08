@@ -157,7 +157,7 @@
 
         <div class="settings-section">
           <h3>Avis Google</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Demandez automatiquement un avis après une bonne conversation SMS, ou envoyez-le manuellement depuis l'inbox.</p>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Envoi automatique après une conversation positive (satisfaction ou résolution), avec un délai configurable. Jamais après une plainte.</p>
           <div class="settings-grid">
             <div class="settings-field settings-field-wide">
               <label for="setGoogleReviewUrl">Lien avis Google</label>
@@ -168,10 +168,15 @@
               <label for="setReviewRequestSms">Message SMS avis (optionnel)</label>
               <textarea id="setReviewRequestSms" rows="2" placeholder="Merci d'avoir choisi {{commerce}}! Un petit avis Google nous aide: {{lien}}"></textarea>
             </div>
+            <div class="settings-field">
+              <label for="setReviewDelayMinutes">Délai avant envoi (minutes)</label>
+              <input id="setReviewDelayMinutes" type="number" min="1" max="120" value="5">
+              <small class="settings-hint">Par défaut 5 min — le client n'est pas interrompu tout de suite</small>
+            </div>
             <div class="settings-field settings-field-wide">
               <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer">
                 <input type="checkbox" id="setAutoReviewRequest" style="margin-top:4px">
-                <span>Envoyer automatiquement quand le client dit « merci » (1 fois par conversation)</span>
+                <span>Envoi automatique intelligent (1 fois par conversation, ton positif seulement)</span>
               </label>
             </div>
           </div>
@@ -356,6 +361,7 @@ function populateSettingsForm(t) {
   document.getElementById('setGoogleReviewUrl').value = t.google_review_url || '';
   document.getElementById('setReviewRequestSms').value = t.review_request_sms || '';
   document.getElementById('setAutoReviewRequest').checked = !!t.auto_review_request;
+  document.getElementById('setReviewDelayMinutes').value = t.review_request_delay_minutes || 5;
   document.getElementById('setWidgetEnabled').checked = t.widget_enabled !== false;
   const revStat = document.getElementById('statReviewSent');
   if (revStat) revStat.textContent = String(t.review_requests_sent || 0);
@@ -1088,6 +1094,7 @@ document.getElementById('settingsForm').onsubmit = async (e) => {
       google_review_url: document.getElementById('setGoogleReviewUrl').value.trim(),
       review_request_sms: document.getElementById('setReviewRequestSms').value.trim(),
       auto_review_request: document.getElementById('setAutoReviewRequest').checked,
+      review_request_delay_minutes: parseInt(document.getElementById('setReviewDelayMinutes').value, 10) || 5,
       widget_enabled: document.getElementById('setWidgetEnabled').checked,
     };
     const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });

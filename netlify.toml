@@ -21,3 +21,6 @@
 [functions]
   node_bundler = "esbuild"
   included_files = ["dossiers/**/*.json"]
+
+[functions."review-queue-processor"]
+  schedule = "*/1 * * * *"

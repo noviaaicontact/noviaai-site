@@ -5,7 +5,8 @@ const { touchThread } = require('../../lib/inbox');
 const { loadHistory, saveHistory } = require('../../lib/store');
 const { generateReply } = require('../../lib/ai');
 const { processInboundActions } = require('../../lib/agent-tools');
-const { maybeAutoReviewRequest } = require('../../lib/review-request');
+const { maybeAutoReviewRequest, clearReviewPending } = require('../../lib/review-request');
+const { hasNegativeInboundText } = require('../../lib/review-eligibility');
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const SUSPENDED_MSG = 'Ce service NoviaAI est temporairement suspendu. Veuillez rappeler plus tard.';
@@ -31,11 +32,16 @@ exports.handler = async (event) => {
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160) });
       await touchThread(tenantId, from, body, 'open');
+      if (hasNegativeInboundText(body)) {
+        await clearReviewPending(tenantId, from);
+      }
     }
 
     let reply = null;
+    let historyForReview = [];
     if (body && dossier) {
       const history = await loadHistory(key, tenantId, from);
+      historyForReview = history;
       history.push({ role: 'user', content: body });
       reply = await generateReply(dossier, history.slice(0, -1), body, tenantId);
       if (reply) {
@@ -68,6 +74,8 @@ exports.handler = async (event) => {
           tenant: client.tenant,
           callerPhone: from,
           userMessage: body,
+          aiReply: reply,
+          history: historyForReview,
         }).catch((e) => console.error('auto-review', e.message));
       }
     }
