@@ -20,7 +20,8 @@
     "netlify:env": "node scripts/export-netlify-env.mjs",
     "configure:prod": "node scripts/configure-production.mjs",
     "configure:prod:local": "node scripts/configure-production.mjs http://localhost:8888",
-    "resend:prod": "node scripts/configure-resend-production.mjs"
+    "resend:prod": "node scripts/configure-resend-production.mjs",
+    "namecheap:mx": "node scripts/namecheap-add-resend-mx.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^7.3.0",
