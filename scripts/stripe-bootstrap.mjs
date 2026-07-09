@@ -12,7 +12,7 @@ const envPath = join(root, '.env');
 
 const PLANS = [
   { key: 'STRIPE_PRICE_STARTER', name: 'NoviaAI Essentiel', amount: 14900, plan: 'starter' },
-  { key: 'STRIPE_PRICE_PRO', name: 'NoviaAI Pro', amount: 29900, plan: 'pro' },
+  { key: 'STRIPE_PRICE_PRO', name: 'NoviaAI Pro', amount: 19900, plan: 'pro' },
   { key: 'STRIPE_PRICE_BUSINESS', name: 'NoviaAI Entreprise', amount: 49900, plan: 'business' },
 ];
 
