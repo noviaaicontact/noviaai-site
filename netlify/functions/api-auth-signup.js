@@ -4,8 +4,15 @@ const { sendSignupConfirmationEmail } = require('../../lib/confirmation-email');
 
 const REDIRECT = () => `${process.env.PUBLIC_BASE_URL || 'https://noviaai.ca'}/auth/callback.html`;
 
+function isResendProductionReady() {
+  if (process.env.RESEND_DOMAIN_VERIFIED === 'true') return true;
+  const from = (process.env.EMAIL_FROM || '').toLowerCase();
+  return from.includes('@noviaai.ca');
+}
+
 function resendSandboxHint(email) {
   if (process.env.SIGNUP_AUTO_CONFIRM === 'true') return null;
+  if (isResendProductionReady()) return null;
   const allowed = (process.env.ADMIN_EMAIL || 'noviaai.contact@gmail.com').toLowerCase();
   if (email.toLowerCase() === allowed) return null;
   return `En mode test, seul ${allowed} peut recevoir les courriels. Utilisez cette adresse ou vérifiez le domaine noviaai.ca sur resend.com.`;
