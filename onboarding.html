@@ -24,24 +24,17 @@
       <small class="muted" style="display:block;margin:10px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne. Votre cellulaire actuel continue de fonctionner normalement — on ajoute simplement une ligne pro.</small>
 
       <label>Votre ligne professionnelle</label>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
-          <input type="radio" name="line_mode" value="new" checked style="margin-top:4px">
-          <span><strong>Nouveau numéro NoviaAI</strong> (recommandé)<br><span class="muted" style="font-size:.85rem">On vous attribue un nouveau numéro local (418, 581 ou 514). Vous le publiez sur Google, Facebook et votre site. <strong>Votre cellulaire actuel ne change pas</strong> : il continue de fonctionner comme avant, et il sonne quand un client appelle ce nouveau numéro. Si vous ne répondez pas, NoviaAI envoie automatiquement un SMS au client pour ne pas le perdre.</span></span>
-        </label>
-        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
-          <input type="radio" name="line_mode" value="hosted" style="margin-top:4px">
-          <span><strong>Garder mon numéro actuel</strong><br><span class="muted" style="font-size:.85rem">Pour le numéro que vos clients connaissent déjà (celui sur Google) : <strong>portage</strong> vers NoviaAI (vous devrez contacter votre fournisseur téléphonique, activation sous 48 h ouvrables) <strong>ou renvoi d'appels manqués</strong> depuis votre opérateur (configuration rapide, sans changer de numéro affiché).</span></span>
-        </label>
-      </div>
 
-      <div id="hostedFields" hidden>
-        <label for="existing_number">Numéro à porter (celui sur Google) *</label>
-        <input id="existing_number" type="tel" placeholder="581-555-1234">
-      </div>
+      <label class="line-mode-card line-mode-card--primary">
+        <input type="radio" name="line_mode" value="new" checked>
+        <span class="line-mode-card-body">
+          <span class="line-mode-badge">Recommandé</span>
+          <strong class="line-mode-title">Nouveau numéro NoviaAI</strong>
+          <span class="muted line-mode-desc">On vous attribue un nouveau numéro local (418, 581 ou 514). Vous le publiez sur Google, Facebook et votre site. Votre cellulaire actuel ne change pas et sonne quand un client appelle ce nouveau numéro. Si vous ne répondez pas, NoviaAI envoie automatiquement un SMS au client.</span>
+        </span>
+      </label>
 
-      <div id="newLineFields">
-      <label for="area_code">Indicatif de votre nouvelle ligne</label>
+      <label for="area_code">Indicatif de votre ligne NoviaAI</label>
       <select id="area_code">
         <option value="418">418 — Québec</option>
         <option value="581">581 — Québec</option>
@@ -50,7 +43,17 @@
         <option value="450">450 — Rive-Sud</option>
         <option value="819">819 — Est</option>
       </select>
-      </div>
+
+      <details class="line-mode-advanced" id="forwardOption">
+        <summary>Vous tenez à garder votre numéro actuel ? (option avancée)</summary>
+        <label class="line-mode-card line-mode-card--secondary">
+          <input type="radio" name="line_mode" value="forward">
+          <span class="line-mode-card-body">
+            <strong class="line-mode-title">Garder mon numéro actuel (renvoi d'appel)</strong>
+            <span class="muted line-mode-desc">Vous gardez le numéro que vos clients connaissent déjà. On vous attribue quand même un numéro NoviaAI — appelez votre fournisseur téléphonique pour configurer le renvoi d'appels manqués vers ce numéro NoviaAI. Quand vous manquez un appel, il est redirigé automatiquement vers NoviaAI qui envoie le SMS au client. Aucun transfert de ligne, aucun délai.</span>
+          </span>
+        </label>
+      </details>
 
       <label for="missed_call_sms">Message SMS si appel manqué *</label>
       <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
@@ -70,13 +73,16 @@
 (async () => { await NoviaApp.requireAuth('/login.html'); })();
 
 function syncLineModeUI() {
-  const hosted = document.querySelector('input[name="line_mode"]:checked')?.value === 'hosted';
-  document.getElementById('hostedFields').hidden = !hosted;
-  document.getElementById('newLineFields').hidden = hosted;
-  document.getElementById('existing_number').required = hosted;
+  const mode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
+  const forwardDetails = document.getElementById('forwardOption');
+  if (mode === 'forward' && forwardDetails) forwardDetails.open = true;
 }
 document.querySelectorAll('input[name="line_mode"]').forEach((el) => {
   el.addEventListener('change', syncLineModeUI);
+});
+document.getElementById('forwardOption')?.addEventListener('toggle', () => {
+  const forwardRadio = document.querySelector('input[name="line_mode"][value="forward"]');
+  if (document.getElementById('forwardOption').open && forwardRadio) forwardRadio.checked = true;
 });
 
 document.getElementById('form').onsubmit = async (e) => {
@@ -87,14 +93,8 @@ document.getElementById('form').onsubmit = async (e) => {
   const phone = document.getElementById('business_phone').value.trim();
   const sms = document.getElementById('missed_call_sms').value.trim();
   const lineMode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
-  const existingNum = document.getElementById('existing_number').value.trim();
   if (!name || !phone || !sms) {
     err.textContent = 'Remplissez tous les champs obligatoires.';
-    err.hidden = false;
-    return;
-  }
-  if (lineMode === 'hosted' && !existingNum) {
-    err.textContent = 'Indiquez le numéro à porter.';
     err.hidden = false;
     return;
   }
@@ -110,7 +110,7 @@ document.getElementById('form').onsubmit = async (e) => {
         area_code: document.getElementById('area_code').value,
         contact_email: document.getElementById('contact_email').value.trim(),
         line_mode: lineMode,
-        existing_business_number: lineMode === 'hosted' ? existingNum : '',
+        existing_business_number: lineMode === 'forward' ? phone : '',
       }),
     });
     if (res.error) throw new Error(res.error);

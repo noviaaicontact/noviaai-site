@@ -84,12 +84,12 @@
     </div>
 
     <div class="card" id="panelInstall" hidden>
-      <h2 style="margin-top:0;font-size:1.1rem">Publier votre numéro</h2>
-      <p class="muted" style="margin:0 0 20px">Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.</p>
+      <h2 style="margin-top:0;font-size:1.1rem" id="installPanelTitle">Publier votre numéro</h2>
+      <p class="muted" style="margin:0 0 20px" id="installPanelDesc">Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.</p>
 
-      <div class="install-plan recommended">
+      <div class="install-plan recommended" id="installPlanNew">
         <span class="install-plan-badge">2 minutes · Zéro config téléphone</span>
-        <h3>Votre numéro pro</h3>
+        <h3>Votre numéro NoviaAI</h3>
         <div class="install-code-row">
           <code id="installTwilioNumA">—</code>
           <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioA">Copier</button>
@@ -103,6 +103,23 @@
         <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneA">C'est fait — j'ai publié mon numéro</button>
       </div>
 
+      <div class="install-plan recommended" id="installPlanForward" hidden>
+        <span class="install-plan-badge">~5 minutes · Appelez votre fournisseur</span>
+        <h3>Votre numéro NoviaAI (renvoi d'appel)</h3>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Gardez votre numéro actuel sur Google. Copiez ce numéro NoviaAI, puis appelez votre fournisseur téléphonique pour activer le <strong>renvoi d'appels manqués</strong> vers ce numéro.</p>
+        <div class="install-code-row">
+          <code id="installTwilioNumForward">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioForward">Copier</button>
+        </div>
+        <ol class="forward-steps" style="margin:12px 0;font-size:.9rem">
+          <li>Copiez le numéro NoviaAI ci-dessus</li>
+          <li>Appelez le service à la clientèle de votre fournisseur (Bell, Vidéotron, Rogers, Telus…)</li>
+          <li>Demandez le <strong>renvoi d'appels manqués</strong> vers ce numéro NoviaAI</li>
+          <li>Test : appelez votre numéro habituel depuis un autre téléphone, ne répondez pas → SMS auto au client</li>
+        </ol>
+        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward">C'est fait — j'ai configuré le renvoi</button>
+      </div>
+
       <details class="install-advanced" style="margin-top:20px">
         <summary>Chatbot sur mon site web</summary>
         <p class="muted" style="font-size:.88rem;margin:12px 0">Widget NoviaAI — vos visiteurs chattent sur votre site avec la même IA que le SMS.</p>
@@ -112,9 +129,9 @@
         </div>
       </details>
 
-      <details class="install-advanced" style="margin-top:20px">
-        <summary>Je veux garder mon ancien numéro (581, 418…) — option avancée</summary>
-        <p class="muted" style="font-size:.88rem;margin:12px 0">Nécessite un renvoi d'appel chez votre opérateur. Contactez-nous pour le portage (recommandé) ou suivez les codes ci-dessous.</p>
+      <details class="install-advanced" id="installMmiFallback" style="margin-top:20px">
+        <summary>Codes MMI (alternative au fournisseur)</summary>
+        <p class="muted" style="font-size:.88rem;margin:12px 0">Certains opérateurs permettent d'activer le renvoi directement depuis votre téléphone avec ces codes.</p>
         <div class="install-code-row">
           <div style="flex:1"><div class="muted" style="font-size:.75rem">Réinitialiser</div><code>#21#</code></div>
           <button type="button" class="btn btn-ghost btn-sm" data-copy-code="#21#">Copier</button>
@@ -392,6 +409,10 @@ function populateChatbotForm(t) {
   if (window.NoviaChatbot) NoviaChatbot.populateChatbotForm(t);
 }
 
+function isForwardMode(t) {
+  return !!(t && t.line_mode === 'forward');
+}
+
 function publicPhoneDisplay(t) {
   if (!t) return 'Activation…';
   if (t.twilio_number && t.provisioning_status === 'active') return formatDial(t.twilio_number);
@@ -483,8 +504,12 @@ function updateProvBox() {
     box.className = 'prov-box success';
     title.textContent = 'Ligne NoviaAI prête';
     msg.textContent = published
-      ? 'Testez un appel manqué depuis un autre téléphone.'
-      : 'Copiez votre numéro et publiez-le sur Google.';
+      ? (isForwardMode(tenant)
+        ? 'Testez : appelez votre numéro habituel, ne répondez pas.'
+        : 'Testez un appel manqué depuis un autre téléphone.')
+      : (isForwardMode(tenant)
+        ? 'Appelez votre fournisseur pour configurer le renvoi vers votre numéro NoviaAI.'
+        : 'Copiez votre numéro et publiez-le sur Google.');
     retry.style.display = 'none';
     return;
   }
@@ -516,9 +541,17 @@ function applyTenantToUI() {
   document.getElementById('statPhone').textContent = pub;
   document.getElementById('bigPublicPhone').textContent = pub;
   const ringHint = document.getElementById('cellRingHint');
+  const numLabel = document.querySelector('#panelHome .number-display .muted');
+  if (numLabel) {
+    numLabel.textContent = isForwardMode(tenant)
+      ? 'Votre numéro NoviaAI (renvoi d\'appel)'
+      : 'Numéro à publier en ligne';
+  }
   if (tenant.phone_forward && tenant.provisioning_status === 'active') {
     ringHint.hidden = false;
-    ringHint.textContent = 'Votre cellulaire sonne quand on appelle ce numéro : ' + formatDial(tenant.phone_forward);
+    ringHint.textContent = isForwardMode(tenant)
+      ? 'Gardez ' + formatDial(tenant.existing_business_number || tenant.phone_forward) + ' sur Google — appelez votre fournisseur pour renvoyer les appels manqués vers le numéro ci-dessus.'
+      : 'Votre cellulaire sonne quand on appelle ce numéro : ' + formatDial(tenant.phone_forward);
   } else {
     ringHint.hidden = true;
   }
@@ -529,8 +562,11 @@ function applyTenantToUI() {
   updateProvBox();
   const live = tenant.provisioning_status === 'active' && tenant.twilio_number;
   document.getElementById('liveStatus').style.display = live ? 'inline-flex' : 'none';
-  document.getElementById('phonePanelDesc').textContent =
-    'Mettez ce numéro sur Google, Facebook et votre site. Vos clients appellent ici — votre cellulaire sonne.';
+  document.getElementById('phonePanelDesc').textContent = isForwardMode(tenant)
+    ? 'Vous avez reçu un numéro NoviaAI. Appelez votre fournisseur pour activer le renvoi d\'appels manqués vers ce numéro. Gardez votre numéro actuel sur Google.'
+    : 'Mettez ce numéro sur Google, Facebook et votre site. Vos clients appellent ici — votre cellulaire sonne.';
+  const btnInstall = document.getElementById('btnOpenInstall');
+  if (btnInstall) btnInstall.textContent = isForwardMode(tenant) ? 'Configurer le renvoi' : 'Publier mon numéro';
   updateInstallWizard();
   updateChecklist();
   if (sessionStorage.getItem('novia_show_link_guide') === '1' && live) {
@@ -556,10 +592,25 @@ function updateInstallWizard() {
   if (!tenant || !tenant.twilio_number) return;
   const num = formatDial(tenant.twilio_number);
   const mmi = mmiNoAnswerCode(tenant.twilio_number);
+  const forward = isForwardMode(tenant);
   const elA = document.getElementById('installTwilioNumA');
+  const elFwd = document.getElementById('installTwilioNumForward');
   const elMmi = document.getElementById('installMmiCode');
+  const planNew = document.getElementById('installPlanNew');
+  const planForward = document.getElementById('installPlanForward');
+  const panelTitle = document.getElementById('installPanelTitle');
+  const panelDesc = document.getElementById('installPanelDesc');
   if (elA) elA.textContent = num;
+  if (elFwd) elFwd.textContent = num;
   if (elMmi) elMmi.textContent = mmi;
+  if (planNew) planNew.hidden = forward;
+  if (planForward) planForward.hidden = !forward;
+  if (panelTitle) panelTitle.textContent = forward ? 'Configurer le renvoi d\'appel' : 'Publier votre numéro';
+  if (panelDesc) {
+    panelDesc.textContent = forward
+      ? 'Vous recevez un numéro NoviaAI. Appelez votre fournisseur pour activer le renvoi d\'appels manqués vers ce numéro.'
+      : 'Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.';
+  }
 }
 
 function initInstallWizard() {
@@ -572,6 +623,12 @@ function initInstallWizard() {
   document.getElementById('btnCopyTwilioA').onclick = () => {
     copyText(document.getElementById('installTwilioNumA').textContent.trim(), document.getElementById('btnCopyTwilioA'));
   };
+  const btnCopyFwd = document.getElementById('btnCopyTwilioForward');
+  if (btnCopyFwd) {
+    btnCopyFwd.onclick = () => {
+      copyText(document.getElementById('installTwilioNumForward').textContent.trim(), btnCopyFwd);
+    };
+  }
   document.getElementById('btnCopyMmi').onclick = () => {
     copyText(document.getElementById('installMmiCode').textContent.trim(), document.getElementById('btnCopyMmi'));
   };
@@ -592,6 +649,14 @@ function initInstallWizard() {
     document.getElementById('btnInstallDoneA').textContent = 'Terminé';
     document.getElementById('btnInstallDoneA').disabled = true;
   };
+  const btnDoneFwd = document.getElementById('btnInstallDoneForward');
+  if (btnDoneFwd) {
+    btnDoneFwd.onclick = () => {
+      markInstallDone();
+      btnDoneFwd.textContent = 'Terminé';
+      btnDoneFwd.disabled = true;
+    };
+  }
   document.getElementById('btnOpenInstall').onclick = (e) => {
     e.preventDefault();
     show('panelInstall');
