@@ -19,19 +19,19 @@
       <label for="business_name">Nom du commerce *</label>
       <input id="business_name" required placeholder="Salon Éclat">
 
-      <label for="business_phone">Cellulaire où vous répondez *</label>
+      <label for="business_phone">Cellulaire du commerce où vous répondez *</label>
       <input id="business_phone" type="tel" required placeholder="581-909-5332">
-      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
+      <small class="muted" style="display:block;margin:10px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
 
       <label>Votre ligne professionnelle</label>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
         <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
           <input type="radio" name="line_mode" value="new" checked style="margin-top:4px">
-          <span><strong>Nouveau numéro NoviaAI</strong> (recommandé)<br><span class="muted" style="font-size:.85rem">On vous donne un 418/581/514 — vous le publiez sur Google</span></span>
+          <span><strong>Nouveau numéro NoviaAI</strong> (recommandé)<br><span class="muted" style="font-size:.85rem">On vous attribue un nouveau numéro local (418, 581 ou 514). Publiez-le sur Google, Facebook et votre site. Quand un client appelle ce numéro, votre cellulaire sonne normalement. Si vous ne répondez pas, NoviaAI envoie automatiquement un SMS au client pour ne pas le perdre.</span></span>
         </label>
         <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;padding:12px;border:1px solid var(--border);border-radius:8px">
           <input type="radio" name="line_mode" value="hosted" style="margin-top:4px">
-          <span><strong>Garder mon numéro actuel</strong> (portage)<br><span class="muted" style="font-size:.85rem">On porte votre ligne existante — activation sous 48h ouvrables</span></span>
+          <span><strong>Garder mon numéro actuel</strong> (portage)<br><span class="muted" style="font-size:.85rem">On porte votre ligne existante sur NoviaAI. Pour transférer votre numéro actuel, vous devrez contacter votre fournisseur téléphonique. L'activation prend jusqu'à 48 h ouvrables.</span></span>
         </label>
       </div>
 
@@ -55,8 +55,8 @@
       <label for="missed_call_sms">Message SMS si appel manqué *</label>
       <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
 
-      <label for="agent_name">Prénom de votre agente SMS</label>
-      <input id="agent_name" placeholder="Léa" value="Léa">
+      <label for="agent_name">Prénom de votre agent SMS</label>
+      <input id="agent_name" placeholder="Ex. : Léa, Marc…">
 
       <label for="contact_email">Courriel alertes (optionnel)</label>
       <input id="contact_email" type="email" placeholder="vous@commerce.com">
@@ -105,7 +105,7 @@ document.getElementById('form').onsubmit = async (e) => {
         onboarding: true,
         business_name: name,
         phone_forward: phone,
-        agent_name: document.getElementById('agent_name').value.trim() || 'Léa',
+        agent_name: document.getElementById('agent_name').value.trim(),
         missed_call_sms: sms,
         area_code: document.getElementById('area_code').value,
         contact_email: document.getElementById('contact_email').value.trim(),
