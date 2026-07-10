@@ -943,7 +943,7 @@ function openThreadDemo(phone) {
     if (params.get('activating') === '1' || sessionStorage.getItem('novia_provisioning')) {
       if (tenant && tenant.stripe_subscription_id) startProvisioningPoll();
       else if (tenant && tenant.onboarding_done && !tenant.stripe_subscription_id) {
-        showFlashBanner('checkoutNeededBanner', '<strong>Presque fini!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Ajoutez votre carte pour activer votre ligne NoviaAI (essai 14 jours, puis 199 $/mois taxes incluses).</p>');
+        showFlashBanner('checkoutNeededBanner', '<strong>Presque fini!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Ajoutez votre carte pour activer votre ligne NoviaAI (essai 14 jours).</p>');
       }
     } else if (sessionStorage.getItem('novia_provisioning') && tenant?.stripe_subscription_id) {
       startProvisioningPoll();
