@@ -125,21 +125,9 @@
 
         <div class="forward-provider-tip" id="forwardProviderTip"></div>
 
-        <ol class="forward-steps" id="forwardProviderSteps" style="margin:12px 0;font-size:.9rem"></ol>
+        <p class="install-warn" id="forwardIphoneWarn" hidden style="margin:12px 0;font-size:.85rem"></p>
 
-        <details class="install-advanced" id="installMmiFallback" style="margin-top:12px">
-          <summary>Code MMI (si votre fournisseur le permet)</summary>
-          <p class="muted" style="font-size:.88rem;margin:12px 0">Alternative au téléphone — ne fonctionne pas chez tous les opérateurs (surtout Fizz/Public Mobile).</p>
-          <div class="install-code-row">
-            <div style="flex:1"><div class="muted" style="font-size:.75rem">Réinitialiser tout renvoi</div><code>#21#</code></div>
-            <button type="button" class="btn btn-ghost btn-sm" data-copy-code="#21#">Copier</button>
-          </div>
-          <div class="install-code-row">
-            <div style="flex:1"><div class="muted" style="font-size:.75rem">Renvoi si pas de réponse</div><code id="installMmiCode">—</code></div>
-            <button type="button" class="btn btn-accent btn-sm" id="btnCopyMmi">Copier</button>
-          </div>
-          <p class="install-warn" id="forwardIphoneWarn">Ne pas utiliser Réglages → Renvoi d'appel sur iPhone Bell/Vidéotron — c'est un renvoi permanent.</p>
-        </details>
+        <ol class="forward-steps" id="forwardProviderSteps" style="margin:12px 0;font-size:.9rem"></ol>
 
         <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward" style="margin-top:16px">C'est fait — j'ai configuré le renvoi</button>
       </div>
@@ -585,22 +573,10 @@ function applyTenantToUI() {
   }
 }
 
-function mmiNoAnswerCode(twilioNumber) {
-  const d = digitsOnly(twilioNumber);
-  const dial = d.length === 10 ? `1${d}` : d;
-  return `*61*${dial}#`;
-}
-
-function markInstallDone() {
-  localStorage.setItem(forwardDoneKey(), '1');
-  localStorage.setItem(installPrefsKey() + '_tested', '1');
-  markCheck('chk3', true);
-  markCheck('chk4', true);
-}
-
 function updateForwardProviderGuide() {
   if (!tenant?.twilio_number || !window.NoviaInstallGuide) return;
   const providerId = document.getElementById('forwardProvider')?.value || 'bell';
+  const num = formatDial(tenant.twilio_number);
   const guide = NoviaInstallGuide.getInstructions('mobile', providerId, 'no_answer', tenant.twilio_number);
   const tip = guide.providerTip || NoviaInstallGuide.getProviderTip(providerId);
   const tipEl = document.getElementById('forwardProviderTip');
@@ -612,6 +588,7 @@ function updateForwardProviderGuide() {
       `<p><strong>iPhone :</strong> ${tip.iphone}</p>`,
       `<p><strong>Android :</strong> ${tip.android}</p>`,
       tip.callProvider ? `<p><strong>Soutien :</strong> ${tip.support}</p>` : '',
+      tip.callProvider ? `<p class="forward-call-script"><strong>À dire au fournisseur :</strong> « Je veux activer le renvoi d'appels <em>si je ne réponds pas</em> vers ${num}. Mon téléphone doit sonner d'abord — ce n'est pas un renvoi permanent. »</p>` : '',
     ].join('');
   }
   if (stepsEl) {
@@ -627,8 +604,8 @@ function updateForwardProviderGuide() {
     warnEl.hidden = !needsWarn;
     if (needsWarn) {
       warnEl.textContent = providerId === 'bell'
-        ? 'iPhone Bell : ne pas activer « Renvoi d\'appel » dans Réglages — c\'est permanent. Appelez Bell ou utilisez Android.'
-        : 'iPhone Vidéotron : ne pas activer le toggle « Renvoi d\'appel » dans Réglages — c\'est permanent. Appelez Vidéotron ou utilisez Android.';
+        ? 'Important iPhone Bell : n\'activez pas « Renvoi d\'appel » dans Réglages — ce serait permanent. Appelez Bell ou configurez depuis un Android.'
+        : 'Important iPhone Vidéotron : n\'activez pas le toggle « Renvoi d\'appel » dans Réglages — ce serait permanent. Appelez Vidéotron ou configurez depuis un Android.';
     }
   }
 }
@@ -636,27 +613,31 @@ function updateForwardProviderGuide() {
 function updateInstallWizard() {
   if (!tenant || !tenant.twilio_number) return;
   const num = formatDial(tenant.twilio_number);
-  const mmi = mmiNoAnswerCode(tenant.twilio_number);
   const forward = isForwardMode(tenant);
   const elA = document.getElementById('installTwilioNumA');
   const elFwd = document.getElementById('installTwilioNumForward');
-  const elMmi = document.getElementById('installMmiCode');
   const planNew = document.getElementById('installPlanNew');
   const planForward = document.getElementById('installPlanForward');
   const panelTitle = document.getElementById('installPanelTitle');
   const panelDesc = document.getElementById('installPanelDesc');
   if (elA) elA.textContent = num;
   if (elFwd) elFwd.textContent = num;
-  if (elMmi) elMmi.textContent = mmi;
   if (planNew) planNew.hidden = forward;
   if (planForward) planForward.hidden = !forward;
   if (panelTitle) panelTitle.textContent = forward ? 'Configurer le renvoi d\'appel' : 'Publier votre numéro';
   if (panelDesc) {
     panelDesc.textContent = forward
-      ? 'Vous recevez un numéro NoviaAI. Configurez le renvoi d\'appels manqués selon votre fournisseur — voir le guide ci-dessous.'
+      ? 'Copiez votre numéro NoviaAI et configurez le renvoi d\'appels manqués chez votre fournisseur — voir le guide ci-dessous.'
       : 'Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.';
   }
   if (forward) updateForwardProviderGuide();
+}
+
+function markInstallDone() {
+  localStorage.setItem(forwardDoneKey(), '1');
+  localStorage.setItem(installPrefsKey() + '_tested', '1');
+  markCheck('chk3', true);
+  markCheck('chk4', true);
 }
 
 function initInstallWizard() {
@@ -675,9 +656,6 @@ function initInstallWizard() {
       copyText(document.getElementById('installTwilioNumForward').textContent.trim(), btnCopyFwd);
     };
   }
-  document.getElementById('btnCopyMmi').onclick = () => {
-    copyText(document.getElementById('installMmiCode').textContent.trim(), document.getElementById('btnCopyMmi'));
-  };
   async function copyWidgetCode(btn) {
     const code = (document.getElementById('widgetEmbedCodeInstall') || {}).textContent || '';
     if (!code || code === '—') return alert('Code widget non disponible — enregistrez vos paramètres.');
@@ -687,9 +665,6 @@ function initInstallWizard() {
   const btnWI = document.getElementById('btnCopyWidgetInstall');
   if (btnW) btnW.onclick = () => copyWidgetCode(btnW);
   if (btnWI) btnWI.onclick = () => copyWidgetCode(btnWI);
-  document.querySelectorAll('[data-copy-code]').forEach((btn) => {
-    btn.onclick = () => copyText(btn.dataset.copyCode, btn);
-  });
   document.getElementById('btnInstallDoneA').onclick = () => {
     markInstallDone();
     document.getElementById('btnInstallDoneA').textContent = 'Terminé';

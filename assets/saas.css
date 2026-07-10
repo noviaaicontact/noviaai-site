@@ -946,6 +946,7 @@ a:hover { text-decoration: underline; }
 .forward-provider-tip p { margin: 0 0 8px; }
 .forward-provider-tip p:last-child { margin-bottom: 0; }
 .forward-provider-tip-lead { color: var(--navy2); }
+.forward-call-script { font-style: italic; background: #fff; padding: 8px 10px; border-radius: 8px; margin-top: 8px !important; }
 
 footer.site-footer {
   text-align: center;
