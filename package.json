@@ -10,6 +10,7 @@
     "diagnose": "node scripts/diagnose-call-flow.mjs",
     "setup-check": "node scripts/setup-check.mjs",
     "stripe:bootstrap": "node scripts/stripe-bootstrap.mjs",
+    "stripe:card-only": "node scripts/stripe-checkout-card-only.mjs",
     "stripe:webhook": "node scripts/stripe-webhook-setup.mjs",
     "stripe:webhook:create": "node scripts/stripe-webhook-setup.mjs --create",
     "stripe:webhook:sync-netlify": "node scripts/sync-webhook-secret-netlify.mjs",
