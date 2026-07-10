@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="/assets/saas.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
+<script src="/assets/install-guide.js"></script>
 <script src="/assets/chatbot-kb.js"></script>
 </head>
 <body>
@@ -104,20 +105,43 @@
       </div>
 
       <div class="install-plan recommended" id="installPlanForward" hidden>
-        <span class="install-plan-badge">~5 minutes · Appelez votre fournisseur</span>
+        <span class="install-plan-badge">~5 minutes · Selon votre fournisseur</span>
         <h3>Votre numéro NoviaAI (renvoi d'appel)</h3>
-        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Gardez votre numéro actuel sur Google. Copiez ce numéro NoviaAI, puis appelez votre fournisseur téléphonique pour activer le <strong>renvoi d'appels manqués</strong> vers ce numéro.</p>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Gardez votre numéro actuel sur Google. Copiez ce numéro NoviaAI, puis configurez le <strong>renvoi d'appels manqués</strong> (pas permanent) vers ce numéro.</p>
         <div class="install-code-row">
           <code id="installTwilioNumForward">—</code>
           <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioForward">Copier</button>
         </div>
-        <ol class="forward-steps" style="margin:12px 0;font-size:.9rem">
-          <li>Copiez le numéro NoviaAI ci-dessus</li>
-          <li>Appelez le service à la clientèle de votre fournisseur (Bell, Vidéotron, Rogers, Telus…)</li>
-          <li>Demandez le <strong>renvoi d'appels manqués</strong> vers ce numéro NoviaAI</li>
-          <li>Test : appelez votre numéro habituel depuis un autre téléphone, ne répondez pas → SMS auto au client</li>
-        </ol>
-        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward">C'est fait — j'ai configuré le renvoi</button>
+
+        <label for="forwardProvider" style="display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600">Votre fournisseur cellulaire</label>
+        <select id="forwardProvider" style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid var(--border)">
+          <option value="bell">Bell / Bell MTS</option>
+          <option value="videotron">Vidéotron</option>
+          <option value="rogers">Rogers / Fido / Chatr</option>
+          <option value="telus">TELUS / Koodo</option>
+          <option value="fizz">Fizz / Public Mobile</option>
+          <option value="other_mobile">Autre</option>
+        </select>
+
+        <div class="forward-provider-tip" id="forwardProviderTip"></div>
+
+        <ol class="forward-steps" id="forwardProviderSteps" style="margin:12px 0;font-size:.9rem"></ol>
+
+        <details class="install-advanced" id="installMmiFallback" style="margin-top:12px">
+          <summary>Code MMI (si votre fournisseur le permet)</summary>
+          <p class="muted" style="font-size:.88rem;margin:12px 0">Alternative au téléphone — ne fonctionne pas chez tous les opérateurs (surtout Fizz/Public Mobile).</p>
+          <div class="install-code-row">
+            <div style="flex:1"><div class="muted" style="font-size:.75rem">Réinitialiser tout renvoi</div><code>#21#</code></div>
+            <button type="button" class="btn btn-ghost btn-sm" data-copy-code="#21#">Copier</button>
+          </div>
+          <div class="install-code-row">
+            <div style="flex:1"><div class="muted" style="font-size:.75rem">Renvoi si pas de réponse</div><code id="installMmiCode">—</code></div>
+            <button type="button" class="btn btn-accent btn-sm" id="btnCopyMmi">Copier</button>
+          </div>
+          <p class="install-warn" id="forwardIphoneWarn">Ne pas utiliser Réglages → Renvoi d'appel sur iPhone Bell/Vidéotron — c'est un renvoi permanent.</p>
+        </details>
+
+        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward" style="margin-top:16px">C'est fait — j'ai configuré le renvoi</button>
       </div>
 
       <details class="install-advanced" style="margin-top:20px">
@@ -127,20 +151,6 @@
           <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
           <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
         </div>
-      </details>
-
-      <details class="install-advanced" id="installMmiFallback" style="margin-top:20px">
-        <summary>Codes MMI (alternative au fournisseur)</summary>
-        <p class="muted" style="font-size:.88rem;margin:12px 0">Certains opérateurs permettent d'activer le renvoi directement depuis votre téléphone avec ces codes.</p>
-        <div class="install-code-row">
-          <div style="flex:1"><div class="muted" style="font-size:.75rem">Réinitialiser</div><code>#21#</code></div>
-          <button type="button" class="btn btn-ghost btn-sm" data-copy-code="#21#">Copier</button>
-        </div>
-        <div class="install-code-row">
-          <div style="flex:1"><div class="muted" style="font-size:.75rem">Renvoi si pas de réponse</div><code id="installMmiCode">—</code></div>
-          <button type="button" class="btn btn-accent btn-sm" id="btnCopyMmi">Copier</button>
-        </div>
-        <p class="install-warn">Ne pas utiliser Réglages → Renvoi d'appel sur iPhone.</p>
       </details>
     </div>
 
@@ -588,6 +598,41 @@ function markInstallDone() {
   markCheck('chk4', true);
 }
 
+function updateForwardProviderGuide() {
+  if (!tenant?.twilio_number || !window.NoviaInstallGuide) return;
+  const providerId = document.getElementById('forwardProvider')?.value || 'bell';
+  const guide = NoviaInstallGuide.getInstructions('mobile', providerId, 'no_answer', tenant.twilio_number);
+  const tip = guide.providerTip || NoviaInstallGuide.getProviderTip(providerId);
+  const tipEl = document.getElementById('forwardProviderTip');
+  const stepsEl = document.getElementById('forwardProviderSteps');
+  const warnEl = document.getElementById('forwardIphoneWarn');
+  if (tipEl && tip) {
+    tipEl.innerHTML = [
+      tip.note ? `<p class="forward-provider-tip-lead"><strong>${tip.label}</strong> — ${tip.note}</p>` : '',
+      `<p><strong>iPhone :</strong> ${tip.iphone}</p>`,
+      `<p><strong>Android :</strong> ${tip.android}</p>`,
+      tip.callProvider ? `<p><strong>Soutien :</strong> ${tip.support}</p>` : '',
+    ].join('');
+  }
+  if (stepsEl) {
+    const steps = [
+      'Copiez le numéro NoviaAI ci-dessus',
+      ...(guide.steps || []),
+      'Test : appelez votre numéro habituel depuis un autre téléphone, ne répondez pas → SMS auto au client',
+    ];
+    stepsEl.innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
+  }
+  if (warnEl) {
+    const needsWarn = providerId === 'bell' || providerId === 'videotron';
+    warnEl.hidden = !needsWarn;
+    if (needsWarn) {
+      warnEl.textContent = providerId === 'bell'
+        ? 'iPhone Bell : ne pas activer « Renvoi d\'appel » dans Réglages — c\'est permanent. Appelez Bell ou utilisez Android.'
+        : 'iPhone Vidéotron : ne pas activer le toggle « Renvoi d\'appel » dans Réglages — c\'est permanent. Appelez Vidéotron ou utilisez Android.';
+    }
+  }
+}
+
 function updateInstallWizard() {
   if (!tenant || !tenant.twilio_number) return;
   const num = formatDial(tenant.twilio_number);
@@ -608,9 +653,10 @@ function updateInstallWizard() {
   if (panelTitle) panelTitle.textContent = forward ? 'Configurer le renvoi d\'appel' : 'Publier votre numéro';
   if (panelDesc) {
     panelDesc.textContent = forward
-      ? 'Vous recevez un numéro NoviaAI. Appelez votre fournisseur pour activer le renvoi d\'appels manqués vers ce numéro.'
+      ? 'Vous recevez un numéro NoviaAI. Configurez le renvoi d\'appels manqués selon votre fournisseur — voir le guide ci-dessous.'
       : 'Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.';
   }
+  if (forward) updateForwardProviderGuide();
 }
 
 function initInstallWizard() {
@@ -661,6 +707,15 @@ function initInstallWizard() {
     e.preventDefault();
     show('panelInstall');
   };
+  const forwardProv = document.getElementById('forwardProvider');
+  if (forwardProv) {
+    const saved = localStorage.getItem('novia_forward_provider');
+    if (saved) forwardProv.value = saved;
+    forwardProv.onchange = () => {
+      localStorage.setItem('novia_forward_provider', forwardProv.value);
+      updateForwardProviderGuide();
+    };
+  }
 }
 
 function installPrefsKey() {

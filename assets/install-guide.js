@@ -13,6 +13,7 @@ window.NoviaInstallGuide = {
     mobile: [
       { id: 'bell', label: 'Bell / Bell MTS' },
       { id: 'videotron', label: 'Vidéotron' },
+      { id: 'rogers', label: 'Rogers / Fido / Chatr' },
       { id: 'telus', label: 'TELUS / Koodo' },
       { id: 'fizz', label: 'Fizz / Public Mobile' },
       { id: 'other_mobile', label: 'Autre cellulaire' },
@@ -53,9 +54,65 @@ window.NoviaInstallGuide = {
       || INSTRUCTIONS[`${lineType}:other_mobile:no_answer`];
     return {
       ...base,
-      steps: (base.steps || []).map((s) => s.replace(/\{\{NUM\}\}/g, num).replace(/\{\{E164\}\}/g, e164)),
+      steps: (base.steps || []).map((s) => s.replace(/\{\{NUM\}\}/g, num).replace(/\{\{E164\}\}/g, e164).replace(/\{\{MMI\}\}/g, base.mmi ? base.mmi.replace(/\{\{NUM\}\}/g, dial.length === 10 ? `1${dial}` : dial) : '')),
       mmi: base.mmi ? base.mmi.replace(/\{\{NUM\}\}/g, dial.length === 10 ? `1${dial}` : dial) : null,
+      providerTip: PROVIDER_TIPS[providerId] || PROVIDER_TIPS.other_mobile,
     };
+  },
+
+  getProviderTip(providerId) {
+    return PROVIDER_TIPS[providerId] || PROVIDER_TIPS.other_mobile;
+  },
+};
+
+const PROVIDER_TIPS = {
+  bell: {
+    label: 'Bell',
+    support: '1-800-667-0123',
+    iphone: 'Ne pas activer « Renvoi d\'appel » dans Réglages iPhone — c\'est un renvoi permanent. Appelez Bell ou utilisez Android.',
+    android: 'Téléphone → Paramètres → Renvoi d\'appel → Si non répondu.',
+    callProvider: true,
+    note: 'Sur iPhone Bell, le code MMI peut ne pas fonctionner — appelez le fournisseur.',
+  },
+  videotron: {
+    label: 'Vidéotron',
+    support: '1-877-380-2611',
+    iphone: 'Ne pas activer le toggle « Renvoi d\'appel » dans Réglages iPhone — renvoi permanent. Appelez Vidéotron ou utilisez Android.',
+    android: 'Paramètres → Renvoi d\'appel → Transférer si non répondu.',
+    callProvider: true,
+    note: 'Comme Bell : iPhone seul = souvent appel au fournisseur requis.',
+  },
+  rogers: {
+    label: 'Rogers / Fido',
+    support: '611 (Rogers) · soutien Fido en ligne',
+    iphone: 'Essayez d\'abord le code MMI. Si messagerie vocale active (Fido), désactivez-la — elle bloque le renvoi.',
+    android: 'Paramètres → Renvoi d\'appel → Si non répondu.',
+    callProvider: false,
+    note: 'Rogers/Fido : le code *61* fonctionne souvent sans appeler le fournisseur.',
+  },
+  telus: {
+    label: 'TELUS / Koodo',
+    support: '1-866-558-2273',
+    iphone: 'Réglages → Téléphone → Renvoi d\'appel → Renvoi si non répondu — fonctionne en général sans appeler TELUS.',
+    android: 'Paramètres → Appels → Renvoi → Si non répondu.',
+    callProvider: false,
+    note: 'TELUS/Koodo + iPhone : les Réglages suffisent la plupart du temps.',
+  },
+  fizz: {
+    label: 'Fizz / Public Mobile',
+    support: 'Clavardage Fizz · soutien Public Mobile',
+    iphone: 'Souvent bloqué (VoLTE). Essayez le code MMI, sinon contactez le soutien ou passez au nouveau numéro NoviaAI.',
+    android: 'Même limitation VoLTE possible — code MMI ou soutien.',
+    callProvider: true,
+    note: 'Le plus difficile — si ça bloque, recommandez le nouveau numéro NoviaAI (zéro config).',
+  },
+  other_mobile: {
+    label: 'Autre',
+    support: 'Service à la clientèle de votre opérateur',
+    iphone: 'Cherchez « Renvoi si non répondu » dans Réglages → Téléphone, ou appelez votre fournisseur.',
+    android: 'Paramètres → Renvoi d\'appel → Si non répondu.',
+    callProvider: true,
+    note: 'En cas de doute, appelez votre fournisseur avec le numéro NoviaAI.',
   },
 };
 
@@ -122,6 +179,24 @@ const INSTRUCTIONS = {
   'mobile:telus:always': {
     title: 'TELUS / Koodo — renvoi permanent',
     steps: ['Réglages → Renvoi d\'appel → {{NUM}}.', 'Ou composez {{MMI}}.'],
+    mmi: '*21*{{NUM}}#',
+  },
+  'mobile:rogers:no_answer': {
+    title: 'Rogers / Fido — renvoi si pas de réponse',
+    difficulty: 'Moyen',
+    extra: 'Fido : le renvoi conditionnel ne fonctionne que si la messagerie vocale est désactivée.',
+    steps: [
+      'D\'abord : composez #21# puis Appeler (couper un renvoi permanent).',
+      'Activez le renvoi si pas de réponse : composez {{MMI}} puis Appeler.',
+      'Android : Paramètres → Renvoi d\'appel → Si non répondu → {{NUM}}.',
+      'Test : votre cell doit sonner. SMS seulement si vous ne répondez pas.',
+    ],
+    mmi: '*61*{{NUM}}#',
+    fallback: 'Rogers : rogers.com → Soutien. Fido : désactiver la messagerie vocale si le renvoi ne s\'active pas.',
+  },
+  'mobile:rogers:always': {
+    title: 'Rogers / Fido — renvoi permanent',
+    steps: ['Composez {{MMI}} puis Appeler.', 'Ou Réglages → Renvoi d\'appel → Toujours → {{NUM}}.'],
     mmi: '*21*{{NUM}}#',
   },
   'mobile:fizz:no_answer': {
