@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chatbot | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+<script src="/assets/chatbot-kb.js"></script>
+</head>
+<body data-dash-page="chatbot">
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="/" class="logo">Novia<span>AI</span></a>
+    <p id="bizName" style="font-weight:700;margin:0 0 4px;font-size:.95rem">…</p>
+    <p id="liveStatus" class="live-badge" style="display:none;margin-bottom:20px">Ligne active</p>
+    <nav class="dash-nav">
+      <a href="/dashboard.html">Tableau de bord</a>
+      <a href="/publier.html">Publier</a>
+      <a href="/chatbot.html" class="active">Chatbot</a>
+      <a href="/conversations.html">Conversations</a>
+      <a href="/parametres.html">Paramètres</a>
+    </nav>
+    <div style="flex:1"></div>
+    <a href="#" id="logout" style="color:rgba(255,255,255,.5);font-size:.85rem;padding:10px 14px">Déconnexion</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Chatbot SMS &amp; web</h1>
+      <p class="muted" style="margin:0">Personnalité, services, FAQ et base de connaissances</p>
+    </div>
+
+    <div class="card">
+      <form id="chatbotForm">
+        <div class="settings-section">
+          <h3>Personnalité</h3>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="setAgentName">Prénom de l'agente *</label>
+              <input id="setAgentName" required placeholder="Léa">
+            </div>
+            <div class="settings-field">
+              <label for="setBusinessType">Type de commerce</label>
+              <input id="setBusinessType" placeholder="Salon de coiffure">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setAgentTone">Ton / personnalité</label>
+              <input id="setAgentTone" placeholder="Français québécois, chaleureux et professionnel">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setWelcomeSms">Message d'accueil SMS</label>
+              <textarea id="setWelcomeSms" rows="2" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Commerce &amp; horaires</h3>
+          <div class="settings-grid">
+            <div class="settings-field settings-field-wide">
+              <label for="setWebsiteUrl">Site web (référence)</label>
+              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
+              <small class="settings-hint">Optionnel — importez les pages ci-dessous pour entraîner l'IA</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setReservationUrl">Lien de réservation</label>
+              <input id="setReservationUrl" type="url" placeholder="https://calendly.com/votre-commerce">
+            </div>
+            <div class="settings-field">
+              <label for="setAddress">Adresse</label>
+              <input id="setAddress" placeholder="245, rue Principale">
+            </div>
+            <div class="settings-field">
+              <label for="setCity">Ville</label>
+              <input id="setCity" placeholder="Lévis">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label>Horaires d'ouverture</label>
+              <div class="hours-grid" id="hoursGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Services</h3>
+          <div id="servicesList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnAddService" style="margin-top:8px">+ Ajouter un service</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>FAQ</h3>
+          <div id="faqList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnAddFaq" style="margin-top:8px">+ Ajouter une question</button>
+        </div>
+
+        <div class="settings-section">
+          <h3>Politiques</h3>
+          <div class="settings-field settings-field-wide">
+            <textarea id="setPolicies" rows="3" placeholder="Annulation 24 h à l'avance&#10;Paiement: carte, Interac"></textarea>
+            <small class="settings-hint">Une politique par ligne</small>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Sources — site web &amp; documents</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Importez votre site ou uploadez un menu tarifs (PDF, Word, TXT). L'IA indexe le contenu automatiquement.</p>
+          <div id="kbMigrationWarn" class="install-warn" hidden>Migration Supabase requise pour l'import URL — exécutez <code>supabase/schema-v6-knowledge-base.sql</code></div>
+          <div class="kb-sources-box">
+            <div class="kb-import-row">
+              <input type="url" id="kbUrlInput" placeholder="https://votre-site.ca/services">
+              <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Importer URL</button>
+            </div>
+            <div class="kb-import-row" style="margin-top:10px">
+              <input type="file" id="kbFileInput" accept=".pdf,.doc,.docx,.txt,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnImportFile">Uploader fichier</button>
+            </div>
+            <small class="settings-hint" style="display:block;margin:6px 0 10px">PDF, DOCX, DOC, TXT, CSV — max 4 Mo</small>
+            <p id="kbImportErr" class="err" hidden style="margin:0 0 8px"></p>
+            <ul class="kb-sources-list" id="kbSourcesList"></ul>
+          </div>
+        </div>
+
+        <div class="settings-section kb-tester">
+          <h3>Tester le chatbot</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Posez une question comme un client — voyez la réponse et les sources utilisées.</p>
+          <div class="kb-tester-row">
+            <input type="text" id="kbTestQuestion" placeholder="C'est combien une coupe femme?">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnKbTest">Tester</button>
+          </div>
+          <div id="kbTestResult" class="kb-test-result" hidden></div>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <button type="submit" class="btn btn-primary" id="btnSaveChatbot">Enregistrer le chatbot</button>
+          <p id="chatbotOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0"> Chatbot enregistré</p>
+          <p id="chatbotErr" class="err" hidden style="margin:0"></p>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="/assets/dash-layout.js"></script>
+<script src="/assets/dashboard-core.js"></script>
+</body>
+</html>

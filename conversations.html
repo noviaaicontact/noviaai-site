@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversations | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body data-dash-page="conversations">
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="/" class="logo">Novia<span>AI</span></a>
+    <p id="bizName" style="font-weight:700;margin:0 0 4px;font-size:.95rem">…</p>
+    <p id="liveStatus" class="live-badge" style="display:none;margin-bottom:20px">Ligne active</p>
+    <nav class="dash-nav">
+      <a href="/dashboard.html">Tableau de bord</a>
+      <a href="/publier.html">Publier</a>
+      <a href="/chatbot.html">Chatbot</a>
+      <a href="/conversations.html" class="active">Conversations</a>
+      <a href="/parametres.html">Paramètres</a>
+    </nav>
+    <div style="flex:1"></div>
+    <a href="#" id="logout" style="color:rgba(255,255,255,.5);font-size:.85rem;padding:10px 14px">Déconnexion</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Conversations</h1>
+      <p class="muted" style="margin:0">Inbox centralisée — SMS et leads</p>
+    </div>
+
+    <div class="stat-row" style="margin-bottom:16px">
+      <div class="stat"><div class="label">Messages (30j)</div><div class="n" id="statMsgs">0</div></div>
+      <div class="stat"><div class="label">Appels rattrapés</div><div class="n" id="missedCount">0</div></div>
+      <div class="stat"><div class="label">Leads</div><div class="n" id="leadCount">0</div></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;font-size:1.1rem">Inbox</h2>
+      <p class="muted" style="margin:0 0 16px;font-size:.88rem">Appels manqués, réponses clients — répondez ici par SMS.</p>
+      <div class="inbox-layout">
+        <div class="inbox-list" id="inboxList"><div class="inbox-empty">Chargement…</div></div>
+        <div class="inbox-thread" id="inboxThread"><div class="inbox-empty">Sélectionnez une conversation</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/assets/dash-layout.js"></script>
+<script src="/assets/dashboard-core.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramètres | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+</head>
+<body data-dash-page="parametres">
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="/" class="logo">Novia<span>AI</span></a>
+    <p id="bizName" style="font-weight:700;margin:0 0 4px;font-size:.95rem">…</p>
+    <p id="liveStatus" class="live-badge" style="display:none;margin-bottom:20px">Ligne active</p>
+    <nav class="dash-nav">
+      <a href="/dashboard.html">Tableau de bord</a>
+      <a href="/publier.html">Publier</a>
+      <a href="/chatbot.html">Chatbot</a>
+      <a href="/conversations.html">Conversations</a>
+      <a href="/parametres.html" class="active">Paramètres</a>
+    </nav>
+    <div style="flex:1"></div>
+    <a href="#" id="logout" style="color:rgba(255,255,255,.5);font-size:.85rem;padding:10px 14px">Déconnexion</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Paramètres</h1>
+      <p class="muted" style="margin:0">Commerce, SMS, avis Google et widget web</p>
+    </div>
+
+    <div class="card">
+      <form id="settingsForm">
+        <div class="settings-section">
+          <h3>Commerce</h3>
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="setBusinessName">Nom du commerce *</label>
+              <input id="setBusinessName" required>
+            </div>
+            <div class="settings-field">
+              <label for="setBusinessPhone">Cellulaire où vous répondez *</label>
+              <input id="setBusinessPhone" type="tel" required placeholder="581-909-5332">
+              <small class="settings-hint">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setContactEmail">Courriel alertes</label>
+              <input id="setContactEmail" type="email">
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setMissedSms">Message SMS appel manqué *</label>
+              <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Désolé, on a manqué votre appel…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Avis Google</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Envoi automatique après une conversation positive (satisfaction ou résolution), avec un délai configurable. Jamais après une plainte.</p>
+          <div class="settings-grid">
+            <div class="settings-field settings-field-wide">
+              <label for="setGoogleReviewUrl">Lien avis Google</label>
+              <input id="setGoogleReviewUrl" type="url" placeholder="https://g.page/r/XXXXX/review">
+              <small class="settings-hint">Google Business → Accueil → « Obtenir plus d'avis » → copier le lien</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setReviewRequestSms">Message SMS avis (optionnel)</label>
+              <textarea id="setReviewRequestSms" rows="2" placeholder="Merci d'avoir choisi {{commerce}}! Un petit avis Google nous aide: {{lien}}"></textarea>
+            </div>
+            <div class="settings-field">
+              <label for="setReviewDelayMinutes">Délai avant envoi (minutes)</label>
+              <input id="setReviewDelayMinutes" type="number" min="1" max="120" value="5">
+              <small class="settings-hint">Par défaut 5 min — le client n'est pas interrompu tout de suite</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer">
+                <input type="checkbox" id="setAutoReviewRequest" style="margin-top:4px">
+                <span>Envoi automatique intelligent (1 fois par conversation, ton positif seulement)</span>
+              </label>
+            </div>
+          </div>
+          <p class="muted" style="font-size:.85rem;margin:8px 0 0"><span id="statReviewSent">0</span> demandes d'avis envoyées</p>
+        </div>
+
+        <div class="settings-section">
+          <h3>Chatbot sur votre site web</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Collez ce code avant &lt;/body&gt; sur votre site — même IA que le SMS.</p>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer;margin-bottom:12px">
+            <input type="checkbox" id="setWidgetEnabled" style="margin-top:4px" checked>
+            <span>Activer le widget web</span>
+          </label>
+          <div class="install-code-row">
+            <code id="widgetEmbedCode" style="font-size:.75rem;word-break:break-all">Chargement…</code>
+            <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidget">Copier</button>
+          </div>
+          <p class="muted" style="font-size:.85rem;margin-top:12px"><a href="/chatbot.html">Configurer le chatbot →</a></p>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+          <button type="submit" class="btn btn-primary" id="btnSaveSettings">Enregistrer les paramètres</button>
+          <p id="settingsOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0"> Paramètres enregistrés</p>
+          <p id="settingsErr" class="err" hidden style="margin:0"></p>
+        </div>
+      </form>
+
+      <div class="settings-section" style="margin-top:40px;padding-top:24px;border-top:1px solid var(--border)">
+        <h3 style="color:var(--err,#c0392b)">Zone dangereuse</h3>
+        <p class="muted" style="font-size:.88rem">Supprime définitivement votre compte, vos conversations et libère votre numéro NoviaAI.</p>
+        <button type="button" class="btn btn-ghost" id="btnDeleteAccount" style="border-color:var(--err,#c0392b);color:var(--err,#c0392b)">Supprimer mon compte</button>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/assets/dash-layout.js"></script>
+<script src="/assets/dashboard-core.js"></script>
+</body>
+</html>

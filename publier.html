@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publier votre numéro | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
+<script src="/assets/install-guide.js"></script>
+</head>
+<body data-dash-page="publier">
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <a href="/" class="logo">Novia<span>AI</span></a>
+    <p id="bizName" style="font-weight:700;margin:0 0 4px;font-size:.95rem">…</p>
+    <p id="liveStatus" class="live-badge" style="display:none;margin-bottom:20px">Ligne active</p>
+    <nav class="dash-nav">
+      <a href="/dashboard.html">Tableau de bord</a>
+      <a href="/publier.html" class="active">Publier</a>
+      <a href="/chatbot.html">Chatbot</a>
+      <a href="/conversations.html">Conversations</a>
+      <a href="/parametres.html">Paramètres</a>
+    </nav>
+    <div style="flex:1"></div>
+    <a href="#" id="logout" style="color:rgba(255,255,255,.5);font-size:.85rem;padding:10px 14px">Déconnexion</a>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Publier votre numéro</h1>
+      <p class="muted" style="margin:0">Google, Facebook, site web — ou renvoi d'appel</p>
+    </div>
+
+    <div id="provBox" class="prov-box" hidden>
+      <strong id="provTitle">⏳ Activation en cours…</strong>
+      <p id="provMsg" class="muted" style="margin:8px 0 0;font-size:.92rem">Achat de votre numéro local (~1–2 min).</p>
+      <button class="btn btn-ghost btn-sm" id="btnRetryProv" style="margin-top:12px;display:none">Réessayer</button>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;font-size:1.1rem" id="installPanelTitle">Publier votre numéro</h2>
+      <p class="muted" style="margin:0 0 20px" id="installPanelDesc">Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.</p>
+
+      <div class="install-plan recommended" id="installPlanNew">
+        <span class="install-plan-badge">2 minutes · Zéro config téléphone</span>
+        <h3>Votre numéro NoviaAI</h3>
+        <div class="install-code-row">
+          <code id="installTwilioNumA">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioA">Copier</button>
+        </div>
+        <ol class="forward-steps" style="margin:12px 0;font-size:.9rem">
+          <li>Copiez le numéro ci-dessus</li>
+          <li><strong>Google Business</strong> → Modifier → Téléphone → collez ce numéro</li>
+          <li>Faites pareil sur Facebook, votre site web ou carte d'affaires</li>
+          <li>Test : appelez ce numéro depuis un autre téléphone, ne répondez pas → SMS auto au client</li>
+        </ol>
+        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneA">C'est fait — j'ai publié mon numéro</button>
+      </div>
+
+      <div class="install-plan recommended" id="installPlanForward" hidden>
+        <span class="install-plan-badge">~5 minutes · Selon votre fournisseur</span>
+        <h3>Votre numéro NoviaAI (renvoi d'appel)</h3>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Gardez votre numéro actuel sur Google. Copiez ce numéro NoviaAI, puis configurez le <strong>renvoi d'appels manqués</strong> (pas permanent) vers ce numéro.</p>
+        <div class="install-code-row">
+          <code id="installTwilioNumForward">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioForward">Copier</button>
+        </div>
+
+        <label for="forwardProvider" style="display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600">Votre fournisseur cellulaire</label>
+        <select id="forwardProvider" style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid var(--border)">
+          <option value="bell">Bell / Bell MTS</option>
+          <option value="videotron">Vidéotron</option>
+          <option value="rogers">Rogers / Fido / Chatr</option>
+          <option value="telus">TELUS / Koodo</option>
+          <option value="fizz">Fizz / Public Mobile</option>
+          <option value="other_mobile">Autre</option>
+        </select>
+
+        <div class="forward-provider-tip" id="forwardProviderTip"></div>
+        <p class="install-warn" id="forwardIphoneWarn" hidden style="margin:12px 0;font-size:.85rem"></p>
+        <ol class="forward-steps" id="forwardProviderSteps" style="margin:12px 0;font-size:.9rem"></ol>
+        <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward" style="margin-top:16px">C'est fait — j'ai configuré le renvoi</button>
+      </div>
+
+      <details class="install-advanced" style="margin-top:20px">
+        <summary>Chatbot sur mon site web</summary>
+        <p class="muted" style="font-size:.88rem;margin:12px 0">Widget NoviaAI — vos visiteurs chattent sur votre site avec la même IA que le SMS.</p>
+        <div class="install-code-row">
+          <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
+          <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
+        </div>
+        <p class="muted" style="font-size:.85rem;margin-top:12px"><a href="/chatbot.html">Configurer le chatbot →</a></p>
+      </details>
+    </div>
+  </main>
+</div>
+<script src="/assets/dash-layout.js"></script>
+<script src="/assets/dashboard-core.js"></script>
+</body>
+</html>
