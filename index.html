@@ -4,187 +4,245 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NoviaAI — Ne perdez plus un client qui appelle</title>
-<meta name="description" content="Numéro local Québec. Appel manqué → texto en 5 secondes. Inbox centralisée. Actif en 2 minutes. Essai 14 jours.">
-<link rel="stylesheet" href="/assets/saas.css">
-<link rel="stylesheet" href="/assets/flows.css">
+<meta name="description" content="Appel manqué → SMS automatique en 5 secondes. Agent IA pour PME québécoises. Essai gratuit 14 jours, sans engagement.">
+<link rel="stylesheet" href="/assets/landing.css">
 </head>
-<body>
-<nav class="nav">
-  <a href="/" class="logo">Novia<span>AI</span></a>
-  <div class="nav-links">
-    <a href="/comment-ca-marche.html" class="nav-link">Comment ça marche</a>
-    <a href="#tarifs" class="nav-link">Tarifs</a>
-    <a href="/dashboard.html?demo=1" class="btn btn-ghost btn-sm">Démo live</a>
-    <a href="/login.html" class="btn btn-ghost btn-sm">Connexion</a>
-    <a href="/signup.html?plan=pro" class="btn btn-accent btn-sm">Essai gratuit →</a>
+<body class="landing">
+
+<nav class="landing-nav">
+  <a href="/" class="landing-logo">Novia<span>AI</span></a>
+  <div class="landing-nav-links">
+    <a href="#solution">Comment ça marche</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="/login.html">Connexion</a>
   </div>
+  <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime landing-btn-sm">Essai gratuit 14 jours</a>
 </nav>
 
-<section class="hero-premium">
-  <span class="badge">⚡ Actif en 2 min · Québec · LCAP</span>
-  <h1>Votre ligne pro. Appel manqué → SMS auto.</h1>
-  <p class="lead">On vous donne un numéro local (581, 418…). Mettez-le sur Google — zéro config téléphone. Chaque appel manqué envoie un texto à vos clients.</p>
-  <div class="hero-actions">
-    <a href="/signup.html?plan=pro" class="btn btn-accent">Obtenir ma ligne pro — essai gratuit</a>
-    <a href="/dashboard.html?demo=1" class="btn btn-ghost">Voir la démo →</a>
-  </div>
-  <div class="hero-trust">
-    <span>✓ Numéro local Québec</span>
-    <span>✓ Actif en 2 minutes</span>
-    <span>✓ Essai 14 jours</span>
-  </div>
-</section>
-
-<section class="hero-showcase">
-  <div class="phone-mock">
-    <div class="phone-screen">
-      <div class="phone-header"><span class="live-dot"></span> Salon Éclat — Léa</div>
-      <div class="phone-feed">
-        <div class="phone-missed">📞 Appel manqué · 14 h 32</div>
-        <div class="bubble bubble-out">Bonjour! Désolée, on a manqué votre appel à Salon Éclat 😊 On peut vous aider par texto — qu'est-ce que vous cherchiez?</div>
-        <div class="bubble bubble-in">C'est combien une coupe femme?</div>
-        <div class="bubble bubble-out">Coupe femme à partir de 45&nbsp;$. On a des places jeudi PM — voulez-vous qu'on vous réserve?</div>
-        <div class="bubble bubble-in">Oui jeudi 15 h</div>
-        <div class="bubble bubble-out">Parfait! Je note jeudi 15 h. Quel est votre prénom?</div>
-        <div class="bubble-system">→ Alert lead envoyée au propriétaire</div>
+<!-- 1. HERO -->
+<section class="landing-hero">
+  <div class="landing-wrap">
+    <div class="landing-hero-grid">
+      <div>
+        <span class="landing-badge">Québec · Actif en 2 min</span>
+        <h1>Un client vous a appelé hier.<br>Vous ne le saviez même pas.</h1>
+        <p class="landing-sub">NoviaAI répond automatiquement par SMS à chaque appel manqué — et convertit vos appels perdus en clients.</p>
+        <div class="landing-hero-actions">
+          <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
+          <a href="/dashboard.html?demo=1" class="landing-btn landing-btn-ghost">Voir la démo</a>
+        </div>
+        <div class="landing-trust">
+          <span>Sans engagement</span>
+          <span>Essai 14 jours</span>
+          <span>Setup en 2 min</span>
+        </div>
+      </div>
+      <div class="landing-phone" aria-hidden="true">
+        <div class="landing-phone-screen">
+          <div class="landing-phone-head"><span class="landing-live-dot"></span> Garage Rive-Sud</div>
+          <div class="landing-phone-feed">
+            <div class="landing-missed">📞 Appel manqué · 14 h 32</div>
+            <div class="landing-bubble landing-bubble-out">Bonjour! On a manqué votre appel au Garage Rive-Sud. On peut vous aider par texto — c'est pour quoi?</div>
+            <div class="landing-bubble landing-bubble-in">Changement d'huile, c'est combien?</div>
+            <div class="landing-bubble landing-bubble-out">À partir de 59 $. On a de la place demain AM — voulez-vous qu'on vous réserve?</div>
+            <div class="landing-bubble landing-bubble-in">Oui demain 9 h</div>
+            <div class="landing-bubble landing-bubble-sys">→ Lead envoyé au propriétaire</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="logo-bar">
-  <span>Salons</span>
-  <span>Cliniques</span>
-  <span>Spas</span>
-  <span>Garages</span>
-  <span>Restaurants</span>
-</div>
+<!-- 2. LE PROBLÈME -->
+<section class="landing-section landing-section-alt" id="probleme">
+  <div class="landing-wrap landing-center">
+    <p class="landing-eyebrow">Le problème</p>
+    <h2 class="landing-h2">Chaque appel manqué, c'est un client qui part chez le voisin.</h2>
+    <p class="landing-lead">Les PME manquent une grande partie de leurs appels. La majorité des clients qui tombent sur une boîte vocale ne rappellent jamais.</p>
 
-<section class="section" id="comment">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="badge">Schémas simples pour PME</span>
-      <h2>Comprenez le problème. Voyez la solution.</h2>
-      <p>Appels manqués, SMS automatique, inbox — expliqué étape par étape, sans jargon.</p>
+    <div class="landing-stats">
+      <div class="landing-stat">
+        <div class="landing-stat-num">62%</div>
+        <p>des appels vers les PME ne sont pas décrochés</p>
+      </div>
+      <div class="landing-stat">
+        <div class="landing-stat-num">80%</div>
+        <p>des clients ne rappellent pas après une boîte vocale</p>
+      </div>
+      <div class="landing-stat">
+        <div class="landing-stat-num">0</div>
+        <p>seconde d'attente avant qu'ils appellent ailleurs</p>
+      </div>
     </div>
-    <div class="flow-schema" style="margin-bottom:28px">
-      <div class="flow-node bad"><div class="ico">📞</div><h4>Client appelle</h4><p>Vous êtes occupé</p></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node bad"><div class="ico">💸</div><h4>Client part</h4><p>80&nbsp;% ne rappellent pas</p></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node accent"><div class="ico">📱</div><h4>NoviaAI</h4><p>SMS auto en 5 sec</p></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-node good"><div class="ico">🎯</div><h4>Lead chez vous</h4><p>RDV + alerte courriel</p></div>
+
+    <div class="landing-money-box">
+      <strong>3 appels manqués/semaine × 150 $ = ~1 800 $/mois</strong>
+      <p>qui partent ailleurs. Pendant que vous coupez les cheveux ou réparez une voiture, quelqu'un appelle le concurrent.</p>
     </div>
-    <p style="text-align:center">
-      <a href="/comment-ca-marche.html" class="btn btn-primary">Voir tous les schémas (problème → solution → fonctionnement)</a>
+  </div>
+</section>
+
+<!-- 3. LA SOLUTION -->
+<section class="landing-section" id="solution">
+  <div class="landing-wrap landing-center">
+    <p class="landing-eyebrow">La solution</p>
+    <h2 class="landing-h2">NoviaAI règle ça en 3 étapes.</h2>
+    <p class="landing-lead">Pas d'installation compliquée. Votre cellulaire ne change pas. Ça marche 24/7.</p>
+
+    <div class="landing-steps">
+      <div class="landing-step">
+        <div class="landing-step-num">1</div>
+        <h3>Un client appelle</h3>
+        <p>Vous êtes occupé — pas de réponse. L'appel est manqué.</p>
+      </div>
+      <div class="landing-step">
+        <div class="landing-step-num">2</div>
+        <h3>SMS instantané</h3>
+        <p>NoviaAI texte le client en ~5 secondes avec un message personnalisé.</p>
+      </div>
+      <div class="landing-step">
+        <div class="landing-step-num">3</div>
+        <h3>L'IA prend le relais</h3>
+        <p>Questions, prix, rendez-vous — l'agent IA répond et vous alerte.</p>
+      </div>
+    </div>
+
+    <div class="landing-checks">
+      <span>Aucune installation compliquée — actif en ~2 minutes</span>
+      <span>Votre cellulaire sonne en premier, votre numéro ne change pas</span>
+      <span>Actif 24/7, même la nuit et les fins de semaine</span>
+    </div>
+
+    <p style="margin-top:28px">
+      <a href="/comment-ca-marche.html" class="landing-btn landing-btn-ghost landing-btn-sm">Voir tous les détails →</a>
     </p>
   </div>
 </section>
 
-<section class="section" style="background:#fff;padding-top:0">
-  <div class="wrap">
-    <div class="grid3">
-      <div class="card">
-        <div class="card-icon">📱</div>
-        <h3>Numéro pro local</h3>
-        <p>On vous donne un 418, 581 ou 514. Mettez-le sur Google, Facebook et votre site — zéro config dans Réglages du téléphone.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📞</div>
-        <h3>Votre cell sonne d'abord</h3>
-        <p>Quand un client appelle, <strong>votre cellulaire sonne</strong>. Pas de réponse? SMS auto personnalisé au client.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📊</div>
-        <h3>ROI en direct</h3>
-        <p>Leads, appels rattrapés, revenus estimés récupérés — comme un vrai dashboard SaaS.</p>
-      </div>
+<!-- 4. BÉNÉFICES -->
+<section class="landing-section landing-section-alt" id="benefices">
+  <div class="landing-wrap">
+    <div class="landing-center" style="margin-bottom:36px">
+      <p class="landing-eyebrow">Pourquoi NoviaAI</p>
+      <h2 class="landing-h2">Tout ce qu'il vous faut. Rien de plus.</h2>
     </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Ce que disent les commerces québécois</h2>
-    </div>
-    <div class="testimonials">
-      <div class="quote">
-        <p>« Avant, 3 à 4 appels manqués par jour partaient ailleurs. Maintenant j'ai 2 RDV de plus par semaine juste avec les textos. »</p>
-        <cite>— Propriétaire salon, Lévis</cite>
+    <div class="landing-benefits">
+      <div class="landing-benefit">
+        <div class="landing-benefit-icon">🎯</div>
+        <h3>Ne plus perdre de clients</h3>
+        <p>Chaque appel manqué devient une conversation — pas un client perdu.</p>
       </div>
-      <div class="quote">
-        <p>« Podium voulait 600 $/mois et un contrat d'un an. NoviaAI fait la job pour la moitié, en français. »</p>
-        <cite>— Clinique esthétique, Québec</cite>
+      <div class="landing-benefit">
+        <div class="landing-benefit-icon">⚡</div>
+        <h3>Réponse instantanée</h3>
+        <p>Même quand vous êtes en rendez-vous ou sous un capot.</p>
       </div>
-      <div class="quote">
-        <p>« Setup en 5 minutes, vrai. J'ai mis le numéro sur Google le soir même. »</p>
-        <cite>— Garage, Rive-Sud</cite>
+      <div class="landing-benefit">
+        <div class="landing-benefit-icon">⭐</div>
+        <h3>Avis Google automatiques</h3>
+        <p>Après une bonne conversation, on demande l'avis au client.</p>
+      </div>
+      <div class="landing-benefit">
+        <div class="landing-benefit-icon">📊</div>
+        <h3>Tableau de bord simple</h3>
+        <p>Leads, conversations, ROI estimé — tout au même endroit.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section" id="tarifs" style="background:#fff">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Tarifs simples. Annulez quand vous voulez.</h2>
-      <p>Inspiré de ce qui convertit chez les SaaS qui marchent — pas de surprise, pas de contrat annuel.</p>
-    </div>
-    <div class="pricing pricing-single">
-      <div class="price-card featured">
-        <span class="popular">Prix fondateur</span>
-        <div class="muted" style="font-weight:700;font-size:.8rem;text-transform:uppercase;margin-top:8px">Pro</div>
-        <h3>199 $</h3>
-        <div class="period">/ mois · essai 14 jours · sans contrat</div>
-        <p class="muted" style="font-size:.82rem;margin:-8px 0 16px;text-decoration:line-through">349 $/mois après les places fondateur</p>
-        <ul>
-          <li>Numéro local Québec (418, 514, 581…)</li>
-          <li>Rattrapeur SMS + inbox centralisée</li>
-          <li>Agent IA + alertes leads courriel</li>
-          <li>Widget web + avis Google intelligents</li>
-          <li>Analytics ROI + support prioritaire</li>
-        </ul>
-        <a href="/signup.html?plan=pro" class="btn btn-accent btn-block">Essai gratuit 14 jours</a>
+<!-- 5. PREUVE SOCIALE (placeholders) -->
+<section class="landing-section" id="temoignages">
+  <div class="landing-wrap landing-center">
+    <p class="landing-eyebrow">Témoignages</p>
+    <h2 class="landing-h2">Ce que disent les commerçants québécois</h2>
+    <p class="landing-lead">Des retours réels de nos clients — à venir.</p>
+
+    <div class="landing-testimonials">
+      <div class="landing-testimonial-empty">
+        <p>« Votre témoignage ici »</p>
+        <cite>— Nom, ville, type de commerce</cite>
       </div>
-    </div>
-    <p class="muted" style="text-align:center;margin-top:20px;font-size:.85rem">Usage équitable · LCAP conforme · Annulation en un clic · Comparé à Podium (~400–800 $/mois + contrat)</p>
-
-    <div class="faq" style="margin-top:64px">
-      <details class="faq-item" open>
-        <summary>Combien de temps pour être en ligne?</summary>
-        <p>Environ 2 minutes : inscription, votre cellulaire + message SMS, puis numéro local activé automatiquement.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Comment je réponds aux clients qui textent?</summary>
-        <p>Depuis votre inbox NoviaAI (tableau de bord) ou directement depuis votre téléphone. Chaque conversation est centralisée.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Puis-je garder mon ancien numéro 581?</summary>
-        <p>Oui — choisissez « Garder mon numéro actuel » à l'inscription. On porte votre ligne existante (Hosted SMS) sous 48 h ouvrables. Sinon, publiez votre nouvelle ligne NoviaAI sur Google (plus simple).</p>
-      </details>
-      <details class="faq-item">
-        <summary>Et si je veux annuler?</summary>
-        <p>Un clic dans le portail Stripe. Pas de contrat annuel. Pas de frais cachés.</p>
-      </details>
-    </div>
-
-    <div class="cta-band">
-      <h2>Prêt à arrêter de perdre des clients?</h2>
-      <p>Essai 14 jours · Setup automatique · Support en français</p>
-      <a href="/signup.html?plan=pro" class="btn btn-accent">Démarrer mon essai gratuit</a>
+      <div class="landing-testimonial-empty">
+        <p>« Votre témoignage ici »</p>
+        <cite>— Nom, ville, type de commerce</cite>
+      </div>
+      <div class="landing-testimonial-empty">
+        <p>« Votre témoignage ici »</p>
+        <cite>— Nom, ville, type de commerce</cite>
+      </div>
     </div>
   </div>
 </section>
 
-<footer class="site-footer">
+<!-- 6. TARIFS -->
+<section class="landing-section landing-section-alt" id="tarifs">
+  <div class="landing-wrap landing-center">
+    <p class="landing-eyebrow">Tarifs</p>
+    <h2 class="landing-h2">Un seul forfait. Tout inclus.</h2>
+    <p class="landing-lead">Essai gratuit 14 jours. Sans engagement. Annulable en tout temps.</p>
+
+    <div class="landing-price-card">
+      <span class="landing-price-tag">Prix fondateur</span>
+      <h3>Pro</h3>
+      <div class="landing-price-amount">199 $</div>
+      <div class="landing-price-period">/ mois · essai 14 jours · sans contrat</div>
+      <ul>
+        <li>Numéro local Québec (418, 514, 581…)</li>
+        <li>Rattrapeur SMS + inbox centralisée</li>
+        <li>Agent IA 24/7 + alertes leads</li>
+        <li>Widget web + avis Google</li>
+        <li>Tableau de bord ROI</li>
+      </ul>
+      <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime landing-btn-block">Essai gratuit 14 jours</a>
+      <p class="landing-price-note">LCAP conforme · Annulation en un clic · Usage équitable</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FAQ -->
+<section class="landing-section" id="faq">
+  <div class="landing-wrap landing-center">
+    <p class="landing-eyebrow">Questions</p>
+    <h2 class="landing-h2">On répond à vos objections.</h2>
+
+    <div class="landing-faq">
+      <details>
+        <summary>Est-ce que je dois changer mon numéro?</summary>
+        <p>Non obligatoire. On vous donne une ligne NoviaAI à publier sur Google, ou vous gardez la vôtre avec renvoi d'appel.</p>
+      </details>
+      <details>
+        <summary>Est-ce compliqué à installer?</summary>
+        <p>Non. Inscription en ~2 minutes. Pas d'app à installer, pas de configuration dans les réglages du téléphone.</p>
+      </details>
+      <details>
+        <summary>Et si je réponds à l'appel?</summary>
+        <p>Votre cellulaire sonne en premier. NoviaAI n'intervient que si vous ne répondez pas.</p>
+      </details>
+      <details>
+        <summary>Puis-je annuler?</summary>
+        <p>Oui, en un clic depuis le portail de facturation. Pas de contrat annuel, pas de frais cachés.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 8. CTA FINAL -->
+<section class="landing-cta-final">
+  <h2>Arrêtez de perdre des clients sans le savoir.</h2>
+  <p>Setup en 2 min · Support en français · Québec</p>
+  <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
+</section>
+
+<footer class="landing-footer">
   NoviaAI · Québec ·
   <a href="/confidentialite.html">Confidentialité</a> ·
   <a href="/conditions.html">Conditions</a> ·
   <a href="/politique-sms.html">Politique SMS</a> ·
   <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a>
 </footer>
+
 <script src="/assets/landing-chat.js" defer></script>
 </body>
 </html>
