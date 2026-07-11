@@ -234,7 +234,8 @@ function applyTenantToUI() {
     }
   }
   if (DASH_PAGE === 'parametres') populateSettingsForm(tenant);
-  if (DASH_PAGE === 'chatbot') populateChatbotForm(tenant);
+  // Ne pas recharger le formulaire chatbot ici — ça efface les lignes ajoutées non enregistrées.
+  // populateChatbotForm est appelé une fois au chargement de la page.
   updateWidgetEmbedUI(tenant);
   updateBillingUI(tenant);
   updateProvBox();
@@ -612,6 +613,7 @@ function openThreadDemo(phone) {
     }
     if (DEMO) {
       loadDemoData();
+      if (DASH_PAGE === 'chatbot') populateChatbotForm(tenant);
       initPageHandlers();
       if (DASH_PAGE === 'publier') initInstallWizard();
       return;

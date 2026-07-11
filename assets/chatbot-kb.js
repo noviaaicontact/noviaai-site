@@ -1,4 +1,5 @@
 // Panneau Chatbot — services, FAQ, horaires, import URL, testeur.
+// v3 — fix boutons ajouter service/FAQ
 
 const HOUR_DAYS = [
   { key: 'lundi', label: 'Lundi' },
@@ -21,6 +22,7 @@ const DEFAULT_HOURS = {
 };
 
 let _demo = false;
+let _chatbotBound = false;
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -67,7 +69,7 @@ function serviceRowHtml(s, idx) {
   return `<div class="kb-row" data-idx="${idx}">
     <input type="text" class="svc-name" placeholder="Nom du service" value="${esc(s.nom || s.description_courte || '')}">
     <input type="text" class="svc-price" placeholder="Prix" value="${esc(s.prix || '')}">
-    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">×</button>
+    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
   </div>`;
 }
 
@@ -91,7 +93,7 @@ function faqRowHtml(f, idx) {
   return `<div class="kb-row kb-row-faq" data-idx="${idx}">
     <input type="text" class="faq-q" placeholder="Question" value="${esc(f.question || '')}">
     <textarea class="faq-a" rows="2" placeholder="Réponse">${esc(f.reponse || '')}</textarea>
-    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">×</button>
+    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
   </div>`;
 }
 
@@ -111,13 +113,39 @@ function collectFaq() {
 }
 
 function bindRemoveButtons(container) {
+  if (!container) return;
   container.querySelectorAll('.kb-remove').forEach((btn) => {
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const row = btn.closest('.kb-row');
+      if (!row) return;
       const parent = row.parentElement;
-      if (parent.querySelectorAll('.kb-row').length > 1) row.remove();
+      if (parent && parent.querySelectorAll('.kb-row').length > 1) row.remove();
     };
   });
+}
+
+function addServiceRow() {
+  const el = document.getElementById('servicesList');
+  if (!el) return false;
+  el.insertAdjacentHTML('beforeend', serviceRowHtml({ nom: '', prix: '' }, el.children.length));
+  bindRemoveButtons(el);
+  const inputs = el.querySelectorAll('.svc-name');
+  const last = inputs[inputs.length - 1];
+  if (last) last.focus();
+  return true;
+}
+
+function addFaqRow() {
+  const el = document.getElementById('faqList');
+  if (!el) return false;
+  el.insertAdjacentHTML('beforeend', faqRowHtml({ question: '', reponse: '' }, el.children.length));
+  bindRemoveButtons(el);
+  const inputs = el.querySelectorAll('.faq-q');
+  const last = inputs[inputs.length - 1];
+  if (last) last.focus();
+  return true;
 }
 
 function policiesToLines(policies) {
@@ -131,15 +159,19 @@ function parsePoliciesLines(text) {
 
 function populateChatbotForm(t) {
   if (!t) return;
-  document.getElementById('setAgentName').value = t.agent_name || 'Léa';
-  document.getElementById('setBusinessType').value = t.business_type || '';
-  document.getElementById('setAgentTone').value = t.agent_tone || '';
-  document.getElementById('setWelcomeSms').value = t.welcome_sms || '';
-  document.getElementById('setWebsiteUrl').value = t.website_url || '';
-  document.getElementById('setReservationUrl').value = t.reservation_url || '';
-  document.getElementById('setAddress').value = t.address_line || '';
-  document.getElementById('setCity').value = t.city || '';
-  document.getElementById('setPolicies').value = policiesToLines(t.policies);
+  const set = (id, val) => {
+    const node = document.getElementById(id);
+    if (node) node.value = val;
+  };
+  set('setAgentName', t.agent_name || 'Léa');
+  set('setBusinessType', t.business_type || '');
+  set('setAgentTone', t.agent_tone || '');
+  set('setWelcomeSms', t.welcome_sms || '');
+  set('setWebsiteUrl', t.website_url || '');
+  set('setReservationUrl', t.reservation_url || '');
+  set('setAddress', t.address_line || '');
+  set('setCity', t.city || '');
+  set('setPolicies', policiesToLines(t.policies));
   renderHours(t.hours || DEFAULT_HOURS);
   renderServices(t.services);
   renderFaq(t.faq);
@@ -197,139 +229,149 @@ async function loadKnowledgeSources() {
   }
 }
 
-function bindClick(id, fn) {
-  const el = document.getElementById(id);
-  if (el) el.onclick = fn;
+function bindUiClicks() {
+  if (_chatbotBound) return;
+  _chatbotBound = true;
+  document.addEventListener('click', (e) => {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    if (t.closest('#btnAddService')) {
+      e.preventDefault();
+      e.stopPropagation();
+      addServiceRow();
+      return;
+    }
+    if (t.closest('#btnAddFaq')) {
+      e.preventDefault();
+      e.stopPropagation();
+      addFaqRow();
+    }
+  });
 }
 
 function initChatbotPanel(opts) {
   _demo = !!(opts && opts.demo);
-  if (!document.getElementById('chatbotForm')) return;
+  bindUiClicks();
+  const form = document.getElementById('chatbotForm');
+  if (!form) return;
 
-  bindClick('btnAddService', () => {
-    const el = document.getElementById('servicesList');
-    el.insertAdjacentHTML('beforeend', serviceRowHtml({ nom: '', prix: '' }, el.children.length));
-    bindRemoveButtons(el);
-  });
-
-  bindClick('btnAddFaq', () => {
-    const el = document.getElementById('faqList');
-    el.insertAdjacentHTML('beforeend', faqRowHtml({ question: '', reponse: '' }, el.children.length));
-    bindRemoveButtons(el);
-  });
-
-  bindClick('btnImportUrl', async () => {
-    if (_demo) { alert('Mode démo — connectez-vous pour importer une URL.'); return; }
-    const url = document.getElementById('kbUrlInput').value.trim();
-    const err = document.getElementById('kbImportErr');
-    const btn = document.getElementById('btnImportUrl');
-    err.hidden = true;
-    if (!url) { err.textContent = 'Entrez une URL.'; err.hidden = false; return; }
-    btn.disabled = true;
-    btn.textContent = 'Import…';
-    try {
-      const res = await NoviaApp.api('api-knowledge', {
-        method: 'POST',
-        body: JSON.stringify({ action: 'import_url', url }),
-      });
-      if (res.error) throw new Error(res.error);
-      document.getElementById('kbUrlInput').value = '';
-      await loadKnowledgeSources();
-    } catch (ex) {
-      err.textContent = ex.message || 'Import échoué';
-      err.hidden = false;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Importer URL';
-    }
-  });
-
-  bindClick('btnImportFile', async () => {
-    if (_demo) { alert('Mode démo — connectez-vous pour uploader un fichier.'); return; }
-    const input = document.getElementById('kbFileInput');
-    const err = document.getElementById('kbImportErr');
-    const btn = document.getElementById('btnImportFile');
-    err.hidden = true;
-    const file = input.files && input.files[0];
-    if (!file) { err.textContent = 'Choisissez un fichier.'; err.hidden = false; return; }
-    if (file.size > 4 * 1024 * 1024) {
-      err.textContent = 'Fichier trop gros (max 4 Mo).';
-      err.hidden = false;
-      return;
-    }
-    btn.disabled = true;
-    btn.textContent = 'Upload…';
-    try {
-      const b64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const raw = String(reader.result || '');
-          const i = raw.indexOf(',');
-          resolve(i >= 0 ? raw.slice(i + 1) : raw);
-        };
-        reader.onerror = () => reject(new Error('Lecture fichier échouée'));
-        reader.readAsDataURL(file);
-      });
-      const res = await NoviaApp.api('api-knowledge', {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'import_file',
-          file_name: file.name,
-          mime_type: file.type,
-          file_base64: b64,
-        }),
-      });
-      if (res.error) throw new Error(res.error);
-      input.value = '';
-      await loadKnowledgeSources();
-    } catch (ex) {
-      err.textContent = ex.message || 'Upload échoué';
-      err.hidden = false;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Uploader fichier';
-    }
-  });
-
-  bindClick('btnKbTest', async () => {
-    const q = document.getElementById('kbTestQuestion').value.trim();
-    const box = document.getElementById('kbTestResult');
-    if (!q) return;
-    if (_demo) {
-      box.innerHTML = '<p class="muted">Mode démo — exemple de réponse affichée.</p><p>Bonjour! Coupe femme à partir de 45 $. On a des places jeudi PM — voulez-vous qu\'on vous réserve?</p>';
-      box.hidden = false;
-      return;
-    }
-    box.hidden = false;
-    box.innerHTML = '<p class="muted">Test en cours…</p>';
-    try {
-      const res = await NoviaApp.api('api-knowledge', {
-        method: 'POST',
-        body: JSON.stringify({ action: 'test', question: q }),
-      });
-      if (res.error) throw new Error(res.error);
-      let html = '';
-      if (res.hits && res.hits.length) {
-        html += '<p><strong>Sources trouvées:</strong></p><ul class="kb-hits">';
-        res.hits.forEach((h) => {
-          html += `<li><small>${Math.round((h.similarity || 0) * 100)}% — ${esc(h.content.slice(0, 120))}…</small></li>`;
+  const btnImportUrl = document.getElementById('btnImportUrl');
+  if (btnImportUrl) {
+    btnImportUrl.onclick = async () => {
+      if (_demo) { alert('Mode démo — connectez-vous pour importer une URL.'); return; }
+      const url = document.getElementById('kbUrlInput').value.trim();
+      const err = document.getElementById('kbImportErr');
+      err.hidden = true;
+      if (!url) { err.textContent = 'Entrez une URL.'; err.hidden = false; return; }
+      btnImportUrl.disabled = true;
+      btnImportUrl.textContent = 'Import…';
+      try {
+        const res = await NoviaApp.api('api-knowledge', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'import_url', url }),
         });
-        html += '</ul>';
-      } else {
-        html += '<p class="muted">Aucun extrait indexé — réponse basée sur FAQ/services seulement.</p>';
+        if (res.error) throw new Error(res.error);
+        document.getElementById('kbUrlInput').value = '';
+        await loadKnowledgeSources();
+      } catch (ex) {
+        err.textContent = ex.message || 'Import échoué';
+        err.hidden = false;
+      } finally {
+        btnImportUrl.disabled = false;
+        btnImportUrl.textContent = 'Importer URL';
       }
-      if (res.reply) {
-        html += `<p><strong>Réponse simulée:</strong></p><p class="kb-test-reply">${esc(res.reply)}</p>`;
-      }
-      box.innerHTML = html;
-    } catch (ex) {
-      box.innerHTML = `<p class="err">${esc(ex.message)}</p>`;
-    }
-  });
+    };
+  }
 
-  const chatbotForm = document.getElementById('chatbotForm');
-  if (!chatbotForm) return;
-  chatbotForm.onsubmit = async (e) => {
+  const btnImportFile = document.getElementById('btnImportFile');
+  if (btnImportFile) {
+    btnImportFile.onclick = async () => {
+      if (_demo) { alert('Mode démo — connectez-vous pour uploader un fichier.'); return; }
+      const input = document.getElementById('kbFileInput');
+      const err = document.getElementById('kbImportErr');
+      err.hidden = true;
+      const file = input.files && input.files[0];
+      if (!file) { err.textContent = 'Choisissez un fichier.'; err.hidden = false; return; }
+      if (file.size > 4 * 1024 * 1024) {
+        err.textContent = 'Fichier trop gros (max 4 Mo).';
+        err.hidden = false;
+        return;
+      }
+      btnImportFile.disabled = true;
+      btnImportFile.textContent = 'Upload…';
+      try {
+        const b64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const raw = String(reader.result || '');
+            const i = raw.indexOf(',');
+            resolve(i >= 0 ? raw.slice(i + 1) : raw);
+          };
+          reader.onerror = () => reject(new Error('Lecture fichier échouée'));
+          reader.readAsDataURL(file);
+        });
+        const res = await NoviaApp.api('api-knowledge', {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'import_file',
+            file_name: file.name,
+            mime_type: file.type,
+            file_base64: b64,
+          }),
+        });
+        if (res.error) throw new Error(res.error);
+        input.value = '';
+        await loadKnowledgeSources();
+      } catch (ex) {
+        err.textContent = ex.message || 'Upload échoué';
+        err.hidden = false;
+      } finally {
+        btnImportFile.disabled = false;
+        btnImportFile.textContent = 'Uploader fichier';
+      }
+    };
+  }
+
+  const btnKbTest = document.getElementById('btnKbTest');
+  if (btnKbTest) {
+    btnKbTest.onclick = async () => {
+      const q = document.getElementById('kbTestQuestion').value.trim();
+      const box = document.getElementById('kbTestResult');
+      if (!q) return;
+      if (_demo) {
+        box.innerHTML = '<p class="muted">Mode démo — exemple de réponse affichée.</p><p>Bonjour! Coupe femme à partir de 45 $. On a des places jeudi PM — voulez-vous qu\'on vous réserve?</p>';
+        box.hidden = false;
+        return;
+      }
+      box.hidden = false;
+      box.innerHTML = '<p class="muted">Test en cours…</p>';
+      try {
+        const res = await NoviaApp.api('api-knowledge', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'test', question: q }),
+        });
+        if (res.error) throw new Error(res.error);
+        let html = '';
+        if (res.hits && res.hits.length) {
+          html += '<p><strong>Sources trouvées:</strong></p><ul class="kb-hits">';
+          res.hits.forEach((h) => {
+            html += `<li><small>${Math.round((h.similarity || 0) * 100)}% — ${esc(h.content.slice(0, 120))}…</small></li>`;
+          });
+          html += '</ul>';
+        } else {
+          html += '<p class="muted">Aucun extrait indexé — réponse basée sur FAQ/services seulement.</p>';
+        }
+        if (res.reply) {
+          html += `<p><strong>Réponse simulée:</strong></p><p class="kb-test-reply">${esc(res.reply)}</p>`;
+        }
+        box.innerHTML = html;
+      } catch (ex) {
+        box.innerHTML = `<p class="err">${esc(ex.message)}</p>`;
+      }
+    };
+  }
+
+  form.onsubmit = async (e) => {
     e.preventDefault();
     const ok = document.getElementById('chatbotOk');
     const err = document.getElementById('chatbotErr');
@@ -359,7 +401,7 @@ function initChatbotPanel(opts) {
       };
       const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });
       if (res.error) throw new Error(res.error);
-      if (opts.onSaved) opts.onSaved(res.tenant);
+      if (opts && opts.onSaved) opts.onSaved(res.tenant);
       ok.hidden = false;
     } catch (ex) {
       err.textContent = ex.message || 'Erreur enregistrement';
@@ -368,9 +410,14 @@ function initChatbotPanel(opts) {
   };
 }
 
+// Bind add buttons immédiatement (même avant initChatbotPanel)
+bindUiClicks();
+
 window.NoviaChatbot = {
   initChatbotPanel,
   populateChatbotForm,
   loadKnowledgeSources,
+  addServiceRow,
+  addFaqRow,
   DEFAULT_HOURS,
 };
