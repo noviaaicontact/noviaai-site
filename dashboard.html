@@ -81,9 +81,30 @@
         <a href="/parametres.html" class="btn btn-ghost" id="btnOpenSettings">Paramètres</a>
       </div>
     </div>
+
+    <div class="card client-sim-card" id="clientSimCard">
+      <div class="client-sim-head">
+        <div>
+          <h2 style="margin:0;font-size:1.1rem">Simuler un client</h2>
+          <p class="muted" style="margin:6px 0 0;font-size:.88rem">Mettez-vous à la place d'un client après un appel manqué — testez votre agent IA en live.</p>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnSimReset">Recommencer</button>
+      </div>
+      <div class="client-sim-phone">
+        <div class="client-sim-status"><span class="live-dot"></span> SMS · Vue client</div>
+        <div class="client-sim-missed" id="simMissedBanner">📞 Appel manqué · à l'instant</div>
+        <div class="client-sim-msgs" id="simMsgs" aria-live="polite"></div>
+        <div class="client-sim-chips" id="simChips"></div>
+        <form class="client-sim-form" id="simForm">
+          <input type="text" id="simInput" placeholder="Écrivez comme un client…" maxlength="500" autocomplete="off" required>
+          <button type="submit" class="btn btn-accent btn-sm" id="simSend">Envoyer</button>
+        </form>
+      </div>
+      <p class="muted" style="margin:12px 0 0;font-size:.8rem">Simulation seulement — aucun SMS réel n'est envoyé. Configurez services et FAQ dans <a href="/chatbot.html">Chatbot</a>.</p>
+    </div>
   </main>
 </div>
 <script src="/assets/dash-layout.js"></script>
-<script src="/assets/dashboard-core.js"></script>
+<script src="/assets/dashboard-core.js?v=4"></script>
 </body>
 </html>

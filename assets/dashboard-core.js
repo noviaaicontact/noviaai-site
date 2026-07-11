@@ -849,6 +849,147 @@ function renderMsgs(msgs) {
   /* legacy flat list â€” inbox preferred */
 }
 
+function initClientSim() {
+  const form = $('simForm');
+  const msgsEl = $('simMsgs');
+  const input = $('simInput');
+  const chips = $('simChips');
+  const resetBtn = $('btnSimReset');
+  if (!form || !msgsEl || !input) return;
+
+  const SUGGESTIONS = [
+    'C\'est combien?',
+    'Vous êtes ouverts demain?',
+    'Je veux un rendez-vous',
+    'Où êtes-vous situés?',
+  ];
+
+  let history = [];
+  let sending = false;
+
+  function agentName() {
+    return (tenant && tenant.agent_name) || 'Léa';
+  }
+
+  function businessName() {
+    return (tenant && tenant.business_name) || 'votre commerce';
+  }
+
+  function welcomeText() {
+    if (tenant && tenant.missed_call_sms) return tenant.missed_call_sms;
+    return `Bonjour! On a manqué votre appel chez ${businessName()}. Ici ${agentName()} — comment puis-je vous aider?`;
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  }
+
+  function appendBubble(role, text, extraClass) {
+    const div = document.createElement('div');
+    div.className = 'client-sim-bubble ' + (role === 'user' ? 'client' : 'agent') + (extraClass ? ' ' + extraClass : '');
+    div.innerHTML = escHtml(text);
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return div;
+  }
+
+  function renderChips() {
+    if (!chips) return;
+    chips.innerHTML = '';
+    SUGGESTIONS.forEach((label) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.onclick = () => sendMessage(label);
+      chips.appendChild(b);
+    });
+  }
+
+  function resetSim() {
+    history = [];
+    msgsEl.innerHTML = '';
+    const welcome = welcomeText();
+    appendBubble('assistant', welcome);
+    history.push({ role: 'assistant', content: welcome });
+    renderChips();
+    input.value = '';
+    input.focus();
+  }
+
+  function demoReply(message) {
+    const t = String(message || '').toLowerCase();
+    const resUrl = (tenant && tenant.reservation_url) || 'votre-commerce.ca/rdv';
+    if (/prix|combien|co[uû]t|\$/.test(t)) {
+      return 'Coupe femme à partir de 45 $, balayage à partir de 120 $. Voulez-vous réserver? ' + resUrl;
+    }
+    if (/ouvert|horaire|demain|samedi/.test(t)) {
+      return 'Oui, on est ouverts demain 9 h – 18 h. Vous pouvez réserver ici : ' + resUrl;
+    }
+    if (/rendez|rdv|r[eé]serv/.test(t)) {
+      return 'Parfait! Réservez en ligne ici : ' + resUrl + ' — l\'équipe confirmera ensuite.';
+    }
+    if (/o[uù]|adress|situ/.test(t)) {
+      return 'On est au 245, rue Principale, Lévis. Autre chose que je puisse vous aider?';
+    }
+    return 'Avec plaisir! Dites-moi ce dont vous avez besoin (prix, horaires, rendez-vous) — ou réservez ici : ' + resUrl;
+  }
+
+  async function sendMessage(text) {
+    const message = (text || input.value || '').trim();
+    if (!message || sending) return;
+    sending = true;
+    input.value = '';
+    const sendBtn = $('simSend');
+    if (sendBtn) sendBtn.disabled = true;
+
+    appendBubble('user', message);
+    history.push({ role: 'user', content: message });
+
+    const typing = appendBubble('assistant', '…', 'typing');
+
+    try {
+      let reply;
+      if (DEMO) {
+        await new Promise((r) => setTimeout(r, 500));
+        reply = demoReply(message);
+      } else {
+        const histForApi = history.slice(0, -1).map((m) => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.content,
+        }));
+        const res = await NoviaApp.api('api-knowledge', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'test', question: message, history: histForApi }),
+        });
+        if (res.error) throw new Error(res.error);
+        reply = res.reply || 'Désolée, je n\'ai pas pu répondre. Réessayez ou configurez le chatbot.';
+      }
+      typing.remove();
+      appendBubble('assistant', reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (ex) {
+      typing.remove();
+      appendBubble('assistant', ex.message || 'Erreur — réessayez dans un instant.');
+    } finally {
+      sending = false;
+      if (sendBtn) sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    sendMessage();
+  };
+  if (resetBtn) resetBtn.onclick = () => resetSim();
+
+  // Liens démo dans le menu
+  const linkChatbot = document.querySelector('a[href="/chatbot.html"]');
+  if (DEMO && linkChatbot) linkChatbot.href = dashHref('/chatbot.html');
+
+  resetSim();
+}
+
 function initPageHandlers() {
   const logout = $('logout');
   if (logout) {
@@ -875,6 +1016,8 @@ function initPageHandlers() {
   }
   const btnW = $('btnCopyWidget');
   if (btnW) btnW.onclick = () => copyWidgetCode(btnW);
+
+  if (DASH_PAGE === 'home') initClientSim();
 
   if (DEMO) {
     const settingsForm = $('settingsForm');

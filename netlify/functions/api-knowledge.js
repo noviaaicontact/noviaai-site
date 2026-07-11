@@ -61,9 +61,10 @@ exports.handler = async (event) => {
       if (action === 'test') {
         const question = (body.question || '').trim();
         if (!question) return json(400, { error: 'Question requise' });
+        const history = Array.isArray(body.history) ? body.history.slice(-10) : [];
         const retrieval = await testRetrieval(tenant.id, question);
         const dossier = rowToDossier(tenant);
-        const reply = await generateReply(dossier, [], question, tenant.id);
+        const reply = await generateReply(dossier, history, question, tenant.id);
         return json(200, {
           hits: retrieval.hits,
           reply: reply || null,
