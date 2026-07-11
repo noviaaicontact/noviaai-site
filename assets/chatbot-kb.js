@@ -339,8 +339,19 @@ function initChatbotPanel(opts) {
       const box = document.getElementById('kbTestResult');
       if (!q) return;
       if (_demo) {
-        box.innerHTML = '<p class="muted">Mode démo — exemple de réponse affichée.</p><p>Bonjour! Coupe femme à partir de 45 $. On a des places jeudi PM — voulez-vous qu\'on vous réserve?</p>';
         box.hidden = false;
+        box.innerHTML = '<p class="muted">Test en cours (démo Salon Éclat)…</p>';
+        try {
+          const res = await fetch('/.netlify/functions/api-demo-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: q, history: [] }),
+          });
+          const data = await res.json();
+          box.innerHTML = `<p class="muted">Démo — réponse IA (Salon Éclat)</p><p class="kb-test-reply">${esc(data.reply || 'Pas de réponse')}</p>`;
+        } catch (ex) {
+          box.innerHTML = `<p class="err">${esc(ex.message || 'Erreur')}</p>`;
+        }
         return;
       }
       box.hidden = false;

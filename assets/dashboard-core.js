@@ -927,20 +927,19 @@ function initClientSim() {
 
   function demoReply(message) {
     const t = String(message || '').toLowerCase();
-    const resUrl = (tenant && tenant.reservation_url) || 'votre-commerce.ca/rdv';
     if (/prix|combien|co[uû]t|\$/.test(t)) {
-      return 'Coupe femme à partir de 45 $, balayage à partir de 120 $. Voulez-vous réserver? ' + resUrl;
+      return 'Coupe femme à partir de 45 $, coupe homme à partir de 30 $, balayage à partir de 120 $. Voulez-vous réserver? https://exemple-saloneclat.ca/reservation';
     }
     if (/ouvert|horaire|demain|samedi/.test(t)) {
-      return 'Oui, on est ouverts demain 9 h – 18 h. Vous pouvez réserver ici : ' + resUrl;
+      return 'Oui! Demain on est ouverts 9 h – 18 h. Réservez ici : https://exemple-saloneclat.ca/reservation';
     }
     if (/rendez|rdv|r[eé]serv/.test(t)) {
-      return 'Parfait! Réservez en ligne ici : ' + resUrl + ' — l\'équipe confirmera ensuite.';
+      return 'Parfait! Réservez en ligne : https://exemple-saloneclat.ca/reservation — l\'équipe confirmera ensuite.';
     }
     if (/o[uù]|adress|situ/.test(t)) {
-      return 'On est au 245, rue Principale, Lévis. Autre chose que je puisse vous aider?';
+      return 'On est au 245, rue Principale à Lévis. Stationnement gratuit derrière le salon.';
     }
-    return 'Avec plaisir! Dites-moi ce dont vous avez besoin (prix, horaires, rendez-vous) — ou réservez ici : ' + resUrl;
+    return 'Avec plaisir! Prix, horaires ou rendez-vous — je peux vous aider. Que cherchez-vous?';
   }
 
   async function sendMessage(text) {
@@ -959,8 +958,21 @@ function initClientSim() {
     try {
       let reply;
       if (DEMO) {
-        await new Promise((r) => setTimeout(r, 500));
-        reply = demoReply(message);
+        const histForApi = history.slice(0, -1).map((m) => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.content,
+        }));
+        try {
+          const res = await fetch('/.netlify/functions/api-demo-chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, history: histForApi }),
+          });
+          const data = await res.json();
+          reply = data.reply || demoReply(message);
+        } catch {
+          reply = demoReply(message);
+        }
       } else {
         const histForApi = history.slice(0, -1).map((m) => ({
           role: m.role === 'user' ? 'user' : 'assistant',
