@@ -1,6 +1,12 @@
 ﻿let tenant = null;
 let pollTimer = null;
-const DEMO = new URLSearchParams(location.search).get('demo') === '1';
+(function persistDemoFlag() {
+  const q = new URLSearchParams(location.search).get('demo');
+  if (q === '1') sessionStorage.setItem('novia_demo', '1');
+  if (q === '0') sessionStorage.removeItem('novia_demo');
+})();
+const DEMO = new URLSearchParams(location.search).get('demo') === '1'
+  || sessionStorage.getItem('novia_demo') === '1';
 const DASH_PAGE = document.body.dataset.dashPage || 'home';
 const DEMO_QS = DEMO ? '?demo=1' : '';
 
@@ -571,13 +577,14 @@ function loadDemoData() {
 }
 
 function showOfflineBanner() {
+  if (DEMO) return;
   if (document.getElementById('offlineBanner')) return;
   const banner = document.createElement('div');
   banner.id = 'offlineBanner';
   banner.className = 'prov-box';
   banner.style.marginBottom = '16px';
   banner.style.borderColor = 'var(--err, #c0392b)';
-  banner.innerHTML = '<strong>Serveur local arrêté</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Relancez <code>OUVRIR-NOVIAAI.bat</code> et gardez la fenêtre ouverte, puis rechargez cette page.</p>';
+  banner.innerHTML = '<strong>Connexion impossible</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Rechargez la page ou reconnectez-vous. <a href="/login.html">Connexion</a></p>';
   document.querySelector('.dash-main').prepend(banner);
 }
 
@@ -646,9 +653,11 @@ function openThreadDemo(phone) {
     initPageHandlers();
   } catch (ex) {
     console.error(ex);
-    showOfflineBanner();
-    const biz = $('bizName');
-    if (biz) biz.textContent = 'Connexion impossible';
+    if (!DEMO) {
+      showOfflineBanner();
+      const biz = $('bizName');
+      if (biz) biz.textContent = 'Connexion impossible';
+    }
   }
 })();
 
@@ -995,8 +1004,10 @@ function initPageHandlers() {
   if (logout) {
     logout.onclick = (e) => {
       e.preventDefault();
-      if (DEMO) location.href = '/portail.html';
-      else NoviaApp.signOut();
+      if (DEMO) {
+        sessionStorage.removeItem('novia_demo');
+        location.href = '/portail.html';
+      } else NoviaApp.signOut();
     };
   }
   const btnOpenSettings = $('btnOpenSettings');
