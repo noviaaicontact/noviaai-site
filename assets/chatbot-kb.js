@@ -242,7 +242,7 @@ function initChatbotPanel(opts) {
       btn.disabled = false;
       btn.textContent = 'Importer URL';
     }
-  };
+  });
 
   bindClick('btnImportFile', async () => {
     if (_demo) { alert('Mode démo — connectez-vous pour uploader un fichier.'); return; }
@@ -289,7 +289,7 @@ function initChatbotPanel(opts) {
       btn.disabled = false;
       btn.textContent = 'Uploader fichier';
     }
-  };
+  });
 
   bindClick('btnKbTest', async () => {
     const q = document.getElementById('kbTestQuestion').value.trim();
@@ -325,7 +325,7 @@ function initChatbotPanel(opts) {
     } catch (ex) {
       box.innerHTML = `<p class="err">${esc(ex.message)}</p>`;
     }
-  };
+  });
 
   const chatbotForm = document.getElementById('chatbotForm');
   if (!chatbotForm) return;
