@@ -184,6 +184,23 @@ body.landing {
 .landing-center { text-align: center; }
 .landing-center .landing-lead { margin: 0 auto; }
 
+/* Sectors strip */
+.landing-sectors {
+  display: flex;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 32px);
+  flex-wrap: wrap;
+  padding: 20px var(--pad);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 /* Hero */
 .landing-hero {
   min-height: calc(100svh - 60px);
@@ -647,6 +664,30 @@ body.landing {
   margin-top: 16px;
   font-size: 0.82rem;
   color: var(--muted);
+}
+
+.landing-price-note a {
+  color: var(--navy2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.landing-price-clarify {
+  margin: 16px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.landing-cta-note {
+  margin: 16px 0 0 !important;
+  font-size: 0.8rem !important;
+  opacity: 0.75;
 }
 
 /* FAQ */
