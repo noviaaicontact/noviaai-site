@@ -148,6 +148,52 @@ function addFaqRow() {
   return true;
 }
 
+function reservationLinkRowHtml(link, idx) {
+  return `<div class="kb-row kb-row-link" data-idx="${idx}">
+    <input type="text" class="link-label" placeholder="Libellé (ex. Spa)" value="${esc(link.label || '')}">
+    <input type="url" class="link-url" placeholder="https://…/soumission" value="${esc(link.url || '')}">
+    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
+  </div>`;
+}
+
+function normalizeLinksFromTenant(t) {
+  if (!t) return [{ label: '', url: '' }];
+  if (Array.isArray(t.reservation_links) && t.reservation_links.length) {
+    return t.reservation_links.map((l) => ({
+      label: (l && (l.label || l.nom)) || '',
+      url: (l && l.url) || '',
+    })).filter((l) => l.url || l.label);
+  }
+  if (t.reservation_url) return [{ label: '', url: t.reservation_url }];
+  return [{ label: '', url: '' }];
+}
+
+function renderReservationLinks(links) {
+  const el = document.getElementById('reservationLinksList');
+  if (!el) return;
+  const list = Array.isArray(links) && links.length ? links : [{ label: '', url: '' }];
+  el.innerHTML = list.map((l, i) => reservationLinkRowHtml(l, i)).join('');
+  bindRemoveButtons(el);
+}
+
+function collectReservationLinks() {
+  return Array.from(document.querySelectorAll('#reservationLinksList .kb-row')).map((row) => ({
+    label: row.querySelector('.link-label').value.trim(),
+    url: row.querySelector('.link-url').value.trim(),
+  })).filter((l) => l.url);
+}
+
+function addReservationLinkRow() {
+  const el = document.getElementById('reservationLinksList');
+  if (!el) return false;
+  el.insertAdjacentHTML('beforeend', reservationLinkRowHtml({ label: '', url: '' }, el.children.length));
+  bindRemoveButtons(el);
+  const inputs = el.querySelectorAll('.link-url');
+  const last = inputs[inputs.length - 1];
+  if (last) last.focus();
+  return true;
+}
+
 function policiesToLines(policies) {
   if (!Array.isArray(policies) || !policies.length) return '';
   return policies.join('\n');
@@ -168,13 +214,13 @@ function populateChatbotForm(t) {
   set('setAgentTone', t.agent_tone || '');
   set('setWelcomeSms', t.welcome_sms || '');
   set('setWebsiteUrl', t.website_url || '');
-  set('setReservationUrl', t.reservation_url || '');
   set('setAddress', t.address_line || '');
   set('setCity', t.city || '');
   set('setPolicies', policiesToLines(t.policies));
   renderHours(t.hours || DEFAULT_HOURS);
   renderServices(t.services);
   renderFaq(t.faq);
+  renderReservationLinks(normalizeLinksFromTenant(t));
   if (!_demo) loadKnowledgeSources();
 }
 
@@ -245,6 +291,12 @@ function bindUiClicks() {
       e.preventDefault();
       e.stopPropagation();
       addFaqRow();
+      return;
+    }
+    if (t.closest('#btnAddReservationLink')) {
+      e.preventDefault();
+      e.stopPropagation();
+      addReservationLinkRow();
     }
   });
 }
@@ -497,7 +549,7 @@ function initChatbotPanel(opts) {
         agent_tone: document.getElementById('setAgentTone').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
         website_url: document.getElementById('setWebsiteUrl').value.trim(),
-        reservation_url: document.getElementById('setReservationUrl').value.trim(),
+        reservation_links: collectReservationLinks(),
         address_line: document.getElementById('setAddress').value.trim(),
         city: document.getElementById('setCity').value.trim(),
         policies: parsePoliciesLines(document.getElementById('setPolicies').value),
@@ -525,5 +577,6 @@ window.NoviaChatbot = {
   loadKnowledgeSources,
   addServiceRow,
   addFaqRow,
+  addReservationLinkRow,
   DEFAULT_HOURS,
 };

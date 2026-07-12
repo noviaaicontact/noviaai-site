@@ -20,6 +20,9 @@
     "telephone": "À COMPLÉTER (numéro Twilio)",
     "telephone_reel": "À COMPLÉTER (vrai numéro du salon pour le transfert d'appel)",
     "reservation_url": "https://exemple-saloneclat.ca/reservation",
+    "reservation_links": [
+      { "label": "Réservation en ligne", "url": "https://exemple-saloneclat.ca/reservation" }
+    ],
     "stationnement": "Gratuit derrière le salon"
   },
   "heures_ouverture": {

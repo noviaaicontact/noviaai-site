@@ -12,6 +12,7 @@ create table if not exists public.tenants (
   phone_forward text,
   twilio_number text unique,
   reservation_url text,
+  reservation_links jsonb default '[]'::jsonb,
   address_line text,
   city text default 'Québec',
   province text default 'QC',

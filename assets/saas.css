@@ -677,6 +677,9 @@ a:hover { text-decoration: underline; }
 .kb-row-faq .faq-q { grid-column: 1 / -2; }
 .kb-row-faq .faq-a { grid-column: 1 / -2; }
 .kb-row-faq .kb-remove { grid-row: 1; grid-column: 2; }
+.kb-row-link { grid-template-columns: minmax(120px, 0.45fr) 1fr 36px; }
+.kb-row-link .link-label { min-width: 0; }
+.kb-row-link .link-url { min-width: 0; }
 .hours-grid { display: flex; flex-direction: column; gap: 8px; max-width: 420px; }
 .hours-row { display: grid; grid-template-columns: 120px 70px 16px 70px; gap: 8px; align-items: center; font-size: .9rem; }
 .hours-check { display: flex; align-items: center; gap: 6px; margin: 0; font-weight: 600; }
@@ -812,6 +815,9 @@ a:hover { text-decoration: underline; }
 @media (max-width: 600px) {
   .kb-row { grid-template-columns: 1fr 36px; }
   .kb-row .svc-price { grid-column: 1 / -2; }
+  .kb-row-link { grid-template-columns: 1fr 36px; }
+  .kb-row-link .link-label,
+  .kb-row-link .link-url { grid-column: 1 / -2; }
 }
 .empty-state {
   text-align: center;

@@ -64,8 +64,10 @@
               <small class="settings-hint">Optionnel — importez les pages ci-dessous pour entraîner l'IA</small>
             </div>
             <div class="settings-field settings-field-wide">
-              <label for="setReservationUrl">Lien de réservation</label>
-              <input id="setReservationUrl" type="url" placeholder="https://calendly.com/votre-commerce">
+              <label>Liens de réservation ou de soumission</label>
+              <div id="reservationLinksList"></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnAddReservationLink" style="margin-top:8px">+ Ajouter un lien</button>
+              <small class="settings-hint">Un lien par service si besoin (ex. Spa, Piscine…). Libellé + URL, puis Enregistrer — le bot envoie le bon lien selon la demande.</small>
             </div>
             <div class="settings-field">
               <label for="setAddress">Adresse</label>
@@ -153,7 +155,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=6"></script>
+<script src="/assets/chatbot-kb.js?v=7"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=10"></script>
 </body>
