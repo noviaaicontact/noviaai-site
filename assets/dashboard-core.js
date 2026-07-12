@@ -265,38 +265,55 @@ function applyTenantToUI() {
 }
 
 function updateForwardProviderGuide() {
-  if (!tenant?.twilio_number || !window.NoviaInstallGuide) return;
+  if (!window.NoviaInstallGuide) return;
   const providerId = document.getElementById('forwardProvider')?.value || 'bell';
-  const num = formatDial(tenant.twilio_number);
-  const guide = NoviaInstallGuide.getInstructions('mobile', providerId, 'no_answer', tenant.twilio_number);
+  const device = document.getElementById('forwardDevice')?.value || 'iphone';
+  const num = tenant?.twilio_number ? formatDial(tenant.twilio_number) : 'votre numéro NoviaAI';
+  const guide = NoviaInstallGuide.getInstructions('mobile', providerId, 'no_answer', tenant?.twilio_number || 'NUMÉRO_NOVIAAI');
   const tip = guide.providerTip || NoviaInstallGuide.getProviderTip(providerId);
   const tipEl = document.getElementById('forwardProviderTip');
   const stepsEl = document.getElementById('forwardProviderSteps');
   const warnEl = document.getElementById('forwardIphoneWarn');
+  const scriptEl = document.getElementById('forwardCallScript');
+  const stepsHeading = document.getElementById('forwardStepsHeading');
+
   if (tipEl && tip) {
+    const deviceLine = device === 'iphone' ? tip.iphone : tip.android;
     tipEl.innerHTML = [
-      tip.note ? `<p class="forward-provider-tip-lead"><strong>${tip.label}</strong> — ${tip.note}</p>` : '',
-      `<p><strong>iPhone :</strong> ${tip.iphone}</p>`,
-      `<p><strong>Android :</strong> ${tip.android}</p>`,
-      tip.callProvider ? `<p><strong>Soutien :</strong> ${tip.support}</p>` : '',
-      tip.callProvider ? `<p class="forward-call-script"><strong>À dire au fournisseur :</strong> « Je veux activer le renvoi d'appels <em>si je ne réponds pas</em> vers ${num}. Mon téléphone doit sonner d'abord — ce n'est pas un renvoi permanent. »</p>` : '',
+      `<p class="forward-provider-tip-lead"><strong>${tip.label}</strong> — ${tip.note || ''}</p>`,
+      `<p><strong>${device === 'iphone' ? 'Sur iPhone' : 'Sur Android'} :</strong> ${deviceLine}</p>`,
+      tip.support ? `<p><strong>Soutien ${tip.label} :</strong> ${tip.support}</p>` : '',
     ].join('');
   }
+
   if (stepsEl) {
+    const deviceSteps = (tip && tip[device + 'Steps']) || [];
+    const providerSteps = guide.steps || [];
     const steps = [
-      'Copiez le numéro NoviaAI ci-dessus',
-      ...(guide.steps || []),
-      'Test : appelez votre numéro habituel depuis un autre téléphone, ne répondez pas → SMS auto au client',
+      `Copiez votre numéro NoviaAI${tenant?.twilio_number ? ` (${num})` : ''} — c’est la destination du renvoi`,
+      ...(deviceSteps.length ? deviceSteps.map((s) => s.replace(/\{\{NUM\}\}/g, num)) : providerSteps),
+      'Test : depuis un autre téléphone, appelez VOTRE numéro habituel (celui sur Google), laissez sonner sans répondre → le client doit recevoir un SMS NoviaAI',
     ];
     stepsEl.innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
   }
+
+  if (stepsHeading && tip) {
+    stepsHeading.textContent = `Étapes — ${tip.label} (${device === 'iphone' ? 'iPhone' : 'Android'})`;
+  }
+
+  if (scriptEl) {
+    scriptEl.innerHTML = `<strong>À dire au fournisseur (si vous appelez) :</strong><br>
+      « Bonjour, je veux activer le <em>renvoi d’appels si je ne réponds pas</em> vers ${num}.
+      Mon téléphone doit sonner en premier — ce n’est <em>pas</em> un renvoi permanent. »`;
+  }
+
   if (warnEl) {
-    const needsWarn = providerId === 'bell' || providerId === 'videotron';
+    const needsWarn = (providerId === 'bell' || providerId === 'videotron') && device === 'iphone';
     warnEl.hidden = !needsWarn;
     if (needsWarn) {
       warnEl.textContent = providerId === 'bell'
-        ? 'Important iPhone Bell : n\'activez pas « Renvoi d\'appel » dans Réglages — ce serait permanent. Appelez Bell ou configurez depuis un Android.'
-        : 'Important iPhone Vidéotron : n\'activez pas le toggle « Renvoi d\'appel » dans Réglages — ce serait permanent. Appelez Vidéotron ou configurez depuis un Android.';
+        ? 'Important iPhone Bell : n’activez PAS « Renvoi d’appel » dans Réglages iPhone — ça active un renvoi permanent. Appelez Bell (1-800-667-0123) ou configurez depuis un Android.'
+        : 'Important iPhone Vidéotron : n’activez PAS le toggle « Renvoi d’appel » dans Réglages — ça serait permanent. Appelez Vidéotron (1-877-380-2611) ou configurez depuis un Android.';
     }
   }
 }
@@ -318,10 +335,16 @@ function updateInstallWizard() {
   if (panelTitle) panelTitle.textContent = forward ? 'Configurer le renvoi d\'appel' : 'Publier votre numéro';
   if (panelDesc) {
     panelDesc.textContent = forward
-      ? 'Copiez votre numéro NoviaAI et configurez le renvoi d\'appels manqués chez votre fournisseur — voir le guide ci-dessous.'
+      ? 'Copiez votre numéro NoviaAI et configurez le renvoi d\'appels manqués chez votre fournisseur — guide ci-dessous.'
       : 'Copiez votre ligne NoviaAI et mettez-la où vos clients vous cherchent. Aucune config dans Réglages du téléphone.';
   }
-  if (forward) updateForwardProviderGuide();
+  const guideIntro = document.getElementById('forwardGuideIntro');
+  if (guideIntro) {
+    guideIntro.innerHTML = forward
+      ? 'Choisissez votre opérateur et votre téléphone — suivez les étapes pour renvoyer les <strong>appels sans réponse</strong> vers NoviaAI.'
+      : 'Vous publiez un <strong>nouveau numéro NoviaAI</strong> ? Pas besoin de renvoi. Si vous voulez <strong>garder votre numéro Google</strong>, voici le guide (mode renvoi à l’inscription) :';
+  }
+  updateForwardProviderGuide();
 }
 
 function markInstallDone() {
@@ -378,6 +401,16 @@ function initInstallWizard() {
       updateForwardProviderGuide();
     };
   }
+  const forwardDevice = $('forwardDevice');
+  if (forwardDevice) {
+    const savedDev = localStorage.getItem('novia_forward_device') || 'iphone';
+    forwardDevice.value = savedDev;
+    forwardDevice.onchange = () => {
+      localStorage.setItem('novia_forward_device', forwardDevice.value);
+      updateForwardProviderGuide();
+    };
+  }
+  updateForwardProviderGuide();
 
   const widgetPlat = $('widgetPlatform');
   function showWidgetPlat(id) {

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/assets/saas.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
-<script src="/assets/install-guide.js"></script>
+<script src="/assets/install-guide.js?v=2"></script>
 </head>
 <body data-dash-page="publier">
 <div class="dash-shell">
@@ -59,28 +59,56 @@
       </div>
 
       <div class="install-plan recommended" id="installPlanForward" hidden>
-        <span class="install-plan-badge">~5 minutes · Selon votre fournisseur</span>
-        <h3>Votre numéro NoviaAI (renvoi d'appel)</h3>
-        <p class="muted" style="font-size:.9rem;margin:0 0 12px">Gardez votre numéro actuel sur Google. Copiez ce numéro NoviaAI, puis configurez le <strong>renvoi d'appels manqués</strong> (pas permanent) vers ce numéro.</p>
+        <span class="install-plan-badge">Garder mon numéro · ~5 min</span>
+        <h3>Renvoi d'appels manqués vers NoviaAI</h3>
+        <p class="muted" style="font-size:.9rem;margin:0 0 12px">
+          Vous <strong>gardez votre numéro actuel</strong> sur Google / Facebook.
+          Copiez la ligne NoviaAI ci-dessous — c’est la destination du renvoi.
+          Votre téléphone sonne d’abord ; si vous ne répondez pas → SMS auto au client.
+        </p>
         <div class="install-code-row">
           <code id="installTwilioNumForward">—</code>
           <button type="button" class="btn btn-accent btn-sm" id="btnCopyTwilioForward">Copier</button>
         </div>
-
-        <label for="forwardProvider" style="display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600">Votre fournisseur cellulaire</label>
-        <select id="forwardProvider" style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid var(--border)">
-          <option value="bell">Bell / Bell MTS</option>
-          <option value="videotron">Vidéotron</option>
-          <option value="rogers">Rogers / Fido / Chatr</option>
-          <option value="telus">TELUS / Koodo</option>
-          <option value="fizz">Fizz / Public Mobile</option>
-          <option value="other_mobile">Autre</option>
-        </select>
-
-        <div class="forward-provider-tip" id="forwardProviderTip"></div>
-        <p class="install-warn" id="forwardIphoneWarn" hidden style="margin:12px 0;font-size:.85rem"></p>
-        <ol class="forward-steps" id="forwardProviderSteps" style="margin:12px 0;font-size:.9rem"></ol>
+        <p class="muted" style="font-size:.82rem;margin:8px 0 0">Ce numéro ne se publie pas sur Google — il reçoit seulement le renvoi.</p>
         <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward" style="margin-top:16px">C'est fait — j'ai configuré le renvoi</button>
+      </div>
+
+      <div class="card forward-guide-card" id="forwardGuideCard" style="margin-top:16px;padding:20px">
+        <h3 style="margin:0 0 8px;font-size:1.05rem" id="forwardGuideTitle">Guide de renvoi d'appel par fournisseur</h3>
+        <p class="muted" style="font-size:.88rem;margin:0 0 14px" id="forwardGuideIntro">
+          Pour <strong>garder votre numéro</strong> sur Google : activez le renvoi <em>si pas de réponse</em> (pas permanent) vers votre ligne NoviaAI.
+          Choisissez votre opérateur et votre téléphone.
+        </p>
+
+        <div class="forward-guide-fields">
+          <div>
+            <label for="forwardProvider" style="display:block;margin:0 0 6px;font-size:.88rem;font-weight:600">Fournisseur</label>
+            <select id="forwardProvider" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+              <option value="bell">Bell / Bell MTS</option>
+              <option value="videotron">Vidéotron</option>
+              <option value="rogers">Rogers / Fido / Chatr</option>
+              <option value="telus">TELUS / Koodo</option>
+              <option value="fizz">Fizz / Public Mobile</option>
+              <option value="freedom">Freedom Mobile</option>
+              <option value="other_mobile">Autre</option>
+            </select>
+          </div>
+          <div>
+            <label for="forwardDevice" style="display:block;margin:0 0 6px;font-size:.88rem;font-weight:600">Appareil</label>
+            <select id="forwardDevice" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+              <option value="iphone">iPhone</option>
+              <option value="android">Android</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="forward-provider-tip" id="forwardProviderTip" style="margin-top:14px"></div>
+        <p class="install-warn" id="forwardIphoneWarn" hidden style="margin:12px 0;font-size:.85rem"></p>
+
+        <p class="install-step-title" style="margin:16px 0 8px"><strong id="forwardStepsHeading">Étapes</strong></p>
+        <ol class="forward-steps" id="forwardProviderSteps" style="margin:0;font-size:.9rem"></ol>
+        <div class="tech-line-box" id="forwardCallScript" style="margin-top:14px;font-size:.88rem"></div>
       </div>
 
       <details class="install-advanced" style="margin-top:20px" open>
@@ -198,6 +226,6 @@
   </main>
 </div>
 <script src="/assets/dash-layout.js?v=2"></script>
-<script src="/assets/dashboard-core.js?v=10"></script>
+<script src="/assets/dashboard-core.js?v=11"></script>
 </body>
 </html>

@@ -1057,6 +1057,19 @@ a:hover { text-decoration: underline; }
 .forward-provider-tip p:last-child { margin-bottom: 0; }
 .forward-provider-tip-lead { color: var(--navy2); }
 .forward-call-script { font-style: italic; background: #fff; padding: 8px 10px; border-radius: 8px; margin-top: 8px !important; }
+.forward-guide-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.forward-guide-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+@media (max-width: 600px) {
+  .forward-guide-fields { grid-template-columns: 1fr; }
+}
 
 footer.site-footer {
   text-align: center;
