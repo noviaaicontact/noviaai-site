@@ -144,11 +144,11 @@
     .then((data) => {
       if (!data.business_name) return;
       config = data;
-      head.innerHTML = '<strong>' + escapeHtml(data.business_name) + '</strong><span>Assistante ' + escapeHtml(data.agent_name || 'IA') + ' · en ligne</span>';
+      head.innerHTML = '<strong>' + escapeHtml(data.business_name) + '</strong><span>Assistante IA · ' + escapeHtml(data.agent_name || 'Léa') + ' · en ligne</span>';
       if (data.sms_href) {
-        smsBar.innerHTML = 'Sur mobile? <a href="' + escapeHtml(data.sms_href) + '">Continuer par texto ' + escapeHtml(data.phone_display || '') + '</a>';
+        smsBar.innerHTML = 'Réponses générées par une assistante IA · Sur mobile? <a href="' + escapeHtml(data.sms_href) + '">Texto ' + escapeHtml(data.phone_display || '') + '</a>';
       } else {
-        smsBar.hidden = true;
+        smsBar.innerHTML = 'Réponses générées par une assistante IA. Vous pouvez aussi appeler le commerce.';
       }
     })
     .catch(() => {

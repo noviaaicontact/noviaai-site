@@ -10,33 +10,76 @@
 <nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
 <div class="wrap" style="max-width:720px;padding:48px 24px 80px">
   <h1>Politique de confidentialité</h1>
-  <p class="muted">Dernière mise à jour : juillet 2026</p>
+  <p class="muted">Dernière mise à jour : juillet 2026 · Applicable au Québec (Loi 25 / Loi sur la protection des renseignements personnels dans le secteur privé)</p>
 
-  <h2>Qui sommes-nous</h2>
-  <p>NoviaAI (« nous ») exploite le service noviaai.ca, une plateforme SaaS pour PME québécoises permettant de rattraper les appels manqués par SMS et de centraliser les conversations.</p>
+  <h2>1. Responsable du traitement</h2>
+  <p>NoviaAI (« nous ») exploite le service <strong>noviaai.ca</strong>, une plateforme SaaS destinée aux PME québécoises.</p>
+  <p><strong>Responsable de la protection des renseignements personnels :</strong><br>
+  Courriel : <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a><br>
+  Téléphone : <a href="tel:+15819095332">581 909-5332</a></p>
 
-  <h2>Données collectées</h2>
+  <h2>2. Renseignements collectés</h2>
   <ul>
-    <li><strong>Compte commerce :</strong> courriel, nom du commerce, numéros de téléphone, paramètres de l'agent IA.</li>
-    <li><strong>Conversations :</strong> messages SMS et web, historique pour l'IA et l'inbox.</li>
-    <li><strong>Facturation :</strong> informations gérées par Stripe (nous ne stockons pas les numéros de carte complets).</li>
-    <li><strong>Technique :</strong> journaux serveur, adresses IP pour la sécurité et le rate limiting.</li>
+    <li><strong>Compte commerce :</strong> courriel, mot de passe (haché via Supabase Auth), nom du commerce, numéros de téléphone, paramètres de l’agent, adresse si fournie.</li>
+    <li><strong>Conversations :</strong> SMS et messages web (widget), horodatage, numéro de l’appelant, extraits utilisés pour répondre et pour votre inbox.</li>
+    <li><strong>Facturation :</strong> gérée par Stripe (nous ne stockons pas les numéros de carte complets).</li>
+    <li><strong>Technique / sécurité :</strong> journaux serveur, adresse IP, limites de débit (rate limiting).</li>
+    <li><strong>Consentements :</strong> horodatage d’acceptation des conditions et de la présente politique à l’inscription.</li>
   </ul>
 
-  <h2>Utilisation</h2>
-  <p>Nous utilisons vos données pour fournir le service, envoyer des alertes (leads, appels manqués), améliorer l'IA conversationnelle et respecter nos obligations légales.</p>
+  <h2>3. Finalités</h2>
+  <p>Nous utilisons ces renseignements uniquement pour :</p>
+  <ul>
+    <li>fournir et améliorer le service (ligne, SMS, IA, inbox, widget) ;</li>
+    <li>vous alerter (appels manqués, leads, facturation) ;</li>
+    <li>assurer la sécurité, prévenir les abus et respecter la LCAP ;</li>
+    <li>respecter nos obligations légales et répondre à vos demandes de droits.</li>
+  </ul>
+  <p>Nous ne vendons pas vos listes de clients à des tiers à des fins publicitaires.</p>
 
-  <h2>Sous-traitants</h2>
-  <p>Supabase (base de données), Twilio (SMS/voix), OpenAI (réponses IA), Stripe (paiements), Resend (courriels), Netlify (hébergement). Ces fournisseurs traitent les données selon leurs propres politiques et nos instructions contractuelles.</p>
+  <h2>4. Décisions et assistance par IA</h2>
+  <p>Des réponses SMS et widget sont générées à l’aide de modèles d’intelligence artificielle (OpenAI), à partir des informations que vous configurez (services, FAQ, documents). <strong>Vous demeurez responsable</strong> du contenu diffusé à vos clients. Les réponses IA ne constituent pas un conseil juridique, médical ou financier.</p>
 
-  <h2>Conservation</h2>
-  <p>Les données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte depuis le tableau de bord (Paramètres).</p>
+  <h2>5. Communication à des tiers (sous-traitants)</h2>
+  <p>Pour exploiter le service, nous faisons appel notamment à :</p>
+  <ul>
+    <li>Supabase (hébergement de données / authentification) ;</li>
+    <li>Twilio (voix et SMS) ;</li>
+    <li>OpenAI (génération de réponses) ;</li>
+    <li>Stripe (paiements) ;</li>
+    <li>Resend (courriels transactionnels) ;</li>
+    <li>Netlify (hébergement du site et des fonctions).</li>
+  </ul>
+  <p>Certains de ces fournisseurs peuvent traiter des données <strong>à l’extérieur du Québec ou du Canada</strong>. Nous limitons le transfert à ce qui est nécessaire au service et exigeons des mesures de protection appropriées dans la mesure du possible.</p>
 
-  <h2>Vos droits</h2>
-  <p>Accès, rectification et suppression : contactez <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a>. Résidents du Québec : droits prévus par la Loi 25.</p>
+  <h2>6. Conservation</h2>
+  <p>Les données sont conservées tant que votre compte est actif, puis pour une durée raisonnable nécessaire aux obligations légales, comptables ou de sécurité (généralement jusqu’à 24 mois après fermeture, sauf obligation contraire). Vous pouvez demander la suppression de votre compte dans <strong>Paramètres</strong>.</p>
 
-  <h2>Cookies</h2>
-  <p>Le site utilise des cookies de session d'authentification (Supabase). Pas de publicité tierce.</p>
+  <h2>7. Sécurité</h2>
+  <p>Accès authentifié, clés et secrets côté serveur, HTTPS, contrôles d’accès et journalisation. Aucune mesure n’est infaillible ; en cas d’incident présentant un risque de préjudice sérieux, nous prendrons les mesures prévues par la Loi 25, incluant l’avis aux personnes concernées et à la Commission d’accès à l’information du Québec lorsque requis.</p>
+
+  <h2>8. Vos droits (Québec — Loi 25)</h2>
+  <p>Sous réserve des exceptions prévues par la loi, vous pouvez demander :</p>
+  <ul>
+    <li>l’accès à vos renseignements personnels ;</li>
+    <li>la rectification ;</li>
+    <li>le retrait du consentement lorsque le traitement repose sur le consentement ;</li>
+    <li>la suppression de votre compte / de certaines données.</li>
+  </ul>
+  <p>Écrivez à <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a>. Nous répondrons dans un délai raisonnable (généralement 30 jours).</p>
+  <p>Vous pouvez aussi formuler une plainte auprès de la <strong>Commission d’accès à l’information du Québec (CAI)</strong> : <a href="https://www.cai.gouv.qc.ca" rel="noopener" target="_blank">cai.gouv.qc.ca</a>.</p>
+
+  <h2>9. Cookies</h2>
+  <p>Cookies / stockage local nécessaires à la session d’authentification (Supabase) et au fonctionnement du service. Pas de publicité tierce ni de suivi publicitaire.</p>
+
+  <h2>10. Clients de nos commerces (PME)</h2>
+  <p>Lorsque vous utilisez NoviaAI, vous êtes responsable des renseignements de <em>vos</em> clients que vous traitez via la plateforme. Vous devez disposer d’une base légitime (relation d’affaires, demande du client, etc.) et informer vos clients selon vos obligations.</p>
+
+  <h2>11. Modifications</h2>
+  <p>Nous pouvons mettre à jour cette politique. La date en tête de page sera révisée. En cas de changement important, nous pourrons vous en informer par courriel ou via le tableau de bord.</p>
+
+  <h2>12. Contact</h2>
+  <p><a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a> · <a href="tel:+15819095332">581 909-5332</a></p>
 </div>
 <footer class="site-footer">
   <a href="/">Accueil</a> · <a href="/conditions.html">Conditions</a> · <a href="/politique-sms.html">Politique SMS</a>

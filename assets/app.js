@@ -51,8 +51,12 @@ async function api(fn, opts, accessToken) {
 
 async function ensureTenant(plan, accessToken) {
   const p = plan || sessionStorage.getItem('novia_plan') || 'pro';
-  const data = await api('api-tenant?plan=' + encodeURIComponent(p), { method: 'GET' }, accessToken);
+  const legal = sessionStorage.getItem('novia_legal_consent') === '1';
+  let url = 'api-tenant?plan=' + encodeURIComponent(p);
+  if (legal) url += '&legal_consent=1';
+  const data = await api(url, { method: 'GET' }, accessToken);
   if (!data.tenant) throw new Error((data && data.error) || 'Impossible de créer votre commerce — réessayez.');
+  if (legal) sessionStorage.removeItem('novia_legal_consent');
   return data;
 }
 

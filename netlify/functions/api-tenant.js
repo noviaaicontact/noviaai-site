@@ -18,9 +18,13 @@ exports.handler = async (event) => {
   try {
     if (event.httpMethod === 'GET') {
       let tenant = await getTenantByUserId(user.id);
+      const qs = event.queryStringParameters || {};
+      const plan = normalizePlan(qs.plan);
+      const legalConsent = qs.legal_consent === '1';
       if (!tenant) {
-        const plan = normalizePlan(event.queryStringParameters && event.queryStringParameters.plan);
-        tenant = await createTenantForUser(user, { plan });
+        tenant = await createTenantForUser(user, { plan, legalConsent });
+      } else if (legalConsent) {
+        tenant = await createTenantForUser(user, { plan, legalConsent: true });
       }
       await ensureWidgetPublicId(tenant);
       return json(200, { tenant, dossier: rowToDossier(tenant) });

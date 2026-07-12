@@ -20,7 +20,14 @@
         <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
         <label for="password">Mot de passe</label>
         <input id="password" type="password" required minlength="8" autocomplete="new-password" placeholder="8 caractères minimum">
-        <button type="submit" class="btn btn-accent btn-block" style="margin-top:24px">Continuer →</button>
+
+        <label class="legal-consent" style="display:flex;gap:10px;align-items:flex-start;margin-top:20px;font-size:.88rem;font-weight:500;cursor:pointer;line-height:1.45">
+          <input type="checkbox" id="acceptLegal" required style="margin-top:3px;flex-shrink:0">
+          <span>J’accepte les <a href="/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a>, la <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a> (Loi&nbsp;25) et la <a href="/politique-sms.html" target="_blank" rel="noopener">politique SMS&nbsp;/ LCAP</a>.</span>
+        </label>
+        <p class="muted" style="font-size:.78rem;margin:8px 0 0;line-height:1.4">En vous inscrivant, vous confirmez exploiter un commerce au Canada et utiliser NoviaAI conformément à ces politiques (pas de textos non sollicités).</p>
+
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:20px">Continuer →</button>
         <p id="ok" class="ok" hidden></p>
         <p id="err" class="err" hidden></p>
       </form>
@@ -28,17 +35,17 @@
     </div>
   </div>
   <div class="auth-side">
-    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Rejoignez 100+ PME québécoises*</span>
+    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Essai 14 jours · Québec</span>
     <h2>Votre ligne pro, prête aujourd'hui.</h2>
-    <p style="opacity:.85;margin:0">Inscrivez-vous, configurez en 2 minutes, publiez sur Google. Sans appel de vente.</p>
+    <p style="opacity:.85;margin:0">Inscrivez-vous, configurez en quelques minutes, publiez sur Google.</p>
     <ul>
       <li>Numéro local 418 / 514 / 581 automatique</li>
       <li>Appels manqués → texto en 5 sec</li>
       <li>Inbox SMS centralisée</li>
       <li>Alertes par courriel</li>
-      <li>Tableau de bord ROI</li>
+      <li>Conformité LCAP (ARRET / STOP)</li>
     </ul>
-    <p style="opacity:.5;font-size:.75rem;margin-top:32px">* Objectif lancement · témoignages démo</p>
+    <p style="opacity:.5;font-size:.75rem;margin-top:32px">Service destiné aux PME québécoises · <a href="/confidentialite.html" style="color:inherit">Confidentialité</a></p>
   </div>
 </div>
 <script>
@@ -51,6 +58,10 @@ document.getElementById('form').onsubmit = async (e) => {
   err.hidden = true;
   ok.hidden = true;
   try {
+    if (!document.getElementById('acceptLegal').checked) {
+      throw new Error('Veuillez accepter les conditions, la confidentialité et la politique SMS pour continuer.');
+    }
+    sessionStorage.setItem('novia_legal_consent', '1');
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password);
