@@ -150,7 +150,7 @@ function addFaqRow() {
 
 function reservationLinkRowHtml(link, idx) {
   return `<div class="kb-row kb-row-link" data-idx="${idx}">
-    <input type="text" class="link-label" placeholder="Libellé (ex. Spa)" value="${esc(link.label || '')}">
+    <input type="text" class="link-label" placeholder="Libellé (ex. Coupe)" value="${esc(link.label || '')}">
     <input type="url" class="link-url" placeholder="https://…/soumission" value="${esc(link.url || '')}">
     <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
   </div>`;
