@@ -58,6 +58,7 @@ document.getElementById('form').onsubmit = async (e) => {
     if (autoConfirmed) {
       const { data: authData, error: signInErr } = await NoviaApp.signIn(email, password);
       if (signInErr) throw signInErr;
+      sessionStorage.removeItem('novia_demo');
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
       await NoviaApp.ensureTenant(plan, authData.session.access_token);
       location.href = '/onboarding.html';
@@ -70,6 +71,7 @@ document.getElementById('form').onsubmit = async (e) => {
       return;
     }
     if (data.session) {
+      sessionStorage.removeItem('novia_demo');
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
       await NoviaApp.ensureTenant(plan, data.session.access_token);
       location.href = '/onboarding.html';

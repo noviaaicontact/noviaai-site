@@ -118,6 +118,7 @@ async function signIn(email, password) {
 async function signOut() {
   const sb = await getSupabase();
   if (sb) await sb.auth.signOut();
+  try { sessionStorage.removeItem('novia_demo'); } catch (_) {}
   location.href = '/login.html';
 }
 

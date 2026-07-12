@@ -1,9 +1,11 @@
-/** Conserve le mode démo (?demo=1) dans le menu SaaS. */
+/** Conserve le mode démo (?demo=1) dans le menu SaaS — uniquement si l'URL le demande. */
 (function () {
   const fromUrl = new URLSearchParams(location.search).get('demo') === '1';
-  if (fromUrl) sessionStorage.setItem('novia_demo', '1');
-  const demo = fromUrl || sessionStorage.getItem('novia_demo') === '1';
-  if (!demo) return;
+  if (!fromUrl) {
+    sessionStorage.removeItem('novia_demo');
+    return;
+  }
+  sessionStorage.setItem('novia_demo', '1');
   document.querySelectorAll('.dash-nav a[href], .dash-sidebar a.logo').forEach((a) => {
     try {
       const url = new URL(a.getAttribute('href'), location.origin);

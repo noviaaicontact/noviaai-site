@@ -47,6 +47,7 @@
       okEl.textContent = 'Courriel confirmé! Redirection…';
       okEl.hidden = false;
       const plan = sessionStorage.getItem('novia_plan') || 'pro';
+      sessionStorage.removeItem('novia_demo');
       const { tenant } = await NoviaApp.ensureTenant(plan, token);
       location.replace(tenant.onboarding_done ? '/dashboard.html' : '/onboarding.html');
       return;

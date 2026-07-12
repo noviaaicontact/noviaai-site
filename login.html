@@ -76,6 +76,7 @@ document.getElementById('form').onsubmit = async (e) => {
     );
     if (error) throw error;
     if (!authData.session) throw new Error('Courriel non confirmé — cliquez le lien reçu par courriel.');
+    sessionStorage.removeItem('novia_demo');
     const plan = sessionStorage.getItem('novia_plan') || 'pro';
     const { tenant } = await NoviaApp.ensureTenant(plan, authData.session.access_token);
     if (tenant.onboarding_done) location.href = '/dashboard.html';

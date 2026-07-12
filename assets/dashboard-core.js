@@ -1,12 +1,12 @@
 ﻿let tenant = null;
 let pollTimer = null;
-(function persistDemoFlag() {
+// Mode démo UNIQUEMENT via ?demo=1 (pas de sticky sessionStorage — sinon un vrai login reste en démo)
+(function syncDemoFlag() {
   const q = new URLSearchParams(location.search).get('demo');
   if (q === '1') sessionStorage.setItem('novia_demo', '1');
-  if (q === '0') sessionStorage.removeItem('novia_demo');
+  else sessionStorage.removeItem('novia_demo');
 })();
-const DEMO = new URLSearchParams(location.search).get('demo') === '1'
-  || sessionStorage.getItem('novia_demo') === '1';
+const DEMO = new URLSearchParams(location.search).get('demo') === '1';
 const DASH_PAGE = document.body.dataset.dashPage || 'home';
 const DEMO_QS = DEMO ? '?demo=1' : '';
 
