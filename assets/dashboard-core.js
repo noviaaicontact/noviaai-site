@@ -737,6 +737,11 @@ async function loadStats() {
   if (s.error) return;
   const statMsgs = $('statMsgs');
   if (statMsgs) statMsgs.textContent = s.messages_30d || 0;
+  const smsUsageEl = $('statSmsUsage');
+  if (smsUsageEl && s.sms_usage) {
+    smsUsageEl.textContent = `${s.sms_usage.count || 0} / ${s.sms_usage.limit || 3000}`;
+    if (!s.sms_usage.ok) smsUsageEl.style.color = 'var(--err, #c0392b)';
+  }
   const missedEl = $('missedCount');
   if (missedEl) missedEl.textContent = s.missed_calls_30d || 0;
   const leadEl = $('leadCount');

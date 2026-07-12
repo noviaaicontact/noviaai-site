@@ -2,6 +2,19 @@ const { getStripe } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { provisionTenant, suspendTenant } = require('../../lib/provision');
 
+function trialEndsFromSub(sub) {
+  if (!sub || !sub.trial_end) return null;
+  return new Date(sub.trial_end * 1000).toISOString();
+}
+
+function statusFromSub(sub) {
+  if (!sub) return 'active';
+  if (sub.status === 'trialing') return 'trialing';
+  if (sub.status === 'active') return 'active';
+  if (sub.status === 'canceled') return 'canceled';
+  return 'inactive';
+}
+
 exports.handler = async (event) => {
   const stripe = getStripe();
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -31,33 +44,40 @@ exports.handler = async (event) => {
         const tenantId = session.metadata && session.metadata.tenant_id;
         if (tenantId) {
           let subStatus = 'active';
+          const patch = {
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription,
+            plan: (session.metadata && session.metadata.plan) || 'pro',
+          };
           if (session.subscription) {
             try {
               const sub = await stripe.subscriptions.retrieve(session.subscription);
-              subStatus = sub.status === 'trialing' ? 'trialing' : 'active';
+              subStatus = statusFromSub(sub);
+              const trialEnds = trialEndsFromSub(sub);
+              if (trialEnds) patch.trial_ends_at = trialEnds;
             } catch (e) {
               console.warn('webhook subscription retrieve', e.message);
             }
           }
-          await db.from('tenants').update({
-            subscription_status: subStatus,
-            stripe_customer_id: session.customer,
-            stripe_subscription_id: session.subscription,
-            plan: (session.metadata && session.metadata.plan) || 'pro',
-          }).eq('id', tenantId);
+          patch.subscription_status = subStatus;
+          await db.from('tenants').update(patch).eq('id', tenantId);
           await provisionTenant(tenantId);
         }
         break;
       }
       case 'customer.subscription.updated': {
         const sub = stripeEvent.data.object;
-        const status = sub.status === 'active' ? 'active'
-          : sub.status === 'trialing' ? 'trialing'
-          : sub.status === 'canceled' ? 'canceled' : 'inactive';
-        const { data: tenants } = await db.from('tenants').update({
+        const status = statusFromSub(sub);
+        const patch = {
           subscription_status: status,
           stripe_subscription_id: sub.id,
-        }).eq('stripe_customer_id', sub.customer).select('id');
+        };
+        const trialEnds = trialEndsFromSub(sub);
+        if (trialEnds) patch.trial_ends_at = trialEnds;
+        else if (status === 'active') patch.trial_ends_at = null;
+
+        const { data: tenants } = await db.from('tenants').update(patch)
+          .eq('stripe_customer_id', sub.customer).select('id');
         if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
           await provisionTenant(tenants[0].id);
         }
@@ -75,12 +95,27 @@ exports.handler = async (event) => {
         break;
       }
       case 'invoice.paid': {
+        // Ne pas forcer "active" : une facture 0 $ pendant l'essai doit rester "trialing"
         const invoice = stripeEvent.data.object;
         if (!invoice.subscription) break;
-        const { data: tenants } = await db.from('tenants').update({
-          subscription_status: 'active',
-        }).eq('stripe_customer_id', invoice.customer).select('id');
-        if (tenants && tenants[0]) await provisionTenant(tenants[0].id);
+        let sub;
+        try {
+          sub = await stripe.subscriptions.retrieve(invoice.subscription);
+        } catch (e) {
+          console.warn('invoice.paid retrieve sub', e.message);
+          break;
+        }
+        const status = statusFromSub(sub);
+        const patch = { subscription_status: status };
+        const trialEnds = trialEndsFromSub(sub);
+        if (trialEnds) patch.trial_ends_at = trialEnds;
+        else if (status === 'active') patch.trial_ends_at = null;
+
+        const { data: tenants } = await db.from('tenants').update(patch)
+          .eq('stripe_customer_id', invoice.customer).select('id');
+        if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
+          await provisionTenant(tenants[0].id);
+        }
         break;
       }
       case 'invoice.payment_failed': {

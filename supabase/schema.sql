@@ -26,7 +26,7 @@ create table if not exists public.tenants (
   parking_info text,
   agent_tone text,
   dossier jsonb,
-  plan text default 'starter',
+  plan text default 'pro',
   subscription_status text default 'trialing',
   stripe_customer_id text,
   stripe_subscription_id text,

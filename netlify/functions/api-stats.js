@@ -2,6 +2,7 @@ const { json, corsHeaders } = require('../../lib/http');
 const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId } = require('../../lib/tenant');
 const { getAdmin } = require('../../lib/db');
+const { checkSmsQuota } = require('../../lib/usage-limits');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -18,10 +19,11 @@ exports.handler = async (event) => {
   const db = getAdmin();
   const since = new Date(Date.now() - 30 * 86400000).toISOString();
 
-  const [msgs, missed, leads] = await Promise.all([
+  const [msgs, missed, leads, quota] = await Promise.all([
     db.from('sms_messages').select('id', { count: 'exact', head: true }).eq('tenant_id', tenant.id).gte('created_at', since),
     db.from('missed_calls').select('id', { count: 'exact', head: true }).eq('tenant_id', tenant.id).gte('created_at', since),
     db.from('leads').select('*').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
+    checkSmsQuota(tenant),
   ]);
 
   const msgCount = msgs.count || 0;
@@ -39,5 +41,11 @@ exports.handler = async (event) => {
     leads: leads.data || [],
     provisioning_status: tenant.provisioning_status,
     twilio_number: tenant.twilio_number,
+    sms_usage: {
+      count: quota.count,
+      limit: quota.limit,
+      ok: quota.ok,
+      period: 'month',
+    },
   });
 };

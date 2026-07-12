@@ -1,6 +1,16 @@
 # www → domaine principal
 https://www.noviaai.ca/*  https://noviaai.ca/:splat  301!
 
+# Anciennes pages démo / brouillons → accueil
+/site-noviaai-complet.html  /  301
+/site-mzone-coiffure.html   /  301
+/site-artis-coiffure.html   /  301
+/site-sansouci-spas.html    /  301
+/index-ANCIEN-SAUVEGARDE.html  /  301
+/site%20internet%20V9.html  /  301
+/site%20internetV8.html     /  301
+/site_internet_noviaAI_v7.html  /  301
+
 # Fallback SPA (pages HTML statiques)
 /dashboard      /dashboard.html      200
 /publier        /publier.html        200

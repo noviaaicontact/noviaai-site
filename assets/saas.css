@@ -1077,4 +1077,18 @@ footer.site-footer {
   .stat-row { grid-template-columns: repeat(2, 1fr); }
   .steps-row::before { display: none; }
   .nav { padding: 12px 16px; }
+  .inbox-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .inbox-list {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    max-height: 220px;
+  }
+  .inbox-thread-wrap {
+    min-height: 360px;
+    max-height: none;
+  }
+  .inbox-thread { max-height: none; }
 }

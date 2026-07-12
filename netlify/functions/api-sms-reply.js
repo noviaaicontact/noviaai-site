@@ -5,6 +5,8 @@ const { sendSMS } = require('../../lib/sms-send');
 const { toE164 } = require('../../lib/phone-util');
 const { logEvent } = require('../../lib/events');
 const { touchThread } = require('../../lib/inbox');
+const { isOptedOut } = require('../../lib/sms-compliance');
+const { checkSmsQuota } = require('../../lib/usage-limits');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -36,11 +38,24 @@ exports.handler = async (event) => {
   }
 
   try {
+    if (await isOptedOut(tenant.id, to)) {
+      return json(403, {
+        error: 'Ce numéro s\'est désabonné (ARRET/STOP). Vous ne pouvez plus lui envoyer de SMS.',
+      });
+    }
+    const quota = await checkSmsQuota(tenant);
+    if (!quota.ok) {
+      return json(429, {
+        error: `Limite mensuelle atteinte (${quota.count}/${quota.limit} SMS). Réessayez le mois prochain.`,
+        quota,
+      });
+    }
+
     await sendSMS({ to, from, body: text });
     await logMessage(tenant.id, toRaw, 'outbound', text);
     await logEvent(tenant.id, toRaw, 'sms_outbound', { body: text.slice(0, 160), manual: true });
     await touchThread(tenant.id, toRaw, text, 'open');
-    return json(200, { ok: true });
+    return json(200, { ok: true, quota: { count: quota.count + 1, limit: quota.limit } });
   } catch (e) {
     console.error('api-sms-reply', e);
     return json(500, { error: e.message || 'Envoi SMS échoué' });

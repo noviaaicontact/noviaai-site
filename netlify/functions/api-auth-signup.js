@@ -1,6 +1,7 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getAdmin } = require('../../lib/db');
 const { sendSignupConfirmationEmail } = require('../../lib/confirmation-email');
+const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
 
 const REDIRECT = () => `${process.env.PUBLIC_BASE_URL || 'https://noviaai.ca'}/auth/callback.html`;
 
@@ -27,11 +28,22 @@ exports.handler = async (event) => {
   const admin = getAdmin();
   if (!admin) return json(503, { error: 'Service indisponible' });
 
+  const ip = clientIp(event);
+  const rlIp = await checkRateLimit(`signup-ip:${ip}`, { maxAttempts: 8, windowMinutes: 60 });
+  if (!rlIp.ok) {
+    return json(429, { error: 'Trop de tentatives. Réessayez dans une heure.' });
+  }
+
   const { email, password } = parseJson(event);
   const normalized = String(email || '').trim().toLowerCase();
   if (!normalized || !normalized.includes('@')) return json(400, { error: 'Courriel invalide' });
   if (!password || String(password).length < 8) {
     return json(400, { error: 'Mot de passe : 8 caractères minimum' });
+  }
+
+  const rlEmail = await checkRateLimit(`signup-email:${normalized}`, { maxAttempts: 5, windowMinutes: 60 });
+  if (!rlEmail.ok) {
+    return json(429, { error: 'Trop de tentatives pour ce courriel. Réessayez plus tard.' });
   }
 
   const sandboxHint = resendSandboxHint(normalized);
