@@ -71,7 +71,7 @@ function populateSettingsForm(t) {
 function widgetEmbedCode(t) {
   if (!t || !t.widget_public_id) return 'Enregistrez vos paramètres pour générer le code.';
   const base = location.origin.replace(/\/$/, '');
-  return `<script src="${base}/widget.js" data-widget-id="${t.widget_public_id}" async><\/script>`;
+  return `<script src="${base}/widget.js?v=2" data-widget-id="${t.widget_public_id}" async><\/script>`;
 }
 
 function updateWidgetEmbedUI(t) {
@@ -637,6 +637,21 @@ function showOfflineBanner() {
   document.querySelector('.dash-main').prepend(banner);
 }
 
+function linkifyText(text) {
+  const esc = (s) => String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;');
+  return String(text || '').split(/(https?:\/\/[^\s]+)/gi).map((part) => {
+    if (/^https?:\/\//i.test(part)) {
+      const url = part.replace(/[.,);:!?]+$/g, '');
+      const trailing = part.slice(url.length);
+      return `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>${esc(trailing)}`;
+    }
+    return esc(part).replace(/\n/g, '<br>');
+  }).join('');
+}
+
 function openThreadDemo(phone) {
   selectedPhone = phone;
   renderInboxList();
@@ -655,7 +670,7 @@ function openThreadDemo(phone) {
   thread.innerHTML = msgs.map(m => {
     const cls = m.direction === 'inbound' ? 'in' : 'out';
     const label = m.direction === 'inbound' ? 'Client' : 'NoviaAI';
-    return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${m.body.replace(/</g,'&lt;')}</div>`;
+    return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${linkifyText(m.body)}</div>`;
   }).join('');
 }
 
@@ -843,7 +858,7 @@ function renderThread(phone, msgs) {
     ? msgs.map(m => {
         const cls = m.direction === 'inbound' ? 'in' : 'out';
         const label = m.direction === 'inbound' ? 'Client' : 'NoviaAI';
-        return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${m.body.replace(/</g,'&lt;')}</div>`;
+        return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${linkifyText(m.body)}</div>`;
       }).join('')
     : '<div class="inbox-empty" style="padding:24px">Aucun message — écrivez au client ci-dessous.</div>';
   const reviewBtn = canReview
@@ -955,10 +970,25 @@ function initClientSim() {
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   }
 
+  function linkifyHtml(text) {
+    const esc = (s) => String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/"/g, '&quot;');
+    return String(text || '').split(/(https?:\/\/[^\s]+)/gi).map((part) => {
+      if (/^https?:\/\//i.test(part)) {
+        const url = part.replace(/[.,);:!?]+$/g, '');
+        const trailing = part.slice(url.length);
+        return `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>${esc(trailing)}`;
+      }
+      return esc(part).replace(/\n/g, '<br>');
+    }).join('');
+  }
+
   function appendBubble(role, text, extraClass) {
     const div = document.createElement('div');
     div.className = 'client-sim-bubble ' + (role === 'user' ? 'client' : 'agent') + (extraClass ? ' ' + extraClass : '');
-    div.innerHTML = escHtml(text);
+    div.innerHTML = linkifyHtml(text);
     msgsEl.appendChild(div);
     msgsEl.scrollTop = msgsEl.scrollHeight;
     return div;

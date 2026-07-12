@@ -51,6 +51,8 @@
     .novia-widget-msg { max-width: 88%; margin-bottom: 10px; padding: 10px 12px; border-radius: 12px; font-size: .9rem; line-height: 1.45; }
     .novia-widget-msg.in { background: #fff; border: 1px solid #e2e8f0; margin-right: auto; }
     .novia-widget-msg.out { background: #13325b; color: #fff; margin-left: auto; }
+    .novia-widget-msg a { color: #c8f135; font-weight: 600; text-decoration: underline; word-break: break-all; }
+    .novia-widget-msg.in a { color: #1c4a86; }
     .novia-widget-foot { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #e2e8f0; background: #fff; }
     .novia-widget-foot input {
       flex: 1; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; font-size: .9rem;
@@ -106,9 +108,20 @@
     if (open) input.focus();
   }
 
+  function linkify(text) {
+    return String(text || '').split(/(https?:\/\/[^\s]+)/gi).map((part) => {
+      if (/^https?:\/\//i.test(part)) {
+        const url = part.replace(/[.,);:!?]+$/g, '');
+        const trailing = part.slice(url.length);
+        return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>${escapeHtml(trailing)}`;
+      }
+      return escapeHtml(part).replace(/\n/g, '<br>');
+    }).join('');
+  }
+
   function addMsg(dir, text) {
     const bubble = el('div', 'novia-widget-msg ' + dir);
-    bubble.textContent = text;
+    bubble.innerHTML = linkify(text);
     msgs.appendChild(bubble);
     msgs.scrollTop = msgs.scrollHeight;
   }

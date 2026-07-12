@@ -28,6 +28,18 @@ function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
+function linkify(text) {
+  const escapedParts = String(text || '').split(/(https?:\/\/[^\s]+)/gi).map((part) => {
+    if (/^https?:\/\//i.test(part)) {
+      const url = part.replace(/[.,);:!?]+$/g, '');
+      const trailing = part.slice(url.length);
+      return `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>${esc(trailing)}`;
+    }
+    return esc(part).replace(/\n/g, '<br>');
+  });
+  return escapedParts.join('');
+}
+
 function renderHours(hours) {
   const h = hours || DEFAULT_HOURS;
   const el = document.getElementById('hoursGrid');
@@ -409,7 +421,7 @@ function initChatbotPanel(opts) {
     if (!msgsEl) return null;
     const div = document.createElement('div');
     div.className = 'client-sim-bubble ' + (role === 'user' ? 'client' : 'agent') + (extraClass ? ' ' + extraClass : '');
-    div.textContent = text;
+    div.innerHTML = linkify(text);
     msgsEl.appendChild(div);
     msgsEl.scrollTop = msgsEl.scrollHeight;
     return div;

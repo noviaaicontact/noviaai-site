@@ -666,6 +666,8 @@ a:hover { text-decoration: underline; }
 .inbox-bubble { max-width: 85%; padding: 10px 14px; border-radius: 12px; margin-bottom: 10px; font-size: .9rem; line-height: 1.45; }
 .inbox-bubble.in { background: #fff; border: 1px solid var(--line); margin-right: auto; }
 .inbox-bubble.out { background: var(--navy2); color: #fff; margin-left: auto; text-align: right; }
+.inbox-bubble a { color: #1c4a86; font-weight: 600; text-decoration: underline; word-break: break-all; }
+.inbox-bubble.out a { color: #c8f135; }
 .inbox-empty { padding: 40px 20px; text-align: center; color: var(--muted); }
 .inbox-thread-wrap { display: flex; flex-direction: column; min-height: 420px; max-height: 520px; }
 .inbox-messages { flex: 1; overflow-y: auto; padding: 16px 20px; background: #fafbfc; }
@@ -769,11 +771,23 @@ a:hover { text-decoration: underline; }
   border: 1px solid var(--line);
   border-bottom-left-radius: 4px;
 }
+.client-sim-bubble.agent a {
+  color: #1c4a86;
+  font-weight: 600;
+  text-decoration: underline;
+  word-break: break-all;
+}
 .client-sim-bubble.client {
   align-self: flex-end;
   background: var(--navy2);
   color: #fff;
   border-bottom-right-radius: 4px;
+}
+.client-sim-bubble.client a {
+  color: #c8f135;
+  font-weight: 600;
+  text-decoration: underline;
+  word-break: break-all;
 }
 .client-sim-bubble.typing {
   opacity: .7;
