@@ -425,7 +425,9 @@ a:hover { text-decoration: underline; }
   text-transform: uppercase;
   letter-spacing: .04em;
 }
-.form-box input, .form-box select, .form-box textarea {
+.form-box input:not([type="checkbox"]):not([type="radio"]),
+.form-box select,
+.form-box textarea {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--line);
@@ -434,12 +436,44 @@ a:hover { text-decoration: underline; }
   font-family: inherit;
   transition: border-color .15s, box-shadow .15s;
 }
-.form-box input:focus, .form-box select:focus, .form-box textarea:focus {
+.form-box input:not([type="checkbox"]):not([type="radio"]):focus,
+.form-box select:focus,
+.form-box textarea:focus {
   outline: none;
   border-color: var(--navy2);
   box-shadow: 0 0 0 3px rgba(30,58,95,.12);
 }
 .form-box textarea { min-height: 88px; resize: vertical; }
+
+.form-box label.legal-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: .88rem;
+  font-weight: 500;
+  color: var(--ink, #0f172a);
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.45;
+  cursor: pointer;
+}
+.form-box label.legal-consent input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--navy);
+  cursor: pointer;
+}
+.form-box label.legal-consent a {
+  color: var(--navy2);
+  text-decoration: underline;
+}
 
 /* Wizard */
 .wizard-wrap { max-width: 640px; margin: 40px auto; padding: 0 24px 80px; }
