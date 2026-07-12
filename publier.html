@@ -85,33 +85,119 @@
 
       <details class="install-advanced" style="margin-top:20px" open>
         <summary>Chatbot sur mon site web — les étapes</summary>
-        <p class="muted" style="font-size:.88rem;margin:12px 0 8px">Même IA que le SMS. Une bulle de chat apparaît en bas à droite de votre site.</p>
-        <ol class="forward-steps" style="margin:0 0 16px;font-size:.9rem">
-          <li>Configurez votre agent dans <a href="/chatbot.html">Chatbot</a> (services, FAQ, ton).</li>
-          <li>Dans <a href="/parametres.html">Paramètres</a>, cochez <strong>Activer le widget web</strong> et enregistrez.</li>
-          <li>Copiez le code ci-dessous.</li>
-          <li>Collez-le <strong>juste avant</strong> <code>&lt;/body&gt;</code> sur votre site (ou dans la section « code personnalisé / footer »).</li>
-          <li>Publiez / mettez en ligne la page, puis rechargez votre site — la bulle 💬 doit apparaître.</li>
-          <li>Testez : envoyez une question (prix, horaires). La conversation arrive aussi dans <a href="/conversations.html">Conversations</a>.</li>
-        </ol>
-        <p class="muted" style="font-size:.85rem;margin:0 0 10px"><strong>Où coller selon votre plateforme</strong></p>
-        <ul class="forward-steps" style="list-style:disc;margin:0 0 16px;font-size:.88rem;padding-left:1.25rem">
-          <li><strong>WordPress</strong> — Apparence → Éditeur de thème / Pied de page, ou plugin « Insert Headers and Footers »</li>
-          <li><strong>Wix</strong> — Paramètres → Code personnalisé → Body - end</li>
-          <li><strong>Squarespace</strong> — Paramètres → Code d'injection avancé → Footer</li>
-          <li><strong>Shopify</strong> — Boutique en ligne → Thèmes → Modifier le code → <code>theme.liquid</code> avant <code>&lt;/body&gt;</code></li>
-          <li><strong>Site HTML / Webflow</strong> — avant la balise de fermeture <code>&lt;/body&gt;</code></li>
-        </ul>
-        <div class="install-code-row">
-          <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
-          <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
+        <p class="muted" style="font-size:.88rem;margin:12px 0 16px">Même IA que le SMS. Une bulle 💬 apparaît en bas à droite de votre site.</p>
+
+        <div class="install-step">
+          <p class="install-step-title"><strong>1.</strong> Préparer NoviaAI</p>
+          <ol class="forward-steps" style="font-size:.9rem">
+            <li>Configurez services et FAQ dans <a href="/chatbot.html">Chatbot</a>.</li>
+            <li>Dans <a href="/parametres.html">Paramètres</a> → cochez <strong>Activer le widget web</strong> → <strong>Enregistrer</strong>.</li>
+          </ol>
         </div>
-        <p class="muted" style="font-size:.85rem;margin-top:12px">Rien ne s'affiche? Vérifiez que le widget est activé, que le code est bien publié, et faites un hard refresh (Ctrl+Shift+R).</p>
+
+        <div class="install-step">
+          <p class="install-step-title"><strong>2.</strong> Copier votre code</p>
+          <p class="muted" style="font-size:.88rem;margin:0 0 10px">Cliquez <strong>Copier</strong>. Vous le collerez à l’étape 3 (ne le modifiez pas).</p>
+          <div class="install-code-row">
+            <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
+            <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
+          </div>
+        </div>
+
+        <div class="install-step" id="widgetStep3">
+          <p class="install-step-title"><strong>3.</strong> Coller le code sur votre site <span class="muted" style="font-weight:500">(l’étape importante)</span></p>
+          <p class="muted" style="font-size:.88rem;margin:0 0 10px">Choisissez comment votre site est fait — on vous dit exactement où cliquer :</p>
+          <label for="widgetPlatform" style="display:block;margin:0 0 8px;font-size:.88rem;font-weight:600">Mon site est fait avec…</label>
+          <select id="widgetPlatform" style="width:100%;max-width:360px;margin-bottom:14px;padding:10px;border-radius:8px;border:1px solid var(--border)">
+            <option value="wix">Wix</option>
+            <option value="wordpress">WordPress</option>
+            <option value="squarespace">Squarespace</option>
+            <option value="shopify">Shopify</option>
+            <option value="webflow">Webflow</option>
+            <option value="html">Site HTML / autre</option>
+            <option value="help">Je ne sais pas / quelqu’un gère mon site</option>
+          </select>
+
+          <div class="widget-plat-panel" data-plat="wix">
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Ouvrez <strong>Wix</strong> → votre site → <strong>Tableau de bord</strong> (pas l’éditeur de design).</li>
+              <li>Menu de gauche → <strong>Paramètres</strong>.</li>
+              <li>Descendez jusqu’à <strong>Code personnalisé</strong> (parfois sous « Avancé ») → ouvrez-le.</li>
+              <li>Cliquez <strong>+ Ajouter un code personnalisé</strong>.</li>
+              <li>Collez le code NoviaAI (Ctrl+V / Cmd+V) dans la zone de texte.</li>
+              <li>Nom : ex. <em>NoviaAI chatbot</em>.</li>
+              <li>Emplacement : <strong>Body - end</strong> (fin du body) — pas Header.</li>
+              <li>Pages : <strong>Toutes les pages</strong>.</li>
+              <li>Cliquez <strong>Appliquer</strong>, puis <strong>Publier</strong> votre site Wix.</li>
+            </ol>
+          </div>
+          <div class="widget-plat-panel" data-plat="wordpress" hidden>
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Connectez-vous à l’admin WordPress (<code>/wp-admin</code>).</li>
+              <li>Installez le plugin gratuit <strong>« WPCode »</strong> ou <strong>« Insert Headers and Footers »</strong> (Plugins → Ajouter).</li>
+              <li>Ouvrez le plugin → section <strong>Footer</strong> / <strong>Body</strong> (pas Header).</li>
+              <li>Collez le code NoviaAI → <strong>Enregistrer</strong>.</li>
+              <li>Rechargez votre site public (pas l’admin) — la bulle doit apparaître.</li>
+            </ol>
+            <p class="muted" style="font-size:.85rem;margin:10px 0 0">Sans plugin : Apparence → Éditeur de thème → fichier <code>footer.php</code> → collez juste avant <code>&lt;/body&gt;</code> (réservé si vous êtes à l’aise).</p>
+          </div>
+          <div class="widget-plat-panel" data-plat="squarespace" hidden>
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Squarespace → <strong>Paramètres</strong> → <strong>Advanced</strong> / <strong>Avancé</strong>.</li>
+              <li>Ouvrez <strong>Code Injection</strong> / <strong>Injection de code</strong>.</li>
+              <li>Dans la case <strong>FOOTER</strong>, collez le code NoviaAI.</li>
+              <li>Enregistrez, puis <strong>Save</strong> / publiez si demandé.</li>
+            </ol>
+          </div>
+          <div class="widget-plat-panel" data-plat="shopify" hidden>
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Admin Shopify → <strong>Boutique en ligne</strong> → <strong>Thèmes</strong>.</li>
+              <li>Sur le thème actuel → ⋯ → <strong>Modifier le code</strong>.</li>
+              <li>À gauche, ouvrez le fichier <code>theme.liquid</code> (souvent sous Layout).</li>
+              <li>Descendez tout en bas. Cherchez la ligne <code>&lt;/body&gt;</code>.</li>
+              <li>Collez le code NoviaAI <strong>juste au-dessus</strong> de cette ligne.</li>
+              <li>Cliquez <strong>Enregistrer</strong>.</li>
+            </ol>
+          </div>
+          <div class="widget-plat-panel" data-plat="webflow" hidden>
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Webflow → Project settings (icône engrenage) → <strong>Custom Code</strong>.</li>
+              <li>Section <strong>Footer Code</strong> → collez le code NoviaAI.</li>
+              <li><strong>Save</strong> → <strong>Publish</strong> le site.</li>
+            </ol>
+          </div>
+          <div class="widget-plat-panel" data-plat="html" hidden>
+            <ol class="forward-steps" style="font-size:.9rem">
+              <li>Ouvrez le fichier de votre page (souvent <code>index.html</code>) dans un éditeur.</li>
+              <li>Allez tout en bas du fichier.</li>
+              <li>Trouvez <code>&lt;/body&gt;</code> — c’est la fin de la page.</li>
+              <li>Collez le code NoviaAI <strong>sur la ligne juste au-dessus</strong> de <code>&lt;/body&gt;</code>.</li>
+              <li>Enregistrez le fichier et remettez-le en ligne (FTP, hébergeur, etc.).</li>
+            </ol>
+          </div>
+          <div class="widget-plat-panel" data-plat="help" hidden>
+            <p style="font-size:.9rem;margin:0 0 10px">Pas besoin de tout comprendre. Envoyez ceci à la personne qui gère votre site :</p>
+            <div class="tech-line-box" style="font-size:.88rem;line-height:1.55">
+              « Peux-tu coller ce script NoviaAI juste avant <code>&lt;/body&gt;</code> (ou dans le code footer / Body end) sur toutes les pages, puis republier le site? »
+            </div>
+            <p class="muted" style="font-size:.85rem;margin:10px 0 0">Joignez le code copié à l’étape 2. Ensuite testez vous-même à l’étape 4.</p>
+          </div>
+        </div>
+
+        <div class="install-step" style="margin-bottom:0">
+          <p class="install-step-title"><strong>4.</strong> Vérifier que ça marche</p>
+          <ol class="forward-steps" style="font-size:.9rem">
+            <li>Ouvrez votre site <strong>public</strong> (pas l’éditeur) → hard refresh : Ctrl+Shift+R.</li>
+            <li>Vous devez voir une bulle en bas à droite → cliquez → posez une question (ex. « Vos horaires? »).</li>
+            <li>La conversation apparaît aussi dans <a href="/conversations.html">Conversations</a>.</li>
+          </ol>
+          <p class="muted" style="font-size:.85rem;margin:12px 0 0">Toujours rien? Widget activé + enregistré? Code collé dans <em>Body / Footer</em> (pas Header)? Site bien <strong>publié</strong>?</p>
+        </div>
       </details>
     </div>
   </main>
 </div>
 <script src="/assets/dash-layout.js?v=2"></script>
-<script src="/assets/dashboard-core.js?v=8"></script>
+<script src="/assets/dashboard-core.js?v=9"></script>
 </body>
 </html>

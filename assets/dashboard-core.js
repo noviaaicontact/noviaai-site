@@ -378,6 +378,22 @@ function initInstallWizard() {
       updateForwardProviderGuide();
     };
   }
+
+  const widgetPlat = $('widgetPlatform');
+  function showWidgetPlat(id) {
+    document.querySelectorAll('.widget-plat-panel').forEach((p) => {
+      p.hidden = p.getAttribute('data-plat') !== id;
+    });
+  }
+  if (widgetPlat) {
+    const savedPlat = localStorage.getItem('novia_widget_platform') || 'wix';
+    widgetPlat.value = savedPlat;
+    showWidgetPlat(widgetPlat.value);
+    widgetPlat.onchange = () => {
+      localStorage.setItem('novia_widget_platform', widgetPlat.value);
+      showWidgetPlat(widgetPlat.value);
+    };
+  }
 }
 
 function installPrefsKey() {
