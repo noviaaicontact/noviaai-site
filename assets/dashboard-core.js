@@ -859,6 +859,14 @@ function renderMsgs(msgs) {
 }
 
 function initClientSim() {
+  const card = $('clientSimCard');
+  // Simulation réservée au mode démo — comptes réels utilisent Conversations / Chatbot
+  if (!DEMO) {
+    if (card) card.hidden = true;
+    return;
+  }
+  if (card) card.hidden = false;
+
   const form = $('simForm');
   const msgsEl = $('simMsgs');
   const input = $('simInput');
@@ -1040,7 +1048,7 @@ function initPageHandlers() {
   const btnW = $('btnCopyWidget');
   if (btnW) btnW.onclick = () => copyWidgetCode(btnW);
 
-  if (DASH_PAGE === 'home') initClientSim();
+  if (DASH_PAGE === 'home') initClientSim(); // no-op si compte réel (!DEMO)
 
   if (DEMO) {
     const settingsForm = $('settingsForm');
