@@ -694,10 +694,10 @@ a:hover { text-decoration: underline; }
 .kb-type { font-size: .65rem; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; margin-left: 6px; background: #e2e8f0; color: #475569; }
 .kb-import-row input[type=file] { flex: 1; min-width: 200px; font-size: .85rem; }
 .kb-tester { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
-.kb-tester-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.kb-tester-row input { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; }
+.kb-sim-phone { max-width: 420px; }
 .kb-test-result { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 14px; font-size: .9rem; }
 .kb-test-reply { background: var(--navy2); color: #fff; padding: 12px; border-radius: 10px; margin-top: 8px; }
+.kb-hits { margin: 8px 0 0; padding-left: 1.1rem; font-size: .82rem; color: var(--muted); }
 .kb-hits { margin: 8px 0; padding-left: 18px; }
 
 /* Client conversation simulator (dashboard) */

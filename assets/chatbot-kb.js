@@ -332,55 +332,140 @@ function initChatbotPanel(opts) {
     };
   }
 
-  const btnKbTest = document.getElementById('btnKbTest');
-  if (btnKbTest) {
-    btnKbTest.onclick = async () => {
-      const q = document.getElementById('kbTestQuestion').value.trim();
-      const box = document.getElementById('kbTestResult');
-      if (!q) return;
+  const SUGGESTIONS = [
+    'C\'est combien?',
+    'Vous êtes ouverts demain?',
+    'Je veux un rendez-vous',
+    'Où êtes-vous situés?',
+  ];
+
+  let testHistory = [];
+  let testSending = false;
+
+  function agentLabel() {
+    return (document.getElementById('setAgentName')?.value || 'Léa').trim() || 'Léa';
+  }
+
+  function welcomeTestMsg() {
+    const w = document.getElementById('setWelcomeSms')?.value?.trim();
+    if (w) return w;
+    return `Bonjour! Ici ${agentLabel()} — comment puis-je vous aider?`;
+  }
+
+  function appendTestBubble(role, text, extraClass) {
+    const msgsEl = document.getElementById('kbTestMsgs');
+    if (!msgsEl) return null;
+    const div = document.createElement('div');
+    div.className = 'client-sim-bubble ' + (role === 'user' ? 'client' : 'agent') + (extraClass ? ' ' + extraClass : '');
+    div.textContent = text;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return div;
+  }
+
+  function renderTestChips() {
+    const chips = document.getElementById('kbTestChips');
+    if (!chips) return;
+    chips.innerHTML = '';
+    SUGGESTIONS.forEach((s) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = s;
+      b.onclick = () => {
+        const input = document.getElementById('kbTestQuestion');
+        if (input) input.value = s;
+        sendTestMessage();
+      };
+      chips.appendChild(b);
+    });
+  }
+
+  function resetTestConvo() {
+    testHistory = [];
+    testSending = false;
+    const msgsEl = document.getElementById('kbTestMsgs');
+    if (msgsEl) msgsEl.innerHTML = '';
+    const box = document.getElementById('kbTestResult');
+    if (box) { box.hidden = true; box.innerHTML = ''; }
+    const input = document.getElementById('kbTestQuestion');
+    if (input) input.value = '';
+    appendTestBubble('assistant', welcomeTestMsg());
+    renderTestChips();
+  }
+
+  async function sendTestMessage() {
+    const input = document.getElementById('kbTestQuestion');
+    const q = (input?.value || '').trim();
+    if (!q || testSending) return;
+    testSending = true;
+    if (input) input.value = '';
+    appendTestBubble('user', q);
+    const typing = appendTestBubble('assistant', '…', 'typing');
+    const box = document.getElementById('kbTestResult');
+
+    try {
+      let reply = '';
+      let hits = [];
       if (_demo) {
-        box.hidden = false;
-        box.innerHTML = '<p class="muted">Test en cours (démo Salon Éclat)…</p>';
-        try {
-          const res = await fetch('/.netlify/functions/api-demo-chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: q, history: [] }),
-          });
-          const data = await res.json();
-          box.innerHTML = `<p class="muted">Démo — réponse IA (Salon Éclat)</p><p class="kb-test-reply">${esc(data.reply || 'Pas de réponse')}</p>`;
-        } catch (ex) {
-          box.innerHTML = `<p class="err">${esc(ex.message || 'Erreur')}</p>`;
-        }
-        return;
-      }
-      box.hidden = false;
-      box.innerHTML = '<p class="muted">Test en cours…</p>';
-      try {
+        const res = await fetch('/.netlify/functions/api-demo-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: q, history: testHistory }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur démo');
+        reply = data.reply || 'Pas de réponse';
+      } else {
         const res = await NoviaApp.api('api-knowledge', {
           method: 'POST',
-          body: JSON.stringify({ action: 'test', question: q }),
+          body: JSON.stringify({ action: 'test', question: q, history: testHistory }),
         });
         if (res.error) throw new Error(res.error);
-        let html = '';
-        if (res.hits && res.hits.length) {
-          html += '<p><strong>Sources trouvées:</strong></p><ul class="kb-hits">';
-          res.hits.forEach((h) => {
-            html += `<li><small>${Math.round((h.similarity || 0) * 100)}% — ${esc(h.content.slice(0, 120))}…</small></li>`;
+        reply = res.reply || 'Pas de réponse';
+        hits = res.hits || [];
+      }
+
+      if (typing) typing.remove();
+      appendTestBubble('assistant', reply);
+      testHistory.push({ role: 'user', content: q });
+      testHistory.push({ role: 'assistant', content: reply });
+      if (testHistory.length > 20) testHistory = testHistory.slice(-20);
+
+      if (box) {
+        if (hits.length) {
+          box.hidden = false;
+          let html = '<p><strong>Sources trouvées:</strong></p><ul class="kb-hits">';
+          hits.forEach((h) => {
+            html += `<li><small>${Math.round((h.similarity || 0) * 100)}% — ${esc(String(h.content || '').slice(0, 120))}…</small></li>`;
           });
           html += '</ul>';
-        } else {
-          html += '<p class="muted">Aucun extrait indexé — réponse basée sur FAQ/services seulement.</p>';
+          box.innerHTML = html;
+        } else if (!_demo) {
+          box.hidden = false;
+          box.innerHTML = '<p class="muted">Aucun extrait indexé pour ce tour — réponse basée sur FAQ/services.</p>';
         }
-        if (res.reply) {
-          html += `<p><strong>Réponse simulée:</strong></p><p class="kb-test-reply">${esc(res.reply)}</p>`;
-        }
-        box.innerHTML = html;
-      } catch (ex) {
-        box.innerHTML = `<p class="err">${esc(ex.message)}</p>`;
       }
+    } catch (ex) {
+      if (typing) typing.remove();
+      appendTestBubble('assistant', ex.message || 'Erreur');
+    } finally {
+      testSending = false;
+      if (input) input.focus();
+    }
+  }
+
+  const btnKbTestReset = document.getElementById('btnKbTestReset');
+  if (btnKbTestReset) btnKbTestReset.onclick = () => resetTestConvo();
+
+  const kbTestForm = document.getElementById('kbTestForm');
+  if (kbTestForm) {
+    kbTestForm.onsubmit = (e) => {
+      e.preventDefault();
+      sendTestMessage();
     };
   }
+
+  resetTestConvo();
 
   form.onsubmit = async (e) => {
     e.preventDefault();
