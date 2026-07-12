@@ -133,10 +133,10 @@
             <div class="client-sim-status"><span class="live-dot"></span> Test chatbot · pas de SMS réel</div>
             <div class="client-sim-msgs" id="kbTestMsgs" aria-live="polite"></div>
             <div class="client-sim-chips" id="kbTestChips"></div>
-            <form class="client-sim-form" id="kbTestForm">
-              <input type="text" id="kbTestQuestion" placeholder="Écrivez comme un client…" maxlength="500" autocomplete="off" required>
-              <button type="submit" class="btn btn-accent btn-sm" id="btnKbTest">Envoyer</button>
-            </form>
+            <div class="client-sim-form" id="kbTestForm">
+              <input type="text" id="kbTestQuestion" placeholder="Écrivez comme un client…" maxlength="500" autocomplete="off">
+              <button type="button" class="btn btn-accent btn-sm" id="btnKbTest">Envoyer</button>
+            </div>
           </div>
           <details class="kb-test-sources" style="margin-top:10px">
             <summary class="muted" style="font-size:.82rem;cursor:pointer">Sources utilisées (dernier message)</summary>
@@ -153,7 +153,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=5"></script>
+<script src="/assets/chatbot-kb.js?v=6"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=10"></script>
 </body>

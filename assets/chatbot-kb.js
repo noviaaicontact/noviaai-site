@@ -457,12 +457,22 @@ function initChatbotPanel(opts) {
   const btnKbTestReset = document.getElementById('btnKbTestReset');
   if (btnKbTestReset) btnKbTestReset.onclick = () => resetTestConvo();
 
-  const kbTestForm = document.getElementById('kbTestForm');
-  if (kbTestForm) {
-    kbTestForm.onsubmit = (e) => {
-      e.preventDefault();
-      sendTestMessage();
-    };
+  const btnKbTest = document.getElementById('btnKbTest');
+  if (btnKbTest) btnKbTest.onclick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sendTestMessage();
+  };
+
+  const kbTestInput = document.getElementById('kbTestQuestion');
+  if (kbTestInput) {
+    kbTestInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        sendTestMessage();
+      }
+    });
   }
 
   resetTestConvo();
