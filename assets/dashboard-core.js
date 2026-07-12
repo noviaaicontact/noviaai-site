@@ -302,9 +302,9 @@ function updateForwardProviderGuide() {
   }
 
   if (scriptEl) {
-    scriptEl.innerHTML = `<strong>À dire au fournisseur (si vous appelez) :</strong><br>
-      « Bonjour, je veux activer le <em>renvoi d’appels si je ne réponds pas</em> vers ${num}.
-      Mon téléphone doit sonner en premier — ce n’est <em>pas</em> un renvoi permanent. »`;
+    scriptEl.innerHTML = `<strong>À dire au fournisseur (quand vous devez l’appeler) :</strong><br>
+      « Bonjour, je voudrais activer un <em>renvoi d’appel</em> — précisément le <em>renvoi si je ne réponds pas</em> (ou renvoi sur non-réponse) — vers le numéro ${num}.
+      Mon téléphone doit sonner en premier. Ce n’est <em>pas</em> un renvoi permanent / tous les appels. »`;
   }
 
   if (warnEl) {
@@ -312,8 +312,8 @@ function updateForwardProviderGuide() {
     warnEl.hidden = !needsWarn;
     if (needsWarn) {
       warnEl.textContent = providerId === 'bell'
-        ? 'Important iPhone Bell : n’activez PAS « Renvoi d’appel » dans Réglages iPhone — ça active un renvoi permanent. Appelez Bell (1-800-667-0123) ou configurez depuis un Android.'
-        : 'Important iPhone Vidéotron : n’activez PAS le toggle « Renvoi d’appel » dans Réglages — ça serait permanent. Appelez Vidéotron (1-877-380-2611) ou configurez depuis un Android.';
+        ? 'Important iPhone Bell : n’activez PAS « Renvoi d’appel » dans Réglages iPhone — ça active un renvoi permanent. Appelez Bell (1-800-667-0123) et demandez un renvoi d’appel sur non-réponse, ou configurez depuis un Android.'
+        : 'Important iPhone Vidéotron : n’activez PAS le toggle « Renvoi d’appel » dans Réglages — ça serait permanent. Appelez Vidéotron (1-877-380-2611) et demandez un renvoi d’appel sur non-réponse, ou configurez depuis un Android.';
     }
   }
 }
