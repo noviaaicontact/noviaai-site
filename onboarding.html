@@ -58,10 +58,12 @@
       </details>
 
       <label for="missed_call_sms">Message SMS si appel manqué *</label>
-      <textarea id="missed_call_sms" rows="3" required placeholder="Bonjour! Désolé, on a manqué votre appel à [Commerce]. Répondez ici — on vous répond tout de suite!"></textarea>
+      <textarea id="missed_call_sms" rows="3" required></textarea>
+      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.82rem">Prérempli — vous pouvez le modifier.</small>
 
       <label for="agent_name">Prénom de votre agent SMS</label>
-      <input id="agent_name" placeholder="Ex. : Léa, Marc…">
+      <input id="agent_name" value="Léa" placeholder="Ex. : Léa, Marc…">
+      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.82rem">À l’activation, on ajoute aussi FAQ et politiques de base (modifiables dans Chatbot).</small>
 
       <label for="contact_email">Courriel alertes (optionnel)</label>
       <input id="contact_email" type="email" placeholder="vous@commerce.com">
@@ -73,6 +75,27 @@
 </div>
 <script>
 (async () => { await NoviaApp.requireAuth('/login.html'); })();
+
+const missedSmsEl = document.getElementById('missed_call_sms');
+const businessNameEl = document.getElementById('business_name');
+const agentNameEl = document.getElementById('agent_name');
+let missedSmsTouched = false;
+
+function buildMissedSms() {
+  const biz = businessNameEl.value.trim() || 'notre commerce';
+  const agent = agentNameEl.value.trim() || 'Léa';
+  return `Bonjour! Ici ${agent}, de ${biz}. Désolé, on a manqué votre appel! Répondez à ce texto — je vous réponds tout de suite.`;
+}
+
+function refreshMissedSms() {
+  if (missedSmsTouched && missedSmsEl.value.trim()) return;
+  missedSmsEl.value = buildMissedSms();
+}
+
+missedSmsEl.addEventListener('input', () => { missedSmsTouched = true; });
+businessNameEl.addEventListener('input', refreshMissedSms);
+agentNameEl.addEventListener('input', refreshMissedSms);
+refreshMissedSms();
 
 function syncLineModeUI() {
   const mode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
