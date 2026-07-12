@@ -226,6 +226,7 @@ function populateChatbotForm(t) {
   set('setAgentTone', t.agent_tone || '');
   set('setWelcomeSms', t.welcome_sms || '');
   set('setWebsiteUrl', t.website_url || '');
+  set('setPublicPhone', t.public_phone || '');
   set('setAddress', t.address_line || '');
   set('setCity', t.city || '');
   set('setPolicies', policiesToLines(t.policies));
@@ -561,6 +562,7 @@ function initChatbotPanel(opts) {
         agent_tone: document.getElementById('setAgentTone').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
         website_url: document.getElementById('setWebsiteUrl').value.trim(),
+        public_phone: document.getElementById('setPublicPhone')?.value.trim() || '',
         reservation_links: collectReservationLinks(),
         address_line: document.getElementById('setAddress').value.trim(),
         city: document.getElementById('setCity').value.trim(),

@@ -10,6 +10,7 @@ create table if not exists public.tenants (
   business_type text default 'PME',
   agent_name text default 'Léa',
   phone_forward text,
+  public_phone text,
   twilio_number text unique,
   reservation_url text,
   reservation_links jsonb default '[]'::jsonb,
