@@ -83,14 +83,30 @@
         <button type="button" class="btn btn-primary btn-sm" id="btnInstallDoneForward" style="margin-top:16px">C'est fait — j'ai configuré le renvoi</button>
       </div>
 
-      <details class="install-advanced" style="margin-top:20px">
-        <summary>Chatbot sur mon site web</summary>
-        <p class="muted" style="font-size:.88rem;margin:12px 0">Widget NoviaAI — vos visiteurs chattent sur votre site avec la même IA que le SMS.</p>
+      <details class="install-advanced" style="margin-top:20px" open>
+        <summary>Chatbot sur mon site web — les étapes</summary>
+        <p class="muted" style="font-size:.88rem;margin:12px 0 8px">Même IA que le SMS. Une bulle de chat apparaît en bas à droite de votre site.</p>
+        <ol class="forward-steps" style="margin:0 0 16px;font-size:.9rem">
+          <li>Configurez votre agent dans <a href="/chatbot.html">Chatbot</a> (services, FAQ, ton).</li>
+          <li>Dans <a href="/parametres.html">Paramètres</a>, cochez <strong>Activer le widget web</strong> et enregistrez.</li>
+          <li>Copiez le code ci-dessous.</li>
+          <li>Collez-le <strong>juste avant</strong> <code>&lt;/body&gt;</code> sur votre site (ou dans la section « code personnalisé / footer »).</li>
+          <li>Publiez / mettez en ligne la page, puis rechargez votre site — la bulle 💬 doit apparaître.</li>
+          <li>Testez : envoyez une question (prix, horaires). La conversation arrive aussi dans <a href="/conversations.html">Conversations</a>.</li>
+        </ol>
+        <p class="muted" style="font-size:.85rem;margin:0 0 10px"><strong>Où coller selon votre plateforme</strong></p>
+        <ul class="forward-steps" style="list-style:disc;margin:0 0 16px;font-size:.88rem;padding-left:1.25rem">
+          <li><strong>WordPress</strong> — Apparence → Éditeur de thème / Pied de page, ou plugin « Insert Headers and Footers »</li>
+          <li><strong>Wix</strong> — Paramètres → Code personnalisé → Body - end</li>
+          <li><strong>Squarespace</strong> — Paramètres → Code d'injection avancé → Footer</li>
+          <li><strong>Shopify</strong> — Boutique en ligne → Thèmes → Modifier le code → <code>theme.liquid</code> avant <code>&lt;/body&gt;</code></li>
+          <li><strong>Site HTML / Webflow</strong> — avant la balise de fermeture <code>&lt;/body&gt;</code></li>
+        </ul>
         <div class="install-code-row">
           <code id="widgetEmbedCodeInstall" style="font-size:.75rem;word-break:break-all">—</code>
           <button type="button" class="btn btn-accent btn-sm" id="btnCopyWidgetInstall">Copier</button>
         </div>
-        <p class="muted" style="font-size:.85rem;margin-top:12px"><a href="/chatbot.html">Configurer le chatbot →</a></p>
+        <p class="muted" style="font-size:.85rem;margin-top:12px">Rien ne s'affiche? Vérifiez que le widget est activé, que le code est bien publié, et faites un hard refresh (Ctrl+Shift+R).</p>
       </details>
     </div>
   </main>
