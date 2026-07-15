@@ -71,8 +71,20 @@ body.landing {
 
 .landing-nav-links a:hover { color: var(--navy); }
 
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 @media (min-width: 768px) {
   .landing-nav-links { display: flex; }
+}
+
+@media (max-width: 520px) {
+  .landing-nav-actions .landing-btn-sm { padding: 8px 12px; font-size: 0.8rem; }
+  .landing-nav-actions .landing-btn-lime { max-width: 9.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* Buttons */
