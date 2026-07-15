@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chatbot | NoviaAI</title>
+<title>Agent | NoviaAI</title>
 <link rel="stylesheet" href="/assets/saas.css?v=3">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
@@ -17,7 +17,7 @@
     <nav class="dash-nav">
       <a href="/dashboard.html">Tableau de bord</a>
       <a href="/publier.html">Publier</a>
-      <a href="/chatbot.html" class="active">Chatbot</a>
+      <a href="/chatbot.html" class="active">Agent</a>
       <a href="/conversations.html">Conversations</a>
       <a href="/parametres.html">Paramètres</a>
     </nav>
@@ -27,7 +27,7 @@
 
   <main class="dash-main">
     <div class="dash-header">
-      <h1>Chatbot SMS &amp; web</h1>
+      <h1>Agent SMS &amp; web</h1>
       <p class="muted" style="margin:0">Personnalité, services, FAQ et base de connaissances</p>
       <p class="muted" style="margin:8px 0 0;font-size:.88rem">Messages et ton de base déjà en place — ajoutez surtout vos <strong>services</strong>, <strong>FAQ</strong> et <strong>liens de réservation ou de soumission</strong>.</p>
     </div>
@@ -67,13 +67,13 @@
             <div class="settings-field">
               <label for="setPublicPhone">Numéro public (site web)</label>
               <input id="setPublicPhone" type="tel" placeholder="418-555-1234" autocomplete="tel">
-              <small class="settings-hint">Celui affiché sur votre site / Google — le bot le donne aux clients</small>
+              <small class="settings-hint">Celui affiché sur votre site / Google — l’agent le donne aux clients</small>
             </div>
             <div class="settings-field settings-field-wide">
               <label>Liens de réservation ou de soumission</label>
               <div id="reservationLinksList"></div>
               <button type="button" class="btn btn-ghost btn-sm" id="btnAddReservationLink" style="margin-top:8px">+ Ajouter un lien</button>
-              <small class="settings-hint">Un lien par service si besoin (ex. Coupe, Coloration…). Libellé + URL, puis Enregistrer — le bot envoie le bon lien selon la demande.</small>
+              <small class="settings-hint">Un lien par service si besoin (ex. Coupe, Coloration…). Libellé + URL, puis Enregistrer — l’agent envoie le bon lien selon la demande.</small>
             </div>
             <div class="settings-field">
               <label for="setAddress">Adresse</label>
@@ -138,7 +138,7 @@
             <button type="button" class="btn btn-ghost btn-sm" id="btnKbTestReset">Réinitialiser</button>
           </div>
           <div class="client-sim-phone kb-sim-phone">
-            <div class="client-sim-status"><span class="live-dot"></span> Test chatbot · pas de SMS réel</div>
+            <div class="client-sim-status"><span class="live-dot"></span> Test agent · pas de SMS réel</div>
             <div class="client-sim-msgs" id="kbTestMsgs" aria-live="polite"></div>
             <div class="client-sim-chips" id="kbTestChips"></div>
             <div class="client-sim-form" id="kbTestForm">
@@ -153,8 +153,8 @@
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
-          <button type="submit" class="btn btn-primary" id="btnSaveChatbot">Enregistrer le chatbot</button>
-          <p id="chatbotOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0"> Chatbot enregistré</p>
+          <button type="submit" class="btn btn-primary" id="btnSaveChatbot">Enregistrer l’agent</button>
+          <p id="chatbotOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0">Agent enregistré</p>
           <p id="chatbotErr" class="err" hidden style="margin:0"></p>
         </div>
       </form>

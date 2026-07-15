@@ -1075,7 +1075,7 @@ function initClientSim() {
           body: JSON.stringify({ action: 'test', question: message, history: histForApi }),
         });
         if (res.error) throw new Error(res.error);
-        reply = res.reply || 'Désolée, je n\'ai pas pu répondre. Réessayez ou configurez le chatbot.';
+        reply = res.reply || 'Désolé, je n\'ai pas pu répondre. Réessayez ou configurez l\'agent.';
       }
       typing.remove();
       appendBubble('assistant', reply);
