@@ -247,6 +247,14 @@ body.landing {
   font-size: clamp(1.05rem, 2.8vw, 1.2rem);
   color: rgba(255, 255, 255, 0.88);
   line-height: 1.6;
+  margin: 0 0 12px;
+  max-width: 480px;
+}
+
+.landing-hero .landing-stat-source {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.62);
   margin: 0 0 28px;
   max-width: 480px;
 }
