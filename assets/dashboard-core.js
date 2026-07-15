@@ -71,7 +71,7 @@ function populateSettingsForm(t) {
 function widgetEmbedCode(t) {
   if (!t || !t.widget_public_id) return 'Enregistrez vos paramètres pour générer le code.';
   const base = location.origin.replace(/\/$/, '');
-  return `<script src="${base}/widget.js?v=2" data-widget-id="${t.widget_public_id}" async><\/script>`;
+  return `<script src="${base}/widget.js?v=3" data-widget-id="${t.widget_public_id}" async><\/script>`;
 }
 
 function updateWidgetEmbedUI(t) {
