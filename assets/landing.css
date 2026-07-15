@@ -811,3 +811,38 @@ body.landing {
 .landing .novia-landing-chat-msg.out {
   background: var(--navy) !important;
 }
+
+.landing-article {
+  max-width: 720px;
+  padding: 48px var(--pad) 64px;
+}
+
+.landing-article h2 {
+  margin: 32px 0 12px;
+  font-size: 1.25rem;
+  color: var(--navy);
+}
+
+.landing-article p,
+.landing-article-list {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.landing-article-list {
+  padding-left: 1.25rem;
+}
+
+.landing-article-list li { margin-bottom: 8px; }
+
+.landing-article-cta {
+  margin-top: 40px;
+  padding: 28px;
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.landing-article-cta h2 { margin-top: 0; }

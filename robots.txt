@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Allow: /index.html
-Allow: /comment-ca-marche.html
+Allow: /appel-manque-pme.html
 Allow: /signup.html
 Allow: /login.html
 Allow: /conditions.html
