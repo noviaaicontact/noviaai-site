@@ -1,0 +1,31 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /comment-ca-marche.html
+Allow: /signup.html
+Allow: /login.html
+Allow: /conditions.html
+Allow: /confidentialite.html
+Allow: /politique-sms.html
+Allow: /apercu.html
+Allow: /demo.html
+
+Disallow: /dashboard.html
+Disallow: /onboarding.html
+Disallow: /parametres.html
+Disallow: /chatbot.html
+Disallow: /conversations.html
+Disallow: /publier.html
+Disallow: /setup.html
+Disallow: /portail.html
+Disallow: /auth/
+Disallow: /.netlify/
+
+Disallow: /site-noviaai-complet.html
+Disallow: /site-mzone-coiffure.html
+Disallow: /site-artis-coiffure.html
+Disallow: /site%20internet%20V9.html
+Disallow: /site%20internetV8.html
+Disallow: /site_internet_noviaAI_v7.html
+
+Sitemap: https://noviaai.ca/sitemap.xml
