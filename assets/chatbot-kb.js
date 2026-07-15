@@ -549,7 +549,7 @@ function initChatbotPanel(opts) {
     ok.hidden = true;
     err.hidden = true;
     if (!document.getElementById('setAgentName').value.trim()) {
-      err.textContent = 'Le prénom de l\'agente est requis.';
+      err.textContent = 'Le prénom de l\'agent est requis.';
       err.hidden = false;
       return;
     }

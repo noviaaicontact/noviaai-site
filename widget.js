@@ -5,7 +5,7 @@
   const widgetId = script.getAttribute('data-widget-id');
   if (!widgetId) return;
 
-  const base = script.src.replace(/\/widget\.js(\?.*)?$/, '');
+  const base = script.src.replace(/\/widget\.js(\?.*)?$/i, '');
   const apiConfig = base + '/.netlify/functions/api-widget-config?id=' + encodeURIComponent(widgetId);
   const apiChat = base + '/.netlify/functions/api-widget-chat';
 
@@ -157,7 +157,7 @@
     .then((data) => {
       if (!data.business_name) return;
       config = data;
-      head.innerHTML = '<strong>' + escapeHtml(data.business_name) + '</strong><span>Assistante IA · ' + escapeHtml(data.agent_name || 'Léa') + ' · en ligne</span>';
+      head.innerHTML = '<strong>' + escapeHtml(data.business_name) + '</strong><span>Assistant IA · ' + escapeHtml(data.agent_name || 'Léa') + ' · en ligne</span>';
       if (data.sms_href) {
         smsBar.innerHTML = 'Réponses générées par une assistante IA · Sur mobile? <a href="' + escapeHtml(data.sms_href) + '">Texto ' + escapeHtml(data.phone_display || '') + '</a>';
       } else {
