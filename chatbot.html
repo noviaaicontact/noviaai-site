@@ -58,18 +58,24 @@
         </div>
 
         <div class="settings-section">
-          <h3>Messages SMS</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Deux messages distincts — vous les rédigez ici, l'agent les utilise tels quels.</p>
+          <h3>Messages de l'agent</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 16px">Deux messages distincts selon le canal — rédigés ici, utilisés tels quels par l'agent.</p>
           <div class="settings-grid">
-            <div class="settings-field settings-field-wide">
-              <label for="setWelcomeSms">Message d'accueil</label>
+            <div class="settings-field settings-field-wide msg-channel-card">
+              <div class="msg-channel-head">
+                <span class="msg-channel-badge web">Site web</span>
+                <label for="setWelcomeSms">Message d'accueil — bulle chat sur votre site</label>
+              </div>
               <textarea id="setWelcomeSms" rows="2" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
-              <small class="settings-hint">Widget web sur votre site + première bulle du simulateur ci-dessous.</small>
+              <small class="settings-hint">Affiché dans le widget 💬 en bas à droite de votre site web quand un visiteur ouvre le chat.</small>
             </div>
-            <div class="settings-field settings-field-wide">
-              <label for="setMissedSms">Premier SMS après appel manqué</label>
+            <div class="settings-field settings-field-wide msg-channel-card">
+              <div class="msg-channel-head">
+                <span class="msg-channel-badge sms">SMS · Téléphone</span>
+                <label for="setMissedSms">Premier texto après appel manqué</label>
+              </div>
               <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Ici Léa, de [Commerce]. Désolé, on a manqué votre appel! Répondez à ce texto…"></textarea>
-              <small class="settings-hint">Envoyé automatiquement en SMS quand un client appelle sans réponse — texte exact, sans variation IA.</small>
+              <small class="settings-hint">Envoyé automatiquement en 📱 SMS quand un client appelle votre ligne sans réponse — texte exact, sans variation IA.</small>
             </div>
           </div>
         </div>
@@ -156,8 +162,8 @@
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <label for="kbTestPreview" class="muted" style="font-size:.82rem;margin:0">1re bulle :</label>
               <select id="kbTestPreview" class="btn btn-ghost btn-sm" style="font-size:.82rem;padding:6px 10px">
-                <option value="welcome">Message d'accueil</option>
-                <option value="missed">SMS appel manqué</option>
+                <option value="welcome">🌐 Site web — accueil</option>
+                <option value="missed">📱 SMS — appel manqué</option>
               </select>
               <button type="button" class="btn btn-ghost btn-sm" id="btnKbTestReset">Réinitialiser</button>
             </div>

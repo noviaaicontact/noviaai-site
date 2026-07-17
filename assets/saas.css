@@ -914,6 +914,44 @@ a:hover { text-decoration: underline; }
 .kb-badge.ok { background: #dcfce7; color: #166534; }
 .kb-badge.err { background: #fee2e2; color: #991b1b; }
 .kb-badge.wait { background: #fef3c7; color: #92400e; }
+
+.msg-channel-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fafbfd;
+}
+.msg-channel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.msg-channel-head label {
+  margin: 0;
+  font-weight: 600;
+}
+.msg-channel-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.msg-channel-badge.web {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.msg-channel-badge.sms {
+  background: #dcfce7;
+  color: #166534;
+}
+
 .kb-err { color: #b91c1c; font-size: .82rem; margin-top: 6px; }
 .kb-del { min-width: 32px; padding: 4px 8px !important; }
 
