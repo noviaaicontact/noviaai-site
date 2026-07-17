@@ -23,6 +23,7 @@ const DEFAULT_HOURS = {
 
 let _demo = false;
 let _chatbotBound = false;
+let _refreshTestWelcome = null;
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -235,6 +236,7 @@ function populateChatbotForm(t) {
   renderFaq(t.faq);
   renderReservationLinks(normalizeLinksFromTenant(t));
   if (!_demo) loadKnowledgeSources();
+  if (typeof _refreshTestWelcome === 'function') _refreshTestWelcome();
 }
 
 async function loadKnowledgeSources() {
@@ -417,6 +419,18 @@ function initChatbotPanel(opts) {
     return `Bonjour! Ici ${agentLabel()} — comment puis-je vous aider?`;
   }
 
+  function syncWelcomeBubble() {
+    const msgsEl = document.getElementById('kbTestMsgs');
+    if (!msgsEl || testHistory.length > 0) return;
+    const first = msgsEl.querySelector('.client-sim-bubble.agent:not(.typing)');
+    const text = welcomeTestMsg();
+    if (first) {
+      first.innerHTML = linkify(text);
+    } else {
+      appendTestBubble('assistant', text);
+    }
+  }
+
   function appendTestBubble(role, text, extraClass) {
     const msgsEl = document.getElementById('kbTestMsgs');
     if (!msgsEl) return null;
@@ -519,6 +533,13 @@ function initChatbotPanel(opts) {
     }
   }
 
+  _refreshTestWelcome = resetTestConvo;
+
+  const welcomeEl = document.getElementById('setWelcomeSms');
+  if (welcomeEl) {
+    welcomeEl.addEventListener('input', syncWelcomeBubble);
+  }
+
   const btnKbTestReset = document.getElementById('btnKbTestReset');
   if (btnKbTestReset) btnKbTestReset.onclick = () => resetTestConvo();
 
@@ -540,7 +561,9 @@ function initChatbotPanel(opts) {
     });
   }
 
-  resetTestConvo();
+  if (document.getElementById('setWelcomeSms')?.value?.trim()) {
+    resetTestConvo();
+  }
 
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -593,4 +616,5 @@ window.NoviaChatbot = {
   addFaqRow,
   addReservationLinkRow,
   DEFAULT_HOURS,
+  refreshTestWelcome: () => { if (_refreshTestWelcome) _refreshTestWelcome(); },
 };
