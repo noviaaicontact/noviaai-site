@@ -251,10 +251,19 @@ body.landing {
   max-width: 480px;
 }
 
+.landing-hero .landing-hero-stat {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.94);
+  margin: 0 0 8px;
+  max-width: 480px;
+}
+
 .landing-hero .landing-stat-source {
   font-size: 0.8rem;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.78);
   margin: 0 0 28px;
   max-width: 480px;
 }
