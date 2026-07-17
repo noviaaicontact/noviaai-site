@@ -27,6 +27,7 @@ create table if not exists public.tenants (
   policies jsonb default '[]'::jsonb,
   parking_info text,
   agent_tone text,
+  agent_instructions text,
   dossier jsonb,
   plan text default 'pro',
   subscription_status text default 'trialing',

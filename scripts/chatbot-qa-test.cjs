@@ -52,6 +52,7 @@ const TENANT = {
   business_type: 'Spas et piscines',
   agent_name: 'jean',
   agent_tone: 'francais quebecois, chaleureux',
+  agent_instructions: 'Toujours proposer un devis gratuit pour les piscines et spas.',
   website_url: 'https://www.spasetpiscines.com/',
   public_phone: '418-836-3138',
   twilio_number: '+15814996602',
@@ -180,6 +181,7 @@ async function main() {
     ['liens', /soumission-piscines/i.test(prompt)],
     ['règle tel', /RÈGLE TÉLÉPHONE/i.test(prompt)],
     ['règle lien', /RÈGLE LIEN/i.test(prompt)],
+    ['instructions', /INSTRUCTIONS PERSONNALISÉES/i.test(prompt) && /devis gratuit/i.test(prompt)],
   ].forEach(([label, ok]) => console.log(`${ok ? 'OK' : 'FAIL'} prompt:${label}`));
 
   console.log(`\n=== ${QUESTIONS.length} questions IA (KB=${!!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY)}) ===\n`);

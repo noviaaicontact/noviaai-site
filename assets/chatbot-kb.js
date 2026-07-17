@@ -225,6 +225,7 @@ function populateChatbotForm(t) {
   set('setAgentName', t.agent_name || 'Léa');
   set('setBusinessType', t.business_type || '');
   set('setAgentTone', t.agent_tone || '');
+  set('setAgentInstructions', t.agent_instructions || '');
   set('setWelcomeSms', t.welcome_sms || '');
   set('setWebsiteUrl', t.website_url || '');
   set('setPublicPhone', t.public_phone || '');
@@ -583,6 +584,7 @@ function initChatbotPanel(opts) {
         agent_name: document.getElementById('setAgentName').value.trim(),
         business_type: document.getElementById('setBusinessType').value.trim(),
         agent_tone: document.getElementById('setAgentTone').value.trim(),
+        agent_instructions: document.getElementById('setAgentInstructions').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
         website_url: document.getElementById('setWebsiteUrl').value.trim(),
         public_phone: document.getElementById('setPublicPhone')?.value.trim() || '',
