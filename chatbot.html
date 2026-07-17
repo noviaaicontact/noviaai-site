@@ -29,7 +29,7 @@
     <div class="dash-header">
       <h1>Agent SMS &amp; web</h1>
       <p class="muted" style="margin:0">Personnalité, services, FAQ et base de connaissances</p>
-      <p class="muted" style="margin:8px 0 0;font-size:.88rem">Messages et ton de base déjà en place — ajoutez surtout vos <strong>services</strong>, <strong>FAQ</strong> et <strong>liens de réservation ou de soumission</strong>.</p>
+      <p class="muted" style="margin:8px 0 0;font-size:.88rem">Configurez vos <strong>messages SMS</strong>, <strong>services</strong>, <strong>FAQ</strong> et <strong>liens de soumission</strong>.</p>
     </div>
 
     <div class="card">
@@ -54,9 +54,22 @@
               <textarea id="setAgentInstructions" rows="4" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit. Mentionner la livraison partout au Québec. Ne jamais parler de la concurrence."></textarea>
               <small class="settings-hint">Consignes métier, sujets à mettre de l'avant ou à éviter — l'agent les suit sans inventer de faits absents de la base.</small>
             </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>Messages SMS</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Deux messages distincts — vous les rédigez ici, l'agent les utilise tels quels.</p>
+          <div class="settings-grid">
             <div class="settings-field settings-field-wide">
-              <label for="setWelcomeSms">Message d'accueil SMS</label>
+              <label for="setWelcomeSms">Message d'accueil</label>
               <textarea id="setWelcomeSms" rows="2" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
+              <small class="settings-hint">Widget web sur votre site + première bulle du simulateur ci-dessous.</small>
+            </div>
+            <div class="settings-field settings-field-wide">
+              <label for="setMissedSms">Premier SMS après appel manqué</label>
+              <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Ici Léa, de [Commerce]. Désolé, on a manqué votre appel! Répondez à ce texto…"></textarea>
+              <small class="settings-hint">Envoyé automatiquement en SMS quand un client appelle sans réponse — texte exact, sans variation IA.</small>
             </div>
           </div>
         </div>
@@ -140,7 +153,14 @@
               <h3 style="margin:0">Simuler une conversation</h3>
               <p class="muted" style="font-size:.88rem;margin:6px 0 0">Parlez comme un client — multi-tours, avec votre vraie config (services, FAQ, site).</p>
             </div>
-            <button type="button" class="btn btn-ghost btn-sm" id="btnKbTestReset">Réinitialiser</button>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <label for="kbTestPreview" class="muted" style="font-size:.82rem;margin:0">1re bulle :</label>
+              <select id="kbTestPreview" class="btn btn-ghost btn-sm" style="font-size:.82rem;padding:6px 10px">
+                <option value="welcome">Message d'accueil</option>
+                <option value="missed">SMS appel manqué</option>
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnKbTestReset">Réinitialiser</button>
+            </div>
           </div>
           <div class="client-sim-phone kb-sim-phone">
             <div class="client-sim-status"><span class="live-dot"></span> Test agent · pas de SMS réel</div>

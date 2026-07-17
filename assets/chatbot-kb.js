@@ -227,6 +227,7 @@ function populateChatbotForm(t) {
   set('setAgentTone', t.agent_tone || '');
   set('setAgentInstructions', t.agent_instructions || '');
   set('setWelcomeSms', t.welcome_sms || '');
+  set('setMissedSms', t.missed_call_sms || '');
   set('setWebsiteUrl', t.website_url || '');
   set('setPublicPhone', t.public_phone || '');
   set('setAddress', t.address_line || '');
@@ -415,6 +416,12 @@ function initChatbotPanel(opts) {
   }
 
   function welcomeTestMsg() {
+    const preview = document.getElementById('kbTestPreview')?.value || 'welcome';
+    if (preview === 'missed') {
+      const m = document.getElementById('setMissedSms')?.value?.trim();
+      if (m) return m;
+      return `Bonjour! Ici ${agentLabel()} — désolé, on a manqué votre appel! Répondez à ce texto.`;
+    }
     const w = document.getElementById('setWelcomeSms')?.value?.trim();
     if (w) return w;
     return `Bonjour! Ici ${agentLabel()} — comment puis-je vous aider?`;
@@ -540,6 +547,16 @@ function initChatbotPanel(opts) {
   if (welcomeEl) {
     welcomeEl.addEventListener('input', syncWelcomeBubble);
   }
+  const missedEl = document.getElementById('setMissedSms');
+  if (missedEl) {
+    missedEl.addEventListener('input', syncWelcomeBubble);
+  }
+  const previewEl = document.getElementById('kbTestPreview');
+  if (previewEl) {
+    previewEl.addEventListener('change', () => {
+      if (testHistory.length === 0) syncWelcomeBubble();
+    });
+  }
 
   const btnKbTestReset = document.getElementById('btnKbTestReset');
   if (btnKbTestReset) btnKbTestReset.onclick = () => resetTestConvo();
@@ -586,6 +603,7 @@ function initChatbotPanel(opts) {
         agent_tone: document.getElementById('setAgentTone').value.trim(),
         agent_instructions: document.getElementById('setAgentInstructions').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
+        missed_call_sms: document.getElementById('setMissedSms').value.trim(),
         website_url: document.getElementById('setWebsiteUrl').value.trim(),
         public_phone: document.getElementById('setPublicPhone')?.value.trim() || '',
         reservation_links: collectReservationLinks(),

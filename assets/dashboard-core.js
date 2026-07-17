@@ -56,7 +56,6 @@ function populateSettingsForm(t) {
   set('setBusinessName', t.business_name || '');
   set('setBusinessPhone', t.phone_forward || '');
   set('setContactEmail', t.contact_email || t.email || '');
-  set('setMissedSms', t.missed_call_sms || '');
   set('setGoogleReviewUrl', t.google_review_url || '');
   set('setReviewRequestSms', t.review_request_sms || '');
   setCheck('setAutoReviewRequest', !!t.auto_review_request);
@@ -1198,7 +1197,6 @@ function initPageHandlers() {
           business_name: $('setBusinessName').value.trim(),
           phone_forward: $('setBusinessPhone').value.trim(),
           contact_email: $('setContactEmail').value.trim(),
-          missed_call_sms: $('setMissedSms').value.trim(),
           google_review_url: $('setGoogleReviewUrl').value.trim(),
           review_request_sms: $('setReviewRequestSms').value.trim(),
           auto_review_request: $('setAutoReviewRequest').checked,
