@@ -16,6 +16,7 @@ Disallow: /parametres.html
 Disallow: /chatbot.html
 Disallow: /conversations.html
 Disallow: /publier.html
+Disallow: /admin.html
 Disallow: /setup.html
 Disallow: /portail.html
 Disallow: /auth/

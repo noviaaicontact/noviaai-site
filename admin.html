@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css">
+</head>
+<body>
+<div class="admin-shell" id="adminApp">
+  <section class="admin-login card" id="adminLogin">
+    <h1>Novia<span style="color:var(--navy2)">AI</span> Admin</h1>
+    <p class="muted">Accès réservé — mot de passe défini dans <code>ADMIN_SECRET</code> (Netlify).</p>
+    <form id="adminLoginForm">
+      <label for="adminSecret">Mot de passe admin</label>
+      <input id="adminSecret" type="password" autocomplete="current-password" required placeholder="••••••••">
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Entrer</button>
+    </form>
+    <p id="adminLoginErr" class="err" hidden style="margin-top:12px"></p>
+  </section>
+
+  <section class="admin-panel" id="adminPanel" hidden>
+    <header class="admin-top">
+      <div>
+        <h1>Inscriptions SaaS</h1>
+        <p class="muted" style="margin:4px 0 0">Comptes, abonnements et lignes téléphoniques</p>
+      </div>
+      <div class="admin-top-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="btnAdminRefresh">Actualiser</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnAdminLogout">Déconnexion</button>
+      </div>
+    </header>
+
+    <div class="admin-stats" id="adminStats"></div>
+
+    <div class="card admin-filters">
+      <input type="search" id="adminSearch" placeholder="Rechercher commerce, courriel, numéro…" aria-label="Rechercher">
+      <select id="adminFilterStatus" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+        <option value="trialing">Essai</option>
+        <option value="active">Actif (payant)</option>
+        <option value="inactive">Inactif</option>
+        <option value="canceled">Annulé</option>
+      </select>
+      <select id="adminFilterLine" aria-label="Filtrer par ligne">
+        <option value="">Toutes les lignes</option>
+        <option value="active">Ligne active</option>
+        <option value="pending">En attente</option>
+        <option value="suspended">Suspendue</option>
+        <option value="failed">Échec</option>
+      </select>
+    </div>
+
+    <div class="card admin-table-wrap">
+      <p id="adminLoadErr" class="err" hidden></p>
+      <div class="admin-table-scroll">
+        <table class="admin-table" id="adminTable">
+          <thead>
+            <tr>
+              <th>Commerce</th>
+              <th>Courriel</th>
+              <th>Plan</th>
+              <th>Abonnement</th>
+              <th>Ligne</th>
+              <th>Inscrit</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            <tr><td colspan="7" class="muted">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p id="adminToast" class="admin-toast" hidden role="status"></p>
+  </section>
+</div>
+<script src="/assets/admin.js"></script>
+</body>
+</html>
