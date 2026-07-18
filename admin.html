@@ -6,16 +6,20 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Admin NoviaAI</title>
 <link rel="stylesheet" href="/assets/saas.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js"></script>
 </head>
 <body>
 <div class="admin-shell" id="adminApp">
   <section class="admin-login card" id="adminLogin">
     <h1>Novia<span style="color:var(--navy2)">AI</span> Admin</h1>
-    <p class="muted">Accès réservé — mot de passe défini dans <code>ADMIN_SECRET</code> (Netlify).</p>
+    <p class="muted">Connexion réservée aux administrateurs NoviaAI.</p>
     <form id="adminLoginForm">
-      <label for="adminSecret">Mot de passe admin</label>
-      <input id="adminSecret" type="password" autocomplete="current-password" required placeholder="••••••••">
-      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Entrer</button>
+      <label for="adminEmail">Courriel admin</label>
+      <input id="adminEmail" type="email" autocomplete="username" required placeholder="admin@noviaai.ca">
+      <label for="adminPassword">Mot de passe</label>
+      <input id="adminPassword" type="password" autocomplete="current-password" required placeholder="••••••••">
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:12px">Se connecter</button>
     </form>
     <p id="adminLoginErr" class="err" hidden style="margin-top:12px"></p>
   </section>
@@ -24,7 +28,7 @@
     <header class="admin-top">
       <div>
         <h1>Inscriptions SaaS</h1>
-        <p class="muted" style="margin:4px 0 0">Comptes, abonnements et lignes téléphoniques</p>
+        <p class="muted" style="margin:4px 0 0">Connecté · <span id="adminUserEmail">…</span></p>
       </div>
       <div class="admin-top-actions">
         <button type="button" class="btn btn-ghost btn-sm" id="btnAdminRefresh">Actualiser</button>

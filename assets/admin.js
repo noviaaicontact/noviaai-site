@@ -1,25 +1,23 @@
 (function () {
-  const STORAGE_KEY = 'novia_admin_secret';
   let tenants = [];
-  let secret = '';
+  let accessToken = '';
 
   const $ = (id) => document.getElementById(id);
 
-  function getSecret() {
-    return secret || sessionStorage.getItem(STORAGE_KEY) || '';
-  }
-
-  function setSecret(val) {
-    secret = val;
-    if (val) sessionStorage.setItem(STORAGE_KEY, val);
-    else sessionStorage.removeItem(STORAGE_KEY);
+  async function getToken() {
+    if (accessToken) return accessToken;
+    const sb = await NoviaApp.getSupabase();
+    if (!sb) return '';
+    const { data } = await sb.auth.getSession();
+    accessToken = data.session?.access_token || '';
+    return accessToken;
   }
 
   async function adminApi(fn, opts) {
     opts = opts || {};
     const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
-    const s = getSecret();
-    if (s) headers['X-Admin-Secret'] = s;
+    const token = await getToken();
+    if (token) headers.Authorization = 'Bearer ' + token;
     const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
     let data = {};
     try { data = await res.json(); } catch (_) { /* ignore */ }
@@ -177,7 +175,7 @@
         errEl.textContent = e.message || 'Erreur chargement';
         errEl.hidden = false;
       }
-      if (/401|403|Non autorisé|incorrect/i.test(e.message || '')) logout();
+      if (/401|403|Non autorisé|refusé/i.test(e.message || '')) logout();
     }
   }
 
@@ -204,37 +202,63 @@
     else toast('Mise à jour effectuée.');
   }
 
-  function showPanel() {
+  async function showPanel(email) {
     $('adminLogin').hidden = true;
     $('adminPanel').hidden = false;
-    loadTenants();
+    const emailEl = $('adminUserEmail');
+    if (emailEl) emailEl.textContent = email || 'admin';
+    await loadTenants();
   }
 
-  function logout() {
-    setSecret('');
+  async function logout() {
+    accessToken = '';
+    const sb = await NoviaApp.getSupabase();
+    if (sb) await sb.auth.signOut();
     $('adminPanel').hidden = true;
     $('adminLogin').hidden = false;
-    $('adminSecret').value = '';
+    $('adminPassword').value = '';
+  }
+
+  async function tryRestoreSession() {
+    const sb = await NoviaApp.getSupabase();
+    if (!sb) return;
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return;
+    try {
+      accessToken = data.session.access_token;
+      await adminApi('api-admin-tenants', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'verify' }),
+      });
+      await showPanel(data.session.user?.email);
+    } catch (_) {
+      await sb.auth.signOut();
+      accessToken = '';
+    }
   }
 
   $('adminLoginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = $('adminLoginErr');
     if (errEl) errEl.hidden = true;
-    const val = $('adminSecret')?.value?.trim();
-    if (!val) return;
+    const email = $('adminEmail')?.value?.trim();
+    const password = $('adminPassword')?.value || '';
+    if (!email || !password) return;
     try {
-      await fetch('/.netlify/functions/api-admin-tenants', {
+      const sb = await NoviaApp.getSupabase();
+      if (!sb) throw new Error('Service indisponible');
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      accessToken = data.session?.access_token || '';
+      await adminApi('api-admin-tenants', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Admin-Secret': val },
         body: JSON.stringify({ action: 'verify' }),
-      }).then(async (res) => {
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || 'Mot de passe incorrect');
       });
-      setSecret(val);
-      showPanel();
+      await showPanel(email);
     } catch (ex) {
+      const sb = await NoviaApp.getSupabase();
+      if (sb) await sb.auth.signOut();
+      accessToken = '';
       if (errEl) {
         errEl.textContent = ex.message || 'Connexion impossible';
         errEl.hidden = false;
@@ -282,5 +306,5 @@
     }
   });
 
-  if (getSecret()) showPanel();
+  tryRestoreSession();
 })();

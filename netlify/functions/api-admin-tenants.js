@@ -1,6 +1,10 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getAdmin } = require('../../lib/db');
-const { checkAdmin, isAdminConfigured } = require('../../lib/admin-auth');
+const {
+  checkAdminAccess,
+  isAdminConfigured,
+  getAdminEmailList,
+} = require('../../lib/admin-auth');
 const { suspendTenant } = require('../../lib/provision');
 
 const TENANT_LIST_FIELDS = [
@@ -31,17 +35,23 @@ exports.handler = async (event) => {
   }
 
   if (!isAdminConfigured()) {
-    return json(503, { error: 'ADMIN_SECRET non configuré sur le serveur.' });
+    return json(503, { error: 'Admin non configuré — définissez ADMIN_EMAIL dans Netlify.' });
   }
 
   const body = parseJson(event);
 
   if (event.httpMethod === 'POST' && body.action === 'verify') {
-    if (!checkAdmin(event)) return json(401, { error: 'Mot de passe admin incorrect.' });
-    return json(200, { ok: true });
+    const access = await checkAdminAccess(event);
+    if (!access.ok) return json(401, { error: 'Accès refusé — compte non autorisé.' });
+    return json(200, {
+      ok: true,
+      via: access.via,
+      email: access.user?.email || null,
+    });
   }
 
-  if (!checkAdmin(event)) return json(401, { error: 'Non autorisé' });
+  const access = await checkAdminAccess(event);
+  if (!access.ok) return json(401, { error: 'Non autorisé' });
 
   const db = getAdmin();
   if (!db) return json(503, { error: 'Base de données non configurée' });
@@ -52,7 +62,11 @@ exports.handler = async (event) => {
       .select(TENANT_LIST_FIELDS)
       .order('created_at', { ascending: false });
     if (error) return json(500, { error: error.message });
-    return json(200, { summary: summarize(data), tenants: data || [] });
+    return json(200, {
+      summary: summarize(data),
+      tenants: data || [],
+      admin_emails: getAdminEmailList(),
+    });
   }
 
   if (event.httpMethod === 'PATCH') {
