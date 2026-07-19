@@ -1,0 +1,136 @@
+{
+  "source": "Pexels (gratuit, usage commercial — crédit apprécié)",
+  "license": "https://www.pexels.com/license/",
+  "videos": [
+    {
+      "id": 7791984,
+      "title": "PDG frustré au téléphone, équipe occupée",
+      "url": "https://www.pexels.com/video/a-man-frustrated-while-talking-on-the-phone-7791984/",
+      "scene": "probleme",
+      "tags": ["bureau", "stress", "trop d'appels"],
+      "use_in": ["Pub A hook", "Pub C scène 1"]
+    },
+    {
+      "id": 8426331,
+      "title": "Homme d'affaires stressé au téléphone",
+      "url": "https://www.pexels.com/video/man-talking-on-the-phone-and-wearing-his-eyeglasses-8426331/",
+      "scene": "probleme",
+      "tags": ["bureau", "stress"],
+      "use_in": ["Pub B scène 1"]
+    },
+    {
+      "id": 8480230,
+      "title": "Multitâche laptop + téléphone (WFH)",
+      "url": "https://www.pexels.com/video/man-talking-on-the-phone-while-using-laptop-8480230/",
+      "scene": "probleme",
+      "tags": ["occupé", "impossible de répondre"],
+      "use_in": ["Pub D"]
+    },
+    {
+      "id": 8987067,
+      "title": "Mécanicien sur son cell (garage)",
+      "url": "https://www.pexels.com/video/a-mechanic-using-his-cellphone-while-sitting-on-a-wheel-8987067/",
+      "scene": "probleme_pme",
+      "tags": ["garage", "mécanicien", "mains occupées"],
+      "use_in": ["Pub B hero", "niche trades"]
+    },
+    {
+      "id": 8987412,
+      "title": "Mécanicien en bleu de travail — cell",
+      "url": "https://www.pexels.com/video/man-wearing-blue-coverall-using-his-phone-8987412/",
+      "scene": "probleme_pme",
+      "tags": ["garage", "PME"],
+      "use_in": ["Pub B alt"]
+    },
+    {
+      "id": 8987403,
+      "title": "Mécanicien vérifie son téléphone sous la voiture",
+      "url": "https://www.pexels.com/video/a-man-using-a-smartphone-8987403/",
+      "scene": "probleme_pme",
+      "tags": ["garage", "appel manqué implicite"],
+      "use_in": ["Pub B scène 2"]
+    },
+    {
+      "id": 7822022,
+      "title": "Notification sur téléphone (nouveau message)",
+      "url": "https://www.pexels.com/video/notification-on-a-phone-7822022/",
+      "scene": "solution_sms",
+      "tags": ["SMS", "notification", "client"],
+      "use_in": ["Toutes les pubs — scène NoviaAI envoie SMS"]
+    },
+    {
+      "id": 8275082,
+      "title": "Gros plan — personne texte sur cell",
+      "url": "https://www.pexels.com/video/close-up-video-of-a-person-using-a-cellphone-8275082/",
+      "scene": "solution_sms",
+      "tags": ["texto", "SMS", "vertical"],
+      "use_in": ["Reels/TikTok", "Pub A scène 3"]
+    },
+    {
+      "id": 8052381,
+      "title": "Homme d'affaires texte dehors (costume bleu)",
+      "url": "https://www.pexels.com/video/a-person-using-mobile-phone-8052381/",
+      "scene": "solution_sms",
+      "tags": ["texto", "professionnel"],
+      "use_in": ["Pub C scène 3"]
+    },
+    {
+      "id": 7866222,
+      "title": "Homme d'affaires envoie un texto devant immeuble",
+      "url": "https://www.pexels.com/video/a-businessman-using-a-smartphone-7866222/",
+      "scene": "solution_sms",
+      "tags": ["texto", "corporate"],
+      "use_in": ["Pub D scène 3"]
+    },
+    {
+      "id": 5452852,
+      "title": "Agent service client au casque (relève)",
+      "url": "https://www.pexels.com/video/a-professional-service-consultant-talking-to-customer-5452852/",
+      "scene": "solution_ia",
+      "tags": ["accueil", "réponse", "IA métaphore"],
+      "use_in": ["Pub A scène 4 — « NoviaAI répond »"]
+    },
+    {
+      "id": 35402293,
+      "title": "Centre d'appels — agent au téléphone",
+      "url": "https://www.pexels.com/video/customer-service-agent-working-at-desk-35402293/",
+      "scene": "solution_ia",
+      "tags": ["accueil", "professionnel"],
+      "use_in": ["Pub C scène 4"]
+    },
+    {
+      "id": 6700013,
+      "title": "Homme d'affaires au téléphone (bureau moderne)",
+      "url": "https://www.pexels.com/video/a-man-talking-on-the-phone-6700013/",
+      "scene": "probleme",
+      "tags": ["bureau", "finance"],
+      "use_in": ["Pub C"]
+    },
+    {
+      "id": 8426322,
+      "title": "Homme d'affaires téléphone + documents",
+      "url": "https://www.pexels.com/video/businessman-working-while-talking-on-the-phone-8426322/",
+      "scene": "probleme",
+      "tags": ["bureau", "multitâche"],
+      "use_in": ["Pub A scène 2"]
+    },
+    {
+      "id": 13801295,
+      "title": "Partenaires regardent l'écran du cell (dehors)",
+      "url": "https://www.pexels.com/video/concerned-business-partners-looking-at-a-phone-screen-in-the-street-13801295/",
+      "scene": "resultat",
+      "tags": ["client satisfait", "lead"],
+      "use_in": ["Pub fin — client reçoit réponse"]
+    }
+  ],
+  "search_queries_extra": [
+    "missed phone call",
+    "phone ringing office",
+    "busy small business owner",
+    "hair salon worker",
+    "construction worker phone",
+    "restaurant kitchen busy",
+    "text message notification",
+    "happy customer phone"
+  ]
+}
