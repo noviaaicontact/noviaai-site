@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Pubs NoviaAI — Aperçu vidéos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root { --navy:#13325b; --accent:#c8f135; --bg:#0f172a; --card:#1e293b; --muted:#94a3b8; --line:#334155; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:Inter,sans-serif; background:var(--bg); color:#f1f5f9; }
+.wrap { max-width:1200px; margin:0 auto; padding:28px 16px 64px; }
+h1 { font-family:Syne,sans-serif; margin:0 0 6px; }
+h1 span { color:var(--accent); }
+.lead { color:var(--muted); margin:0 0 24px; max-width:720px; }
+.tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.tab { padding:9px 14px; border-radius:999px; border:1px solid var(--line); background:transparent; color:#e2e8f0; cursor:pointer; font-weight:600; font-size:.85rem; }
+.tab.active { background:var(--accent); color:var(--navy); border-color:var(--accent); }
+.panel { display:none; } .panel.active { display:block; }
+.notice { background:#1e3a5f; border:1px solid #2563eb; border-radius:10px; padding:12px 14px; font-size:.88rem; margin-bottom:20px; }
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+.vcard { background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+.vpreview {
+  position:relative; aspect-ratio:16/10; background:#000; cursor:pointer;
+}
+.vpreview img, .vpreview video {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.vpreview .play {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.35); opacity:0; transition:opacity .2s;
+  font-size:3rem; pointer-events:none;
+}
+.vpreview:hover .play { opacity:1; }
+.vpreview.playing .play { display:none; }
+.vbody { padding:14px 16px 16px; }
+.badge { display:inline-block; font-size:.65rem; font-weight:800; text-transform:uppercase; padding:3px 8px; border-radius:999px; margin-bottom:6px; }
+.badge.probleme { background:#fef3c7;color:#92400e; }
+.badge.probleme_pme { background:#fed7aa;color:#9a3412; }
+.badge.solution_sms { background:#dcfce7;color:#166534; }
+.badge.solution_ia { background:#dbeafe;color:#1e40af; }
+.badge.resultat { background:#e9d5ff;color:#6b21a8; }
+.vbody h3 { margin:0 0 8px; font-size:.95rem; }
+.vactions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.btn { display:inline-block; padding:8px 12px; border-radius:8px; font-weight:700; font-size:.78rem; text-decoration:none; border:none; cursor:pointer; }
+.btn-accent { background:var(--accent); color:var(--navy); }
+.btn-ghost { background:transparent; color:#cbd5e1; border:1px solid var(--line); }
+.ad-card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
+.shot { display:grid; grid-template-columns:64px 1fr; gap:12px; padding:12px; background:rgba(0,0,0,.2); border-radius:10px; margin-bottom:8px; }
+.shot-time { color:var(--accent); font-weight:800; font-size:.8rem; }
+.shot-vid { margin-top:8px; max-width:280px; border-radius:8px; overflow:hidden; border:1px solid var(--line); }
+.shot-vid video, .shot-vid .vpreview { aspect-ratio:16/9; }
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
+.modal.open { display:flex; }
+.modal-box { background:var(--card); border-radius:16px; max-width:900px; width:100%; overflow:hidden; }
+.modal-box video { width:100%; max-height:70vh; background:#000; }
+.modal-head { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); }
+.modal-close { background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Novia<span>AI</span> — Aperçu pubs</h1>
+  <p class="lead">Cliquez une vignette pour <strong>lire la vidéo</strong>. Aperçus animés Pexels (gratuits). Storyboards + scripts inclus.</p>
+  <div class="notice" id="apiNotice">Chargement du lecteur vidéo…</div>
+
+  <div class="tabs">
+    <button type="button" class="tab active" data-tab="videos">Banque vidéos (15)</button>
+    <button type="button" class="tab" data-tab="a">Pub A · 30 s</button>
+    <button type="button" class="tab" data-tab="b">Pub B · Garage</button>
+    <button type="button" class="tab" data-tab="c">Pub C · Bureau</button>
+    <button type="button" class="tab" data-tab="d">Pub D · Avant/Après</button>
+  </div>
+
+  <div id="panel-videos" class="panel active">
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
+
+  <div id="panel-a" class="panel">
+    <div class="ad-card"><h2>Pub A — Trop occupé (30 s)</h2>
+      <div class="shot"><div class="shot-time">0–3 s</div><div><strong>Mécanicien sous la voiture</strong><p>« Quand vous pouvez pas décrocher… »</p><div class="shot-vid" data-vid="8987403"></div></div></div>
+      <div class="shot"><div class="shot-time">3–8 s</div><div><strong>PDG frustré</strong><p>Appel manqué = client perdu</p><div class="shot-vid" data-vid="7791984"></div></div></div>
+      <div class="shot"><div class="shot-time">8–14 s</div><div><strong>Notification SMS</strong><p>NoviaAI texte en secondes</p><div class="shot-vid" data-vid="7822022"></div></div></div>
+      <div class="shot"><div class="shot-time">14–22 s</div><div><strong>Texto client</strong><div class="shot-vid" data-vid="8275082"></div></div></div>
+      <div class="shot"><div class="shot-time">22–30 s</div><div><strong>CTA noviaai.ca</strong></div></div>
+    </div>
+  </div>
+
+  <div id="panel-b" class="panel">
+    <div class="ad-card"><h2>Pub B — Garage (15 s vertical)</h2>
+      <div class="shot"><div class="shot-time">0–5 s</div><div><strong>Mécanicien occupé</strong><div class="shot-vid" data-vid="8987067"></div></div></div>
+      <div class="shot"><div class="shot-time">5–9 s</div><div><strong>SMS auto</strong><div class="shot-vid" data-vid="7822022"></div></div></div>
+      <div class="shot"><div class="shot-time">9–15 s</div><div><strong>Client texte</strong><div class="shot-vid" data-vid="8987412"></div></div></div>
+    </div>
+  </div>
+
+  <div id="panel-c" class="panel">
+    <div class="ad-card"><h2>Pub C — Bureau (30 s)</h2>
+      <div class="shot"><div class="shot-time">0–5 s</div><div><div class="shot-vid" data-vid="8426331"></div></div></div>
+      <div class="shot"><div class="shot-time">5–10 s</div><div><div class="shot-vid" data-vid="8480230"></div></div></div>
+      <div class="shot"><div class="shot-time">18–25 s</div><div><div class="shot-vid" data-vid="5452852"></div></div></div>
+    </div>
+  </div>
+
+  <div id="panel-d" class="panel">
+    <div class="ad-card"><h2>Pub D — Avant / Après (20 s)</h2>
+      <div class="shot"><div class="shot-time">AVANT</div><div><div class="shot-vid" data-vid="7791984"></div></div></div>
+      <div class="shot"><div class="shot-time">APRÈS</div><div><div class="shot-vid" data-vid="7822022"></div></div></div>
+      <div class="shot"><div class="shot-time">Résultat</div><div><div class="shot-vid" data-vid="13801295"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <strong id="modalTitle">Vidéo</strong>
+      <button type="button" class="modal-close" id="modalClose" aria-label="Fermer">×</button>
+    </div>
+    <video id="modalVideo" controls playsinline></video>
+    <div style="padding:12px 16px"><a id="modalPexels" href="#" target="_blank" rel="noopener" class="btn btn-ghost">Ouvrir sur Pexels</a></div>
+  </div>
+</div>
+
+<script>
+const VIDEOS = [
+  { id:7791984, title:"PDG frustré au téléphone", scene:"probleme", url:"https://www.pexels.com/video/a-man-frustrated-while-talking-on-the-phone-7791984/" },
+  { id:8426331, title:"Homme stressé au téléphone", scene:"probleme", url:"https://www.pexels.com/video/man-talking-on-the-phone-and-wearing-his-eyeglasses-8426331/" },
+  { id:8480230, title:"Multitâche laptop + téléphone", scene:"probleme", url:"https://www.pexels.com/video/man-talking-on-the-phone-while-using-laptop-8480230/" },
+  { id:8987067, title:"Mécanicien sur roue (garage)", scene:"probleme_pme", url:"https://www.pexels.com/video/a-mechanic-using-his-cellphone-while-sitting-on-a-wheel-8987067/" },
+  { id:8987412, title:"Mécanicien bleu de travail", scene:"probleme_pme", url:"https://www.pexels.com/video/man-wearing-blue-coverall-using-his-phone-8987412/" },
+  { id:8987403, title:"Mécanicien sous la voiture", scene:"probleme_pme", url:"https://www.pexels.com/video/a-man-using-a-smartphone-8987403/" },
+  { id:7822022, title:"Notification sur téléphone", scene:"solution_sms", url:"https://www.pexels.com/video/notification-on-a-phone-7822022/" },
+  { id:8275082, title:"Gros plan texto", scene:"solution_sms", url:"https://www.pexels.com/video/close-up-video-of-a-person-using-a-cellphone-8275082/" },
+  { id:8052381, title:"Homme d'affaires texte", scene:"solution_sms", url:"https://www.pexels.com/video/a-person-using-mobile-phone-8052381/" },
+  { id:7866222, title:"Texto devant immeuble", scene:"solution_sms", url:"https://www.pexels.com/video/a-businessman-using-a-smartphone-7866222/" },
+  { id:5452852, title:"Agent service client", scene:"solution_ia", url:"https://www.pexels.com/video/a-professional-service-consultant-talking-to-customer-5452852/" },
+  { id:35402293, title:"Centre d'appels", scene:"solution_ia", url:"https://www.pexels.com/video/customer-service-agent-working-at-desk-35402293/" },
+  { id:6700013, title:"Bureau moderne", scene:"probleme", url:"https://www.pexels.com/video/a-man-talking-on-the-phone-6700013/" },
+  { id:8426322, title:"Téléphone + documents", scene:"probleme", url:"https://www.pexels.com/video/businessman-working-while-talking-on-the-phone-8426322/" },
+  { id:13801295, title:"Clients regardent cell", scene:"resultat", url:"https://www.pexels.com/video/concerned-business-partners-looking-at-a-phone-screen-in-the-street-13801295/" }
+];
+const LABELS = { probleme:"Problème", probleme_pme:"PME occupée", solution_sms:"SMS", solution_ia:"Agent IA", resultat:"Résultat" };
+const cache = {};
+let apiOk = false;
+
+function frames(id) {
+  return [0,1,2,3,4].map(n => `https://images.pexels.com/videos/${id}/pictures/preview-${n}.jpeg`);
+}
+
+function previewHtml(id, small) {
+  const fs = frames(id);
+  return `<div class="vpreview" data-id="${id}" data-frame="0">
+    <img src="${fs[0]}" alt="Aperçu vidéo ${id}" loading="lazy">
+    <span class="play">▶</span>
+  </div>`;
+}
+
+async function fetchVideo(id) {
+  if (cache[id]) return cache[id];
+  try {
+    const r = await fetch('/.netlify/functions/api-pexels-preview?id=' + id);
+    const d = await r.json();
+    if (r.ok && d.mp4) { cache[id] = d; return d; }
+  } catch (_) {}
+  cache[id] = { id, poster: frames(id)[0], frames: frames(id), mp4: null };
+  return cache[id];
+}
+
+function animatePreviews() {
+  document.querySelectorAll('.vpreview:not(.playing)').forEach(el => {
+    if (el.querySelector('video')) return;
+    const id = el.dataset.id;
+    let n = Number(el.dataset.frame || 0);
+    const fs = frames(id);
+    n = (n + 1) % fs.length;
+    el.dataset.frame = n;
+    const img = el.querySelector('img');
+    if (img) img.src = fs[n];
+  });
+}
+
+async function playInModal(id, title, pexelsUrl) {
+  const modal = document.getElementById('modal');
+  const video = document.getElementById('modalVideo');
+  const data = await fetchVideo(id);
+  document.getElementById('modalTitle').textContent = title || ('Vidéo ' + id);
+  document.getElementById('modalPexels').href = pexelsUrl || data.url || '#';
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  if (data.mp4) {
+    video.src = data.mp4;
+    video.poster = data.poster;
+    modal.classList.add('open');
+    video.play().catch(() => {});
+  } else {
+    window.open(pexelsUrl || `https://www.pexels.com/video/${id}/`, '_blank');
+  }
+}
+
+function bindPreview(el, id, title, url) {
+  el.addEventListener('click', () => playInModal(id, title, url));
+}
+
+document.getElementById('videoGrid').innerHTML = VIDEOS.map(v => `
+  <article class="vcard">
+    ${previewHtml(v.id)}
+    <div class="vbody">
+      <span class="badge ${v.scene}">${LABELS[v.scene]||v.scene}</span>
+      <h3>${v.title}</h3>
+      <div class="vactions">
+        <button type="button" class="btn btn-accent btn-play" data-id="${v.id}">▶ Lire</button>
+        <a class="btn btn-ghost" href="${v.url}" target="_blank" rel="noopener">Pexels</a>
+      </div>
+    </div>
+  </article>`).join('');
+
+document.querySelectorAll('.vcard .vpreview').forEach((el, i) => {
+  const v = VIDEOS[i];
+  bindPreview(el, v.id, v.title, v.url);
+});
+document.querySelectorAll('.btn-play').forEach((btn, i) => {
+  btn.onclick = (e) => { e.stopPropagation(); const v = VIDEOS.find(x => String(x.id) === btn.dataset.id); playInModal(v.id, v.title, v.url); };
+});
+
+document.querySelectorAll('.shot-vid[data-vid]').forEach(el => {
+  const id = el.dataset.vid;
+  const v = VIDEOS.find(x => String(x.id) === id);
+  el.innerHTML = previewHtml(id, true);
+  bindPreview(el.querySelector('.vpreview'), id, v && v.title, v && v.url);
+});
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  };
+});
+
+document.getElementById('modalClose').onclick = () => {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modalVideo').pause();
+};
+document.getElementById('modal').onclick = (e) => {
+  if (e.target.id === 'modal') document.getElementById('modalClose').click();
+};
+
+fetch('/.netlify/functions/api-pexels-preview?id=7822022').then(r => r.json()).then(d => {
+  apiOk = !!d.mp4;
+  document.getElementById('apiNotice').innerHTML = apiOk
+    ? '✅ Lecteur vidéo actif — cliquez ▶ pour regarder en plein écran.'
+    : 'ℹ️ Aperçus animés actifs. Pour lire la vidéo ici, ajoutez <code>PEXELS_API_KEY</code> dans Netlify (gratuit sur pexels.com/api). Sinon cliquez ▶ → ouvre Pexels.';
+}).catch(() => {
+  document.getElementById('apiNotice').textContent = 'Aperçus animés — ouvrez via noviaai.ca après déploiement, ou cliquez pour aller sur Pexels.';
+});
+
+setInterval(animatePreviews, 700);
+</script>
+</body>
+</html>
