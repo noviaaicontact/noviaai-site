@@ -2,6 +2,7 @@ const { parseBody, escapeXml, xmlResponse, validateTwilioRequest, twilioUnauthor
 const { resolveClient } = require('../../lib/tenant');
 const { sendTextback } = require('../../lib/sms-send');
 const { toE164 } = require('../../lib/phone-util');
+const { buildVoicemailTwiml } = require('../../lib/voicemail');
 
 const SUSPENDED_TWIML = '<?xml version="1.0" encoding="UTF-8"?><Response><Say language="fr-CA">Ce service est temporairement suspendu. Merci de votre compréhension.</Say><Hangup/></Response>';
 
@@ -30,7 +31,9 @@ exports.handler = async (event) => {
     inner = `<Dial timeout="25" answerOnBridge="true" action="${escapeXml(action)}" method="POST"><Number>${escapeXml(forwardTo)}</Number></Dial>`;
   } else {
     try { await sendTextback(to, from); } catch (e) { console.error('textback (no-forward)', e); }
-    inner = '<Hangup/>';
+    const recordAction = `${base}/.netlify/functions/voice-recording?tn=${encodeURIComponent(to || '')}`;
+    const bizName = client?.tenant?.business_name || 'Notre entreprise';
+    return xmlResponse(buildVoicemailTwiml({ businessName: bizName, recordActionUrl: recordAction }));
   }
 
   return xmlResponse(`<?xml version="1.0" encoding="UTF-8"?><Response>${inner}</Response>`);

@@ -1,7 +1,9 @@
-// Après tentative de joindre le proprio : SMS de rattrapage si pas de réponse.
+// Après tentative de joindre le proprio : SMS de rattrapage + boîte vocale NoviaAI.
 const { parseBody, xmlResponse, validateTwilioRequest, twilioUnauthorized } = require('../../lib/twilio-util');
 const { sendTextback } = require('../../lib/sms-send');
+const { resolveClient } = require('../../lib/tenant');
 const { resolveDialCallbackNumbers, shouldSendTextback } = require('../../lib/voice-callback');
+const { buildVoicemailTwiml } = require('../../lib/voicemail');
 
 exports.handler = async (event) => {
   if (!validateTwilioRequest(event)) return twilioUnauthorized();
@@ -41,9 +43,14 @@ exports.handler = async (event) => {
         message: e.message,
       });
     }
-  } else {
-    console.log('voice-status: pas de SMS', { status, duration, bridged });
+
+    const base = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+    const recordAction = `${base}/.netlify/functions/voice-recording?tn=${encodeURIComponent(twilioNumber)}`;
+    const client = await resolveClient(twilioNumber);
+    const bizName = client?.tenant?.business_name || 'Notre entreprise';
+    return xmlResponse(buildVoicemailTwiml({ businessName: bizName, recordActionUrl: recordAction }));
   }
 
+  console.log('voice-status: pas de SMS/vocal', { status, duration, bridged });
   return xmlResponse('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
 };

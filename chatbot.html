@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=3">
+<link rel="stylesheet" href="/assets/saas.css?v=4">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -55,6 +55,19 @@
               <small class="settings-hint">Consignes métier, sujets à mettre de l'avant ou à éviter — l'agent les suit sans inventer de faits absents de la base.</small>
             </div>
           </div>
+        </div>
+
+        <div class="settings-section" id="favoris">
+          <h3>Favoris agent</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Infos que l'agent garde sous la main — promos, consignes urgentes, réponses types. Plus besoin de fouiller dans le chat pour les retrouver.</p>
+          <div id="favoritesList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnAddFavorite" style="margin-top:8px">+ Ajouter un favori</button>
+        </div>
+
+        <div class="settings-section" id="qualification">
+          <h3>Infos à collecter &amp; résumé client</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Choisissez ce que l'agent doit demander (nom, téléphone, demande, urgence…). Il produit un <strong>résumé structuré</strong> visible dans Conversations et dans vos alertes courriel.</p>
+          <div id="qualificationFieldsList" class="qual-fields-grid"></div>
         </div>
 
         <div class="settings-section">
@@ -192,8 +205,8 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=11"></script>
+<script src="/assets/chatbot-kb.js?v=13"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
-<script src="/assets/dashboard-core.js?v=13"></script>
+<script src="/assets/dashboard-core.js?v=15"></script>
 </body>
 </html>

@@ -1,0 +1,227 @@
+{
+  "product": "NoviaAI",
+  "locale": "fr-CA",
+  "format": "narrative_4_plans",
+  "scripts": [
+    {
+      "id": 1,
+      "titre": "Le trou sous l'évier",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "Il compose. Ça sonne dans le vide."},
+        {"scene": "busy", "texte": "Toi? T'es sous l'évier. Pris."},
+        {"scene": "sms", "texte": "Il reçoit ton texto. Tout de suite."},
+        {"scene": "result", "texte": "RDV booké. Écris PLOMBIER en privé."}
+      ]
+    },
+    {
+      "id": 2,
+      "titre": "Sous le capot",
+      "metier": "garagiste",
+      "plans": [
+        {"scene": "call", "texte": "Un client appelle. Personne répond."},
+        {"scene": "busy", "texte": "T'es sous un moteur. Impossible."},
+        {"scene": "sms", "texte": "Il lit ton message. Il répond."},
+        {"scene": "result", "texte": "Il arrive demain. Écris GARAGE."}
+      ]
+    },
+    {
+      "id": 3,
+      "titre": "Sur l'échelle",
+      "metier": "électricien",
+      "plans": [
+        {"scene": "call", "texte": "Le téléphone sonne. Encore."},
+        {"scene": "busy", "texte": "T'as les mains dans les fils."},
+        {"scene": "sms", "texte": "Un texto. De ta compagnie."},
+        {"scene": "result", "texte": "Soumission bookée. Écris ÉLECTRO."}
+      ]
+    },
+    {
+      "id": 4,
+      "titre": "Chantier bruyant",
+      "metier": "rénovation",
+      "plans": [
+        {"scene": "call", "texte": "Elle appelle pour une réno."},
+        {"scene": "busy", "texte": "T'entends rien. T'es en job."},
+        {"scene": "sms", "texte": "Elle reçoit ton texto. Soulagée."},
+        {"scene": "result", "texte": "Visite jeudi. Écris RÉNO en privé."}
+      ]
+    },
+    {
+      "id": 5,
+      "titre": "L'autre a répondu",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "Il raccroche. Frustré."},
+        {"scene": "busy", "texte": "Pendant ce temps, t'es occupé."},
+        {"scene": "sms", "texte": "Sauf qu'il reçoit ton texto."},
+        {"scene": "result", "texte": "Il t'appelle plus. Écris NOVIA."}
+      ]
+    },
+    {
+      "id": 6,
+      "titre": "Samedi soir",
+      "metier": "garagiste",
+      "plans": [
+        {"scene": "call", "texte": "19 h. Ça sonne. Personne."},
+        {"scene": "busy", "texte": "T'es encore au garage."},
+        {"scene": "sms", "texte": "Le texto part quand même."},
+        {"scene": "result", "texte": "Lundi matin: booké. Écris SAMEDI."}
+      ]
+    },
+    {
+      "id": 7,
+      "titre": "La fuite",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "Fuite. Panique. J'appelle."},
+        {"scene": "busy", "texte": "Jean est sous l'évier. Pris."},
+        {"scene": "sms", "texte": "Puis un texto de Jean."},
+        {"scene": "result", "texte": "Jean arrive. Écris URGENCE."}
+      ]
+    },
+    {
+      "id": 8,
+      "titre": "Deux mains",
+      "metier": "électricien",
+      "plans": [
+        {"scene": "call", "texte": "Appel manqué. Encore un."},
+        {"scene": "busy", "texte": "Deux mains. Pas trois."},
+        {"scene": "sms", "texte": "Le texto fait le job."},
+        {"scene": "result", "texte": "Client content. Écris 2MAINS."}
+      ]
+    },
+    {
+      "id": 9,
+      "titre": "Boîte vocale",
+      "metier": "rénovation",
+      "plans": [
+        {"scene": "call", "texte": "Boîte vocale. Il raccroche."},
+        {"scene": "busy", "texte": "Toi? En pleine démolition."},
+        {"scene": "sms", "texte": "Un texto? Là il reste."},
+        {"scene": "result", "texte": "Soumission signée. Écris OUI."}
+      ]
+    },
+    {
+      "id": 10,
+      "titre": "Le compétiteur",
+      "metier": "garagiste",
+      "plans": [
+        {"scene": "call", "texte": "Ton client compose."},
+        {"scene": "busy", "texte": "T'es en réparation. Pris."},
+        {"scene": "sms", "texte": "Ton texto arrive en premier."},
+        {"scene": "result", "texte": "Sa job. Chez toi. Écris JOB."}
+      ]
+    },
+    {
+      "id": 11,
+      "titre": "Minuit",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "Minuit. Inondation. Appel."},
+        {"scene": "busy", "texte": "T'es en pyjama. Dormais."},
+        {"scene": "sms", "texte": "30 secondes. Un texto."},
+        {"scene": "result", "texte": "RDV 7 h. Écris NUIT."}
+      ]
+    },
+    {
+      "id": 12,
+      "titre": "Le calcul",
+      "metier": "électricien",
+      "plans": [
+        {"scene": "call", "texte": "3 appels. Zéro réponse."},
+        {"scene": "busy", "texte": "T'étais sur le chantier."},
+        {"scene": "sms", "texte": "3 textos. 2 réponses."},
+        {"scene": "result", "texte": "2 jobs de plus. Écris CALCUL."}
+      ]
+    },
+    {
+      "id": 13,
+      "titre": "Côté client",
+      "metier": "rénovation",
+      "plans": [
+        {"scene": "call", "texte": "Personne répond. Déçue."},
+        {"scene": "busy", "texte": "Le rénovateur est occupé."},
+        {"scene": "sms", "texte": "Un texto: « On vous appelle »"},
+        {"scene": "result", "texte": "Elle est contente. Écris CLIENT."}
+      ]
+    },
+    {
+      "id": 14,
+      "titre": "Lévis",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "Appel manqué. Comme avant."},
+        {"scene": "busy", "texte": "Mains dans l'eau. Toujours."},
+        {"scene": "sms", "texte": "Maintenant? Un texto auto."},
+        {"scene": "result", "texte": "Bâti à Lévis. Écris LÉVIS."}
+      ]
+    },
+    {
+      "id": 15,
+      "titre": "Camionnette",
+      "metier": "garagiste",
+      "plans": [
+        {"scene": "call", "texte": "Il appelle depuis l'autoroute."},
+        {"scene": "busy", "texte": "T'es dans la fosse. Pris."},
+        {"scene": "sms", "texte": "Notification. Ton commerce."},
+        {"scene": "result", "texte": "Pneus demain. Écris PNEU."}
+      ]
+    },
+    {
+      "id": 16,
+      "titre": "Souper",
+      "metier": "électricien",
+      "plans": [
+        {"scene": "call", "texte": "Ça sonne au souper."},
+        {"scene": "busy", "texte": "Tu réponds pas. Normal."},
+        {"scene": "sms", "texte": "Le texto part pendant qu'tu manges."},
+        {"scene": "result", "texte": "Job demain. Écris SOUPER."}
+      ]
+    },
+    {
+      "id": 17,
+      "titre": "15 000$",
+      "metier": "rénovation",
+      "plans": [
+        {"scene": "call", "texte": "Une cuisine. 15 000$."},
+        {"scene": "busy", "texte": "Tu mesures. Tu peux pas parler."},
+        {"scene": "sms", "texte": "Elle reçoit ton texto pro."},
+        {"scene": "result", "texte": "Soumission signée. Écris 15000."}
+      ]
+    },
+    {
+      "id": 18,
+      "titre": "Test du client",
+      "metier": "plombier",
+      "plans": [
+        {"scene": "call", "texte": "4 sonneries. Il raccroche."},
+        {"scene": "busy", "texte": "T'as 30 secondes max."},
+        {"scene": "sms", "texte": "Texto avant qu'il parte."},
+        {"scene": "result", "texte": "Il reste. Écris TEST."}
+      ]
+    },
+    {
+      "id": 19,
+      "titre": "Matin",
+      "metier": "garagiste",
+      "plans": [
+        {"scene": "call", "texte": "4 appels hier soir."},
+        {"scene": "busy", "texte": "T'étais fermé. Normal."},
+        {"scene": "sms", "texte": "Chaque appel? Un texto."},
+        {"scene": "result", "texte": "3 RDV ce matin. Écris MATIN."}
+      ]
+    },
+    {
+      "id": 20,
+      "titre": "Simple",
+      "metier": "électricien",
+      "plans": [
+        {"scene": "call", "texte": "Appel manqué."},
+        {"scene": "busy", "texte": "Commerçant occupé."},
+        {"scene": "sms", "texte": "Client reçoit un texto."},
+        {"scene": "result", "texte": "RDV booké. Écris NOVIA en privé."}
+      ]
+    }
+  ]
+}

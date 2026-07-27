@@ -1,0 +1,10 @@
+.venv/
+clips/
+selection/
+logs/
+*.log
+.pipeline_state.json
+pubs/pub_0*.mp4
+pubs/pub_1*.mp4
+pubs/pub_test.mp4
+pubs/pub_*_test.mp4

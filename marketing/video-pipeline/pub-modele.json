@@ -1,0 +1,53 @@
+{
+  "format": {
+    "resolution": "1080x1920",
+    "fps": 30,
+    "duree_totale": 25
+  },
+  "style_texte": {
+    "police": "Montserrat Bold",
+    "taille": 90,
+    "couleur": "#FFFFFF",
+    "contour": "#000000",
+    "position": "centre-haut",
+    "bande_fond": "noir 60% opacite"
+  },
+  "pub_exemple": {
+    "id": "pub_01",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "plumber_under_sink_01.mp4",
+        "texte": "Le téléphone sonne.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "phone_ringing_table_02.mp4",
+        "texte": "Tu peux pas répondre.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "man_texting_phone_01.mp4",
+        "texte": "Novia répond pour toi. Pis il prend le rendez-vous.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "handshake_customer_01.mp4",
+        "texte": "Écris-moi en commentaire.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  }
+}

@@ -78,9 +78,11 @@ exports.handler = async (event) => {
 
     let reply = null;
     let historyForReview = [];
+    let conversationHistory = [];
     if (body && dossier) {
       const history = await loadHistory(key, tenantId, from);
       historyForReview = history;
+      conversationHistory = history;
       history.push({ role: 'user', content: body });
       reply = await generateReply(dossier, history.slice(0, -1), body, tenantId);
       if (reply) {
@@ -108,6 +110,7 @@ exports.handler = async (event) => {
           callerPhone: from,
           userMessage: body,
           aiReply: reply,
+          history: conversationHistory,
         }).catch((e) => console.error('agent-tools', e.message));
         maybeAutoReviewRequest({
           tenant: client.tenant,

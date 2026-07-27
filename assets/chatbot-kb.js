@@ -11,6 +11,15 @@ const HOUR_DAYS = [
   { key: 'dimanche', label: 'Dimanche' },
 ];
 
+const DEFAULT_QUALIFICATION_FIELDS = [
+  { key: 'nom', label: 'Nom du client', enabled: true, required: true },
+  { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
+  { key: 'demande', label: 'Demande / sujet', enabled: true, required: true },
+  { key: 'urgence', label: 'Urgence', enabled: true, required: false },
+  { key: 'adresse', label: 'Adresse', enabled: true, required: false },
+  { key: 'disponibilites', label: 'Disponibilités', enabled: true, required: false },
+];
+
 const DEFAULT_HOURS = {
   lundi: { ouvert: true, debut: '9h', fin: '17h' },
   mardi: { ouvert: true, debut: '9h', fin: '17h' },
@@ -125,6 +134,83 @@ function collectFaq() {
   })).filter((f) => f.question && f.reponse);
 }
 
+function favoriteRowHtml(f, idx) {
+  const favId = f.id || '';
+  return `<div class="kb-row kb-row-fav" data-idx="${idx}" data-fav-id="${esc(favId)}">
+    <input type="text" class="fav-label" placeholder="Libellé (ex. Promo mars)" value="${esc(f.label || '')}">
+    <textarea class="fav-content" rows="2" placeholder="Ce que l'agent doit retenir et utiliser">${esc(f.content || '')}</textarea>
+    <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
+  </div>`;
+}
+
+function renderFavorites(favorites) {
+  const el = document.getElementById('favoritesList');
+  if (!el) return;
+  const list = Array.isArray(favorites) && favorites.length ? favorites : [{ label: '', content: '' }];
+  el.innerHTML = list.map((f, i) => favoriteRowHtml(f, i)).join('');
+  bindRemoveButtons(el);
+}
+
+function collectFavorites() {
+  return Array.from(document.querySelectorAll('#favoritesList .kb-row')).map((row, i) => ({
+    id: row.dataset.favId || `fav-${i}-${Date.now()}`,
+    label: row.querySelector('.fav-label').value.trim(),
+    content: row.querySelector('.fav-content').value.trim(),
+  })).filter((f) => f.content);
+}
+
+function addFavoriteRow() {
+  const el = document.getElementById('favoritesList');
+  if (!el) return false;
+  el.insertAdjacentHTML('beforeend', favoriteRowHtml({ label: '', content: '' }, el.children.length));
+  bindRemoveButtons(el);
+  const inputs = el.querySelectorAll('.fav-content');
+  const last = inputs[inputs.length - 1];
+  if (last) last.focus();
+  return true;
+}
+
+function normalizeQualificationFieldsClient(raw) {
+  const byKey = new Map(DEFAULT_QUALIFICATION_FIELDS.map((f) => [f.key, { ...f }]));
+  if (Array.isArray(raw)) {
+    raw.forEach((item) => {
+      if (!item || !byKey.has(item.key)) return;
+      const base = byKey.get(item.key);
+      byKey.set(item.key, {
+        ...base,
+        label: String(item.label || base.label).trim() || base.label,
+        enabled: item.enabled !== false,
+        required: !!item.required,
+      });
+    });
+  }
+  return DEFAULT_QUALIFICATION_FIELDS.map((f) => byKey.get(f.key));
+}
+
+function qualificationFieldRowHtml(f) {
+  return `<div class="qual-field-row" data-key="${esc(f.key)}">
+    <label class="qual-field-check"><input type="checkbox" class="qual-enabled" ${f.enabled !== false ? 'checked' : ''}> Collecter</label>
+    <input type="text" class="qual-label" value="${esc(f.label)}" placeholder="Libellé affiché">
+    <label class="qual-field-req"><input type="checkbox" class="qual-required" ${f.required ? 'checked' : ''}> Requis</label>
+  </div>`;
+}
+
+function renderQualificationFields(fields) {
+  const el = document.getElementById('qualificationFieldsList');
+  if (!el) return;
+  const list = normalizeQualificationFieldsClient(fields);
+  el.innerHTML = list.map((f) => qualificationFieldRowHtml(f)).join('');
+}
+
+function collectQualificationFields() {
+  return Array.from(document.querySelectorAll('#qualificationFieldsList .qual-field-row')).map((row) => ({
+    key: row.dataset.key,
+    label: row.querySelector('.qual-label').value.trim(),
+    enabled: row.querySelector('.qual-enabled').checked,
+    required: row.querySelector('.qual-required').checked,
+  }));
+}
+
 function bindRemoveButtons(container) {
   if (!container) return;
   container.querySelectorAll('.kb-remove').forEach((btn) => {
@@ -236,6 +322,8 @@ function populateChatbotForm(t) {
   renderHours(t.hours || DEFAULT_HOURS);
   renderServices(t.services);
   renderFaq(t.faq);
+  renderFavorites(t.agent_favorites);
+  renderQualificationFields(t.qualification_fields);
   renderReservationLinks(normalizeLinksFromTenant(t));
   if (!_demo) loadKnowledgeSources();
   if (typeof _refreshTestWelcome === 'function') _refreshTestWelcome();
@@ -314,6 +402,12 @@ function bindUiClicks() {
       e.preventDefault();
       e.stopPropagation();
       addReservationLinkRow();
+      return;
+    }
+    if (t.closest('#btnAddFavorite')) {
+      e.preventDefault();
+      e.stopPropagation();
+      addFavoriteRow();
     }
   });
 }
@@ -613,6 +707,8 @@ function initChatbotPanel(opts) {
         hours: collectHours(),
         services: collectServices(),
         faq: collectFaq(),
+        agent_favorites: collectFavorites(),
+        qualification_fields: collectQualificationFields(),
       };
       const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });
       if (res.error) throw new Error(res.error);
@@ -634,6 +730,7 @@ window.NoviaChatbot = {
   loadKnowledgeSources,
   addServiceRow,
   addFaqRow,
+  addFavoriteRow,
   addReservationLinkRow,
   DEFAULT_HOURS,
   refreshTestWelcome: () => { if (_refreshTestWelcome) _refreshTestWelcome(); },

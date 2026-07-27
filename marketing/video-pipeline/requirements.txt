@@ -1,0 +1,10 @@
+requests>=2.31.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+moviepy>=1.0.3
+imageio-ffmpeg>=0.4.9
+
+# Optionnel — détection de texte incrusté (installez aussi le moteur OCR)
+# pytesseract>=0.3.10
+# easyocr>=1.7.0

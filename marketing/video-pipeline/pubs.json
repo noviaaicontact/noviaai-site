@@ -1,0 +1,762 @@
+[
+  {
+    "id": "pub_01",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_01.mp4",
+        "texte": "Il compose. Ça sonne dans le vide.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_01.mp4",
+        "texte": "Toi? T'es sous l'évier. Pris.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "Il reçoit ton texto. Tout de suite.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_handshake_customer_shop_01.mp4",
+        "texte": "RDV booké. Écris PLOMBIER en privé.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_02",
+    "metier": "garagiste",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_01.mp4",
+        "texte": "Un client appelle. Personne répond.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_garage_mechanic_working_01.mp4",
+        "texte": "T'es sous un moteur. Impossible.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_garage_01.mp4",
+        "texte": "Il lit ton message. Il répond.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_happy_customer_phone_01.mp4",
+        "texte": "Il arrive demain. Écris GARAGE.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_03",
+    "metier": "électricien",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_01.mp4",
+        "texte": "Le téléphone sonne. Encore.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_electrician_working_wires_03.mp4",
+        "texte": "T'as les mains dans les fils.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_electro_01.mp4",
+        "texte": "Un texto. De ta compagnie.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_contractor_phone_smile_01.mp4",
+        "texte": "Soumission bookée. Écris ÉLECTRO.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_04",
+    "metier": "rénovation",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_02.mp4",
+        "texte": "Elle appelle pour une réno.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_construction_worker_busy_04.mp4",
+        "texte": "T'entends rien. T'es en job.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_reno_01.mp4",
+        "texte": "Elle reçoit ton texto. Soulagée.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_small_business_owner_phone_01.mp4",
+        "texte": "Visite jeudi. Écris RÉNO en privé.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_05",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_02.mp4",
+        "texte": "Il raccroche. Frustré.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_01.mp4",
+        "texte": "Pendant ce temps, t'es occupé.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "Sauf qu'il reçoit ton texto.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_handshake_customer_shop_02.mp4",
+        "texte": "Il t'appelle plus. Écris NOVIA.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_06",
+    "metier": "garagiste",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_02.mp4",
+        "texte": "19 h. Ça sonne. Personne.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_garage_mechanic_working_01.mp4",
+        "texte": "T'es encore au garage.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_garage_01.mp4",
+        "texte": "Le texto part quand même.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_happy_customer_phone_02.mp4",
+        "texte": "Lundi matin: booké. Écris SAMEDI.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_07",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_03.mp4",
+        "texte": "Fuite. Panique. J'appelle.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_03.mp4",
+        "texte": "Jean est sous l'évier. Pris.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "Puis un texto de Jean.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_contractor_phone_smile_02.mp4",
+        "texte": "Jean arrive. Écris URGENCE.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_08",
+    "metier": "électricien",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_03.mp4",
+        "texte": "Appel manqué. Encore un.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_electrician_working_wires_04.mp4",
+        "texte": "Deux mains. Pas trois.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_electro_01.mp4",
+        "texte": "Le texto fait le job.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_small_business_owner_phone_02.mp4",
+        "texte": "Client content. Écris 2MAINS.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_09",
+    "metier": "rénovation",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_03.mp4",
+        "texte": "Boîte vocale. Il raccroche.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_construction_worker_busy_01.mp4",
+        "texte": "Toi? En pleine démolition.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_reno_01.mp4",
+        "texte": "Un texto? Là il reste.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_handshake_customer_shop_03.mp4",
+        "texte": "Soumission signée. Écris OUI.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_10",
+    "metier": "garagiste",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_04.mp4",
+        "texte": "Ton client compose.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_garage_mechanic_working_01.mp4",
+        "texte": "T'es en réparation. Pris.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_garage_01.mp4",
+        "texte": "Ton texto arrive en premier.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_happy_customer_phone_03.mp4",
+        "texte": "Sa job. Chez toi. Écris JOB.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_11",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_04.mp4",
+        "texte": "Minuit. Inondation. Appel.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_03.mp4",
+        "texte": "T'es en pyjama. Dormais.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "30 secondes. Un texto.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_contractor_phone_smile_03.mp4",
+        "texte": "RDV 7 h. Écris NUIT.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_12",
+    "metier": "électricien",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_04.mp4",
+        "texte": "3 appels. Zéro réponse.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_electrician_working_wires_04.mp4",
+        "texte": "T'étais sur le chantier.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_electro_01.mp4",
+        "texte": "3 textos. 2 réponses.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_small_business_owner_phone_03.mp4",
+        "texte": "2 jobs de plus. Écris CALCUL.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_13",
+    "metier": "rénovation",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_01.mp4",
+        "texte": "Personne répond. Déçue.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_construction_worker_busy_01.mp4",
+        "texte": "Le rénovateur est occupé.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_reno_01.mp4",
+        "texte": "Un texto: « On vous appelle »",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_handshake_customer_shop_04.mp4",
+        "texte": "Elle est contente. Écris CLIENT.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_14",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_01.mp4",
+        "texte": "Appel manqué. Comme avant.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_02.mp4",
+        "texte": "Mains dans l'eau. Toujours.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "Maintenant? Un texto auto.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_happy_customer_phone_04.mp4",
+        "texte": "Bâti à Lévis. Écris LÉVIS.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_15",
+    "metier": "garagiste",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_01.mp4",
+        "texte": "Il appelle depuis l'autoroute.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_mechanic_under_car_hood_02.mp4",
+        "texte": "T'es dans la fosse. Pris.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_garage_01.mp4",
+        "texte": "Notification. Ton commerce.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_contractor_phone_smile_04.mp4",
+        "texte": "Pneus demain. Écris PNEU.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_16",
+    "metier": "électricien",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_02.mp4",
+        "texte": "Ça sonne au souper.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_electrician_working_wires_04.mp4",
+        "texte": "Tu réponds pas. Normal.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_electro_01.mp4",
+        "texte": "Le texto part pendant qu'tu manges.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_small_business_owner_phone_04.mp4",
+        "texte": "Job demain. Écris SOUPER.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_17",
+    "metier": "rénovation",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_02.mp4",
+        "texte": "Une cuisine. 15 000$.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_construction_worker_busy_01.mp4",
+        "texte": "Tu mesures. Tu peux pas parler.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_reno_01.mp4",
+        "texte": "Elle reçoit ton texto pro.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_handshake_customer_shop_01.mp4",
+        "texte": "Soumission signée. Écris 15000.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_18",
+    "metier": "plombier",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_phone_ringing_table_02.mp4",
+        "texte": "4 sonneries. Il raccroche.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_plumber_under_sink_02.mp4",
+        "texte": "T'as 30 secondes max.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_plombier_01.mp4",
+        "texte": "Texto avant qu'il parte.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_happy_customer_phone_01.mp4",
+        "texte": "Il reste. Écris TEST.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_19",
+    "metier": "garagiste",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_woman_calling_phone_03.mp4",
+        "texte": "4 appels hier soir.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_mechanic_under_car_hood_02.mp4",
+        "texte": "T'étais fermé. Normal.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_garage_01.mp4",
+        "texte": "Chaque appel? Un texto.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_contractor_phone_smile_01.mp4",
+        "texte": "3 RDV ce matin. Écris MATIN.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  },
+  {
+    "id": "pub_20",
+    "metier": "électricien",
+    "plans": [
+      {
+        "num": 1,
+        "debut": 0,
+        "fin": 4,
+        "clip": "call_man_calling_smartphone_03.mp4",
+        "texte": "Appel manqué.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 2,
+        "debut": 4,
+        "fin": 10,
+        "clip": "busy_electrician_working_wires_04.mp4",
+        "texte": "Commerçant occupé.",
+        "animation_texte": "fade_in"
+      },
+      {
+        "num": 3,
+        "debut": 10,
+        "fin": 18,
+        "clip": "sms_novia_electro_01.mp4",
+        "texte": "Client reçoit un texto.",
+        "animation_texte": "slide_up"
+      },
+      {
+        "num": 4,
+        "debut": 18,
+        "fin": 25,
+        "clip": "result_small_business_owner_phone_01.mp4",
+        "texte": "RDV booké. Écris NOVIA en privé.",
+        "animation_texte": "fade_in"
+      }
+    ]
+  }
+]

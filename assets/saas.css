@@ -664,7 +664,66 @@ a:hover { text-decoration: underline; }
 .inbox-badge.lead { background: rgba(200,241,53,.35); color: #365314; }
 .inbox-thread { padding: 0; overflow: hidden; max-height: 520px; background: #fafbfc; display: flex; flex-direction: column; }
 .inbox-bubble { max-width: 85%; padding: 10px 14px; border-radius: 12px; margin-bottom: 10px; font-size: .9rem; line-height: 1.45; }
+.inbox-bubble-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.inbox-bubble-head small { flex: 1; }
+.inbox-fav-btn {
+  border: none; background: transparent; color: #94a3b8; cursor: pointer;
+  font-size: 1rem; line-height: 1; padding: 2px 4px; border-radius: 4px;
+}
+.inbox-fav-btn:hover { color: #eab308; background: rgba(234, 179, 8, .12); }
+.inbox-bubble.out .inbox-fav-btn { color: rgba(255,255,255,.55); }
+.inbox-bubble.out .inbox-fav-btn:hover { color: #fde047; background: rgba(255,255,255,.12); }
+.inbox-favorites {
+  padding: 12px 16px; border-bottom: 1px solid var(--line); background: #fff;
+  max-height: 180px; overflow-y: auto; flex-shrink: 0;
+}
+.inbox-favorites-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.inbox-favorites-head strong { font-size: .88rem; }
+.inbox-favorites-head .muted { font-size: .75rem; }
+.inbox-favorites-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.inbox-fav-item {
+  display: grid; grid-template-columns: 1fr 24px; gap: 6px; align-items: start;
+  padding: 8px 10px; border-radius: 8px; background: #f8fafc; border: 1px solid var(--line); font-size: .82rem;
+}
+.inbox-fav-label { display: block; font-weight: 700; color: var(--navy2); margin-bottom: 2px; grid-column: 1 / -1; }
+.inbox-fav-text { grid-column: 1; line-height: 1.4; color: #334155; }
+.inbox-fav-remove {
+  border: none; background: transparent; color: #94a3b8; cursor: pointer;
+  font-size: 1.1rem; line-height: 1; padding: 0;
+}
+.inbox-fav-remove:hover { color: var(--err, #c0392b); }
+.inbox-fav-empty { font-size: .82rem; margin: 0 0 8px; }
+.inbox-fav-add { display: grid; grid-template-columns: minmax(100px, 0.35fr) 1fr auto; gap: 6px; }
+.inbox-fav-add input {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: .82rem; min-width: 0;
+}
+.inbox-qualification {
+  padding: 12px 16px; border-bottom: 1px solid var(--line); background: #f0fdf4; flex-shrink: 0;
+}
+.inbox-qualification-empty { background: #f8fafc; }
+.inbox-qual-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.inbox-qual-head strong { font-size: .88rem; }
+.inbox-qual-head .muted { font-size: .75rem; }
+.inbox-qual-grid { display: grid; gap: 6px; }
+.inbox-qual-row {
+  display: grid; grid-template-columns: minmax(100px, 34%) 1fr; gap: 8px; align-items: start;
+  font-size: .84rem; padding: 6px 0; border-bottom: 1px dashed rgba(0,0,0,.06);
+}
+.inbox-qual-row:last-child { border-bottom: none; }
+.inbox-qual-k { font-weight: 700; color: var(--navy2); }
+.inbox-qual-v { color: #334155; line-height: 1.4; word-break: break-word; }
+.qual-fields-grid { display: flex; flex-direction: column; gap: 8px; max-width: 640px; }
+.qual-field-row {
+  display: grid; grid-template-columns: 90px 1fr 90px; gap: 10px; align-items: center;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fafbfc;
+}
+.qual-field-check, .qual-field-req { display: flex; align-items: center; gap: 6px; margin: 0; font-size: .82rem; font-weight: 600; white-space: nowrap; }
+.qual-field-row .qual-label { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: .88rem; min-width: 0; }
 .inbox-bubble.in { background: #fff; border: 1px solid var(--line); margin-right: auto; }
+.inbox-bubble.in.voicemail {
+  background: #fffbeb; border-color: #fcd34d; max-width: 92%;
+}
+.inbox-bubble.in.voicemail .inbox-bubble-head strong { color: #92400e; font-size: .78rem; }
 .inbox-bubble.out { background: var(--navy2); color: #fff; margin-left: auto; text-align: right; }
 .inbox-bubble a { color: #1c4a86; font-weight: 600; text-decoration: underline; word-break: break-all; }
 .inbox-bubble.out a { color: #c8f135; }
@@ -679,6 +738,10 @@ a:hover { text-decoration: underline; }
 .kb-row-faq .faq-q { grid-column: 1 / -2; }
 .kb-row-faq .faq-a { grid-column: 1 / -2; }
 .kb-row-faq .kb-remove { grid-row: 1; grid-column: 2; }
+.kb-row-fav { grid-template-columns: 1fr 36px; }
+.kb-row-fav .fav-label { grid-column: 1 / -2; }
+.kb-row-fav .fav-content { grid-column: 1 / -2; }
+.kb-row-fav .kb-remove { grid-row: 1; grid-column: 2; }
 .kb-row-link { grid-template-columns: minmax(120px, 0.45fr) 1fr 36px; }
 .kb-row-link .link-label { min-width: 0; }
 .kb-row-link .link-url { min-width: 0; }

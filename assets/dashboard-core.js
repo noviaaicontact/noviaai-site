@@ -651,6 +651,125 @@ function linkifyText(text) {
   }).join('');
 }
 
+function escHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;');
+}
+
+let _threadMsgs = [];
+
+function agentFavoritesList() {
+  return Array.isArray(tenant && tenant.agent_favorites) ? tenant.agent_favorites : [];
+}
+
+async function saveAgentFavorites(favorites) {
+  if (DEMO) return;
+  const res = await NoviaApp.api('api-tenant', {
+    method: 'PATCH',
+    body: JSON.stringify({ settings: true, agent_favorites: favorites }),
+  });
+  if (res.error) throw new Error(res.error);
+  tenant = res.tenant;
+}
+
+async function addAgentFavorite(content, label = '') {
+  const text = String(content || '').trim();
+  if (!text || DEMO) return;
+  const list = agentFavoritesList();
+  list.unshift({
+    id: `fav-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    label: String(label || '').trim().slice(0, 80),
+    content: text.slice(0, 500),
+  });
+  await saveAgentFavorites(list.slice(0, 30));
+}
+
+async function removeAgentFavorite(id) {
+  if (DEMO || !id) return;
+  await saveAgentFavorites(agentFavoritesList().filter((f) => f.id !== id));
+}
+
+function renderInboxFavoritesHtml() {
+  const favs = agentFavoritesList();
+  const items = favs.length
+    ? favs.map((f) => `
+      <div class="inbox-fav-item">
+        ${f.label ? `<span class="inbox-fav-label">${escHtml(f.label)}</span>` : ''}
+        <span class="inbox-fav-text">${escHtml(f.content)}</span>
+        <button type="button" class="inbox-fav-remove" data-fav-id="${escHtml(f.id)}" title="Retirer des favoris">&times;</button>
+      </div>`).join('')
+    : '<p class="muted inbox-fav-empty">Aucun favori — cliquez ★ sur un message ou ajoutez ci-dessous.</p>';
+  return `<div class="inbox-favorites" id="inboxFavorites">
+    <div class="inbox-favorites-head">
+      <strong>Favoris agent</strong>
+      <span class="muted">L'agent utilise ces infos sans relire le chat</span>
+    </div>
+    <div class="inbox-favorites-list">${items}</div>
+    <div class="inbox-fav-add">
+      <input type="text" id="inboxFavLabel" placeholder="Libellé (optionnel)" maxlength="80" autocomplete="off">
+      <input type="text" id="inboxFavContent" placeholder="Ajouter une info pour l'agent…" maxlength="500" autocomplete="off">
+      <button type="button" class="btn btn-accent btn-sm" id="btnInboxFavAdd">Ajouter</button>
+    </div>
+  </div>`;
+}
+
+function bindInboxFavoritesEvents() {
+  document.querySelectorAll('.inbox-fav-remove').forEach((btn) => {
+    btn.onclick = async () => {
+      const id = btn.dataset.favId;
+      btn.disabled = true;
+      try {
+        await removeAgentFavorite(id);
+        refreshInboxFavoritesPanel();
+      } catch (ex) {
+        alert(ex.message || 'Suppression impossible');
+        btn.disabled = false;
+      }
+    };
+  });
+  const addBtn = document.getElementById('btnInboxFavAdd');
+  if (addBtn) {
+    addBtn.onclick = async () => {
+      const labelEl = document.getElementById('inboxFavLabel');
+      const contentEl = document.getElementById('inboxFavContent');
+      const content = (contentEl && contentEl.value || '').trim();
+      if (!content) {
+        if (contentEl) contentEl.focus();
+        return;
+      }
+      addBtn.disabled = true;
+      try {
+        await addAgentFavorite(content, labelEl && labelEl.value);
+        if (labelEl) labelEl.value = '';
+        if (contentEl) contentEl.value = '';
+        refreshInboxFavoritesPanel();
+      } catch (ex) {
+        alert(ex.message || 'Ajout impossible');
+      } finally {
+        addBtn.disabled = false;
+      }
+    };
+  }
+  const contentInput = document.getElementById('inboxFavContent');
+  if (contentInput) {
+    contentInput.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (addBtn) addBtn.click();
+      }
+    };
+  }
+}
+
+function refreshInboxFavoritesPanel() {
+  const el = document.getElementById('inboxFavorites');
+  if (!el) return;
+  el.outerHTML = renderInboxFavoritesHtml();
+  bindInboxFavoritesEvents();
+}
+
 function openThreadDemo(phone) {
   selectedPhone = phone;
   renderInboxList();
@@ -845,19 +964,70 @@ async function openThread(phone) {
   const thread = document.getElementById('inboxThread');
   thread.innerHTML = '<div class="inbox-empty">Chargement…</div>';
   const data = await NoviaApp.api('api-conversations?phone=' + encodeURIComponent(phone));
-  const msgs = (data.conversation && data.conversation.messages) || [];
-  renderThread(phone, msgs);
+  const conv = data.conversation || {};
+  const msgs = conv.messages || [];
+  const qualData = (conv.thread && conv.thread.qualification_data) || {};
+  renderThread(phone, msgs, qualData);
 }
 
-function renderThread(phone, msgs) {
+function qualificationFieldLabels() {
+  const raw = tenant && tenant.qualification_fields;
+  const defaults = [
+    { key: 'nom', label: 'Nom du client' },
+    { key: 'telephone', label: 'Téléphone' },
+    { key: 'demande', label: 'Demande / sujet' },
+    { key: 'urgence', label: 'Urgence' },
+    { key: 'adresse', label: 'Adresse' },
+    { key: 'disponibilites', label: 'Disponibilités' },
+  ];
+  if (!Array.isArray(raw) || !raw.length) return defaults;
+  const byKey = new Map(defaults.map((d) => [d.key, d.label]));
+  raw.forEach((f) => { if (f && f.key) byKey.set(f.key, f.label || byKey.get(f.key)); });
+  return defaults.map((d) => ({ key: d.key, label: byKey.get(d.key) || d.label }));
+}
+
+function renderQualificationSummaryHtml(qualData) {
+  if (!qualData || typeof qualData !== 'object') return '';
+  const labels = qualificationFieldLabels();
+  const rows = labels
+    .map(({ key, label }) => {
+      const val = qualData[key];
+      if (!val) return '';
+      return `<div class="inbox-qual-row"><span class="inbox-qual-k">${escHtml(label)}</span><span class="inbox-qual-v">${escHtml(val)}</span></div>`;
+    })
+    .filter(Boolean)
+    .join('');
+  if (!rows) {
+    return `<div class="inbox-qualification inbox-qualification-empty" id="inboxQualification">
+      <div class="inbox-qual-head"><strong>Résumé client</strong><span class="muted">L'agent remplit ce bloc au fil de la conversation</span></div>
+      <p class="muted" style="font-size:.82rem;margin:0">Nom, demande, urgence… — configurez les champs dans Agent → Infos à collecter.</p>
+    </div>`;
+  }
+  return `<div class="inbox-qualification" id="inboxQualification">
+    <div class="inbox-qual-head"><strong>Résumé client</strong><span class="muted">Mis à jour automatiquement par l'agent</span></div>
+    <div class="inbox-qual-grid">${rows}</div>
+  </div>`;
+}
+
+function renderThread(phone, msgs, qualData) {
   const thread = document.getElementById('inboxThread');
   const isWeb = String(phone).startsWith('web:');
   const canReview = !isWeb && tenant && tenant.google_review_url;
-  const bubbles = msgs.length
-    ? msgs.map(m => {
-        const cls = m.direction === 'inbound' ? 'in' : 'out';
-        const label = m.direction === 'inbound' ? 'Client' : 'NoviaAI';
-        return `<div class="inbox-bubble ${cls}"><small class="muted">${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small><br>${linkifyText(m.body)}</div>`;
+  _threadMsgs = msgs || [];
+  const bubbles = _threadMsgs.length
+    ? _threadMsgs.map((m, i) => {
+        const body = m.body || '';
+        const isVoicemail = body.startsWith('🎙 Message vocal');
+        const cls = m.direction === 'inbound' ? (isVoicemail ? 'in voicemail' : 'in') : 'out';
+        const label = isVoicemail ? 'Message vocal' : (m.direction === 'inbound' ? 'Client' : 'NoviaAI');
+        const favBtn = (DEMO || isVoicemail) ? '' : `<button type="button" class="inbox-fav-btn" data-msg-idx="${i}" title="Ajouter aux favoris agent">★</button>`;
+        return `<div class="inbox-bubble ${cls}">
+          <div class="inbox-bubble-head">
+            <small class="muted">${isVoicemail ? '<strong>🎙</strong> ' : ''}${label} · ${new Date(m.created_at).toLocaleString('fr-CA')}</small>
+            ${favBtn}
+          </div>
+          ${linkifyText(body)}
+        </div>`;
       }).join('')
     : '<div class="inbox-empty" style="padding:24px">Aucun message — écrivez au client ci-dessous.</div>';
   const reviewBtn = canReview
@@ -869,12 +1039,35 @@ function renderThread(phone, msgs) {
         <input type="text" id="inboxReplyInput" placeholder="Répondre par SMS…" maxlength="1600" required autocomplete="off">
         <button type="submit" class="btn btn-accent btn-sm">Envoyer</button>
       </form>`;
+  const favoritesPanel = DEMO ? '' : renderInboxFavoritesHtml();
+  const qualificationPanel = DEMO ? '' : renderQualificationSummaryHtml(qualData);
   thread.innerHTML = `
     <div class="inbox-thread-wrap">
+      ${qualificationPanel}
+      ${favoritesPanel}
       <div class="inbox-messages" id="inboxMessages">${bubbles}</div>
       ${reviewBtn}
       ${replyForm}
     </div>`;
+  if (!DEMO) bindInboxFavoritesEvents();
+  document.querySelectorAll('.inbox-fav-btn').forEach((btn) => {
+    btn.onclick = async () => {
+      const idx = parseInt(btn.dataset.msgIdx, 10);
+      const msg = _threadMsgs[idx];
+      if (!msg || !msg.body) return;
+      btn.disabled = true;
+      btn.textContent = '✓';
+      try {
+        await addAgentFavorite(msg.body);
+        refreshInboxFavoritesPanel();
+      } catch (ex) {
+        alert(ex.message || 'Ajout impossible');
+        btn.textContent = '★';
+      } finally {
+        btn.disabled = false;
+      }
+    };
+  });
   const box = document.getElementById('inboxMessages');
   if (box) box.scrollTop = box.scrollHeight;
   const reviewEl = document.getElementById('btnSendReview');
