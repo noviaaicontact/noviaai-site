@@ -19,20 +19,36 @@ const {
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const OPTED_OUT_MSG = 'Vous êtes désinscrit(e) des textos. Répondez OUI pour vous réabonner, ou appelez-nous directement.';
-const SUSPENDED_MSG = 'Ce service NoviaAI est temporairement suspendu. Veuillez rappeler plus tard.';
+/** Budget max pour l'IA — Twilio abandonne le webhook ~15s; on garde une marge. */
+const AI_BUDGET_MS = 9000;
+// Note: on ne bloque plus les textos si l'abonnement est inactif — l'agent doit répondre.
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((resolve) => setTimeout(() => resolve(null), ms)),
+  ]);
+}
 
 exports.handler = async (event) => {
   try {
-    if (!validateTwilioRequest(event)) return twilioUnauthorized();
-
     const p = parseBody(event);
+    if (!validateTwilioRequest(event)) {
+      console.warn('sms: unauthorized twilio request', {
+        to: p.get('To'),
+        from: p.get('From'),
+      });
+      return twilioUnauthorized();
+    }
+
     const from = p.get('From');
     const to = p.get('To');
     const body = (p.get('Body') || '').trim();
     if (!from || !to) return xmlResponse(twimlMessage(DEFAULT_ACK));
 
     const client = await resolveClient(to);
-    if (client.suspended) return xmlResponse(twimlMessage(SUSPENDED_MSG));
+    // Ne plus bloquer les textos entrants si l'abonnement est inactif :
+    // l'agent doit répondre dès qu'on écrit au numéro (cold SMS inclus).
 
     const tenantId = client && client.tenant && client.tenant.id;
     const dossier = client && client.dossier;
@@ -84,7 +100,15 @@ exports.handler = async (event) => {
       historyForReview = history;
       conversationHistory = history;
       history.push({ role: 'user', content: body });
-      reply = await generateReply(dossier, history.slice(0, -1), body, tenantId);
+      try {
+        reply = await withTimeout(
+          generateReply(dossier, history.slice(0, -1), body, tenantId),
+          AI_BUDGET_MS,
+        );
+      } catch (e) {
+        console.error('generateReply', e.message);
+        reply = null;
+      }
       if (reply) {
         history.push({ role: 'assistant', content: reply });
         await saveHistory(key, history, tenantId, from);
@@ -92,6 +116,7 @@ exports.handler = async (event) => {
     }
 
     if (!reply) {
+      // Accueil configuré (welcome_sms) — même pour un premier texto sans appel manqué
       reply = (client && client.tenant && client.tenant.welcome_sms)
         || (dossier && dossier.scripts && dossier.scripts.accueil)
         || DEFAULT_ACK;

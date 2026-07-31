@@ -5,7 +5,8 @@
   "description": "SaaS NoviaAI — Rattrapeur d'appels manqués par SMS",
   "scripts": {
     "dev": "netlify dev",
-    "test:twilio": "node scripts/start-test-twilio.mjs",
+    "diagnose:sms": "node scripts/diagnose-sms-inbound.mjs",
+    "twilio:sync-webhooks": "node scripts/sync-all-twilio-webhooks.mjs",
     "test:twilio:stop": "node scripts/stop-test-twilio.mjs",
     "diagnose": "node scripts/diagnose-call-flow.mjs",
     "setup-check": "node scripts/setup-check.mjs",
