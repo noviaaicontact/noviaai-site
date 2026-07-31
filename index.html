@@ -71,6 +71,7 @@
 }
 </script>
 <link rel="stylesheet" href="/assets/landing.css?v=3">
+<script src="/assets/meta-pixel.js"></script>
 </head>
 <body class="landing">
 
@@ -311,5 +312,12 @@
 </footer>
 
 <script src="/assets/landing-chat.js" defer></script>
+<script>
+document.querySelectorAll('a[href*="signup.html"]').forEach(function (a) {
+  a.addEventListener('click', function () {
+    if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead();
+  });
+});
+</script>
 </body>
 </html>
