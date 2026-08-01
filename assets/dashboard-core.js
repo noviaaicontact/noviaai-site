@@ -1,5 +1,8 @@
 ﻿let tenant = null;
 let pollTimer = null;
+// Déclarés ici : loadDemoData() les utilise au chargement, avant loadInbox().
+let inboxData = [];
+let selectedPhone = null;
 // Mode démo UNIQUEMENT via ?demo=1 (pas de sticky sessionStorage — sinon un vrai login reste en démo)
 (function syncDemoFlag() {
   const q = new URLSearchParams(location.search).get('demo');
@@ -924,9 +927,6 @@ async function loadStats() {
     await loadInbox();
   }
 }
-
-let inboxData = [];
-let selectedPhone = null;
 
 async function loadInbox() {
   const data = await NoviaApp.api('api-conversations');

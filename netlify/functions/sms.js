@@ -61,7 +61,9 @@ exports.handler = async (event) => {
       return xmlResponse(twimlMessage(OPT_OUT_ACK));
     }
 
-    if (tenantId && body && isOptInMessage(body)) {
+    // Réabonnement seulement si le numéro était vraiment opted-out.
+    // Sinon « Oui » / confirmations RDV passent à l'agent IA.
+    if (tenantId && body && isOptInMessage(body) && (await isOptedOut(tenantId, from))) {
       await clearOptOut(tenantId, from);
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_opt_in', { body: body.slice(0, 80) });
