@@ -8,84 +8,267 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 <script src="/assets/meta-pixel.js"></script>
+<style>
+  .ob-hint { display:block; margin:-8px 0 16px; font-size:.82rem; }
+  .ob-section-title { margin: 20px 0 8px; font-size: 1rem; }
+  .ob-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 520px) { .ob-type-grid { grid-template-columns: 1fr; } }
+  .ob-type-card {
+    display: block; border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; background: #fff; margin: 0;
+  }
+  .ob-type-card:has(input:checked) { border-color: var(--accent); background: rgba(56,189,248,.08); }
+  .ob-type-card input { margin-right: 8px; }
+  .ob-type-card strong { display: block; margin-bottom: 4px; }
+  .ob-type-card span { font-size: .8rem; color: var(--muted); font-weight: 400; }
+  .form-box .hours-grid { max-width: 100%; margin-bottom: 8px; }
+  .form-box .hours-row { grid-template-columns: 110px 64px 14px 64px; }
+  .form-box .hours-row input[type="text"] {
+    padding: 6px 8px; font-size: .85rem; min-height: 0; margin: 0;
+  }
+</style>
 </head>
 <body>
 <nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
 <div class="wizard-wrap">
-  <div class="form-box" style="max-width:520px">
-    <h1>Créez votre ligne pro</h1>
-    <p class="muted">~3 minutes — on vous donne un numéro local. Vous le mettez sur Google. C'est actif.</p>
+  <div class="form-box" style="max-width:560px">
+    <div class="wizard-progress" id="progress" aria-hidden="true">
+      <span class="current" data-step="1"></span>
+      <span data-step="2"></span>
+      <span data-step="3"></span>
+    </div>
 
     <form id="form">
-      <label for="business_name">Nom du commerce *</label>
-      <input id="business_name" required placeholder="Salon Éclat">
+      <!-- Étape 1 : commerce + ligne -->
+      <div class="wizard-step active" data-step="1">
+        <h1>Votre commerce</h1>
+        <p class="muted">Étape 1 sur 3 — ligne pro et numéro de contact.</p>
 
-      <label for="business_phone">Cellulaire du commerce où vous répondez *</label>
-      <input id="business_phone" type="tel" required placeholder="581-909-5332">
-      <small class="muted" style="display:block;margin:10px 0 16px;font-size:.85rem">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne. Votre cellulaire actuel continue de fonctionner normalement — on ajoute simplement une ligne pro.</small>
+        <label for="business_name">Nom du commerce *</label>
+        <input id="business_name" required placeholder="Salon Éclat">
 
-      <label>Votre ligne professionnelle</label>
+        <label for="business_phone">Cellulaire du commerce où vous répondez *</label>
+        <input id="business_phone" type="tel" required placeholder="581-909-5332">
+        <small class="muted ob-hint">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
 
-      <label class="line-mode-card line-mode-card--primary">
-        <input type="radio" name="line_mode" value="new" checked>
-        <span class="line-mode-card-body">
-          <span class="line-mode-badge">Recommandé</span>
-          <strong class="line-mode-title">Nouveau numéro NoviaAI</strong>
-          <span class="muted line-mode-desc">On vous attribue un nouveau numéro local (418, 581 ou 514). Vous le publiez sur Google, Facebook et votre site. Votre cellulaire actuel ne change pas et sonne quand un client appelle ce nouveau numéro. Si vous ne répondez pas, NoviaAI envoie automatiquement un SMS au client — votre agent s'occupe de tout.</span>
-          <span class="muted line-mode-desc" style="font-size:.82rem;margin-top:8px;display:block">Vous préférez <strong>garder le numéro déjà sur Google</strong> ? Choisissez plutôt l’option <strong>renvoi d’appel</strong> plus bas — on vous guide selon votre fournisseur (Bell, Vidéotron, Rogers, TELUS…).</span>
-        </span>
-      </label>
+        <label>Votre ligne professionnelle</label>
 
-      <label for="area_code">Indicatif de votre ligne NoviaAI</label>
-      <select id="area_code">
-        <option value="418">418 — Québec</option>
-        <option value="581">581 — Québec</option>
-        <option value="514">514 — Montréal</option>
-        <option value="438">438 — Montréal</option>
-        <option value="450">450 — Rive-Sud</option>
-        <option value="819">819 — Est</option>
-      </select>
-
-      <details class="line-mode-advanced" id="forwardOption">
-        <summary>Vous tenez à garder votre numéro actuel ? (option avancée)</summary>
-        <label class="line-mode-card line-mode-card--secondary">
-          <input type="radio" name="line_mode" value="forward">
+        <label class="line-mode-card line-mode-card--primary">
+          <input type="radio" name="line_mode" value="new" checked>
           <span class="line-mode-card-body">
-            <strong class="line-mode-title">Garder mon numéro actuel (renvoi d'appel)</strong>
-            <span class="muted line-mode-desc">Vous gardez le numéro que vos clients connaissent. On vous donne quand même une ligne NoviaAI : configurez le <strong>renvoi si pas de réponse</strong> vers cette ligne (guide détaillé Bell, Vidéotron, Rogers, TELUS, Fizz… dans Publier après activation).</span>
-            <span class="muted line-mode-desc" style="font-size:.8rem;margin-top:4px"><strong>À savoir :</strong> iPhone Bell/Vidéotron → appelez le fournisseur (pas le toggle Réglages). TELUS/Rogers → souvent OK dans Réglages. Fizz → parfois impossible (préférez le nouveau numéro).</span>
+            <span class="line-mode-badge">Recommandé</span>
+            <strong class="line-mode-title">Nouveau numéro NoviaAI</strong>
+            <span class="muted line-mode-desc">On vous attribue un nouveau numéro local. Vous le publiez sur Google. Si vous ne répondez pas, NoviaAI envoie un SMS au client.</span>
           </span>
         </label>
-      </details>
 
-      <label for="missed_call_sms">Message SMS si appel manqué *</label>
-      <textarea id="missed_call_sms" rows="3" required></textarea>
-      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.82rem">Prérempli — vous pouvez le modifier.</small>
+        <label for="area_code">Indicatif de votre ligne NoviaAI</label>
+        <select id="area_code">
+          <option value="418">418 — Québec</option>
+          <option value="581">581 — Québec</option>
+          <option value="514">514 — Montréal</option>
+          <option value="438">438 — Montréal</option>
+          <option value="450">450 — Rive-Sud</option>
+          <option value="819">819 — Est</option>
+        </select>
 
-      <label for="agent_name">Prénom de votre agent SMS</label>
-      <input id="agent_name" value="Léa" placeholder="Ex. : Léa, Marc…">
-      <small class="muted" style="display:block;margin:-8px 0 16px;font-size:.82rem">Messages d’accueil et ton de base sont préparés automatiquement. FAQ et services : à ajouter dans Agent.</small>
+        <details class="line-mode-advanced" id="forwardOption">
+          <summary>Vous tenez à garder votre numéro actuel ? (option avancée)</summary>
+          <label class="line-mode-card line-mode-card--secondary">
+            <input type="radio" name="line_mode" value="forward">
+            <span class="line-mode-card-body">
+              <strong class="line-mode-title">Garder mon numéro actuel (renvoi d'appel)</strong>
+              <span class="muted line-mode-desc">Configurez le renvoi si pas de réponse vers votre ligne NoviaAI (guide dans Publier après activation).</span>
+            </span>
+          </label>
+        </details>
 
-      <label for="contact_email">Courriel alertes (optionnel)</label>
-      <input id="contact_email" type="email" placeholder="vous@commerce.com">
+        <div class="wizard-nav">
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-accent" id="next1">Continuer →</button>
+        </div>
+      </div>
 
-      <button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px">Continuer vers la facturation →</button>
-      <p id="err" class="err" hidden></p>
+      <!-- Étape 2 : type + agent -->
+      <div class="wizard-step" data-step="2">
+        <h1>Votre agent SMS</h1>
+        <p class="muted">Étape 2 sur 3 — type d'entreprise et messages.</p>
+
+        <label>Type d'entreprise *</label>
+        <div class="ob-type-grid">
+          <label class="ob-type-card">
+            <input type="radio" name="biz_kind" value="appointment" checked>
+            <strong>Rendez-vous</strong>
+            <span>Salon, clinique, spa, cabinet…</span>
+          </label>
+          <label class="ob-type-card">
+            <input type="radio" name="biz_kind" value="field_service">
+            <strong>Service terrain</strong>
+            <span>Plombier, garage, électricien…</span>
+          </label>
+        </div>
+
+        <label for="business_type">Précisez (ex. Salon de coiffure)</label>
+        <input id="business_type" placeholder="Salon de coiffure">
+
+        <label for="agent_name">Prénom de votre agent SMS</label>
+        <input id="agent_name" value="Léa" placeholder="Ex. : Léa, Marc…">
+
+        <label for="missed_call_sms">Message SMS si appel manqué *</label>
+        <textarea id="missed_call_sms" rows="3" required></textarea>
+        <small class="muted ob-hint">Prérempli selon votre type — vous pouvez le modifier.</small>
+
+        <label for="contact_email">Courriel alertes (optionnel)</label>
+        <input id="contact_email" type="email" placeholder="vous@commerce.com">
+
+        <div class="wizard-nav">
+          <button type="button" class="btn btn-ghost" id="back2">← Retour</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-accent" id="next2">Continuer →</button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : connaissances agent -->
+      <div class="wizard-step" data-step="3">
+        <h1>Ce que l'agent doit savoir</h1>
+        <p class="muted">Étape 3 sur 3 — services, horaires et FAQ. Vous pourrez tout modifier plus tard dans Agent.</p>
+
+        <label for="services_text">Services offerts</label>
+        <textarea id="services_text" rows="4" placeholder="Coupe femme — 45$&#10;Coupe homme — 30$&#10;Coloration — sur devis"></textarea>
+        <small class="muted ob-hint">Un service par ligne. Prix optionnel après un tiret.</small>
+
+        <h3 class="ob-section-title">Horaires</h3>
+        <div class="hours-grid" id="hoursGrid"></div>
+
+        <label for="faq_text">FAQ (optionnel)</label>
+        <textarea id="faq_text" rows="5" placeholder="Q: Faut-il un rendez-vous?&#10;R: Oui, on fonctionne sur rendez-vous.&#10;&#10;Q: Acceptez-vous les marches?&#10;R: Selon disponibilité, appelez-nous."></textarea>
+        <small class="muted ob-hint">Format : Q: … puis R: …</small>
+
+        <label for="reservation_url">Lien de réservation (optionnel)</label>
+        <input id="reservation_url" type="url" placeholder="https://calendly.com/…">
+
+        <div class="wizard-nav">
+          <button type="button" class="btn btn-ghost" id="back3">← Retour</button>
+          <span class="spacer"></span>
+          <button type="submit" class="btn btn-accent" id="submitBtn">Activer et facturer →</button>
+        </div>
+        <p id="err" class="err" hidden></p>
+      </div>
     </form>
   </div>
 </div>
 <script>
 (async () => { await NoviaApp.requireAuth('/login.html'); })();
 
+const HOUR_DAYS = [
+  { key: 'lundi', label: 'Lundi' },
+  { key: 'mardi', label: 'Mardi' },
+  { key: 'mercredi', label: 'Mercredi' },
+  { key: 'jeudi', label: 'Jeudi' },
+  { key: 'vendredi', label: 'Vendredi' },
+  { key: 'samedi', label: 'Samedi' },
+  { key: 'dimanche', label: 'Dimanche' },
+];
+
+const DEFAULT_HOURS = {
+  lundi: { ouvert: true, debut: '9h', fin: '17h' },
+  mardi: { ouvert: true, debut: '9h', fin: '17h' },
+  mercredi: { ouvert: true, debut: '9h', fin: '17h' },
+  jeudi: { ouvert: true, debut: '9h', fin: '17h' },
+  vendredi: { ouvert: true, debut: '9h', fin: '17h' },
+  samedi: { ouvert: false, debut: '9h', fin: '16h' },
+  dimanche: { ouvert: false, debut: '9h', fin: '17h' },
+};
+
+const TYPE_PRESETS = {
+  appointment: {
+    label: 'Salon / clinique',
+    placeholder: 'Salon de coiffure',
+    sms: (biz, agent) =>
+      `Bonjour! Ici ${agent}, de ${biz}. Désolé, on a manqué votre appel! Répondez à ce texto — je vais noter le service souhaité et vos disponibilités pour un rendez-vous.`,
+  },
+  field_service: {
+    label: 'Service terrain',
+    placeholder: 'Plomberie / garage',
+    sms: (biz, agent) =>
+      `Bonjour! Ici ${agent}, de ${biz}. Nous avons remarqué votre appel. Je vais prendre quelques informations pour que notre équipe puisse mieux vous aider.`,
+  },
+};
+
+let step = 1;
+let missedSmsTouched = false;
+
 const missedSmsEl = document.getElementById('missed_call_sms');
 const businessNameEl = document.getElementById('business_name');
 const agentNameEl = document.getElementById('agent_name');
-let missedSmsTouched = false;
+const businessTypeEl = document.getElementById('business_type');
+
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+function bizKind() {
+  return document.querySelector('input[name="biz_kind"]:checked')?.value || 'appointment';
+}
+
+function renderHours(hours) {
+  const h = hours || DEFAULT_HOURS;
+  const el = document.getElementById('hoursGrid');
+  el.innerHTML = HOUR_DAYS.map(({ key, label }) => {
+    const row = h[key] || { ouvert: false, debut: '9h', fin: '17h' };
+    const open = row.ouvert !== false;
+    return `<div class="hours-row" data-day="${key}">
+      <label class="hours-check"><input type="checkbox" class="hours-open" ${open ? 'checked' : ''}> ${label}</label>
+      <input type="text" class="hours-debut" value="${esc(row.debut || '9h')}" placeholder="9h" ${open ? '' : 'disabled'}>
+      <span class="hours-sep">–</span>
+      <input type="text" class="hours-fin" value="${esc(row.fin || '17h')}" placeholder="17h" ${open ? '' : 'disabled'}>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.hours-open').forEach((cb) => {
+    cb.onchange = () => {
+      const row = cb.closest('.hours-row');
+      const on = cb.checked;
+      row.querySelector('.hours-debut').disabled = !on;
+      row.querySelector('.hours-fin').disabled = !on;
+    };
+  });
+}
+
+function collectHours() {
+  const out = {};
+  document.querySelectorAll('#hoursGrid .hours-row').forEach((row) => {
+    out[row.dataset.day] = {
+      ouvert: row.querySelector('.hours-open').checked,
+      debut: row.querySelector('.hours-debut').value.trim() || '9h',
+      fin: row.querySelector('.hours-fin').value.trim() || '17h',
+    };
+  });
+  return out;
+}
+
+function parseServicesText(text) {
+  return String(text || '').split('\n').map((l) => l.trim()).filter(Boolean).map((line) => {
+    const parts = line.split(/\s*[—–\-|]\s*/).map((s) => s.trim());
+    return { nom: parts[0], prix: parts[1] || '', description_courte: parts[0] };
+  });
+}
+
+function parseFaqText(text) {
+  if (!text || !String(text).trim()) return [];
+  const blocks = String(text).split(/\n(?=Q:|Q :|Question:)/i).filter(Boolean);
+  const faq = [];
+  blocks.forEach((block) => {
+    const m = block.match(/^(?:Q:|Q :|Question:)\s*(.+?)[\n\r]+(?:R:|R :|Réponse:|Reponse:)\s*([\s\S]+)/i);
+    if (m) faq.push({ question: m[1].trim(), reponse: m[2].trim() });
+  });
+  return faq;
+}
 
 function buildMissedSms() {
   const biz = businessNameEl.value.trim() || 'notre commerce';
   const agent = agentNameEl.value.trim() || 'Léa';
-  return `Bonjour! Ici ${agent}, de ${biz}. Désolé, on a manqué votre appel! Répondez à ce texto — je vous réponds tout de suite.`;
+  const preset = TYPE_PRESETS[bizKind()] || TYPE_PRESETS.appointment;
+  return preset.sms(biz, agent);
 }
 
 function refreshMissedSms() {
@@ -93,16 +276,42 @@ function refreshMissedSms() {
   missedSmsEl.value = buildMissedSms();
 }
 
-missedSmsEl.addEventListener('input', () => { missedSmsTouched = true; });
-businessNameEl.addEventListener('input', refreshMissedSms);
-agentNameEl.addEventListener('input', refreshMissedSms);
-refreshMissedSms();
+function syncTypePreset() {
+  const preset = TYPE_PRESETS[bizKind()] || TYPE_PRESETS.appointment;
+  businessTypeEl.placeholder = preset.placeholder;
+  if (!businessTypeEl.value.trim()) businessTypeEl.value = preset.placeholder;
+  refreshMissedSms();
+}
+
+function showStep(n) {
+  step = n;
+  document.querySelectorAll('.wizard-step').forEach((el) => {
+    el.classList.toggle('active', Number(el.dataset.step) === n);
+  });
+  document.querySelectorAll('#progress span').forEach((el) => {
+    const s = Number(el.dataset.step);
+    el.classList.toggle('current', s === n);
+    el.classList.toggle('done', s < n);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function syncLineModeUI() {
   const mode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
   const forwardDetails = document.getElementById('forwardOption');
   if (mode === 'forward' && forwardDetails) forwardDetails.open = true;
 }
+
+missedSmsEl.addEventListener('input', () => { missedSmsTouched = true; });
+businessNameEl.addEventListener('input', refreshMissedSms);
+agentNameEl.addEventListener('input', refreshMissedSms);
+document.querySelectorAll('input[name="biz_kind"]').forEach((el) => {
+  el.addEventListener('change', () => {
+    missedSmsTouched = false;
+    businessTypeEl.value = '';
+    syncTypePreset();
+  });
+});
 document.querySelectorAll('input[name="line_mode"]').forEach((el) => {
   el.addEventListener('change', syncLineModeUI);
 });
@@ -111,32 +320,83 @@ document.getElementById('forwardOption')?.addEventListener('toggle', () => {
   if (document.getElementById('forwardOption').open && forwardRadio) forwardRadio.checked = true;
 });
 
+document.getElementById('next1').onclick = () => {
+  const err = document.getElementById('err');
+  err.hidden = true;
+  const name = businessNameEl.value.trim();
+  const phone = document.getElementById('business_phone').value.trim();
+  if (!name || !phone) {
+    err.textContent = 'Indiquez le nom du commerce et le cellulaire.';
+    err.hidden = false;
+    showStep(1);
+    return;
+  }
+  syncTypePreset();
+  showStep(2);
+};
+
+document.getElementById('next2').onclick = () => {
+  const err = document.getElementById('err');
+  err.hidden = true;
+  if (!missedSmsEl.value.trim()) {
+    err.textContent = 'Le message SMS d\'appel manqué est obligatoire.';
+    err.hidden = false;
+    showStep(2);
+    return;
+  }
+  showStep(3);
+};
+
+document.getElementById('back2').onclick = () => showStep(1);
+document.getElementById('back3').onclick = () => showStep(2);
+
+renderHours(DEFAULT_HOURS);
+refreshMissedSms();
+
 document.getElementById('form').onsubmit = async (e) => {
   e.preventDefault();
   const err = document.getElementById('err');
+  const btn = document.getElementById('submitBtn');
   err.hidden = true;
-  const name = document.getElementById('business_name').value.trim();
+
+  const name = businessNameEl.value.trim();
   const phone = document.getElementById('business_phone').value.trim();
-  const sms = document.getElementById('missed_call_sms').value.trim();
+  const sms = missedSmsEl.value.trim();
   const lineMode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
+  const businessType = businessTypeEl.value.trim()
+    || (TYPE_PRESETS[bizKind()] || TYPE_PRESETS.appointment).placeholder;
+
   if (!name || !phone || !sms) {
     err.textContent = 'Remplissez tous les champs obligatoires.';
     err.hidden = false;
+    showStep(!name || !phone ? 1 : 2);
     return;
   }
+
+  const services = parseServicesText(document.getElementById('services_text').value);
+  const faq = parseFaqText(document.getElementById('faq_text').value);
+  const reservationUrl = document.getElementById('reservation_url').value.trim();
+
+  btn.disabled = true;
+  btn.textContent = 'Activation…';
   try {
     const res = await NoviaApp.api('api-tenant', {
       method: 'POST',
       body: JSON.stringify({
         onboarding: true,
         business_name: name,
+        business_type: businessType,
         phone_forward: phone,
-        agent_name: document.getElementById('agent_name').value.trim(),
+        agent_name: agentNameEl.value.trim() || 'Léa',
         missed_call_sms: sms,
         area_code: document.getElementById('area_code').value,
         contact_email: document.getElementById('contact_email').value.trim(),
         line_mode: lineMode,
         existing_business_number: lineMode === 'forward' ? phone : '',
+        hours: collectHours(),
+        services,
+        faq,
+        reservation_url: reservationUrl,
       }),
     });
     if (res.error) throw new Error(res.error);
@@ -146,6 +406,8 @@ document.getElementById('form').onsubmit = async (e) => {
   } catch (ex) {
     err.textContent = ex.message || 'Erreur';
     err.hidden = false;
+    btn.disabled = false;
+    btn.textContent = 'Activer et facturer →';
   }
 };
 </script>

@@ -11,14 +11,59 @@ const HOUR_DAYS = [
   { key: 'dimanche', label: 'Dimanche' },
 ];
 
-const DEFAULT_QUALIFICATION_FIELDS = [
-  { key: 'nom', label: 'Nom du client', enabled: true, required: true },
-  { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
-  { key: 'demande', label: 'Demande / sujet', enabled: true, required: true },
-  { key: 'urgence', label: 'Urgence', enabled: true, required: false },
-  { key: 'adresse', label: 'Adresse', enabled: true, required: false },
-  { key: 'disponibilites', label: 'Disponibilités', enabled: true, required: false },
+const QUALIFICATION_BY_WORKFLOW = {
+  appointment: [
+    { key: 'nom', label: 'Nom du client', enabled: true, required: true },
+    { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
+    { key: 'service_souhaite', label: 'Service désiré', enabled: true, required: true },
+    { key: 'preferences', label: 'Préférences du client', enabled: true, required: false },
+    { key: 'disponibilites', label: 'Disponibilités', enabled: true, required: true },
+    { key: 'creneau_confirme', label: 'Créneau souhaité', enabled: true, required: false },
+  ],
+  field_service: [
+    { key: 'nom', label: 'Nom du client', enabled: true, required: true },
+    { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
+    { key: 'probleme', label: 'Type de problème', enabled: true, required: true },
+    { key: 'urgence', label: 'Urgence', enabled: true, required: true },
+    { key: 'depuis_quand', label: 'Depuis quand', enabled: true, required: false },
+    { key: 'adresse', label: 'Adresse', enabled: true, required: false },
+    { key: 'disponibilite_rappel', label: 'Meilleur moment pour rappeler', enabled: true, required: true },
+  ],
+};
+
+const APPOINTMENT_KEYWORDS = [
+  'salon', 'coiffure', 'coiffeur', 'esthétique', 'esthetique', 'beauté', 'beaute',
+  'spa', 'clinique', 'dentiste', 'physio', 'massoth', 'vétérinaire', 'veterinaire',
+  'avocat', 'comptable', 'notaire', 'barbier', 'onglerie', 'cabinet',
 ];
+const FIELD_SERVICE_KEYWORDS = [
+  'plombier', 'plomberie', 'électricien', 'electricien', 'garage', 'mécanique',
+  'mecanique', 'toiture', 'couvreur', 'chauffage', 'hvac', 'déneigement', 'deneigement',
+  'serrurier', 'paysag', 'dépannage', 'depannage',
+];
+
+function detectWorkflowClient(businessType, businessName) {
+  const blob = `${businessType || ''} ${businessName || ''}`.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (APPOINTMENT_KEYWORDS.some((kw) => blob.includes(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '')))) {
+    return 'appointment';
+  }
+  if (FIELD_SERVICE_KEYWORDS.some((kw) => blob.includes(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '')))) {
+    return 'field_service';
+  }
+  return 'field_service';
+}
+
+function defaultQualificationFieldsForContext() {
+  const type = document.getElementById('setBusinessType')?.value || '';
+  const name = document.getElementById('setBusinessName')?.value || '';
+  const wf = detectWorkflowClient(type, name);
+  return (QUALIFICATION_BY_WORKFLOW[wf] || QUALIFICATION_BY_WORKFLOW.field_service)
+    .map((f) => ({ ...f }));
+}
+
+/** @deprecated — utiliser defaultQualificationFieldsForContext */
+const DEFAULT_QUALIFICATION_FIELDS = QUALIFICATION_BY_WORKFLOW.field_service;
 
 const DEFAULT_HOURS = {
   lundi: { ouvert: true, debut: '9h', fin: '17h' },
@@ -171,7 +216,8 @@ function addFavoriteRow() {
 }
 
 function normalizeQualificationFieldsClient(raw) {
-  const byKey = new Map(DEFAULT_QUALIFICATION_FIELDS.map((f) => [f.key, { ...f }]));
+  const defaults = defaultQualificationFieldsForContext();
+  const byKey = new Map(defaults.map((f) => [f.key, { ...f }]));
   if (Array.isArray(raw)) {
     raw.forEach((item) => {
       if (!item || !byKey.has(item.key)) return;
@@ -180,11 +226,11 @@ function normalizeQualificationFieldsClient(raw) {
         ...base,
         label: String(item.label || base.label).trim() || base.label,
         enabled: item.enabled !== false,
-        required: !!item.required,
+        required: item.required != null ? !!item.required : base.required,
       });
     });
   }
-  return DEFAULT_QUALIFICATION_FIELDS.map((f) => byKey.get(f.key));
+  return defaults.map((f) => byKey.get(f.key));
 }
 
 function qualificationFieldRowHtml(f) {
@@ -410,6 +456,12 @@ function bindUiClicks() {
       addFavoriteRow();
     }
   });
+  const typeEl = document.getElementById('setBusinessType');
+  if (typeEl) {
+    typeEl.addEventListener('change', () => {
+      renderQualificationFields(collectQualificationFields());
+    });
+  }
 }
 
 function initChatbotPanel(opts) {
