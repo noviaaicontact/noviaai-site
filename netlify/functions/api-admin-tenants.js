@@ -83,7 +83,7 @@ exports.handler = async (event) => {
     if (!existing) return json(404, { error: 'Compte introuvable' });
 
     if (action === 'suspend') {
-      await suspendTenant(tenantId);
+      await suspendTenant(tenantId, { release: true });
       const patch = { subscription_status: 'inactive', updated_at: new Date().toISOString() };
       const { data, error } = await db.from('tenants').update(patch).eq('id', tenantId).select(TENANT_LIST_FIELDS).single();
       if (error) return json(500, { error: error.message });

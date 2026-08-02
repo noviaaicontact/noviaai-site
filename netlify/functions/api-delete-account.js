@@ -30,7 +30,7 @@ exports.handler = async (event) => {
           console.warn('stripe cancel', e.message);
         }
       }
-      await suspendTenant(tenant.id).catch(() => {});
+      await suspendTenant(tenant.id, { release: true }).catch(() => {});
       await db.from('tenants').delete().eq('id', tenant.id);
     }
 

@@ -13,12 +13,14 @@ const {
   isOptedOut,
   recordOptOut,
   clearOptOut,
+  appendPromoFooter,
   OPT_OUT_ACK,
   OPT_IN_ACK,
 } = require('../../lib/sms-compliance');
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const OPTED_OUT_MSG = 'Vous êtes désinscrit(e) des textos. Répondez OUI pour vous réabonner, ou appelez-nous directement.';
+const AI_TIMEOUT_MSG = 'Un instant, on vous revient tout de suite.';
 /** Budget max pour l'IA — Twilio abandonne le webhook ~15s; on garde une marge. */
 const AI_BUDGET_MS = 9000;
 // Note: on ne bloque plus les textos si l'abonnement est inactif — l'agent doit répondre.
@@ -95,18 +97,22 @@ exports.handler = async (event) => {
     }
 
     let reply = null;
+    let timedOut = false;
     let historyForReview = [];
     let conversationHistory = [];
+    let priorAssistantCount = 0;
     if (body && dossier) {
       const history = await loadHistory(key, tenantId, from);
       historyForReview = history;
       conversationHistory = history;
+      priorAssistantCount = history.filter((m) => m.role === 'assistant').length;
       history.push({ role: 'user', content: body });
       try {
         reply = await withTimeout(
           generateReply(dossier, history.slice(0, -1), body, tenantId),
           AI_BUDGET_MS,
         );
+        if (!reply) timedOut = true;
       } catch (e) {
         console.error('generateReply', e.message);
         reply = null;
@@ -118,10 +124,19 @@ exports.handler = async (event) => {
     }
 
     if (!reply) {
-      // Accueil configuré (welcome_sms) — même pour un premier texto sans appel manqué
-      reply = (client && client.tenant && client.tenant.welcome_sms)
-        || (dossier && dossier.scripts && dossier.scripts.accueil)
-        || DEFAULT_ACK;
+      if (timedOut && priorAssistantCount > 0) {
+        // En cours de fil : ne pas renvoyer le message d'accueil hors contexte
+        reply = AI_TIMEOUT_MSG;
+      } else {
+        reply = (client && client.tenant && client.tenant.welcome_sms)
+          || (dossier && dossier.scripts && dossier.scripts.accueil)
+          || DEFAULT_ACK;
+      }
+    }
+
+    // Footer ARRET sur la 1re réponse auto du fil (LCAP)
+    if (priorAssistantCount === 0 && client && client.tenant) {
+      reply = appendPromoFooter(reply, client.tenant.business_name);
     }
 
     if (tenantId) {

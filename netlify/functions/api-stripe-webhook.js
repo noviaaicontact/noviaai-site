@@ -81,8 +81,12 @@ exports.handler = async (event) => {
         if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
           await provisionTenant(tenants[0].id);
         }
-        if (['canceled', 'inactive'].includes(status) && tenants && tenants[0]) {
-          await suspendTenant(tenants[0].id);
+        if (status === 'canceled' && tenants && tenants[0]) {
+          // Résiliation réelle → libérer le numéro
+          await suspendTenant(tenants[0].id, { release: true });
+        } else if (status === 'inactive' && tenants && tenants[0]) {
+          // Pause / past_due → garder la ligne (grace)
+          await suspendTenant(tenants[0].id, { release: false });
         }
         break;
       }
@@ -91,7 +95,7 @@ exports.handler = async (event) => {
         const { data: tenants } = await db.from('tenants').update({
           subscription_status: 'canceled',
         }).eq('stripe_customer_id', sub.customer).select('id');
-        if (tenants && tenants[0]) await suspendTenant(tenants[0].id);
+        if (tenants && tenants[0]) await suspendTenant(tenants[0].id, { release: true });
         break;
       }
       case 'invoice.paid': {
@@ -119,11 +123,13 @@ exports.handler = async (event) => {
         break;
       }
       case 'invoice.payment_failed': {
+        // Grace period : marque inactive mais NE libère PAS le numéro Twilio.
+        // Le numéro n'est libéré qu'à la résiliation (subscription.deleted / canceled).
         const invoice = stripeEvent.data.object;
         const { data: tenants } = await db.from('tenants').update({
           subscription_status: 'inactive',
         }).eq('stripe_customer_id', invoice.customer).select('id');
-        if (tenants && tenants[0]) await suspendTenant(tenants[0].id);
+        if (tenants && tenants[0]) await suspendTenant(tenants[0].id, { release: false });
         break;
       }
       default:

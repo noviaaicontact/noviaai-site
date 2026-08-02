@@ -28,7 +28,7 @@ exports.handler = async () => {
       subscription_status: 'inactive',
       updated_at: now,
     }).eq('id', row.id);
-    await suspendTenant(row.id).catch((e) => console.warn('suspend', row.id, e.message));
+    await suspendTenant(row.id, { release: true }).catch((e) => console.warn('suspend', row.id, e.message));
     suspended += 1;
   }
 

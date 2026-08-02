@@ -52,9 +52,10 @@ exports.handler = async (event) => {
     }
 
     await sendSMS({ to, from, body: text });
-    await logMessage(tenant.id, toRaw, 'outbound', text);
-    await logEvent(tenant.id, toRaw, 'sms_outbound', { body: text.slice(0, 160), manual: true });
-    await touchThread(tenant.id, toRaw, text, 'open');
+    // Toujours logger en E.164 pour éviter les fils fragmentés
+    await logMessage(tenant.id, to, 'outbound', text);
+    await logEvent(tenant.id, to, 'sms_outbound', { body: text.slice(0, 160), manual: true });
+    await touchThread(tenant.id, to, text, 'open');
     return json(200, { ok: true, quota: { count: quota.count + 1, limit: quota.limit } });
   } catch (e) {
     console.error('api-sms-reply', e);
