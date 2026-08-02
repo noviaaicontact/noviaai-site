@@ -1,5 +1,18 @@
 .env
 .netlify/
 node_modules/
+secrets/
 
 compte twilio.txt
+
+# Médias générés par les pipelines marketing (~750 Mo) — régénérables via les
+# scripts. La vidéo publiée sur le site vit dans assets/video/, elle, suivie.
+marketing/ad-generator/output/
+marketing/video-pipeline/pubs/
+marketing/demo-videos/
+marketing/explainer/build/
+marketing/explainer/output/
+marketing/assets-pub/
+__pycache__/
+*TEMP_MPY*.mp4
+scripts/_tmp-deploys.json

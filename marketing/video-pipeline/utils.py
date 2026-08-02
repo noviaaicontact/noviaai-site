@@ -9,6 +9,27 @@ import requests
 
 from config import LOGS_DIR, MAX_RETRIES, REQUEST_TIMEOUT, RETRY_BACKOFF
 
+SITE_ROOT = Path(__file__).resolve().parent.parent.parent
+SECRETS_DIR = SITE_ROOT / "secrets"
+
+
+def load_secrets_into_env() -> None:
+    """Charge noviaai-site/secrets/*.env dans os.environ (non commité)."""
+    import os
+
+    if not SECRETS_DIR.is_dir():
+        return
+    for path in sorted(SECRETS_DIR.glob("*.env")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            t = line.strip()
+            if not t or t.startswith("#") or "=" not in t:
+                continue
+            k, _, v = t.partition("=")
+            key = k.strip()
+            val = v.strip()
+            if key and val and not os.environ.get(key):
+                os.environ[key] = val
+
 
 def setup_logging(name: str, log_file: str | None = None) -> logging.Logger:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)

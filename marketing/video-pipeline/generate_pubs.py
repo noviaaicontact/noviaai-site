@@ -92,17 +92,21 @@ def render_text_frame(text: str, width: int, height: int, font_size: int = 52) -
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     font = _font(font_size)
-    bar_top = int(height * 0.62)
-    draw.rectangle([0, bar_top, width, height], fill=(0, 0, 0, 185))
-    margin = 40
+    grad_top = int(height * 0.52)
+    for y in range(grad_top, height):
+        t = (y - grad_top) / max(height - grad_top, 1)
+        alpha = int(210 * t)
+        draw.line([(0, y), (width, y)], fill=(0, 0, 0, alpha))
+    margin = 48
     lines = wrap_text(draw, text, font, width - margin * 2)
-    line_h = font_size + 12
+    line_h = font_size + 14
     total_h = len(lines) * line_h
-    y = bar_top + max((height - bar_top - total_h) // 2, 20)
+    y = height - total_h - 72
     for line in lines:
         bbox = draw.textbbox((0, 0), line, font=font)
         x = (width - (bbox[2] - bbox[0])) // 2
-        draw.text((x + 2, y + 2), line, font=font, fill=(0, 0, 0, 200))
+        for dx, dy in [(-2, 0), (2, 0), (0, -2), (0, 2)]:
+            draw.text((x + dx, y + dy), line, font=font, fill=(0, 0, 0, 180))
         draw.text((x, y), line, font=font, fill=(255, 255, 255, 255))
         y += line_h
     return np.array(img)
@@ -143,26 +147,51 @@ def load_scenes() -> dict[str, list[dict]]:
     return data["scenes"]
 
 
+METIER_TAGS = {
+    "plombier": ["plombier", "plumb", "sink", "pipe"],
+    "garagiste": ["garage", "mechanic", "hood", "car"],
+    "salon": ["salon", "hair", "stylist", "cut", "coiff"],
+    "électricien": ["electro", "electric", "wire"],
+    "electricien": ["electro", "electric", "wire"],
+    "rénovation": ["reno", "construction"],
+    "renovation": ["reno", "construction"],
+}
+
+
+def _clip_blob(meta: dict) -> str:
+    return " ".join(
+        str(meta.get(k, "")) for k in ("filename", "term", "selection_file", "path")
+    ).lower()
+
+
+def _matches_metier(meta: dict, metier: str) -> bool:
+    tags = METIER_TAGS.get(metier.lower(), [])
+    if not tags:
+        return False
+    blob = _clip_blob(meta)
+    return any(t in blob for t in tags)
+
+
 def pick_clip(scenes: dict[str, list], scene: str, pub_index: int, plan_index: int, metier: str = "") -> Path:
     pool = scenes.get(scene) or []
     if not pool:
         raise ValueError(f"Aucun clip pour la scène « {scene} »")
 
-    if scene == "sms" and metier:
-        tag = {
-            "plombier": "plombier",
-            "garagiste": "garage",
-            "électricien": "electro",
-            "electricien": "electro",
-            "rénovation": "reno",
-            "renovation": "reno",
-        }.get(metier.lower(), "")
-        if tag:
+    if metier:
+        if scene == "sms":
             for m in pool:
-                if tag in m.get("filename", "").lower() or tag in m.get("selection_file", "").lower():
-                    path = SELECTION_DIR / m["selection_file"]
-                    if path.exists():
-                        return path
+                if m.get("source") == "local" and "novia" in m.get("filename", "").lower():
+                    if _matches_metier(m, metier):
+                        path = SELECTION_DIR / m["selection_file"]
+                        if path.exists():
+                            return path
+        elif scene in ("busy", "result", "call"):
+            matched = [m for m in pool if _matches_metier(m, metier)]
+            if matched:
+                meta = matched[pub_index % len(matched)]
+                path = SELECTION_DIR / meta["selection_file"]
+                if path.exists():
+                    return path
 
     meta = pool[(pub_index + plan_index) % len(pool)]
     path = SELECTION_DIR / meta["selection_file"]

@@ -14,6 +14,28 @@ from utils import load_json, save_json, setup_logging
 
 log = setup_logging("select_clips", "02_select.log")
 
+# Pexels « plumber under sink » renvoie souvent de la vaisselle — exclure
+CLIP_BLOCKLIST = (
+    "washing",
+    "dishes",
+    "dish",
+    "cup",
+    "elderly",
+    "cleaning",
+    "vaisselle",
+    "9474125",
+    "7477416",
+    "7477419",
+    "7477598",
+)
+
+
+def is_blocked_clip(clip: dict) -> bool:
+    blob = " ".join(
+        str(clip.get(k, "")) for k in ("filename", "term", "pexels_url", "path")
+    ).lower()
+    return any(b in blob for b in CLIP_BLOCKLIST)
+
 HAS_TESSERACT = False
 HAS_EASYOCR = False
 try:
@@ -170,6 +192,9 @@ def main() -> int:
     by_scene: dict[str, list] = {s: [] for s in SCENE_CATALOG}
 
     for clip in catalog["clips"]:
+        if is_blocked_clip(clip):
+            log.info("  [skip] %s — clip exclu (hors-sujet)", clip.get("filename"))
+            continue
         path = Path(__file__).parent / clip.get("path", "")
         if not path.exists():
             path = CLIPS_DIR / clip.get("filename", "")
@@ -191,7 +216,56 @@ def main() -> int:
             bonus += 50.0
         if "novia" in c.get("filename", "").lower():
             bonus += 40.0
+        h = int(c.get("height") or 0)
+        if h >= 1080:
+            bonus += 20.0
+        elif h >= 720:
+            bonus += 10.0
+        elif h > 0 and h < 720:
+            bonus -= 15.0
         return c["score"] + bonus
+
+    NICHE_HINTS = {
+        "busy": [
+            ["plumb", "sink", "pipe"],
+            ["mechanic", "garage", "hood", "car"],
+            ["hair", "stylist", "salon", "cut"],
+        ],
+        "result": [
+            ["plumb", "contractor"],
+            ["mechanic", "garage", "customer"],
+            ["salon", "hair", "woman"],
+        ],
+    }
+
+    def pick_top_with_niches(ranked: list[dict], scene: str) -> list[dict]:
+        hints_groups = NICHE_HINTS.get(scene)
+        if not hints_groups:
+            return ranked[:TOP_PER_SCENE]
+        picked: list[dict] = []
+        used: set[str] = set()
+
+        def blob(c: dict) -> str:
+            return " ".join(str(c.get(k, "")) for k in ("filename", "term", "path")).lower()
+
+        for hints in hints_groups:
+            for c in ranked:
+                fn = c.get("filename", "")
+                if fn in used or is_blocked_clip(c):
+                    continue
+                if any(h in blob(c) for h in hints):
+                    picked.append(c)
+                    used.add(fn)
+                    break
+
+        for c in ranked:
+            if len(picked) >= TOP_PER_SCENE:
+                break
+            fn = c.get("filename", "")
+            if fn not in used:
+                picked.append(c)
+                used.add(fn)
+        return picked[:TOP_PER_SCENE]
 
     SELECTION_DIR.mkdir(parents=True, exist_ok=True)
     for old in SELECTION_DIR.glob("*.mp4"):
@@ -204,7 +278,7 @@ def main() -> int:
     total = 0
     for scene in SCENE_CATALOG:
         ranked = sorted(by_scene[scene], key=rank_key, reverse=True)
-        top = ranked[:TOP_PER_SCENE]
+        top = pick_top_with_niches(ranked, scene)
         scenes_out[scene] = []
         for i, clip in enumerate(top, 1):
             src = Path(clip["source_path"])

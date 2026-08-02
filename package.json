@@ -13,6 +13,8 @@
     "verify:schema": "node scripts/verify-schema.mjs",
     "test": "node scripts/smoke-test.mjs",
     "test:smoke": "node scripts/smoke-test.mjs",
+    "test:leads": "node scripts/test-lead-detection.mjs",
+    "test:onboarding": "node scripts/test-onboarding-draft.mjs",
     "stripe:bootstrap": "node scripts/stripe-bootstrap.mjs",
     "stripe:card-only": "node scripts/stripe-checkout-card-only.mjs",
     "stripe:webhook": "node scripts/stripe-webhook-setup.mjs",

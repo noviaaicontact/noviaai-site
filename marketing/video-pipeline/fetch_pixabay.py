@@ -69,9 +69,12 @@ def dedupe_clips(clips: list[dict]) -> list[dict]:
 
 
 def main() -> int:
+    from utils import load_secrets_into_env
+
+    load_secrets_into_env()
     api_key = os.environ.get("PIXABAY_API_KEY", "").strip()
     if not api_key:
-        log.warning("PIXABAY_API_KEY absente — étape ignorée (gratuit sur pixabay.com/api/docs/)")
+        log.warning("PIXABAY_API_KEY absente — ajoutez noviaai-site/secrets/pixabay.env")
         return 0
 
     CLIPS_DIR.mkdir(parents=True, exist_ok=True)

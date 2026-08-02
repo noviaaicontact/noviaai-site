@@ -22,6 +22,28 @@ from utils import download_file, load_json, pexels_get, save_json, setup_logging
 
 log = setup_logging("fetch_clips", "01_fetch.log")
 
+MIN_HD_HEIGHT = 900
+
+
+def probe_video_height(path: Path) -> int:
+    try:
+        import cv2
+        cap = cv2.VideoCapture(str(path))
+        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+        cap.release()
+        return h
+    except Exception:
+        return 0
+
+
+def needs_hd_upgrade(dest: Path, new_height: int) -> bool:
+    if not dest.exists() or dest.stat().st_size <= 10000:
+        return True
+    current = probe_video_height(dest)
+    if current >= MIN_HD_HEIGHT:
+        return False
+    return new_height > current
+
 
 def pick_mp4(video: dict) -> dict | None:
     files = video.get("video_files") or []
@@ -89,9 +111,12 @@ def dedupe_clips(clips: list[dict]) -> list[dict]:
 
 
 def main() -> int:
+    from utils import load_secrets_into_env
+
+    load_secrets_into_env()
     api_key = os.environ.get("PEXELS_API_KEY", "").strip()
     if not api_key:
-        log.error("Variable PEXELS_API_KEY manquante. Voir README.md")
+        log.error("PEXELS_API_KEY manquante — ajoutez noviaai-site/secrets/pexels.env")
         return 1
 
     CLIPS_DIR.mkdir(parents=True, exist_ok=True)
@@ -124,15 +149,16 @@ def main() -> int:
                 idx += 1
                 filename = f"{scene}_{slug}_{idx:02d}.mp4"
                 dest = CLIPS_DIR / filename
-                if dest.exists() and dest.stat().st_size > 10000:
-                    log.info("  Existe déjà: %s", filename)
-                else:
-                    log.info("  Télécharge %s (%.1fs, %sp)", filename, video.get("duration", 0), file_info.get("height"))
+                new_h = file_info.get("height") or 0
+                if needs_hd_upgrade(dest, new_h):
+                    log.info("  Télécharge %s (%.1fs, %sp)", filename, video.get("duration", 0), new_h)
                     try:
                         download_file(file_info["link"], dest, log)
                     except Exception as e:
                         log.error("  Échec %s: %s", filename, e)
                         continue
+                else:
+                    log.info("  HD OK: %s (%sp)", filename, probe_video_height(dest) or new_h)
 
                 meta = {
                     "filename": filename,
@@ -143,7 +169,7 @@ def main() -> int:
                     "pexels_url": video.get("url"),
                     "duration": video.get("duration"),
                     "width": file_info.get("width"),
-                    "height": file_info.get("height"),
+                    "height": probe_video_height(dest) or file_info.get("height"),
                     "quality": file_info.get("quality"),
                 }
                 all_clips.append(meta)

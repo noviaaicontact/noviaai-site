@@ -1,0 +1,1015 @@
+{
+  "scene_types": {
+    "hook_busy_missed_call": "Entrepreneur en job, téléphone vibre, impossible de répondre (Runway/b-roll)",
+    "hook_stat_shock": "Stat animée plein écran (MoviePy stat_clip)",
+    "hook_pattern_interrupt": "Visuel inattendu ou question provocante (Runway)",
+    "problem_missed_calls": "Appels manqués, notifications, client frustré (Runway)",
+    "problem_client_leaves": "Client raccroche, cherche concurrent (Runway)",
+    "problem_revenue_loss": "Perte d'argent visualisée — factures, calendrier vide (Runway/stat)",
+    "agitate_urgency": "Montage rapide stressant, accumulation de problèmes (Runway cuts)",
+    "before_chaos": "Journée chaotique sans système (Runway/b-roll)",
+    "after_calm": "Même entrepreneur serein, RDV bookés (Runway)",
+    "solution_sms_mockup": "Conversation SMS NoviaAI animée (Playwright mockup)",
+    "solution_dashboard": "Dashboard NoviaAI mobile (Playwright capture)",
+    "proof_rdv_confirmed": "Notification « RDV confirmé » + soulagement (Runway)",
+    "proof_social_stat": "Chiffres résultats (+3 RDV, 8 sec réponse) (stat_clip)",
+    "objection_answer": "Réponse visuelle à une objection (Runway/texte)",
+    "cta_demo": "Slide CTA navy/lime + noviaai.ca (MoviePy cta_clip)"
+  },
+  "hook_types": {
+    "question_pain": "Question directe sur la douleur (« Combien de clients avez-vous perdus…? »)",
+    "stat_shock": "Chiffre choc (« 60 % ne rappellent jamais »)",
+    "pattern_interrupt": "Affirmation contre-intuitive (« Votre téléphone vous coûte de l'argent »)",
+    "relatable_moment": "Scène reconnaissable instantanément (mains sales, sous l'évier)",
+    "before_after_tease": "Aperçu transformation (« Avant / Après NoviaAI »)",
+    "social_proof_open": "Résultat d'abord (« +12 RDV cette semaine »)"
+  },
+  "frameworks": {
+    "pas_classic": {
+      "id": "pas_classic",
+      "name": "PAS — Problème · Agitation · Solution",
+      "origin": "Direct response (Eugene Schwartz) · Standard agences performance SaaS",
+      "psychological_objective": "Amplifier la douleur existante jusqu'à ce que la solution devienne évidente et urgente.",
+      "when_to_use": [
+        "Audience qui vit déjà le problème (appels manqués) mais ne connaît pas NoviaAI",
+        "Cold traffic Meta / TikTok — pas de notoriété de marque",
+        "Première pub d'une campagne de conversion",
+        "Niches à forte urgence (plombier, électricien, dépannage)"
+      ],
+      "when_not_to_use": [
+        "Retargeting chaud qui a déjà vu une démo",
+        "Audience sceptique de l'IA — préférer objection_crusher"
+      ],
+      "hook_types": [
+        "question_pain",
+        "relatable_moment"
+      ],
+      "scene_types_required": [
+        "hook_busy_missed_call",
+        "problem_missed_calls",
+        "agitate_urgency",
+        "solution_sms_mockup",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 3,
+          "role": "hook",
+          "scene_type": "hook_busy_missed_call",
+          "hook_type": "question_pain",
+          "texte_ecran_template": "{hook_question}",
+          "voix_off_template": "{hook_voix}",
+          "visual_brief": "Gros plan téléphone qui vibre, mains occupées",
+          "asset": "runway"
+        },
+        {
+          "start_s": 3,
+          "end_s": 10,
+          "role": "problem",
+          "scene_type": "problem_missed_calls",
+          "hook_type": null,
+          "texte_ecran_template": "Un appel manqué = un client perdu.",
+          "voix_off_template": "Chaque jour, des clients vous appellent. Personne ne répond assez vite.",
+          "visual_brief": "Appels manqués, client qui part chez le concurrent",
+          "asset": "runway"
+        },
+        {
+          "start_s": 10,
+          "end_s": 18,
+          "role": "agitate+solution",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Votre assistant IA disponible 24/7.",
+          "voix_off_template": "NoviaAI répond en 8 secondes, qualifie et propose un RDV.",
+          "visual_brief": "Mockup SMS conversation qualification",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 18,
+          "end_s": 26,
+          "role": "solution_proof",
+          "scene_type": "proof_rdv_confirmed",
+          "hook_type": null,
+          "texte_ecran_template": "Nouveau rendez-vous confirmé.",
+          "voix_off_template": "Pendant que vous travaillez, votre entreprise continue de répondre.",
+          "visual_brief": "Notification RDV, entrepreneur serein",
+          "asset": "runway"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Demandez votre démonstration.",
+          "voix_off_template": "Essai gratuit 14 jours — noviaai.ca",
+          "visual_brief": "Slide CTA navy/lime",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Scène 1-2 = douleur appel manqué. Scène 3 = mockup SMS réel (preuve produit). Scène 4 = notification RDV (résultat tangible). Ne jamais expliquer l'IA — montrer le texto.",
+      "examples": {
+        "plombier": {
+          "hook": "Combien de fuites urgentes avez-vous perdues parce que vous étiez sous l'évier?",
+          "textes_ecran": [
+            "Combien de fuites perdues aujourd'hui?",
+            "Un appel manqué = un client perdu.",
+            "NoviaAI répond en 8 sec",
+            "RDV confirmé demain 8h",
+            "Essai gratuit 14 jours"
+          ],
+          "voix_off": "T'es en job, le téléphone sonne, tu peux pas répondre. NoviaAI envoie un texto en 8 secondes et book le client."
+        },
+        "garage": {
+          "hook": "Combien de clients ont raccroché pendant que vous étiez sous le capot?",
+          "textes_ecran": [
+            "Clients perdus sous le capot?",
+            "60% ne rappellent jamais",
+            "Texto auto + qualification",
+            "3 RDV bookés cette semaine",
+            "Démo gratuite"
+          ],
+          "voix_off": "Pendant que tu répares, tes clients appellent ailleurs. NoviaAI répond et remplit ton horaire."
+        },
+        "salon": {
+          "hook": "Combien de clientes avez-vous perdues pendant une coloration?",
+          "textes_ecran": [
+            "Mains dans les cheveux, téléphone qui sonne?",
+            "Elle appelle le salon d'à côté",
+            "NoviaAI book pendant que vous coiffez",
+            "Nouvelle cliente confirmée",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Tu es en pleine coupe, tu peux pas décrocher. NoviaAI répond et propose les créneaux libres."
+        }
+      },
+      "tags": [
+        "cold",
+        "conversion",
+        "urgence",
+        "default"
+      ]
+    },
+    "bab_transformation": {
+      "id": "bab_transformation",
+      "name": "BAB — Avant · Après · Pont",
+      "origin": "StoryBrand · Agences GHL · SaaS onboarding ads",
+      "psychological_objective": "Créer un contraste émotionnel fort : chaos → sérénité. Le produit est le pont.",
+      "when_to_use": [
+        "Propriétaires qui se sentent débordés mais pas encore en crise",
+        "Salons, cliniques, garages avec horaire à remplir",
+        "Quand la vidéo doit inspirer (aspiration) plus qu'effrayer"
+      ],
+      "when_not_to_use": [
+        "Urgence extrême (fuite, panne) — PAS convertit mieux"
+      ],
+      "hook_types": [
+        "before_after_tease",
+        "relatable_moment"
+      ],
+      "scene_types_required": [
+        "before_chaos",
+        "after_calm",
+        "solution_sms_mockup",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 4,
+          "role": "before",
+          "scene_type": "before_chaos",
+          "hook_type": "relatable_moment",
+          "texte_ecran_template": "Votre journée sans NoviaAI.",
+          "voix_off_template": "Avant : téléphone qui sonne, stress, clients perdus.",
+          "visual_brief": "Montage chaotique, multiples appels manqués",
+          "asset": "runway"
+        },
+        {
+          "start_s": 4,
+          "end_s": 12,
+          "role": "after_tease",
+          "scene_type": "after_calm",
+          "hook_type": "before_after_tease",
+          "texte_ecran_template": "Votre journée avec NoviaAI.",
+          "voix_off_template": "Après : vous travaillez, NoviaAI répond à votre place.",
+          "visual_brief": "Même métier, calme, notification positive",
+          "asset": "runway"
+        },
+        {
+          "start_s": 12,
+          "end_s": 22,
+          "role": "bridge",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Le pont : texto en 8 sec + RDV auto.",
+          "voix_off_template": "NoviaAI envoie le texto, qualifie et confirme le rendez-vous.",
+          "visual_brief": "Mockup SMS complet",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 22,
+          "end_s": 26,
+          "role": "proof",
+          "scene_type": "proof_social_stat",
+          "hook_type": null,
+          "texte_ecran_template": "+{n} RDV cette semaine",
+          "voix_off_template": "Résultats concrets dès la première semaine.",
+          "visual_brief": "Stat animée ou notification",
+          "asset": "stat"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Passez de l'avant à l'après.",
+          "voix_off_template": "Demandez votre démo — essai 14 jours.",
+          "visual_brief": "CTA slide",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Contraste visuel avant/après sur le MÊME métier. Le mockup SMS = le pont concret entre les deux états.",
+      "examples": {
+        "plombier": {
+          "hook": "Avant NoviaAI vs après NoviaAI — même plombier, deux journées.",
+          "textes_ecran": [
+            "Journée chaos",
+            "Journée sereine",
+            "Texto auto en 8 sec",
+            "+4 urgences bookées",
+            "Démo gratuite"
+          ],
+          "voix_off": "Avant, tu courais partout et tu perdais des appels. Maintenant NoviaAI répond pendant que tu travailles."
+        },
+        "garage": {
+          "hook": "Garage débordé? Voici la différence en une semaine.",
+          "textes_ecran": [
+            "Avant : horaire troué",
+            "Après : agenda plein",
+            "Qualification auto",
+            "+6 RDV",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Ton garage sans système vs avec NoviaAI qui remplit tes créneaux."
+        },
+        "salon": {
+          "hook": "Coiffeuse débordée le samedi? Regardez la différence.",
+          "textes_ecran": [
+            "Samedi sans NoviaAI",
+            "Samedi avec NoviaAI",
+            "RDV bookés en SMS",
+            "Agenda plein",
+            "Démo salon"
+          ],
+          "voix_off": "Avant tu perdais des clientes. Maintenant NoviaAI book pendant que tu coiffes."
+        }
+      },
+      "tags": [
+        "aspiration",
+        "salon",
+        "garage"
+      ]
+    },
+    "stat_shock_ghl": {
+      "id": "stat_shock_ghl",
+      "name": "Stat Shock → Démo → Preuve → CTA",
+      "origin": "GoHighLevel / LeadConnector · Agences white-label US",
+      "psychological_objective": "Arrêter le scroll avec un chiffre inconfortable, puis prouver avec le produit.",
+      "when_to_use": [
+        "Trafic froid très distrait (Reels, TikTok)",
+        "Message quantifiable fort (60%, 8 sec, 3 RDV)",
+        "Retargeting léger"
+      ],
+      "when_not_to_use": [
+        "Audience déjà convaincue du problème — trop répétitif"
+      ],
+      "hook_types": [
+        "stat_shock"
+      ],
+      "scene_types_required": [
+        "hook_stat_shock",
+        "solution_sms_mockup",
+        "solution_dashboard",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 3,
+          "role": "hook",
+          "scene_type": "hook_stat_shock",
+          "hook_type": "stat_shock",
+          "texte_ecran_template": "{stat}% de vos clients\nne rappellent jamais",
+          "voix_off_template": "Soixante pour cent de vos clients ne rappellent jamais.",
+          "visual_brief": "Stat plein écran animée",
+          "asset": "stat"
+        },
+        {
+          "start_s": 3,
+          "end_s": 7,
+          "role": "context",
+          "scene_type": "hook_busy_missed_call",
+          "hook_type": null,
+          "texte_ecran_template": "Pendant que t'es en job…",
+          "voix_off_template": "Pendant que vous êtes occupé, ils partent ailleurs.",
+          "visual_brief": "B-roll métier occupé",
+          "asset": "runway"
+        },
+        {
+          "start_s": 7,
+          "end_s": 15,
+          "role": "demo",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Texto automatique en 8 secondes",
+          "voix_off_template": "NoviaAI envoie un texto en huit secondes et qualifie le client.",
+          "visual_brief": "SMS mockup",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 15,
+          "end_s": 24,
+          "role": "demo",
+          "scene_type": "solution_dashboard",
+          "hook_type": null,
+          "texte_ecran_template": "Ton dashboard en direct",
+          "voix_off_template": "Tous vos leads et RDV au même endroit.",
+          "visual_brief": "Capture dashboard mobile",
+          "asset": "dashboard"
+        },
+        {
+          "start_s": 24,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Essai gratuit 14 jours\nnoviaai.ca",
+          "voix_off_template": "Commencez votre essai gratuit aujourd'hui.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Utiliser stat_clip MoviePy + mockup SMS + dashboard Playwright. C'est le framework du pub_plombier_GHL existant.",
+      "examples": {
+        "plombier": {
+          "hook": "60% de tes clients ne rappellent jamais.",
+          "textes_ecran": [
+            "60% ne rappellent jamais",
+            "Pendant que t'es en job…",
+            "Texto en 8 sec",
+            "Dashboard live",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Soixante pour cent ne rappellent jamais. NoviaAI envoie le texto pendant que tu répares."
+        },
+        "garage": {
+          "hook": "8 secondes — c'est le temps de réponse de vos clients.",
+          "textes_ecran": [
+            "8 sec pour répondre",
+            "Sinon ils partent",
+            "NoviaAI = 8 sec",
+            "RDV qualifiés",
+            "noviaai.ca"
+          ],
+          "voix_off": "Tes clients attendent huit secondes. NoviaAI répond à ta place."
+        },
+        "salon": {
+          "hook": "3 clientes perdues par semaine — en moyenne.",
+          "textes_ecran": [
+            "3 clientes perdues/sem.",
+            "Elles appellent ailleurs",
+            "NoviaAI book 24/7",
+            "Agenda rempli",
+            "Essai gratuit"
+          ],
+          "voix_off": "Trois clientes perdues par semaine. NoviaAI réserve pendant que tu travailles."
+        }
+      },
+      "tags": [
+        "ghl",
+        "stat",
+        "cold",
+        "proven"
+      ]
+    },
+    "hso_hook_story_offer": {
+      "id": "hso_hook_story_offer",
+      "name": "Hook · Story · Offer",
+      "origin": "Alex Hormozi · Agences info-produits · Adapté SaaS par GHL agencies",
+      "psychological_objective": "Capturer l'attention, créer l'identification via micro-histoire, offrir une sortie claire.",
+      "when_to_use": [
+        "Storytelling court (un client, une journée)",
+        "Quand le fondateur n'est pas à l'écran — l'histoire est celle du PME",
+        "Campagnes evergreen"
+      ],
+      "when_not_to_use": [
+        "Besoin de preuve produit immédiate — préférer stat_shock_ghl"
+      ],
+      "hook_types": [
+        "pattern_interrupt",
+        "question_pain"
+      ],
+      "scene_types_required": [
+        "hook_pattern_interrupt",
+        "problem_client_leaves",
+        "solution_sms_mockup",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 3,
+          "role": "hook",
+          "scene_type": "hook_pattern_interrupt",
+          "hook_type": "pattern_interrupt",
+          "texte_ecran_template": "Votre téléphone vous coûte de l'argent.",
+          "voix_off_template": "Votre téléphone vous coûte de l'argent.",
+          "visual_brief": "Visuel provocant — téléphone = fuite d'argent",
+          "asset": "runway"
+        },
+        {
+          "start_s": 3,
+          "end_s": 12,
+          "role": "story",
+          "scene_type": "problem_client_leaves",
+          "hook_type": null,
+          "texte_ecran_template": "Marc a appelé. Personne n'a répondu.",
+          "voix_off_template": "Marc avait une urgence. Il a appelé trois fois. Puis il a googlé votre concurrent.",
+          "visual_brief": "Micro-histoire client fictif mais crédible",
+          "asset": "runway"
+        },
+        {
+          "start_s": 12,
+          "end_s": 22,
+          "role": "offer_setup",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Et si quelqu'un répondait à votre place?",
+          "voix_off_template": "NoviaAI répond en huit secondes, pose les bonnes questions et book le RDV.",
+          "visual_brief": "SMS demo",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 22,
+          "end_s": 26,
+          "role": "offer",
+          "scene_type": "proof_rdv_confirmed",
+          "hook_type": null,
+          "texte_ecran_template": "Marc a booké demain 8h.",
+          "voix_off_template": "Marc a reçu une confirmation. Vous, vous étiez en job.",
+          "visual_brief": "Notification succès",
+          "asset": "runway"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Offre : démo gratuite + 14 jours.",
+          "voix_off_template": "Demandez votre démonstration gratuite.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Personnifier le client final (Marc, Julie) — jamais le propriétaire NoviaAI. L'offre = démo + essai, pas discount.",
+      "examples": {
+        "plombier": {
+          "hook": "Votre téléphone vous coûte des urgences à 500$.",
+          "textes_ecran": [
+            "Votre tel vous coûte cher",
+            "Marc avait une fuite",
+            "NoviaAI répond",
+            "Marc booké 8h",
+            "Démo gratuite"
+          ],
+          "voix_off": "Marc avait une fuite à minuit. Personne n'a répondu. Avec NoviaAI, il aurait booké en deux minutes."
+        },
+        "garage": {
+          "hook": "Un client avec un bruit de frein. Parti en 30 secondes.",
+          "textes_ecran": [
+            "30 sec et c'est fini",
+            "Il appelle le garage voisin",
+            "NoviaAI intercepte",
+            "RDV demain",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Un client appelle pour ses freins. Pas de réponse. NoviaAI l'a rattrapé par texto."
+        },
+        "salon": {
+          "hook": "Julie voulait une coupe pour samedi. Elle a appelé ailleurs.",
+          "textes_ecran": [
+            "Julie cherche un créneau",
+            "Personne ne répond",
+            "NoviaAI propose 14h",
+            "Julie confirmée",
+            "Démo salon"
+          ],
+          "voix_off": "Julie voulait samedi. NoviaAI lui a proposé un créneau pendant que tu coiffais."
+        }
+      },
+      "tags": [
+        "story",
+        "evergreen"
+      ]
+    },
+    "lost_revenue": {
+      "id": "lost_revenue",
+      "name": "Calculateur de revenus perdus",
+      "origin": "SaaS B2B (HubSpot, ServiceTitan ads) · Agences comptables PME",
+      "psychological_objective": "Rendre la perte concrète en dollars — la douleur devient un calcul, pas une émotion vague.",
+      "when_to_use": [
+        "PME sensibles au ROI (garage, plombier commercial)",
+        "Décideurs rationnels",
+        "Retargeting après vidéo émotionnelle"
+      ],
+      "when_not_to_use": [
+        "Première impression — trop froid sans contexte émotionnel"
+      ],
+      "hook_types": [
+        "stat_shock",
+        "pattern_interrupt"
+      ],
+      "scene_types_required": [
+        "problem_revenue_loss",
+        "hook_stat_shock",
+        "solution_sms_mockup",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 4,
+          "role": "hook",
+          "scene_type": "hook_stat_shock",
+          "hook_type": "stat_shock",
+          "texte_ecran_template": "1 appel manqué = {montant}$ perdus",
+          "voix_off_template": "Un seul appel manqué peut vous coûter cinq cents dollars.",
+          "visual_brief": "Chiffre dollar animé",
+          "asset": "stat"
+        },
+        {
+          "start_s": 4,
+          "end_s": 11,
+          "role": "problem",
+          "scene_type": "problem_revenue_loss",
+          "hook_type": null,
+          "texte_ecran_template": "× 3 par semaine = {montant_mois}$/mois",
+          "voix_off_template": "Multipliez par trois par semaine. Ça fait des milliers par mois.",
+          "visual_brief": "Calendrier vide, factures manquantes",
+          "asset": "runway"
+        },
+        {
+          "start_s": 11,
+          "end_s": 20,
+          "role": "solution",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "NoviaAI rattrape l'appel en 8 sec",
+          "voix_off_template": "NoviaAI envoie un texto automatique et transforme l'appel manqué en RDV.",
+          "visual_brief": "SMS mockup",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 20,
+          "end_s": 26,
+          "role": "proof",
+          "scene_type": "proof_social_stat",
+          "hook_type": null,
+          "texte_ecran_template": "ROI : 1 client = forfait payé",
+          "voix_off_template": "Un seul client rattrapé paie votre abonnement.",
+          "visual_brief": "Stat ROI",
+          "asset": "stat"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Calculez vos pertes — démo gratuite",
+          "voix_off_template": "Demandez une démo et voyez combien vous perdez.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Adapter {montant} par niche : urgence plombier 500$, garage 300$, salon 80$. Forfait NoviaAI ~199$/mois = ancrage ROI.",
+      "examples": {
+        "plombier": {
+          "hook": "1 urgence manquée = 500$ dans le vide.",
+          "textes_ecran": [
+            "500$ par appel manqué",
+            "×3/semaine = 6000$/mois",
+            "NoviaAI rattrape",
+            "1 job = abonnement payé",
+            "Démo ROI"
+          ],
+          "voix_off": "Une urgence à cinq cents dollars. Trois par semaine. NoviaAI les rattrape toutes."
+        },
+        "garage": {
+          "hook": "1 freinage perdu = 350$. Combien par mois?",
+          "textes_ecran": [
+            "350$ par RDV perdu",
+            "12 RDV/mois perdus?",
+            "Texto auto 8 sec",
+            "Rentable en 1 job",
+            "Démo gratuite"
+          ],
+          "voix_off": "Un freinage à trois cent cinquante. NoviaAI remplit les trous dans ton horaire."
+        },
+        "salon": {
+          "hook": "1 coloration perdue = 120$. × 4/semaine?",
+          "textes_ecran": [
+            "120$ par cliente perdue",
+            "480$/semaine envolés",
+            "NoviaAI book 24/7",
+            "14 jours gratuits",
+            "noviaai.ca"
+          ],
+          "voix_off": "Cent vingt dollars par coloration. NoviaAI ne laisse plus sonner dans le vide."
+        }
+      },
+      "tags": [
+        "roi",
+        "rational",
+        "retargeting"
+      ]
+    },
+    "objection_crusher": {
+      "id": "objection_crusher",
+      "name": "Brise-objections",
+      "origin": "SaaS enterprise · Meta retargeting · GHL webinar funnels",
+      "psychological_objective": "Lever les freins à l'achat avant le CTA — trop occupé, trop cher, pas confiance IA.",
+      "when_to_use": [
+        "Retargeting visiteurs noviaai.ca",
+        "Audience 35-55 ans sceptique tech",
+        "Après 3+ impressions sans conversion"
+      ],
+      "when_not_to_use": [
+        "Cold traffic — objections prématurées"
+      ],
+      "hook_types": [
+        "pattern_interrupt"
+      ],
+      "scene_types_required": [
+        "objection_answer",
+        "solution_sms_mockup",
+        "proof_social_stat",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 4,
+          "role": "objection",
+          "scene_type": "objection_answer",
+          "hook_type": "pattern_interrupt",
+          "texte_ecran_template": "« Je suis trop occupé pour un autre outil. »",
+          "voix_off_template": "Vous pensez être trop occupé pour un autre outil?",
+          "visual_brief": "Texte objection + entrepreneur occupé",
+          "asset": "runway"
+        },
+        {
+          "start_s": 4,
+          "end_s": 10,
+          "role": "answer",
+          "scene_type": "objection_answer",
+          "hook_type": null,
+          "texte_ecran_template": "NoviaAI travaille PENDANT que vous travaillez.",
+          "voix_off_template": "NoviaAI ne demande pas plus de temps. Il répond quand vous ne pouvez pas.",
+          "visual_brief": "Split écran travail / SMS auto",
+          "asset": "runway"
+        },
+        {
+          "start_s": 10,
+          "end_s": 18,
+          "role": "proof",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Pas besoin de toucher votre téléphone.",
+          "voix_off_template": "Le client reçoit un texto en huit secondes. Vous recevez un résumé.",
+          "visual_brief": "SMS mockup",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 18,
+          "end_s": 26,
+          "role": "objection2",
+          "scene_type": "proof_social_stat",
+          "hook_type": null,
+          "texte_ecran_template": "199$/mois · 1 client = rentabilisé",
+          "voix_off_template": "Cent quatre-vingt-dix-neuf dollars. Un client rattrapé et c'est payé.",
+          "visual_brief": "Stat prix/ROI",
+          "asset": "stat"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Essai 14 jours — zéro engagement",
+          "voix_off_template": "Essai gratuit quatorze jours. Annulez quand vous voulez.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Nommer l'objection en texte écran (guillemets). Répondre par preuve produit, pas argumentation. Essai 14j = risque zéro.",
+      "examples": {
+        "plombier": {
+          "hook": "« J'ai pas le temps de gérer un robot. »",
+          "textes_ecran": [
+            "Trop occupé?",
+            "NoviaAI répond seul",
+            "Vous recevez le résumé",
+            "199$/mois · 1 job",
+            "14 jours gratuits"
+          ],
+          "voix_off": "T'as pas le temps? C'est exactement pour ça que NoviaAI existe."
+        },
+        "garage": {
+          "hook": "« L'IA va dire n'importe quoi à mes clients. »",
+          "textes_ecran": [
+            "Peur de l'IA?",
+            "Qualification contrôlée",
+            "Vous validez les RDV",
+            "Essai sans risque",
+            "Démo garage"
+          ],
+          "voix_off": "L'agent pose les bonnes questions. Vous gardez le contrôle."
+        },
+        "salon": {
+          "hook": "« Mes clientes veulent parler à une vraie personne. »",
+          "textes_ecran": [
+            "Elles veulent du personnel?",
+            "Réponse humaine par SMS",
+            "RDV confirmé par texto",
+            "14 jours gratuits",
+            "noviaai.ca"
+          ],
+          "voix_off": "NoviaAI répond comme votre réceptionniste — disponible vingt-quatre heures sur sept."
+        }
+      },
+      "tags": [
+        "retargeting",
+        "objection"
+      ]
+    },
+    "social_proof_micro": {
+      "id": "social_proof_micro",
+      "name": "Micro preuve sociale",
+      "origin": "Case study ads (Intercom, Jobber) · Témoignages GHL",
+      "psychological_objective": "Réduire le risque perçu via résultats d'un pair (même métier, même ville).",
+      "when_to_use": [
+        "Quand vous avez des stats clients (même anonymisées)",
+        "Phase scaling — lookalike audiences",
+        "Niches où le bouche-à-oreille domine"
+      ],
+      "when_not_to_use": [
+        "Sans chiffres crédibles — paraît fake"
+      ],
+      "hook_types": [
+        "social_proof_open"
+      ],
+      "scene_types_required": [
+        "proof_social_stat",
+        "solution_sms_mockup",
+        "proof_rdv_confirmed",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 4,
+          "role": "hook",
+          "scene_type": "proof_social_stat",
+          "hook_type": "social_proof_open",
+          "texte_ecran_template": "+{n} RDV bookés en 7 jours",
+          "voix_off_template": "Plus douze rendez-vous bookés en une semaine.",
+          "visual_brief": "Stat résultat plein écran",
+          "asset": "stat"
+        },
+        {
+          "start_s": 4,
+          "end_s": 10,
+          "role": "context",
+          "scene_type": "hook_busy_missed_call",
+          "hook_type": null,
+          "texte_ecran_template": "Un {metier} comme vous",
+          "voix_off_template": "Un plombier comme vous, même problème : trop d'appels manqués.",
+          "visual_brief": "B-roll métier",
+          "asset": "runway"
+        },
+        {
+          "start_s": 10,
+          "end_s": 18,
+          "role": "how",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Voici comment ça marche",
+          "voix_off_template": "NoviaAI envoie un texto en huit secondes et qualifie automatiquement.",
+          "visual_brief": "SMS demo",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 18,
+          "end_s": 26,
+          "role": "proof",
+          "scene_type": "proof_rdv_confirmed",
+          "hook_type": null,
+          "texte_ecran_template": "Résultat : inbox zero stress",
+          "voix_off_template": "Rendez-vous confirmés sans décrocher.",
+          "visual_brief": "Notification + calme",
+          "asset": "runway"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "cta",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Rejoignez les PME qui convertissent",
+          "voix_off_template": "Demandez votre démo — essai quatorze jours.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Utiliser stats réelles dashboard quand disponibles. Sinon fourchette conservative (+3 RDV/semaine). Jamais inventer un nom de client sans consentement.",
+      "examples": {
+        "plombier": {
+          "hook": "+12 urgences bookées en 7 jours — plombier Laval.",
+          "textes_ecran": [
+            "+12 RDV en 7 jours",
+            "Même problème que vous",
+            "Texto en 8 sec",
+            "Inbox under control",
+            "Démo gratuite"
+          ],
+          "voix_off": "Douze urgences en une semaine. NoviaAI pendant qu'il était en job."
+        },
+        "garage": {
+          "hook": "Garage Québec : +8 RDV qualifiés cette semaine.",
+          "textes_ecran": [
+            "+8 RDV cette semaine",
+            "Garage comme le vôtre",
+            "Qualification auto",
+            "Agenda plein",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Huit rendez-vous qualifiés. NoviaAI a filtré les vrais clients."
+        },
+        "salon": {
+          "hook": "Salon Montréal : 15 nouvelles clientes via SMS ce mois.",
+          "textes_ecran": [
+            "+15 clientes ce mois",
+            "Salon comme le vôtre",
+            "RDV auto samedi",
+            "Agenda rempli",
+            "Démo salon"
+          ],
+          "voix_off": "Quinze nouvelles clientes bookées par texto ce mois-ci."
+        }
+      },
+      "tags": [
+        "proof",
+        "scaling",
+        "lookalike"
+      ]
+    },
+    "aida_compact": {
+      "id": "aida_compact",
+      "name": "AIDA — Attention · Intérêt · Désir · Action",
+      "origin": "Classic marketing · Meta creative testing frameworks",
+      "psychological_objective": "Progression logique du scroll-stop à l'action sans saut émotionnel.",
+      "when_to_use": [
+        "Tests A/B de hooks",
+        "Audiences mixtes (froid + tiède)",
+        "Format éducatif léger"
+      ],
+      "when_not_to_use": [
+        "Urgence extrême — trop linéaire, manque d'agitation"
+      ],
+      "hook_types": [
+        "question_pain",
+        "stat_shock"
+      ],
+      "scene_types_required": [
+        "hook_busy_missed_call",
+        "problem_missed_calls",
+        "solution_sms_mockup",
+        "cta_demo"
+      ],
+      "beats": [
+        {
+          "start_s": 0,
+          "end_s": 3,
+          "role": "attention",
+          "scene_type": "hook_busy_missed_call",
+          "hook_type": "question_pain",
+          "texte_ecran_template": "{hook}",
+          "voix_off_template": "{hook_voix}",
+          "visual_brief": "Scroll-stop visuel",
+          "asset": "runway"
+        },
+        {
+          "start_s": 3,
+          "end_s": 9,
+          "role": "interest",
+          "scene_type": "problem_missed_calls",
+          "hook_type": null,
+          "texte_ecran_template": "Le vrai coût d'un appel manqué",
+          "voix_off_template": "Saviez-vous que la plupart des clients ne rappellent jamais?",
+          "visual_brief": "Éducation problème",
+          "asset": "runway"
+        },
+        {
+          "start_s": 9,
+          "end_s": 18,
+          "role": "desire",
+          "scene_type": "solution_sms_mockup",
+          "hook_type": null,
+          "texte_ecran_template": "Imaginez : réponse en 8 sec, 24/7",
+          "voix_off_template": "Imaginez un assistant qui répond en huit secondes, vingt-quatre heures sur sept.",
+          "visual_brief": "SMS demo désirable",
+          "asset": "sms_mockup"
+        },
+        {
+          "start_s": 18,
+          "end_s": 26,
+          "role": "desire+",
+          "scene_type": "proof_rdv_confirmed",
+          "hook_type": null,
+          "texte_ecran_template": "RDV confirmés. Sérénité.",
+          "voix_off_template": "Des rendez-vous confirmés pendant que vous travaillez.",
+          "visual_brief": "Résultat",
+          "asset": "runway"
+        },
+        {
+          "start_s": 26,
+          "end_s": 30,
+          "role": "action",
+          "scene_type": "cta_demo",
+          "hook_type": null,
+          "texte_ecran_template": "Action : démo gratuite",
+          "voix_off_template": "Passez à l'action — essai gratuit quatorze jours.",
+          "visual_brief": "CTA",
+          "asset": "cta"
+        }
+      ],
+      "noviaai_adaptation": "Ton légèrement plus éducatif que PAS. « Imaginez » à la scène désir — pas de hard sell avant scène 3.",
+      "examples": {
+        "plombier": {
+          "hook": "Saviez-vous que 60% des appels urgents ne laissent pas de message?",
+          "textes_ecran": [
+            "60% pas de message",
+            "Coût d'un appel manqué",
+            "Réponse en 8 sec",
+            "RDV auto",
+            "Démo gratuite"
+          ],
+          "voix_off": "La plupart des urgences ne laissent pas de message. NoviaAI les rattrape par texto."
+        },
+        "garage": {
+          "hook": "Vos clients attendent combien de temps avant d'appeler ailleurs?",
+          "textes_ecran": [
+            "30 sec max",
+            "Puis ils partent",
+            "NoviaAI 24/7",
+            "RDV qualifiés",
+            "Essai 14 jours"
+          ],
+          "voix_off": "Trente secondes. C'est tout ce qu'ils attendent."
+        },
+        "salon": {
+          "hook": "Une cliente sur deux n'attend pas plus d'une sonnerie.",
+          "textes_ecran": [
+            "1 sonnerie max",
+            "Elle book ailleurs",
+            "NoviaAI répond",
+            "Créneaux remplis",
+            "Démo salon"
+          ],
+          "voix_off": "Une sonnerie. NoviaAI répond pendant que vous avez les mains occupées."
+        }
+      },
+      "tags": [
+        "testing",
+        "education",
+        "aida"
+      ]
+    }
+  },
+  "recommendation_rules": {
+    "cold_urgent_niche": "pas_classic",
+    "cold_distracted": "stat_shock_ghl",
+    "aspiration": "bab_transformation",
+    "retargeting": "objection_crusher",
+    "roi_focus": "lost_revenue",
+    "has_client_stats": "social_proof_micro",
+    "story_evergreen": "hso_hook_story_offer",
+    "ab_testing": "aida_compact"
+  }
+}

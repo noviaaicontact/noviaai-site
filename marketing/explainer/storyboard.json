@@ -1,0 +1,354 @@
+{
+  "project": "noviaai-explainer",
+  "title": "NoviaAI — Comment ça marche",
+  "baseUrl": "http://127.0.0.1:8888",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "voice": {
+    "model": "gpt-4o-mini-tts",
+    "name": "nova",
+    "instructions": "Parle en français québécois naturel, avec un ton chaleureux, posé et professionnel. Débit calme et articulé, comme la narration d'une vidéo explicative destinée à des propriétaires de PME. Pas d'emphase publicitaire exagérée."
+  },
+  "shots": [
+    {
+      "id": "probleme_flow",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "#probleme .flow-schema"
+    },
+    {
+      "id": "probleme_impact",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "#probleme .impact-grid"
+    },
+    {
+      "id": "compare",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": ".compare-grid"
+    },
+    {
+      "id": "flow_appel",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "#schema-appel .flow-schema"
+    },
+    {
+      "id": "phone_client",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "#schema-appel .flow-phone"
+    },
+    {
+      "id": "setup_steps",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "#setup .big-steps"
+    },
+    {
+      "id": "resume_flow",
+      "url": "/comment-ca-marche.html",
+      "mode": "element",
+      "selector": "section.flow-section.alt:last-of-type .flow-schema"
+    },
+    {
+      "id": "dash_top",
+      "url": "/dashboard.html?demo=1",
+      "mode": "viewport",
+      "wait": 2500
+    },
+    {
+      "id": "dash_roi",
+      "url": "/dashboard.html?demo=1",
+      "mode": "element",
+      "selector": "#roiBox",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "dash_number",
+      "url": "/dashboard.html?demo=1",
+      "mode": "element",
+      "selector": ".card:has(.number-display)",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "dash_checklist",
+      "url": "/dashboard.html?demo=1",
+      "mode": "element",
+      "selector": "#checklist",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "conv_full",
+      "url": "/conversations.html?demo=1",
+      "mode": "element",
+      "selector": ".inbox-layout",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "conv_thread",
+      "url": "/conversations.html?demo=1",
+      "mode": "element",
+      "selector": "#inboxThread",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "conv_stats",
+      "url": "/conversations.html?demo=1",
+      "mode": "element",
+      "selector": ".stat-row",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "agent_perso",
+      "url": "/chatbot.html?demo=1",
+      "mode": "element",
+      "selector": ".settings-section",
+      "matchText": "Personnalité",
+      "wait": 3000,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "agent_services",
+      "url": "/chatbot.html?demo=1",
+      "mode": "element",
+      "selector": ".settings-section",
+      "matchText": "Services",
+      "wait": 3000,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "agent_messages",
+      "url": "/chatbot.html?demo=1",
+      "mode": "element",
+      "selector": ".settings-section",
+      "matchText": "Messages de l'agent",
+      "wait": 3000,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "agent_qualif",
+      "url": "/chatbot.html?demo=1",
+      "mode": "element",
+      "selector": "#qualification",
+      "wait": 3000,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "publier_num",
+      "url": "/publier.html?demo=1",
+      "mode": "element",
+      "selector": "#installPlanNew",
+      "wait": 2500,
+      "viewport": {
+        "width": 1120,
+        "height": 1400
+      }
+    },
+    {
+      "id": "signup",
+      "url": "/signup.html?plan=pro",
+      "mode": "viewport",
+      "wait": 1800
+    },
+    {
+      "id": "sim",
+      "url": "/dashboard.html?demo=1",
+      "mode": "scenario",
+      "scenario": "clientSim",
+      "wait": 2500
+    }
+  ],
+  "scenes": [
+    {
+      "id": "s01_hook",
+      "kicker": "Le problème",
+      "title": "Un appel manqué, c'est un client perdu",
+      "vo": "Vous êtes en rendez-vous, les mains dans le moteur, ou tout simplement fermé. Le téléphone sonne, et personne ne répond. Ce client-là, huit fois sur dix, ne rappellera jamais. Il appelle le prochain nom sur Google.",
+      "shots": [
+        "probleme_flow"
+      ]
+    },
+    {
+      "id": "s02_cout",
+      "kicker": "Ce que ça coûte",
+      "title": "Environ 2 400 $ par mois qui sortent par la porte",
+      "vo": "Pour un salon ou une clinique, on parle de trois à cinq appels manqués par jour. À quatre-vingts dollars le rendez-vous, c'est près de deux mille quatre cents dollars qui s'envolent chaque mois.",
+      "shots": [
+        "probleme_impact"
+      ]
+    },
+    {
+      "id": "s03_solution",
+      "kicker": "La solution",
+      "title": "Une ligne téléphonique intelligente",
+      "vo": "NoviaAI, c'est une ligne téléphonique intelligente pour votre commerce. Vos clients l'appellent, votre cellulaire sonne normalement. Mais si vous ne répondez pas, un agent conversationnel prend le relais par texto, en français, vingt-quatre heures sur vingt-quatre.",
+      "shots": [
+        "compare"
+      ]
+    },
+    {
+      "id": "s04_flux",
+      "kicker": "Comment ça marche",
+      "title": "Le flux automatique, étape par étape",
+      "vo": "Voici exactement ce qui se passe. Le client compose votre numéro NoviaAI, un vrai numéro local. Votre cellulaire sonne pendant vingt secondes. Si personne ne décroche, NoviaAI envoie automatiquement un texto au client, environ cinq secondes plus tard.",
+      "shots": [
+        "flow_appel"
+      ]
+    },
+    {
+      "id": "s05_client",
+      "kicker": "Côté client",
+      "title": "Un vrai message, pas un répondeur",
+      "vo": "Le client reçoit un vrai message. Il répond, et l'agent poursuit la conversation : il comprend la demande, pose les bonnes questions, donne vos prix et vos heures d'ouverture, puis propose un rendez-vous.",
+      "shots": [
+        "phone_client"
+      ]
+    },
+    {
+      "id": "s06_alerte",
+      "kicker": "Côté vous",
+      "title": "Alerte courriel et inbox centralisée",
+      "vo": "Pendant ce temps, vous recevez une alerte par courriel, et toute la conversation atterrit dans votre boîte de réception NoviaAI. Vous pouvez reprendre la main et répondre vous-même à n'importe quel moment.",
+      "shots": [
+        "conv_full"
+      ]
+    },
+    {
+      "id": "s07_dashboard",
+      "kicker": "Votre tableau de bord",
+      "title": "Votre poste de commande",
+      "vo": "Le tableau de bord, c'est votre poste de commande. Vous y voyez vos leads du mois, vos appels rattrapés, et une estimation des revenus que le système vous a récupérés.",
+      "shots": [
+        "dash_top",
+        "dash_roi"
+      ]
+    },
+    {
+      "id": "s08_ligne",
+      "kicker": "Votre numéro",
+      "title": "Le numéro à publier partout",
+      "vo": "Votre ligne NoviaAI est affichée en gros : c'est le numéro à mettre sur Google, sur Facebook et sur votre site web. Et la liste de démarrage vous indique exactement ce qu'il vous reste à faire.",
+      "shots": [
+        "dash_number",
+        "dash_checklist"
+      ]
+    },
+    {
+      "id": "s09_conversations",
+      "kicker": "Conversations",
+      "title": "Tous vos clients au même endroit",
+      "vo": "Dans Conversations, toutes vos discussions sont regroupées, avec les leads identifiés et le résumé de chaque demande. Vous répondez par texto directement depuis l'écran, sur votre ordinateur ou sur votre téléphone.",
+      "shots": [
+        "conv_thread",
+        "conv_stats"
+      ]
+    },
+    {
+      "id": "s10_agent",
+      "kicker": "L'agent",
+      "title": "Vous décidez de ce qu'elle répond",
+      "vo": "Dans l'onglet Agent, vous personnalisez votre assistante : son prénom, son ton, vos services et vos prix, vos heures d'ouverture, votre foire aux questions et votre lien de réservation. C'est ce qui rend ses réponses justes pour votre commerce.",
+      "shots": [
+        "agent_perso",
+        "agent_services"
+      ]
+    },
+    {
+      "id": "s11_qualif",
+      "kicker": "Qualification",
+      "title": "Elle recueille les bonnes informations",
+      "vo": "Vous choisissez aussi les informations qu'elle doit recueillir : le nom, le numéro, la nature de la demande, le niveau d'urgence. Elle vous en produit un résumé structuré, et vous rédigez vous-même le premier texto envoyé après un appel manqué.",
+      "shots": [
+        "agent_qualif",
+        "agent_messages"
+      ]
+    },
+    {
+      "id": "s12_simulateur",
+      "kicker": "Tester",
+      "title": "Le simulateur de client",
+      "vo": "Et vous pouvez la tester en direct avec le simulateur de client. Vous écrivez comme un client, vous voyez la réponse arriver. Aucun texto réel n'est envoyé.",
+      "shots": [
+        "sim_1",
+        "sim_2",
+        "sim_3"
+      ]
+    },
+    {
+      "id": "s13_setup",
+      "kicker": "Le démarrage",
+      "title": "Environ cinq minutes, une seule fois",
+      "vo": "Le démarrage prend environ cinq minutes. Vous créez votre compte, vous entrez le cellulaire où vous voulez être rejoint, et NoviaAI achète votre numéro local automatiquement.",
+      "shots": [
+        "signup",
+        "setup_steps"
+      ]
+    },
+    {
+      "id": "s14_publier",
+      "kicker": "Publier",
+      "title": "Un copier-coller sur Google",
+      "vo": "Ensuite, vous copiez ce numéro sur votre fiche Google Business, votre page Facebook et votre site. Et si vous préférez garder votre numéro actuel, un guide de renvoi d'appel est fourni pour chaque fournisseur.",
+      "shots": [
+        "publier_num"
+      ]
+    },
+    {
+      "id": "s15_test",
+      "kicker": "Vérifier",
+      "title": "Appelez-vous vous-même",
+      "vo": "Dernière étape : appelez votre nouvelle ligne à partir d'un autre téléphone, ne répondez pas, et regardez le texto partir chez le client. À partir de là, c'est en ligne.",
+      "shots": [
+        "resume_flow"
+      ]
+    },
+    {
+      "id": "s16_cta",
+      "kicker": "",
+      "title": "",
+      "vo": "NoviaAI répond pendant que vous travaillez. Essai de quatorze jours, sans contrat, et du support en français. Rendez-vous sur noviaai point ca.",
+      "shots": [
+        "generated:cta"
+      ]
+    }
+  ]
+}

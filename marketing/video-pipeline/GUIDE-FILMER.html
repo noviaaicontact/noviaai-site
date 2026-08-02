@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8">
+  <title>Guide tournage — 4 plans Novia</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+    h1 { color: #111; }
+    .plan { border-left: 4px solid #007aff; padding-left: 16px; margin: 24px 0; }
+    .plan.busy { border-color: #f39c12; }
+    .plan.sms { border-color: #2ecc71; }
+    .plan.result { border-color: #9b59b6; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Guide tournage — 4 plans (cellulaire vertical)</h1>
+  <p>Filme en <strong>portrait</strong>, 10 secondes par plan. Dépose les fichiers dans <code>clips/local/</code> avec les noms indiqués.</p>
+
+  <div class="plan">
+    <h2>Plan 1 — Appel (call_local_01.mp4)</h2>
+    <p>Main qui compose un numéro sur iPhone. On entend 3-4 sonneries. Personne ne répond.</p>
+  </div>
+
+  <div class="plan busy">
+    <h2>Plan 2 — Occupé (busy_local_01.mp4)</h2>
+    <p>Plombier sous évier, mécano sous capot ou électricien en job. Téléphone visible qui sonne — tu ignores.</p>
+  </div>
+
+  <div class="plan sms">
+    <h2>Plan 3 — SMS (auto-généré)</h2>
+    <p>Les mockups Novia animés sont créés par <code>generate_sms_mockups.py</code>. Pas besoin de filmer.</p>
+  </div>
+
+  <div class="plan result">
+    <h2>Plan 4 — Dénouement (result_local_01.mp4)</h2>
+    <p>Commerçant regarde son cellulaire, sourit. Ou poignée de main avec client.</p>
+  </div>
+
+  <p><strong>Relancer :</strong> <code>python run.py --from select --force</code></p>
+</body>
+</html>

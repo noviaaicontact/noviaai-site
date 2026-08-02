@@ -1,0 +1,94 @@
+[
+  {
+    "id": "probleme_flow",
+    "file": "probleme_flow.png"
+  },
+  {
+    "id": "probleme_impact",
+    "file": "probleme_impact.png"
+  },
+  {
+    "id": "compare",
+    "file": "compare.png"
+  },
+  {
+    "id": "flow_appel",
+    "file": "flow_appel.png"
+  },
+  {
+    "id": "phone_client",
+    "file": "phone_client.png"
+  },
+  {
+    "id": "setup_steps",
+    "file": "setup_steps.png"
+  },
+  {
+    "id": "resume_flow",
+    "file": "resume_flow.png"
+  },
+  {
+    "id": "dash_top",
+    "file": "dash_top.png"
+  },
+  {
+    "id": "dash_roi",
+    "file": "dash_roi.png"
+  },
+  {
+    "id": "dash_number",
+    "file": "dash_number.png"
+  },
+  {
+    "id": "dash_checklist",
+    "file": "dash_checklist.png"
+  },
+  {
+    "id": "conv_full",
+    "file": "conv_full.png"
+  },
+  {
+    "id": "conv_thread",
+    "file": "conv_thread.png"
+  },
+  {
+    "id": "conv_stats",
+    "file": "conv_stats.png"
+  },
+  {
+    "id": "agent_perso",
+    "file": "agent_perso.png"
+  },
+  {
+    "id": "agent_services",
+    "file": "agent_services.png"
+  },
+  {
+    "id": "agent_messages",
+    "file": "agent_messages.png"
+  },
+  {
+    "id": "agent_qualif",
+    "file": "agent_qualif.png"
+  },
+  {
+    "id": "publier_num",
+    "file": "publier_num.png"
+  },
+  {
+    "id": "signup",
+    "file": "signup.png"
+  },
+  {
+    "id": "sim_1",
+    "file": "sim_1.png"
+  },
+  {
+    "id": "sim_2",
+    "file": "sim_2.png"
+  },
+  {
+    "id": "sim_3",
+    "file": "sim_3.png"
+  }
+]

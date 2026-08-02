@@ -43,11 +43,13 @@ def trigger_download(access_key: str, download_location: str) -> None:
 
 
 def main() -> int:
+    from utils import load_secrets_into_env
+
+    load_secrets_into_env()
     access_key = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
     if not access_key:
         log.warning(
-            "UNSPLASH_ACCESS_KEY absente — étape ignorée. "
-            "Créez une app sur https://unsplash.com/developers (gratuit, 50 req/h)."
+            "UNSPLASH_ACCESS_KEY absente — ajoutez noviaai-site/secrets/unsplash.env"
         )
         return 0
 

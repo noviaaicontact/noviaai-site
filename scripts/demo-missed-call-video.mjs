@@ -18,9 +18,13 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(root, 'marketing', 'demo-videos');
 
 const DEMO_PHONE = '+1 (418) 555-9021';
-const SMS_RATTRAPAGE = 'Bonjour! Désolée, on a manqué votre appel à Salon Éclat 😊 On peut vous aider par texto — qu\'est-ce que vous cherchiez?';
-const SMS_CLIENT = 'Bonjour! Je voudrais un rendez-vous jeudi après-midi pour une coupe.';
-const SMS_IA = 'Parfait! Jeudi PM fonctionne bien 😊 Nous avons 14 h et 16 h de libre. Quelle heure vous convient?';
+const SMS_RATTRAPAGE = 'Bonjour! Ici Léa, de Plomberie Tremblay. Désolé, on a manqué votre appel! Répondez à ce texto.';
+const SMS_CLIENT = 'Fuite sous l\'évier, c\'est urgent!';
+const SMS_IA = 'Parfait! Disponible demain 8 h? Répondez OUI pour confirmer le RDV.';
+
+/** iPhone 14 Pro — capture native pour pubs verticales */
+const MOBILE_W = 390;
+const MOBILE_H = 844;
 
 function wait(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -135,6 +139,13 @@ async function appendBubble(page, direction, body, label) {
   }, { direction, body, label });
 }
 
+async function hidePlaywrightBanner(page) {
+  await page.evaluate(() => {
+    const el = document.getElementById('playwright-demo-banner');
+    if (el) el.style.display = 'none';
+  });
+}
+
 async function pulseStat(page, id) {
   await page.evaluate((id) => {
     const el = document.getElementById(id);
@@ -165,11 +176,13 @@ async function main() {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const mp4Path = join(OUT_DIR, `demo-appel-manque-${stamp}.mp4`);
 
-  const browser = await chromium.launch({ headless: false, slowMo: 60 });
+  const browser = await chromium.launch({ headless: false, slowMo: 80 });
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
-    recordVideo: { dir: OUT_DIR, size: { width: 1440, height: 900 } },
+    viewport: { width: MOBILE_W, height: MOBILE_H },
+    recordVideo: { dir: OUT_DIR, size: { width: MOBILE_W, height: MOBILE_H } },
     locale: 'fr-CA',
+    isMobile: true,
+    hasTouch: true,
   });
 
   const page = await context.newPage();
@@ -178,42 +191,34 @@ async function main() {
   try {
     await page.goto(`${base}/conversations.html?demo=1`);
     await page.waitForSelector('#inboxList', { timeout: 20000 });
-    await wait(1200);
+    await wait(1000);
     await hideDemoBanner(page);
     await resetInbox(page);
 
-    await showBanner(page, '🎬 NoviaAI — Démo', 'Salon Éclat · ligne NoviaAI active');
-    await wait(2200);
-
-    // Étape 1 — appel manqué
-    await showBanner(page, '📞 Appel manqué', `${DEMO_PHONE} a appelé — pas de réponse`);
+    // Intro courte
+    await showBanner(page, '📞 Appel manqué', `${DEMO_PHONE}`);
     await pulseStat(page, 'missedCount');
-    await wait(2500);
+    await wait(2200);
+    await hidePlaywrightBanner(page);
 
-    // Étape 2 — SMS auto
-    await showBanner(page, '💬 SMS automatique envoyé', 'Rattrapage immédiat après l\'appel manqué');
+    // Conversation — sans bannière, temps allongé
     await addInboxItem(page, DEMO_PHONE, 'SMS de rattrapage envoyé…', 1);
     await page.click('.inbox-item');
-    await wait(800);
+    await wait(1200);
     await appendBubble(page, 'outbound', SMS_RATTRAPAGE, 'NoviaAI · SMS rattrapage');
-    await wait(2800);
+    await wait(4500);
 
-    // Étape 3 — client répond
-    await showBanner(page, '👤 Le client répond', 'Conversation SMS en cours…');
-    await addInboxItem(page, DEMO_PHONE, SMS_CLIENT.slice(0, 48) + '…', 1);
-    await wait(1200);
+    await addInboxItem(page, DEMO_PHONE, SMS_CLIENT.slice(0, 40) + '…', 1);
+    await wait(1500);
     await appendBubble(page, 'inbound', SMS_CLIENT, 'Client');
-    await wait(2800);
+    await wait(5000);
 
-    // Étape 4 — réponse IA
-    await showBanner(page, '🤖 Agent IA répond', 'Qualification + prise de rendez-vous');
-    await wait(1200);
-    await appendBubble(page, 'outbound', SMS_IA, 'NoviaAI');
-    await addInboxItem(page, DEMO_PHONE, 'Jeudi PM — coupe', 1);
-    await wait(3200);
+    await appendBubble(page, 'outbound', SMS_IA, 'NoviaAI · Agent IA');
+    await addInboxItem(page, DEMO_PHONE, 'RDV demain 8 h — confirmé', 1);
+    await wait(6500);
 
-    await showBanner(page, '✅ Résultat', 'Appel manqué → SMS → lead qualifié · 0 appel perdu');
-    await wait(4000);
+    // Pause finale sur la conversation complète
+    await wait(5000);
   } finally {
     const video = page.video();
     await context.close();

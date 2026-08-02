@@ -42,6 +42,13 @@ MOCKUPS = [
         "reply": "Refaire la salle de bain complète.",
         "confirm": "Visite gratuite lundi! On vous envoie l'heure?",
     },
+    {
+        "file": "sms_novia_salon_01.mp4",
+        "business": "Salon Éclat",
+        "incoming": "Bonjour! Ici Léa, de Salon Éclat. Désolé, on a manqué votre appel! Répondez à ce texto.",
+        "reply": "Je voudrais un RDV jeudi PM pour une coupe.",
+        "confirm": "Parfait! Jeudi 14 h ou 16 h — quelle heure vous convient?",
+    },
 ]
 
 DURATION = 8.0

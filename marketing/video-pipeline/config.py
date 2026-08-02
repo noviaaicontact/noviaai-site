@@ -24,11 +24,14 @@ SCENE_CATALOG: dict[str, list[str]] = {
     ],
     # Plan 2 : le commerçant est occupé, impossible de décrocher
     "busy": [
-        "plumber under sink",
+        "plumber repair pipes",
+        "plumber working tools",
+        "plumber fixing faucet",
         "mechanic under car hood",
         "electrician working wires",
         "construction worker busy",
         "garage mechanic working",
+        "hair stylist cutting hair",
     ],
     # Plan 3 : le client reçoit le texto du commerce
     "sms": [
@@ -43,6 +46,7 @@ SCENE_CATALOG: dict[str, list[str]] = {
         "happy customer phone",
         "contractor phone smile",
         "small business owner phone",
+        "happy woman salon mirror",
     ],
 }
 
