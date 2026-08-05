@@ -1,6 +1,7 @@
-const { getStripe } = require('../../lib/stripe');
+const { getStripe, createPortalSession } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { provisionTenant, suspendTenant } = require('../../lib/provision');
+const { sendTrialEndingEmail, sendPaymentFailedEmail } = require('../../lib/email');
 
 function trialEndsFromSub(sub) {
   if (!sub || !sub.trial_end) return null;
@@ -13,6 +14,32 @@ function statusFromSub(sub) {
   if (sub.status === 'active') return 'active';
   if (sub.status === 'canceled') return 'canceled';
   return 'inactive';
+}
+
+async function tenantByCustomer(db, customerId) {
+  if (!customerId) return null;
+  const { data } = await db.from('tenants')
+    .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+  return data || null;
+}
+
+async function portalLinkForCustomer(customerId) {
+  const base = (process.env.PUBLIC_BASE_URL || 'https://noviaai.ca').replace(/\/$/, '');
+  try {
+    return await createPortalSession(customerId, `${base}/dashboard.html`);
+  } catch (e) {
+    console.warn('portal session email', e.message);
+    return `${base}/dashboard.html`;
+  }
+}
+
+function amountLabelFromInvoice(invoice) {
+  if (!invoice || invoice.amount_due == null) return '199 $ CAD';
+  const dollars = (Number(invoice.amount_due) / 100).toFixed(0);
+  const currency = String(invoice.currency || 'cad').toUpperCase();
+  return `${dollars} $ ${currency}`;
 }
 
 exports.handler = async (event) => {
@@ -128,8 +155,39 @@ exports.handler = async (event) => {
         const invoice = stripeEvent.data.object;
         const { data: tenants } = await db.from('tenants').update({
           subscription_status: 'inactive',
-        }).eq('stripe_customer_id', invoice.customer).select('id');
-        if (tenants && tenants[0]) await suspendTenant(tenants[0].id, { release: false });
+        }).eq('stripe_customer_id', invoice.customer).select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id');
+        if (tenants && tenants[0]) {
+          await suspendTenant(tenants[0].id, { release: false });
+          try {
+            const portalUrl = await portalLinkForCustomer(invoice.customer);
+            await sendPaymentFailedEmail(tenants[0], {
+              portalUrl,
+              amountLabel: amountLabelFromInvoice(invoice),
+            });
+          } catch (e) {
+            console.warn('payment_failed email', e.message);
+          }
+        }
+        break;
+      }
+      case 'customer.subscription.trial_will_end': {
+        // Stripe envoie cet événement ~3 jours avant la fin de l'essai.
+        const sub = stripeEvent.data.object;
+        const tenant = await tenantByCustomer(db, sub.customer);
+        if (!tenant) break;
+        const trialEnds = trialEndsFromSub(sub);
+        if (trialEnds) {
+          await db.from('tenants').update({ trial_ends_at: trialEnds }).eq('id', tenant.id);
+        }
+        try {
+          const portalUrl = await portalLinkForCustomer(sub.customer);
+          await sendTrialEndingEmail(
+            { ...tenant, trial_ends_at: trialEnds || tenant.trial_ends_at },
+            { trialEndsAt: trialEnds || tenant.trial_ends_at, portalUrl, amountLabel: '199 $ CAD' },
+          );
+        } catch (e) {
+          console.warn('trial_will_end email', e.message);
+        }
         break;
       }
       default:
