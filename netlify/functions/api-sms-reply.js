@@ -1,6 +1,6 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId, logMessage } = require('../../lib/tenant');
+const { getTenantByUserId, logMessage, isActive } = require('../../lib/tenant');
 const { sendSMS } = require('../../lib/sms-send');
 const { toE164 } = require('../../lib/phone-util');
 const { logEvent } = require('../../lib/events');
@@ -19,6 +19,9 @@ exports.handler = async (event) => {
 
   const tenant = await getTenantByUserId(user.id);
   if (!tenant) return json(404, { error: 'Commerce introuvable' });
+  if (!isActive(tenant)) {
+    return json(402, { error: 'Abonnement inactif — régularisez le paiement pour envoyer des textos.' });
+  }
   if (!tenant.twilio_number || tenant.provisioning_status !== 'active') {
     return json(400, { error: 'Ligne NoviaAI non active' });
   }

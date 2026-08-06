@@ -21,9 +21,9 @@ const {
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const OPTED_OUT_MSG = 'Vous êtes désinscrit(e) des textos. Répondez OUI pour vous réabonner, ou appelez-nous directement.';
 const AI_TIMEOUT_MSG = 'Un instant, on vous revient tout de suite.';
+const SUSPENDED_SMS = 'Cette ligne est temporairement inactive. Veuillez appeler le commerce directement ou réessayez plus tard.';
 /** Budget max pour l'IA — Twilio abandonne le webhook ~15s; on garde une marge. */
 const AI_BUDGET_MS = 9000;
-// Note: on ne bloque plus les textos si l'abonnement est inactif — l'agent doit répondre.
 
 function withTimeout(promise, ms) {
   return Promise.race([
@@ -49,8 +49,6 @@ exports.handler = async (event) => {
     if (!from || !to) return xmlResponse(twimlMessage(DEFAULT_ACK));
 
     const client = await resolveClient(to);
-    // Ne plus bloquer les textos entrants si l'abonnement est inactif :
-    // l'agent doit répondre dès qu'on écrit au numéro (cold SMS inclus).
 
     const tenantId = client && client.tenant && client.tenant.id;
     const dossier = client && client.dossier;
@@ -76,6 +74,16 @@ exports.handler = async (event) => {
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160), opted_out: true });
       return xmlResponse(twimlMessage(OPTED_OUT_MSG));
+    }
+
+    // Aligné avec la voix : pas d'agent IA ni de coûts si l'abo est mort.
+    // LCAP (ARRET/OUI) reste géré ci-dessus.
+    if (client && client.suspended) {
+      if (tenantId && body) {
+        await logMessage(tenantId, from, 'inbound', body);
+        await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160), suspended: true });
+      }
+      return xmlResponse(twimlMessage(SUSPENDED_SMS));
     }
 
     if (tenantId && client.tenant) {

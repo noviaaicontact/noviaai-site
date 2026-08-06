@@ -17,6 +17,7 @@
     "test:onboarding": "node scripts/test-onboarding-draft.mjs",
     "stripe:bootstrap": "node scripts/stripe-bootstrap.mjs",
     "stripe:go-live": "node scripts/stripe-go-live.mjs",
+    "stripe:setup-tax": "node scripts/stripe-setup-tax.mjs",
     "stripe:card-only": "node scripts/stripe-checkout-card-only.mjs",
     "stripe:webhook": "node scripts/stripe-webhook-setup.mjs",
     "stripe:webhook:create": "node scripts/stripe-webhook-setup.mjs --create",
