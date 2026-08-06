@@ -1,7 +1,7 @@
 const { getStripe, createPortalSession } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { provisionTenant, suspendTenant } = require('../../lib/provision');
-const { sendTrialEndingEmail, sendPaymentFailedEmail } = require('../../lib/email');
+const { sendTrialEndingEmail, sendPaymentFailedEmail, sendPaymentReceiptEmail } = require('../../lib/email');
 
 function trialEndsFromSub(sub) {
   if (!sub || !sub.trial_end) return null;
@@ -143,9 +143,34 @@ exports.handler = async (event) => {
         else if (status === 'active') patch.trial_ends_at = null;
 
         const { data: tenants } = await db.from('tenants').update(patch)
-          .eq('stripe_customer_id', invoice.customer).select('id');
+          .eq('stripe_customer_id', invoice.customer)
+          .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id');
         if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
           await provisionTenant(tenants[0].id);
+        }
+        // Reçu client seulement si un vrai montant a été prélevé (pas la facture 0 $ d'essai).
+        if (tenants && tenants[0] && Number(invoice.amount_paid) > 0) {
+          try {
+            const portalUrl = await portalLinkForCustomer(invoice.customer);
+            const paidCents = Number(invoice.amount_paid);
+            const currency = String(invoice.currency || 'cad').toUpperCase();
+            const amountLabel = `${(paidCents / 100).toFixed(paidCents % 100 ? 2 : 0)} $ ${currency}`;
+            let periodLabel = '';
+            if (invoice.lines?.data?.[0]?.period) {
+              const p = invoice.lines.data[0].period;
+              const a = new Date(p.start * 1000).toLocaleDateString('fr-CA', { timeZone: 'America/Toronto' });
+              const b = new Date(p.end * 1000).toLocaleDateString('fr-CA', { timeZone: 'America/Toronto' });
+              periodLabel = `${a} → ${b}`;
+            }
+            await sendPaymentReceiptEmail(tenants[0], {
+              amountLabel,
+              portalUrl,
+              invoiceUrl: invoice.hosted_invoice_url || invoice.invoice_pdf || '',
+              periodLabel,
+            });
+          } catch (e) {
+            console.warn('invoice.paid receipt email', e.message);
+          }
         }
         break;
       }
