@@ -85,6 +85,14 @@ a:hover { text-decoration: underline; }
 .btn-ghost:hover { border-color: #cbd5e1; background: #f8fafc; }
 .btn-block { width: 100%; }
 .btn-sm { padding: 8px 14px; font-size: .85rem; }
+.btn:disabled,
+.btn[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn:disabled:hover,
+.btn[disabled]:hover { transform: none; }
 
 /* Layout */
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 80px; }
