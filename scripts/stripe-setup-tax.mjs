@@ -1,5 +1,5 @@
 /**
- * Prépare Stripe Tax pour NoviaAI (produit SaaS + prix tax_behavior).
+ * Prépare Stripe Tax pour les 3 forfaits NoviaAI (produit SaaS + prix tax_behavior).
  *
  * Le Checkout a déjà automatic_tax: enabled. Pour que la TPS/TVQ soit
  * réellement collectée, il faut AUSSI dans le Dashboard (mode Live) :
@@ -23,6 +23,12 @@ const envPaths = [
 
 /** SaaS — usage professionnel (clients PME). */
 const TAX_CODE_SAAS_BUSINESS = 'txcd_10103001';
+
+const PLANS = [
+  { key: 'STRIPE_PRICE_ESSENTIEL', plan: 'essentiel' },
+  { key: 'STRIPE_PRICE_CROISSANCE', plan: 'croissance' },
+  { key: 'STRIPE_PRICE_PRO', plan: 'pro' },
+];
 
 function loadEnv() {
   for (const envPath of envPaths) {
@@ -54,50 +60,82 @@ if (!secret) {
 }
 
 const stripe = new Stripe(secret, { apiVersion: '2025-04-30.basil' });
-const priceId = env.STRIPE_PRICE_PRO;
-if (!priceId) {
-  console.error('❌ STRIPE_PRICE_PRO manquant');
-  process.exit(1);
+
+console.log('\n🧾 Stripe Tax — setup produits/prix\n');
+
+/** Retrouve le prix actif du forfait, via .env puis via les metadata Stripe. */
+async function resolvePrice({ key, plan }) {
+  const fromEnv = env[key];
+  if (fromEnv) {
+    try {
+      const price = await stripe.prices.retrieve(fromEnv);
+      if (price.active) return price;
+      console.log(`  ~ ${key} pointe vers un prix archivé (${fromEnv})`);
+    } catch {
+      console.log(`  ~ ${key} introuvable dans Stripe (${fromEnv})`);
+    }
+  }
+  const search = await stripe.prices.search({
+    query: `active:'true' AND metadata['novia_plan']:'${plan}'`,
+  });
+  return search.data[0] || null;
 }
 
-console.log('\n🧾 Stripe Tax — setup produit/prix\n');
+const resolved = {};
 
-const price = await stripe.prices.retrieve(priceId, { expand: ['product'] });
-const productId = typeof price.product === 'string' ? price.product : price.product.id;
+for (const entry of PLANS) {
+  console.log(`\n${entry.plan}:`);
+  const price = await resolvePrice(entry);
+  if (!price) {
+    console.error(`  ❌ Aucun prix actif — lancez d'abord: npm run stripe:bootstrap`);
+    continue;
+  }
+  resolved[entry.key] = price.id;
 
-await stripe.products.update(productId, { tax_code: TAX_CODE_SAAS_BUSINESS });
-console.log(`✓ Produit ${productId} → tax_code ${TAX_CODE_SAAS_BUSINESS} (SaaS business)`);
+  const productId = typeof price.product === 'string' ? price.product : price.product.id;
+  await stripe.products.update(productId, { tax_code: TAX_CODE_SAAS_BUSINESS });
+  console.log(`  ✓ Produit ${productId} → tax_code ${TAX_CODE_SAAS_BUSINESS} (SaaS business)`);
 
-let nextPriceId = priceId;
-if (price.tax_behavior === 'exclusive' || price.tax_behavior === 'inclusive') {
-  console.log(`✓ Prix ${priceId} tax_behavior déjà = ${price.tax_behavior}`);
-} else {
-  // tax_behavior n'est pas modifiable une fois fixé ; on crée un prix exclusif.
-  const created = await stripe.prices.create({
-    product: productId,
-    unit_amount: price.unit_amount,
-    currency: price.currency,
-    recurring: price.recurring ? { interval: price.recurring.interval } : undefined,
-    tax_behavior: 'exclusive',
-    metadata: { ...(price.metadata || {}), novia_plan: 'pro', replaces: priceId },
-  });
-  await stripe.prices.update(priceId, { active: false });
-  nextPriceId = created.id;
-  console.log(`✓ Nouveau prix exclusive: ${nextPriceId} (ancien désactivé)`);
-
-  let envText = existsSync(envPath) ? readFileSync(envPath, 'utf8') : '';
-  envText = setEnvKey(envText, 'STRIPE_PRICE_PRO', nextPriceId);
-  writeFileSync(envPath, envText, 'utf8');
-  console.log(`✓ .env mis à jour (${envPath})`);
+  if (price.tax_behavior === 'exclusive' || price.tax_behavior === 'inclusive') {
+    console.log(`  ✓ Prix ${price.id} tax_behavior déjà = ${price.tax_behavior}`);
+    continue;
+  }
 
   try {
-    execFileSync('npx', ['netlify-cli', 'env:set', 'STRIPE_PRICE_PRO', nextPriceId], {
+    await stripe.prices.update(price.id, { tax_behavior: 'exclusive' });
+    console.log(`  ✓ Prix ${price.id} → tax_behavior exclusive`);
+  } catch (e) {
+    // tax_behavior n'est plus modifiable une fois fixé ; on crée un prix exclusif.
+    const created = await stripe.prices.create({
+      product: productId,
+      unit_amount: price.unit_amount,
+      currency: price.currency,
+      recurring: price.recurring ? { interval: price.recurring.interval } : undefined,
+      tax_behavior: 'exclusive',
+      metadata: { ...(price.metadata || {}), novia_plan: entry.plan, replaces: price.id },
+    });
+    await stripe.prices.update(price.id, { active: false });
+    resolved[entry.key] = created.id;
+    console.log(`  + Nouveau prix exclusive: ${created.id} (ancien désactivé — ${e.message})`);
+  }
+}
+
+let envText = existsSync(envPath) ? readFileSync(envPath, 'utf8') : '';
+for (const [key, value] of Object.entries(resolved)) {
+  envText = setEnvKey(envText, key, value);
+}
+writeFileSync(envPath, envText, 'utf8');
+console.log(`\n✓ .env mis à jour (${envPath})`);
+
+for (const [key, value] of Object.entries(resolved)) {
+  try {
+    execFileSync('npx', ['netlify-cli', 'env:set', key, value], {
       stdio: 'inherit',
       shell: true,
       cwd: root,
     });
-  } catch (e) {
-    console.warn('⚠️  Sync Netlify échouée — lancez: npx netlify-cli env:set STRIPE_PRICE_PRO', nextPriceId);
+  } catch {
+    console.warn(`⚠️  Sync Netlify échouée — lancez: npx netlify-cli env:set ${key} ${value}`);
   }
 }
 
@@ -119,7 +157,7 @@ Prochaines étapes Dashboard (obligatoire pour collecter vraiment) :
   2. Ajouter l'adresse du siège (head office) — Québec
   3. https://dashboard.stripe.com/tax/registrations
      → Canada (GST/HST) et Québec (QST) si vous êtes inscrits
-  4. Redéployer Netlify si le prix a changé
+  4. Redéployer Netlify si un prix a changé
 
 Checkout: automatic_tax déjà activé dans lib/stripe.js
 `);

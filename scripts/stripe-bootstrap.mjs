@@ -10,6 +10,9 @@ import Stripe from 'stripe';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = join(root, '.env');
 
+/** SaaS — usage professionnel (clients PME). */
+const TAX_CODE_SAAS_BUSINESS = 'txcd_10103001';
+
 const PLANS = [
   {
     key: 'STRIPE_PRICE_ESSENTIEL',
@@ -65,6 +68,7 @@ async function findOrCreatePrice(stripe, { name, amount, plan, description }) {
     product = await stripe.products.create({
       name,
       description: description || undefined,
+      tax_code: TAX_CODE_SAAS_BUSINESS,
       metadata: { novia_plan: plan },
     });
     console.log(`  + Produit créé: ${name} (${product.id})`);
@@ -72,6 +76,7 @@ async function findOrCreatePrice(stripe, { name, amount, plan, description }) {
     await stripe.products.update(product.id, {
       name,
       description: description || undefined,
+      tax_code: TAX_CODE_SAAS_BUSINESS,
     });
     console.log(`  ✓ Produit existant: ${name} (${product.id})`);
   }
@@ -98,6 +103,7 @@ async function findOrCreatePrice(stripe, { name, amount, plan, description }) {
     unit_amount: amount,
     currency: 'cad',
     recurring: { interval: 'month' },
+    tax_behavior: 'exclusive',
     metadata: { novia_plan: plan },
   });
   console.log(`  + Prix créé: ${price.id} (${amount / 100} CAD/mois)`);
