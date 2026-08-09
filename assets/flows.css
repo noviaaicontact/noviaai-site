@@ -17,6 +17,20 @@
 .flow-page-hero .lead { color: rgba(255,255,255,.82); max-width: 560px; margin: 0 auto 24px; font-size: 1.05rem; }
 .flow-page-hero .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+/* Sur fond sombre : le btn-ghost par défaut est blanc → texte blanc = invisible */
+.flow-page-hero .btn-ghost,
+.sticky-vente .btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+.flow-page-hero .btn-ghost:hover,
+.sticky-vente .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
 .flow-section { padding: 64px 0; }
 .flow-section.alt { background: #fff; }
 .flow-section.dark { background: var(--navy); color: #fff; }
