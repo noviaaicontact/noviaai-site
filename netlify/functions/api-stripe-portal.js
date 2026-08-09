@@ -1,6 +1,5 @@
 const { json, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { createPortalSession } = require('../../lib/stripe');
 
 exports.handler = async (event) => {
@@ -9,12 +8,13 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
+  // Portail de facturation : action du client uniquement.
+  const ctx = await resolveTenantContext(event, { blockAssist: true });
+  if (!ctx.ok) return ctx.response;
 
   try {
-    const tenant = await getTenantByUserId(user.id);
-    if (!tenant || !tenant.stripe_customer_id) {
+    const tenant = ctx.tenant;
+    if (!tenant.stripe_customer_id) {
       return json(400, { error: 'Aucun abonnement Stripe associé' });
     }
     const base = process.env.PUBLIC_BASE_URL || 'http://localhost:8888';

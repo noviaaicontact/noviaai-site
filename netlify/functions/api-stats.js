@@ -1,6 +1,5 @@
 const { json, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { getAdmin } = require('../../lib/db');
 const { checkSmsQuota } = require('../../lib/usage-limits');
 
@@ -10,11 +9,9 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'GET') return json(405, { error: 'GET seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
-
-  const tenant = await getTenantByUserId(user.id);
-  if (!tenant) return json(404, { error: 'Commerce introuvable' });
+  const ctx = await resolveTenantContext(event);
+  if (!ctx.ok) return ctx.response;
+  const tenant = ctx.tenant;
 
   const db = getAdmin();
   const since = new Date(Date.now() - 30 * 86400000).toISOString();

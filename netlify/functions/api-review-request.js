@@ -1,6 +1,5 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { sendReviewRequest } = require('../../lib/review-request');
 
 exports.handler = async (event) => {
@@ -9,11 +8,9 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
-
-  const tenant = await getTenantByUserId(user.id);
-  if (!tenant) return json(404, { error: 'Commerce introuvable' });
+  const ctx = await resolveTenantContext(event);
+  if (!ctx.ok) return ctx.response;
+  const tenant = ctx.tenant;
 
   const body = parseJson(event);
   const phone = (body.phone || '').trim();

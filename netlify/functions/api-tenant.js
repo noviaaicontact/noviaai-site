@@ -1,6 +1,6 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId, createTenantForUser, updateTenant } = require('../../lib/tenant');
+const { getTenantById, createTenantForUser, updateTenantById } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
 const { normalizePlan } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
@@ -12,45 +12,46 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: corsHeaders(), body: '' };
   }
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
-
   try {
     if (event.httpMethod === 'GET') {
-      let tenant = await getTenantByUserId(user.id);
       const qs = event.queryStringParameters || {};
       const plan = normalizePlan(qs.plan);
       const legalConsent = qs.legal_consent === '1';
-      if (!tenant) {
-        tenant = await createTenantForUser(user, { plan, legalConsent });
-      } else if (legalConsent) {
-        tenant = await createTenantForUser(user, { plan, legalConsent: true });
+      const ctx = await resolveTenantContext(event, {
+        createIfMissing: true,
+        createOptions: { plan, legalConsent },
+      });
+      if (!ctx.ok) return ctx.response;
+      let tenant = ctx.tenant;
+      if (!ctx.assisting && legalConsent) {
+        tenant = await createTenantForUser(ctx.user, { plan, legalConsent: true });
       }
       await ensureWidgetPublicId(tenant);
-      return json(200, { tenant, dossier: rowToDossier(tenant) });
+      return json(200, { tenant, dossier: rowToDossier(tenant), assisting: ctx.assisting });
     }
 
     if (event.httpMethod === 'PATCH' || event.httpMethod === 'POST') {
+      const ctx = await resolveTenantContext(event, { createIfMissing: true });
+      if (!ctx.ok) return ctx.response;
       const body = parseJson(event);
-      let tenant = await getTenantByUserId(user.id);
-      if (!tenant) tenant = await createTenantForUser(user);
       const patch = (event.httpMethod === 'POST' && body.onboarding)
         ? formToTenantPayload(body)
         : body.settings
-          ? settingsToTenantPayload(body, tenant)
+          ? settingsToTenantPayload(body, ctx.tenant)
           : null;
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
-      const updated = await updateTenant(user.id, patch);
+      const updated = await updateTenantById(ctx.tenant.id, patch);
 
       if (body.onboarding && updated.onboarding_done && updated.line_mode === 'hosted') {
         await startHostedRequest(updated);
       }
 
-      const fresh = await getTenantByUserId(user.id);
+      const fresh = await getTenantById(ctx.tenant.id);
       if (fresh) await ensureWidgetPublicId(fresh);
       return json(200, {
         tenant: fresh || updated,
         dossier: rowToDossier(fresh || updated),
+        assisting: ctx.assisting,
         needsCheckout: !!(fresh || updated).onboarding_done && !(fresh || updated).stripe_subscription_id,
       });
     }
