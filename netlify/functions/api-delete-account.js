@@ -1,6 +1,7 @@
 const { json, corsHeaders } = require('../../lib/http');
 const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId } = require('../../lib/tenant');
+const { getAssistTargetId } = require('../../lib/tenant-context');
 const { getAdmin } = require('../../lib/db');
 const { suspendTenant } = require('../../lib/provision');
 const { getStripe } = require('../../lib/stripe');
@@ -15,6 +16,12 @@ exports.handler = async (event) => {
 
   const user = await getUserFromRequest(event);
   if (!user) return json(401, { error: 'Non authentifié' });
+
+  if (getAssistTargetId(event)) {
+    return json(403, {
+      error: 'Suppression impossible en mode assistance — le client doit supprimer son compte lui-même.',
+    });
+  }
 
   const db = getAdmin();
   if (!db) return json(503, { error: 'Service indisponible' });

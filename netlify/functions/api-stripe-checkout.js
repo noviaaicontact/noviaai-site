@@ -1,6 +1,5 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId, createTenantForUser } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { createCheckoutSession, PLANS } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { normalizePlan } = require('../../lib/plans');
@@ -11,12 +10,12 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
+  // La carte de crédit reste une action du client : jamais en mode assistance.
+  const ctx = await resolveTenantContext(event, { createIfMissing: true, blockAssist: true });
+  if (!ctx.ok) return ctx.response;
 
   try {
-    let tenant = await getTenantByUserId(user.id);
-    if (!tenant) tenant = await createTenantForUser(user);
+    const tenant = ctx.tenant;
     const body = parseJson(event);
     const plan = normalizePlan(body.plan || tenant.plan);
     if (!PLANS[plan]) return json(400, { error: 'Forfait invalide' });
@@ -38,7 +37,7 @@ exports.handler = async (event) => {
       if (customerId && customerId !== tenant.stripe_customer_id) {
         patch.stripe_customer_id = customerId;
       }
-      await db.from('tenants').update(patch).eq('user_id', user.id);
+      await db.from('tenants').update(patch).eq('id', tenant.id);
     }
 
     return json(200, { url });

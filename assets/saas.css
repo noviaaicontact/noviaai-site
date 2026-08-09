@@ -85,6 +85,14 @@ a:hover { text-decoration: underline; }
 .btn-ghost:hover { border-color: #cbd5e1; background: #f8fafc; }
 .btn-block { width: 100%; }
 .btn-sm { padding: 8px 14px; font-size: .85rem; }
+.btn:disabled,
+.btn[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn:disabled:hover,
+.btn[disabled]:hover { transform: none; }
 
 /* Layout */
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 80px; }
@@ -1415,3 +1423,96 @@ footer.site-footer {
   z-index: 200;
 }
 .admin-toast.err { background: #991b1b; }
+
+/* Mode assistance — bandeau admin dans le compte d'un client */
+.assist-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  background: var(--warn);
+  color: #fff;
+  font-size: .88rem;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .18);
+}
+.assist-banner strong { font-weight: 800; }
+.assist-banner-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  flex: 0 0 auto;
+  animation: assistPulse 1.8s ease-in-out infinite;
+}
+@keyframes assistPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+.assist-banner-exit {
+  margin-left: auto;
+  background: rgba(255, 255, 255, .18);
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #fff;
+  font: inherit;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.assist-banner-exit:hover { background: rgba(255, 255, 255, .3); }
+body.has-assist-banner { padding-top: 44px; }
+@media (max-width: 640px) {
+  .assist-banner { font-size: .8rem; padding: 8px 12px; }
+  body.has-assist-banner { padding-top: 62px; }
+}
+
+/* Sync en direct — pastille d'état + notice de changement distant */
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .74rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.live-dot::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  animation: assistPulse 2.4s ease-in-out infinite;
+}
+.live-dot.stale::before { background: var(--muted); animation: none; }
+.live-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 250;
+  background: var(--navy);
+  color: #fff;
+  padding: 11px 16px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  font-size: .85rem;
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.live-toast button {
+  background: var(--accent);
+  color: var(--navy);
+  border: none;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

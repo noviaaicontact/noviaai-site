@@ -1,6 +1,5 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { listSources, ingestUrl, ingestFile, deleteSource, testRetrieval } = require('../../lib/knowledge');
 const { generateReply } = require('../../lib/ai');
 const { rowToDossier } = require('../../lib/dossier-builder');
@@ -10,11 +9,9 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: corsHeaders(), body: '' };
   }
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
-
-  const tenant = await getTenantByUserId(user.id);
-  if (!tenant) return json(404, { error: 'Commerce introuvable' });
+  const ctx = await resolveTenantContext(event);
+  if (!ctx.ok) return ctx.response;
+  const tenant = ctx.tenant;
 
   try {
     if (event.httpMethod === 'GET') {

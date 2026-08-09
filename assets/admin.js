@@ -129,6 +129,7 @@
         </td>
         <td>${esc(fmtDate(t.created_at))}</td>
         <td class="admin-actions">
+          <button type="button" class="btn btn-accent btn-sm" data-action="assist">Assister</button>
           <button type="button" class="btn btn-ghost btn-sm" data-action="detail">Détails</button>
           ${canSuspend ? `<button type="button" class="btn btn-ghost btn-sm admin-danger" data-action="suspend">Suspendre</button>` : ''}
           ${canReactivate ? `<button type="button" class="btn btn-ghost btn-sm" data-action="reactivate">Réactiver</button>` : ''}
@@ -283,6 +284,16 @@
     if (action === 'detail') {
       const detail = document.querySelector(`tr.admin-detail-row[data-detail-for="${id}"]`);
       if (detail) detail.hidden = !detail.hidden;
+      return;
+    }
+
+    // Ouvre le tableau de bord du client dans un onglet séparé : la session
+    // admin (localStorage) suit, le ciblage passe par le paramètre d'URL.
+    if (action === 'assist') {
+      const t = tenants.find((x) => x.id === id);
+      const url = '/dashboard.html?assist=' + encodeURIComponent(id)
+        + '&assist_nom=' + encodeURIComponent(t?.business_name || '');
+      window.open(url, '_blank');
       return;
     }
 
