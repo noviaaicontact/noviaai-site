@@ -1,6 +1,73 @@
 let _config = null;
 let _supabase = null;
 
+/* ------------------------------------------------------------------ *
+ * Mode assistance — un admin NoviaAI travaille dans le compte d'un
+ * client pendant que celui-ci reste connecté de son côté.
+ * L'état vit dans sessionStorage : propre à l'onglet, effacé à la
+ * fermeture, jamais partagé avec la session normale de l'admin.
+ * ------------------------------------------------------------------ */
+const ASSIST_KEY = 'novia_assist';
+
+function getAssist() {
+  try {
+    const raw = sessionStorage.getItem(ASSIST_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function startAssist(tenantId, businessName) {
+  if (!tenantId) return null;
+  const info = { tenant_id: tenantId, business_name: businessName || '' };
+  try { sessionStorage.setItem(ASSIST_KEY, JSON.stringify(info)); } catch (_) {}
+  return info;
+}
+
+function stopAssist(redirectTo) {
+  try { sessionStorage.removeItem(ASSIST_KEY); } catch (_) {}
+  location.href = redirectTo || '/admin.html';
+}
+
+/** L'admin arrive via /dashboard.html?assist=<uuid> — on mémorise puis on nettoie l'URL. */
+function bootstrapAssistFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const target = params.get('assist');
+  if (!target) return;
+  startAssist(target, params.get('assist_nom') || '');
+  params.delete('assist');
+  params.delete('assist_nom');
+  const qs = params.toString();
+  history.replaceState({}, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+}
+
+function renderAssistBanner() {
+  const assist = getAssist();
+  if (!assist || document.getElementById('assistBanner')) return;
+  const bar = document.createElement('div');
+  bar.id = 'assistBanner';
+  bar.className = 'assist-banner';
+  bar.setAttribute('role', 'status');
+  const who = assist.business_name
+    ? `compte de <strong>${String(assist.business_name).replace(/</g, '&lt;')}</strong>`
+    : 'compte client';
+  bar.innerHTML = `
+    <span class="assist-banner-dot" aria-hidden="true"></span>
+    <span>Mode assistance — vos modifications s'appliquent au ${who}, en direct.</span>
+    <button type="button" class="assist-banner-exit" id="assistExit">Quitter l'assistance</button>`;
+  document.body.prepend(bar);
+  document.body.classList.add('has-assist-banner');
+  document.getElementById('assistExit')?.addEventListener('click', () => stopAssist());
+}
+
+bootstrapAssistFromUrl();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderAssistBanner);
+} else {
+  renderAssistBanner();
+}
+
 async function loadConfig() {
   if (_config) return _config;
   const res = await fetch('/.netlify/functions/api-config');
@@ -37,6 +104,8 @@ async function api(fn, opts, accessToken) {
   const token = accessToken || (await getSession())?.access_token;
   const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
   if (token) headers.Authorization = 'Bearer ' + token;
+  const assist = getAssist();
+  if (assist && assist.tenant_id) headers['X-Assist-Tenant-Id'] = assist.tenant_id;
   const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
   let data = {};
   try { data = await res.json(); } catch (_) { /* réponse non-JSON */ }
@@ -45,6 +114,11 @@ async function api(fn, opts, accessToken) {
       throw new Error('Serveur occupé — attendez 30 secondes et réessayez.');
     }
     throw new Error((data && data.error) || ('Erreur serveur (' + res.status + ')'));
+  }
+  // Sert de référence au sync en direct : toute réponse portant le commerce
+  // met à jour l'horodatage connu, quel que soit l'endroit qui a sauvegardé.
+  if (data && data.tenant) {
+    window.dispatchEvent(new CustomEvent('novia:tenant', { detail: data.tenant }));
   }
   return data;
 }
@@ -120,6 +194,12 @@ async function signIn(email, password) {
 }
 
 async function signOut() {
+  // En assistance, « déconnexion » ne doit pas fermer la session admin :
+  // on quitte simplement le compte du client.
+  if (getAssist()) {
+    stopAssist();
+    return;
+  }
   const sb = await getSupabase();
   if (sb) await sb.auth.signOut();
   try { sessionStorage.removeItem('novia_demo'); } catch (_) {}
@@ -141,4 +221,4 @@ async function updatePassword(newPassword) {
   if (error) throw error;
 }
 
-window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, resetPassword, updatePassword, isDuplicateSignUpAttempt, formatSignUpError };
+window.NoviaApp = { loadConfig, getSupabase, getSession, requireAuth, api, ensureTenant, signUp, signIn, signOut, resetPassword, updatePassword, isDuplicateSignUpAttempt, formatSignUpError, getAssist, startAssist, stopAssist };

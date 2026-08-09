@@ -1,6 +1,6 @@
 const { json, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId } = require('../../lib/tenant');
+const { getTenantById } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
 const { provisionTenant } = require('../../lib/provision');
 
 exports.handler = async (event) => {
@@ -9,13 +9,10 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
+  const ctx = await resolveTenantContext(event);
+  if (!ctx.ok) return ctx.response;
 
-  const tenant = await getTenantByUserId(user.id);
-  if (!tenant) return json(404, { error: 'Commerce introuvable' });
-
-  const result = await provisionTenant(tenant.id);
-  const fresh = await getTenantByUserId(user.id);
+  const result = await provisionTenant(ctx.tenant.id);
+  const fresh = await getTenantById(ctx.tenant.id);
   return json(200, { ...result, tenant: fresh });
 };

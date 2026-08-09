@@ -464,6 +464,17 @@ function updateChecklist() {
   markCheck('chk4', localStorage.getItem(installPrefsKey() + '_tested') === '1');
 }
 
+/** Carte de crédit et suppression de compte : réservées au client, pas à l'assistance. */
+function lockOwnerOnlyControls() {
+  if (!window.NoviaApp || !NoviaApp.getAssist || !NoviaApp.getAssist()) return;
+  ['btnSubscribe', 'btnManageBilling', 'btnDeleteAccount'].forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.disabled = true;
+    el.title = 'Le client doit faire cette action depuis son propre compte.';
+  });
+}
+
 function updateBillingUI(t) {
   if (!t || DEMO) return;
   const box = document.getElementById('billingBanner');
@@ -836,6 +847,8 @@ function openThreadDemo(phone) {
     if (DASH_PAGE === 'chatbot' && tenant) populateChatbotForm(tenant);
     if (DASH_PAGE === 'parametres' && tenant) populateSettingsForm(tenant);
     initPageHandlers();
+    lockOwnerOnlyControls();
+    startLiveSync();
   } catch (ex) {
     console.error(ex);
     if (!DEMO) {
@@ -932,6 +945,46 @@ async function loadInbox() {
   const data = await NoviaApp.api('api-conversations');
   inboxData = data.conversations || [];
   renderInboxList();
+}
+
+/** Recharge le fil ouvert sans faire perdre la réponse en cours de frappe. */
+async function refreshOpenThread() {
+  if (!selectedPhone) return;
+  const input = $('inboxReplyInput');
+  const draft = input ? input.value : '';
+  const wasFocused = input && document.activeElement === input;
+  await openThread(selectedPhone);
+  const next = $('inboxReplyInput');
+  if (next && draft) {
+    next.value = draft;
+    if (wasFocused) next.focus();
+  }
+}
+
+/**
+ * Deux personnes peuvent piloter le même compte (client + assistance NoviaAI).
+ * On répercute ici ce que l'autre session vient de changer.
+ */
+function startLiveSync() {
+  if (DEMO || !window.NoviaLive) return;
+  NoviaLive.start({
+    tenant,
+    onRemoteTenant: async (fresh) => {
+      tenant = fresh;
+      applyTenantToUI();
+      if (DASH_PAGE === 'chatbot' && typeof populateChatbotForm === 'function') {
+        populateChatbotForm(tenant);
+      }
+      if (DASH_PAGE === 'home' || DASH_PAGE === 'conversations') {
+        try { await loadStats(); } catch (e) { console.warn('live stats', e); }
+      }
+    },
+    onRemoteInbox: async (conversations) => {
+      inboxData = conversations;
+      renderInboxList();
+      await refreshOpenThread();
+    },
+  });
 }
 
 function renderInboxList() {

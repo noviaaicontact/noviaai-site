@@ -1,6 +1,6 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
-const { getUserFromRequest } = require('../../lib/auth');
-const { getTenantByUserId, logMessage, isActive } = require('../../lib/tenant');
+const { resolveTenantContext } = require('../../lib/tenant-context');
+const { logMessage, isActive } = require('../../lib/tenant');
 const { sendSMS } = require('../../lib/sms-send');
 const { toE164 } = require('../../lib/phone-util');
 const { logEvent } = require('../../lib/events');
@@ -14,11 +14,9 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') return json(405, { error: 'POST seulement' });
 
-  const user = await getUserFromRequest(event);
-  if (!user) return json(401, { error: 'Non authentifié' });
-
-  const tenant = await getTenantByUserId(user.id);
-  if (!tenant) return json(404, { error: 'Commerce introuvable' });
+  const ctx = await resolveTenantContext(event);
+  if (!ctx.ok) return ctx.response;
+  const tenant = ctx.tenant;
   if (!isActive(tenant)) {
     return json(402, { error: 'Abonnement inactif — régularisez le paiement pour envoyer des textos.' });
   }
