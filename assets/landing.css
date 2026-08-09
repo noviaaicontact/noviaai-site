@@ -466,6 +466,19 @@ body.landing {
   color: #94a3b8 !important;
 }
 
+.landing-estimate-link {
+  margin-top: 16px !important;
+}
+
+.landing-estimate-link a {
+  font-weight: 700;
+  color: var(--navy2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing-estimate-link a:hover { color: var(--navy); }
+
 /* Steps */
 .landing-steps {
   display: grid;
@@ -829,6 +842,29 @@ body.landing {
   color: rgba(255, 255, 255, 0.8);
   margin: 0 0 28px;
   font-size: 0.95rem;
+}
+
+.landing-cta-final-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.landing-cta-final .landing-btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.landing-cta-final .landing-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.landing-article-cta .landing-cta-final-actions {
+  margin: 0 0 8px;
 }
 
 /* Footer */
