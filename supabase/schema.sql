@@ -29,7 +29,7 @@ create table if not exists public.tenants (
   agent_tone text,
   agent_instructions text,
   dossier jsonb,
-  plan text default 'pro',
+  plan text default 'croissance',
   subscription_status text default 'trialing',
   stripe_customer_id text,
   stripe_subscription_id text,

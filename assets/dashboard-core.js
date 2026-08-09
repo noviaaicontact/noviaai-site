@@ -218,7 +218,7 @@ function applyTenantToUI() {
   const statStatus = $('statStatus');
   if (statStatus) statStatus.textContent = formatSubStatus(tenant.subscription_status);
   const statPlan = $('statPlan');
-  if (statPlan) statPlan.textContent = (tenant.plan || 'pro').toUpperCase();
+  if (statPlan) statPlan.textContent = formatPlanName(tenant.plan);
   const pub = publicPhoneDisplay(tenant);
   const statPhone = $('statPhone');
   if (statPhone) statPhone.textContent = pub;
@@ -475,18 +475,25 @@ function updateBillingUI(t) {
 
   const status = t.subscription_status || 'trialing';
   const hasBilling = hasBillingSetup(t);
-  const planLabel = (t.plan || 'pro').toUpperCase();
+  const planLabel = formatPlanName(t.plan);
   const trialEnd = t.trial_ends_at ? new Date(t.trial_ends_at) : null;
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 14;
   const trialEndStr = trialEnd
     ? trialEnd.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })
     : '';
+  const recoEl = document.getElementById('trialRecoMsg');
+  const btnSwitch = document.getElementById('btnSwitchPlan');
 
   if (btnSub) {
     btnSub.hidden = false;
     btnSub.disabled = false;
   }
   if (btnPortal) btnPortal.hidden = true;
+  if (btnSwitch) btnSwitch.hidden = true;
+  if (recoEl) {
+    recoEl.style.display = 'none';
+    recoEl.textContent = '';
+  }
 
   if (isPaidSubscription(t)) {
     box.hidden = false;
@@ -495,18 +502,20 @@ function updateBillingUI(t) {
     msg.textContent = `Forfait ${planLabel} · Gérez votre carte et vos factures dans Stripe.`;
     if (btnSub) btnSub.hidden = true;
     if (btnPortal) btnPortal.hidden = false;
+    if (btnSwitch) btnSwitch.hidden = false;
     return;
   }
 
   if (status === 'trialing' && hasBilling) {
     box.hidden = false;
-    box.className = 'prov-box success';
+    box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
     title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit — carte enregistrée';
     msg.textContent = trialEndStr
       ? `Forfait ${planLabel} · Premier prélèvement après le ${trialEndStr}.`
       : `Forfait ${planLabel} · Votre carte est enregistrée pour la fin de l'essai.`;
     if (btnSub) btnSub.hidden = true;
     if (btnPortal) btnPortal.hidden = false;
+    if (btnSwitch) btnSwitch.hidden = false;
     return;
   }
 
@@ -536,11 +545,16 @@ function updateBillingUI(t) {
   }
 }
 
-async function startCheckout() {
-  if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive'].includes(tenant.subscription_status)) {
+function formatPlanName(plan) {
+  const map = { essentiel: 'Essentiel', croissance: 'Croissance', pro: 'Pro', starter: 'Essentiel', business: 'Pro' };
+  return map[plan] || (plan ? String(plan).charAt(0).toUpperCase() + String(plan).slice(1) : 'Croissance');
+}
+
+async function startCheckout(planOverride) {
+  if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive'].includes(tenant.subscription_status) && !planOverride) {
     return openBillingPortal();
   }
-  const plan = (tenant && tenant.plan) || 'pro';
+  const plan = planOverride || (tenant && tenant.plan) || 'croissance';
   const res = await NoviaApp.api('api-stripe-checkout', {
     method: 'POST',
     body: JSON.stringify({ plan }),
@@ -622,7 +636,7 @@ function loadDemoData() {
     banner.id = 'demoBanner';
     banner.className = 'prov-box success';
     banner.style.marginBottom = '16px';
-    banner.innerHTML = '<strong>Mode démo</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Données fictives pour voir le SaaS complet. <a href="/signup.html?plan=pro">Créer un vrai compte →</a></p>';
+    banner.innerHTML = '<strong>Mode démo</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Données fictives pour voir le SaaS complet. <a href="/signup.html?plan=croissance">Créer un vrai compte →</a></p>';
     document.querySelector('.dash-main').insertBefore(banner, document.querySelector('.dash-main').firstChild.nextSibling);
   }
 }
@@ -906,10 +920,31 @@ async function loadStats() {
   if (s.error) return;
   const statMsgs = $('statMsgs');
   if (statMsgs) statMsgs.textContent = s.messages_30d || 0;
+  const usage = s.conversation_usage || s.sms_usage;
   const smsUsageEl = $('statSmsUsage');
-  if (smsUsageEl && s.sms_usage) {
-    smsUsageEl.textContent = `${s.sms_usage.count || 0} / ${s.sms_usage.limit || 3000}`;
-    if (!s.sms_usage.ok) smsUsageEl.style.color = 'var(--err, #c0392b)';
+  if (smsUsageEl && usage) {
+    smsUsageEl.textContent = `${usage.count || 0} / ${usage.limit || 0}`;
+    if (!usage.ok) smsUsageEl.style.color = 'var(--err, #c0392b)';
+  }
+  const usageLine = $('usageLine');
+  if (usageLine && usage) {
+    const trial = tenant?.subscription_status === 'trialing';
+    usageLine.textContent = trial
+      ? `${usage.count || 0} conversations utilisées pendant l'essai`
+      : `${usage.count || 0} / ${usage.limit || 0} conversations utilisées ce mois-ci`;
+    if (!usage.ok) usageLine.style.color = 'var(--err, #c0392b)';
+  }
+  if (s.trial_recommendation) window.__noviaTrialReco = s.trial_recommendation;
+  const recoEl = document.getElementById('trialRecoMsg');
+  if (recoEl && s.trial_recommendation && tenant?.subscription_status === 'trialing') {
+    const daysLeft = s.trial_recommendation.days_left;
+    // Afficher la reco en fin d'essai (≤ 3 jours) pour guider le choix de forfait.
+    if (daysLeft != null && daysLeft <= 3) {
+      recoEl.style.display = 'block';
+      recoEl.textContent = s.trial_recommendation.message;
+      const btnSwitch = document.getElementById('btnSwitchPlan');
+      if (btnSwitch) btnSwitch.hidden = false;
+    }
   }
   const missedEl = $('missedCount');
   if (missedEl) missedEl.textContent = s.missed_calls_30d || 0;
@@ -1359,6 +1394,27 @@ function initPageHandlers() {
   if (btnPortal) btnPortal.onclick = async () => {
     try { await openBillingPortal(); } catch (ex) { alert(ex.message || 'Erreur portail'); }
   };
+  const btnSwitch = $('btnSwitchPlan');
+  if (btnSwitch) {
+    btnSwitch.onclick = async () => {
+      btnSwitch.disabled = true;
+      try {
+        // Portail Stripe si déjà abonné; sinon checkout vers le forfait recommandé / actuel.
+        if (tenant && hasBillingSetup(tenant) && isPaidSubscription(tenant)) {
+          await openBillingPortal();
+          return;
+        }
+        const plan = (window.__noviaTrialReco && window.__noviaTrialReco.plan)
+          || (tenant && tenant.plan)
+          || 'croissance';
+        await startCheckout(plan);
+      } catch (ex) {
+        alert(ex.message || 'Erreur forfait');
+      } finally {
+        btnSwitch.disabled = false;
+      }
+    };
+  }
   const btnRetry = $('btnRetryProv');
   if (btnRetry) {
     btnRetry.onclick = async () => {

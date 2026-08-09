@@ -11,9 +11,27 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = join(root, '.env');
 
 const PLANS = [
-  { key: 'STRIPE_PRICE_STARTER', name: 'NoviaAI Essentiel', amount: 14900, plan: 'starter' },
-  { key: 'STRIPE_PRICE_PRO', name: 'NoviaAI Pro', amount: 19900, plan: 'pro' },
-  { key: 'STRIPE_PRICE_BUSINESS', name: 'NoviaAI Entreprise', amount: 49900, plan: 'business' },
+  {
+    key: 'STRIPE_PRICE_ESSENTIEL',
+    name: 'NoviaAI Essentiel',
+    amount: 14900,
+    plan: 'essentiel',
+    description: '100 conversations / mois',
+  },
+  {
+    key: 'STRIPE_PRICE_CROISSANCE',
+    name: 'NoviaAI Croissance',
+    amount: 29900,
+    plan: 'croissance',
+    description: '300 conversations / mois',
+  },
+  {
+    key: 'STRIPE_PRICE_PRO',
+    name: 'NoviaAI Pro',
+    amount: 49900,
+    plan: 'pro',
+    description: '1 000 conversations / mois',
+  },
 ];
 
 function loadEnv() {
@@ -38,7 +56,7 @@ function setEnvKey(envText, key, value) {
   return envText.trimEnd() + `\n${key}=${value}\n`;
 }
 
-async function findOrCreatePrice(stripe, { name, amount, plan }) {
+async function findOrCreatePrice(stripe, { name, amount, plan, description }) {
   const products = await stripe.products.search({
     query: `active:'true' AND metadata['novia_plan']:'${plan}'`,
   });
@@ -46,10 +64,15 @@ async function findOrCreatePrice(stripe, { name, amount, plan }) {
   if (!product) {
     product = await stripe.products.create({
       name,
+      description: description || undefined,
       metadata: { novia_plan: plan },
     });
     console.log(`  + Produit créé: ${name} (${product.id})`);
   } else {
+    await stripe.products.update(product.id, {
+      name,
+      description: description || undefined,
+    });
     console.log(`  ✓ Produit existant: ${name} (${product.id})`);
   }
 
@@ -60,6 +83,14 @@ async function findOrCreatePrice(stripe, { name, amount, plan }) {
   if (match) {
     console.log(`  ✓ Prix existant: ${match.id} (${amount / 100} CAD/mois)`);
     return match.id;
+  }
+
+  // Désactiver les anciens prix du produit qui ne matchent plus le montant cible.
+  for (const old of prices.data) {
+    if (old.id && old.active && old.unit_amount !== amount) {
+      await stripe.prices.update(old.id, { active: false });
+      console.log(`  ~ Ancien prix désactivé: ${old.id} (${(old.unit_amount || 0) / 100} CAD)`);
+    }
   }
 
   const price = await stripe.prices.create({
@@ -98,6 +129,8 @@ for (const [key, value] of Object.entries(priceIds)) {
 writeFileSync(envPath, envText, 'utf8');
 
 console.log('\n✅ .env mis à jour avec les Price ID');
-console.log('\nWebhook (local) — installez Stripe CLI puis :');
-console.log('  stripe listen --forward-to http://localhost:8888/.netlify/functions/api-stripe-webhook');
-console.log('  → copiez whsec_... dans STRIPE_WEBHOOK_SECRET\n');
+console.log('\nÀ synchroniser aussi sur Netlify :');
+for (const [key, value] of Object.entries(priceIds)) {
+  console.log(`  ${key}=${value}`);
+}
+console.log('');

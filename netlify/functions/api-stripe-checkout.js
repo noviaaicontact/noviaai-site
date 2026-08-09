@@ -29,13 +29,16 @@ exports.handler = async (event) => {
       cancelUrl: base + '/dashboard.html?cancel=1',
     });
 
-    if (customerId && customerId !== tenant.stripe_customer_id) {
+    {
       const db = getAdmin();
-      await db.from('tenants').update({
-        stripe_customer_id: customerId,
+      const patch = {
         plan: normalizePlan(plan),
         updated_at: new Date().toISOString(),
-      }).eq('user_id', user.id);
+      };
+      if (customerId && customerId !== tenant.stripe_customer_id) {
+        patch.stripe_customer_id = customerId;
+      }
+      await db.from('tenants').update(patch).eq('user_id', user.id);
     }
 
     return json(200, { url });

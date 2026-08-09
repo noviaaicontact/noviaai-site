@@ -2,7 +2,7 @@ const { json, corsHeaders } = require('../../lib/http');
 const { getUserFromRequest } = require('../../lib/auth');
 const { getTenantByUserId } = require('../../lib/tenant');
 const { getAdmin } = require('../../lib/db');
-const { checkSmsQuota } = require('../../lib/usage-limits');
+const { getUsageSnapshot } = require('../../lib/usage-limits');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -19,11 +19,11 @@ exports.handler = async (event) => {
   const db = getAdmin();
   const since = new Date(Date.now() - 30 * 86400000).toISOString();
 
-  const [msgs, missed, leads, quota] = await Promise.all([
+  const [msgs, missed, leads, usage] = await Promise.all([
     db.from('sms_messages').select('id', { count: 'exact', head: true }).eq('tenant_id', tenant.id).gte('created_at', since),
     db.from('missed_calls').select('id', { count: 'exact', head: true }).eq('tenant_id', tenant.id).gte('created_at', since),
     db.from('leads').select('*').eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(20),
-    checkSmsQuota(tenant),
+    getUsageSnapshot(tenant),
   ]);
 
   const msgCount = msgs.count || 0;
@@ -33,6 +33,14 @@ exports.handler = async (event) => {
   const roiLow = Math.round(leadCount * avg * 0.3);
   const roiHigh = Math.round(leadCount * avg);
 
+  const conversationUsage = {
+    count: usage.count,
+    limit: usage.limit,
+    ok: usage.ok,
+    period: 'billing_month',
+    period_start: usage.period_start,
+  };
+
   return json(200, {
     messages_30d: msgCount,
     missed_calls_30d: missedCount,
@@ -41,11 +49,13 @@ exports.handler = async (event) => {
     leads: leads.data || [],
     provisioning_status: tenant.provisioning_status,
     twilio_number: tenant.twilio_number,
-    sms_usage: {
-      count: quota.count,
-      limit: quota.limit,
-      ok: quota.ok,
-      period: 'month',
-    },
+    // Nouveau compteur principal
+    conversation_usage: conversationUsage,
+    // Compat dashboard existant
+    sms_usage: conversationUsage,
+    trial_recommendation: usage.recommendation,
+    subscription_status: tenant.subscription_status,
+    plan: usage.plan,
+    plan_name: usage.plan_name,
   });
 };

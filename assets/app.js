@@ -50,7 +50,7 @@ async function api(fn, opts, accessToken) {
 }
 
 async function ensureTenant(plan, accessToken) {
-  const p = plan || sessionStorage.getItem('novia_plan') || 'pro';
+  const p = plan || sessionStorage.getItem('novia_plan') || 'croissance';
   const legal = sessionStorage.getItem('novia_legal_consent') === '1';
   let url = 'api-tenant?plan=' + encodeURIComponent(p);
   if (legal) url += '&legal_consent=1';

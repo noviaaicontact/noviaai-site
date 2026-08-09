@@ -624,15 +624,33 @@ body.landing {
 }
 
 /* Pricing */
-.landing-price-card {
-  max-width: 420px;
+.landing-pricing {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: stretch;
   margin: 36px auto 0;
+  max-width: 1080px;
+  text-align: left;
+}
+
+.landing-price-card {
   background: var(--surface);
-  border: 2px solid var(--navy);
+  border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 36px 28px;
+  padding: 32px 24px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+
+.landing-price-card-featured {
+  border: 2px solid var(--navy);
   box-shadow: var(--shadow-lg);
+  transform: scale(1.03);
+  z-index: 1;
 }
 
 .landing-price-tag {
@@ -648,8 +666,18 @@ body.landing {
   margin-bottom: 12px;
 }
 
+.landing-price-card-featured .landing-price-tag {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--navy);
+  margin-bottom: 0;
+}
+
 .landing-price-card h3 {
-  margin: 0;
+  margin: 8px 0 0;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -657,7 +685,7 @@ body.landing {
 }
 
 .landing-price-amount {
-  font-size: clamp(2.8rem, 8vw, 3.5rem);
+  font-size: clamp(2.4rem, 6vw, 3.1rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   margin: 8px 0 4px;
@@ -667,14 +695,23 @@ body.landing {
 .landing-price-period {
   color: var(--muted);
   font-size: 0.9rem;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
+}
+
+.landing-price-desc {
+  margin: 0 0 18px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+  min-height: 2.8em;
 }
 
 .landing-price-card ul {
   list-style: none;
   padding: 0;
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   text-align: left;
+  flex: 1;
 }
 
 .landing-price-card li {
@@ -711,6 +748,17 @@ body.landing {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 12px 14px;
+}
+
+@media (max-width: 900px) {
+  .landing-pricing {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+  .landing-price-card-featured {
+    transform: none;
+    order: -1;
+  }
 }
 
 .landing-cta-note {

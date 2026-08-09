@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tableau de bord | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=3">
+<link rel="stylesheet" href="/assets/saas.css?v=4">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -40,9 +40,11 @@
     <div id="billingBanner" class="prov-box" hidden style="margin-bottom:16px">
       <strong id="billingTitle">Essai gratuit</strong>
       <p id="billingMsg" class="muted" style="margin:8px 0 12px;font-size:.92rem"></p>
+      <p id="trialRecoMsg" class="muted" style="margin:0 0 12px;font-size:.92rem;display:none"></p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button type="button" class="btn btn-accent btn-sm" id="btnSubscribe" hidden>Ajouter ma carte</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnManageBilling" hidden>Gérer la facturation</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnSwitchPlan" hidden>Changer de forfait</button>
       </div>
     </div>
 
@@ -64,8 +66,14 @@
       <div class="stat"><div class="label">Statut</div><div class="n" id="statStatus" style="font-size:1rem">—</div></div>
       <div class="stat"><div class="label">Forfait</div><div class="n" id="statPlan" style="font-size:1rem">—</div></div>
       <div class="stat"><div class="label">Messages (30j)</div><div class="n" id="statMsgs">0</div></div>
-      <div class="stat"><div class="label">SMS ce mois</div><div class="n" id="statSmsUsage" style="font-size:1rem">—</div></div>
+      <div class="stat"><div class="label">Conversations</div><div class="n" id="statSmsUsage" style="font-size:.95rem">—</div></div>
       <div class="stat"><div class="label">Votre ligne</div><div class="n" id="statPhone" style="font-size:.85rem;word-break:break-all">—</div></div>
+    </div>
+
+    <div class="card" id="usageCard" style="margin-bottom:16px">
+      <h2 style="margin-top:0;font-size:1.05rem">Utilisation ce mois-ci</h2>
+      <p id="usageLine" style="margin:0;font-size:1.05rem;font-weight:600">—</p>
+      <p class="muted" id="usageHint" style="margin:8px 0 0;font-size:.85rem">Une conversation = un prospect distinct qui échange avec NoviaAI. Le compteur se réinitialise à chaque période de facturation.</p>
     </div>
 
     <div class="card">
@@ -106,6 +114,6 @@
   </main>
 </div>
 <script src="/assets/dash-layout.js?v=2"></script>
-<script src="/assets/dashboard-core.js?v=13"></script>
+<script src="/assets/dashboard-core.js?v=14"></script>
 </body>
 </html>

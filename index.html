@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NoviaAI — Ne perdez plus un client qui appelle</title>
-<meta name="description" content="Appel manqué → SMS automatique. Agent IA + inbox pour PME québécoises. 199 $/mois (~6,50 $/jour). Essai 14 jours, garantie 30 jours, sans contrat.">
+<meta name="description" content="Appel manqué → SMS automatique. Agent IA + inbox pour PME québécoises. Forfaits dès 149 $ CAD/mois. Essai 14 jours, garantie 30 jours, sans contrat.">
 <link rel="canonical" href="https://noviaai.ca/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
@@ -39,12 +39,11 @@
       "name": "NoviaAI",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "199",
-        "priceCurrency": "CAD",
-        "priceValidUntil": "2027-12-31"
-      },
+      "offers": [
+        { "@type": "Offer", "name": "Essentiel", "price": "149", "priceCurrency": "CAD", "priceValidUntil": "2027-12-31" },
+        { "@type": "Offer", "name": "Croissance", "price": "299", "priceCurrency": "CAD", "priceValidUntil": "2027-12-31" },
+        { "@type": "Offer", "name": "Pro", "price": "499", "priceCurrency": "CAD", "priceValidUntil": "2027-12-31" }
+      ],
       "description": "Rattrapage SMS automatique après appel manqué pour PME au Québec."
     },
     {
@@ -63,7 +62,7 @@
         {
           "@type": "Question",
           "name": "Comment fonctionne l'essai 14 jours?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Carte requise pour activer la ligne. Pas de prélèvement pendant 14 jours. Ensuite 199 $ CAD/mois (environ 6,50 $/jour), annulable en un clic." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Carte requise pour activer la ligne. Pas de prélèvement pendant 14 jours. Ensuite forfait dès 149 $ CAD/mois selon le volume de conversations, annulable en un clic." }
         },
         {
           "@type": "Question",
@@ -75,7 +74,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/assets/landing.css?v=3">
+<link rel="stylesheet" href="/assets/landing.css?v=4">
 <script src="/assets/meta-pixel.js"></script>
 </head>
 <body class="landing">
@@ -88,7 +87,7 @@
   </div>
   <div class="landing-nav-actions">
     <a href="/login.html" class="landing-btn landing-btn-ghost landing-btn-sm">Connexion</a>
-    <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime landing-btn-sm">Essai gratuit 14 jours</a>
+    <a href="/signup.html?plan=croissance" class="landing-btn landing-btn-lime landing-btn-sm">Essai gratuit 14 jours</a>
   </div>
 </nav>
 
@@ -103,7 +102,7 @@
         <p class="landing-hero-stat">Seulement 38&nbsp;% des appels aux petites entreprises sont décrochés en direct — les autres tombent dans le vide.</p>
         <p class="landing-stat-source">Source&nbsp;: 411&nbsp;Locals</p>
         <div class="landing-hero-actions">
-          <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
+          <a href="/signup.html?plan=croissance" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
           <a href="/dashboard.html?demo=1" class="landing-btn landing-btn-ghost">Voir la démo</a>
         </div>
         <div class="landing-trust">
@@ -254,31 +253,63 @@
 <section class="landing-section" id="tarifs">
   <div class="landing-wrap landing-center">
     <p class="landing-eyebrow">Tarifs</p>
-    <h2 class="landing-h2">Un seul forfait. Tout inclus.</h2>
-    <p class="landing-lead">Essai 14 jours. Garantie 30 jours. Sans contrat. Annulable en tout temps.</p>
+    <h2 class="landing-h2">Trois forfaits. Choisissez selon votre volume.</h2>
+    <p class="landing-lead">Essai 14 jours. Garantie 30 jours. Sans contrat. Prix en dollars canadiens.</p>
 
-    <div class="landing-price-card">
-      <span class="landing-price-tag">Prix fondateur</span>
-      <h3>Pro</h3>
-      <div class="landing-price-amount">199 $</div>
-      <div class="landing-price-period">CAD / mois · environ 6,50&nbsp;$ / jour</div>
-      <p class="landing-price-promo" style="margin:12px 0 0;padding:12px 14px;border-radius:10px;background:rgba(200,241,53,.14);font-size:.95rem;line-height:1.45">
-        <strong>Code promo <span style="letter-spacing:.04em">FONDATEUR49</span></strong><br>
-        Passez à <strong>49&nbsp;$ CAD / mois</strong> au checkout (à vie avec ce code).
-      </p>
-      <ul>
-        <li>Numéro local Québec (418, 514, 581…)</li>
-        <li>Rattrapeur SMS + inbox centralisée</li>
-        <li>Agent IA 24/7 + alertes leads</li>
-        <li>Lien de réservation (Calendly, etc.)</li>
-        <li>Widget web + avis Google</li>
-        <li>Tableau de bord + réponses manuelles</li>
-        <li><strong>Garantie 30 jours</strong> — 0 client rattrapé = remboursé</li>
-      </ul>
-      <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime landing-btn-block">Démarrer mon essai 14 jours</a>
-      <p class="landing-price-clarify">Carte requise pour activer la ligne. Premier prélèvement après l'essai de 14 jours. Au paiement, entrez le code <strong>FONDATEUR49</strong> pour 49&nbsp;$/mois. Si aucun client n'est rattrapé dans les 30 premiers jours payants, remboursement sur demande. Annulation en un clic — aucun frais caché.</p>
-      <p class="landing-price-note"><a href="/politique-sms.html">Politique SMS</a> · Usage équitable · Support en français</p>
+    <div class="landing-pricing">
+      <div class="landing-price-card">
+        <h3>Essentiel</h3>
+        <div class="landing-price-amount">149&nbsp;$</div>
+        <div class="landing-price-period">CAD / mois</div>
+        <p class="landing-price-desc">Pour les petites entreprises qui reçoivent un faible volume de demandes.</p>
+        <ul>
+          <li><strong>100 conversations / mois</strong></li>
+          <li>Numéro local Québec</li>
+          <li>Rattrapeur SMS + inbox</li>
+          <li>Agent IA 24/7</li>
+          <li>Garantie 30 jours</li>
+        </ul>
+        <a href="/signup.html?plan=essentiel" class="landing-btn landing-btn-ghost landing-btn-block">Essai 14 jours</a>
+      </div>
+
+      <div class="landing-price-card landing-price-card-featured">
+        <span class="landing-price-tag">Recommandé</span>
+        <h3>Croissance</h3>
+        <div class="landing-price-amount">299&nbsp;$</div>
+        <div class="landing-price-period">CAD / mois</div>
+        <p class="landing-price-desc">Pour les entreprises qui reçoivent un volume régulier de demandes.</p>
+        <ul>
+          <li><strong>300 conversations / mois</strong></li>
+          <li>Numéro local Québec</li>
+          <li>Rattrapeur SMS + inbox</li>
+          <li>Agent IA 24/7 + alertes leads</li>
+          <li>Widget web + avis Google</li>
+          <li>Garantie 30 jours</li>
+        </ul>
+        <a href="/signup.html?plan=croissance" class="landing-btn landing-btn-lime landing-btn-block">Démarrer mon essai 14 jours</a>
+      </div>
+
+      <div class="landing-price-card">
+        <h3>Pro</h3>
+        <div class="landing-price-amount">499&nbsp;$</div>
+        <div class="landing-price-period">CAD / mois</div>
+        <p class="landing-price-desc">Pour les entreprises qui reçoivent un volume élevé de demandes.</p>
+        <ul>
+          <li><strong>1&nbsp;000 conversations / mois</strong></li>
+          <li>Numéro local Québec</li>
+          <li>Rattrapeur SMS + inbox</li>
+          <li>Agent IA 24/7 + alertes leads</li>
+          <li>Widget web + avis Google</li>
+          <li>Garantie 30 jours</li>
+        </ul>
+        <a href="/signup.html?plan=pro" class="landing-btn landing-btn-ghost landing-btn-block">Essai 14 jours</a>
+      </div>
     </div>
+
+    <p class="landing-price-clarify" style="max-width:720px;margin:28px auto 0">
+      Une conversation = un prospect distinct qui échange avec NoviaAI. Carte requise pour activer la ligne. Pendant l'essai de 14 jours, on mesure votre usage pour recommander le forfait adapté. Si aucun client n'est rattrapé dans les 30 premiers jours payants, remboursement sur demande. Annulation en un clic.
+    </p>
+    <p class="landing-price-note"><a href="/politique-sms.html">Politique SMS</a> · Support en français · Québec</p>
   </div>
 </section>
 
@@ -303,7 +334,7 @@
       </details>
       <details>
         <summary>Comment fonctionne l'essai 14 jours?</summary>
-        <p>Vous ajoutez une carte pour activer la ligne. Pendant 14 jours, pas de prélèvement. Ensuite : 199 $ CAD / mois (environ 6,50&nbsp;$ / jour). Vous annulez en un clic avant la fin de l'essai si ce n'est pas pour vous.</p>
+        <p>Vous ajoutez une carte pour activer la ligne. Pendant 14 jours, pas de prélèvement. On mesure vos conversations pour recommander Essentiel (149&nbsp;$), Croissance (299&nbsp;$) ou Pro (499&nbsp;$) CAD / mois. Vous annulez en un clic avant la fin de l'essai si ce n'est pas pour vous.</p>
       </details>
       <details>
         <summary>C'est quoi la garantie 30 jours?</summary>
@@ -325,8 +356,8 @@
 <section class="landing-cta-final">
   <h2>Arrêtez de laisser 6&nbsp;appels sur&nbsp;10 partir sans réponse.</h2>
   <p>Essai 14 jours · Garantie 30 jours · Support en français · Québec</p>
-  <a href="/signup.html?plan=pro" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
-  <p class="landing-cta-note">~6,50&nbsp;$ / jour · Carte pour activer · Sans contrat · 0 client rattrapé = remboursé</p>
+  <a href="/signup.html?plan=croissance" class="landing-btn landing-btn-lime">Essai gratuit 14 jours</a>
+  <p class="landing-cta-note">Dès 149&nbsp;$ CAD / mois · Carte pour activer · Sans contrat · 0 client rattrapé = remboursé</p>
 </section>
 
 <footer class="landing-footer">

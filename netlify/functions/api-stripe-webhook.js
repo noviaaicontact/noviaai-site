@@ -2,6 +2,8 @@ const { getStripe, createPortalSession } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { provisionTenant, suspendTenant } = require('../../lib/provision');
 const { sendTrialEndingEmail, sendPaymentFailedEmail, sendPaymentReceiptEmail } = require('../../lib/email');
+const { planLabel, planPriceLabel, normalizePlan } = require('../../lib/plans');
+const { getUsageSnapshot } = require('../../lib/usage-limits');
 
 function trialEndsFromSub(sub) {
   if (!sub || !sub.trial_end) return null;
@@ -19,7 +21,7 @@ function statusFromSub(sub) {
 async function tenantByCustomer(db, customerId) {
   if (!customerId) return null;
   const { data } = await db.from('tenants')
-    .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id')
+    .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id, plan, created_at, subscription_status')
     .eq('stripe_customer_id', customerId)
     .maybeSingle();
   return data || null;
@@ -35,11 +37,13 @@ async function portalLinkForCustomer(customerId) {
   }
 }
 
-function amountLabelFromInvoice(invoice) {
-  if (!invoice || invoice.amount_due == null) return '199 $ CAD';
-  const dollars = (Number(invoice.amount_due) / 100).toFixed(0);
-  const currency = String(invoice.currency || 'cad').toUpperCase();
-  return `${dollars} $ ${currency}`;
+function amountLabelFromInvoice(invoice, plan) {
+  if (invoice && invoice.amount_due != null) {
+    const dollars = (Number(invoice.amount_due) / 100).toFixed(0);
+    const currency = String(invoice.currency || 'cad').toUpperCase();
+    return `${dollars} $ ${currency}`;
+  }
+  return planPriceLabel(plan);
 }
 
 exports.handler = async (event) => {
@@ -74,7 +78,7 @@ exports.handler = async (event) => {
           const patch = {
             stripe_customer_id: session.customer,
             stripe_subscription_id: session.subscription,
-            plan: (session.metadata && session.metadata.plan) || 'pro',
+            plan: normalizePlan((session.metadata && session.metadata.plan) || 'croissance'),
           };
           if (session.subscription) {
             try {
@@ -144,7 +148,7 @@ exports.handler = async (event) => {
 
         const { data: tenants } = await db.from('tenants').update(patch)
           .eq('stripe_customer_id', invoice.customer)
-          .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id');
+          .select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id, plan');
         if (['active', 'trialing'].includes(status) && tenants && tenants[0]) {
           await provisionTenant(tenants[0].id);
         }
@@ -167,6 +171,7 @@ exports.handler = async (event) => {
               portalUrl,
               invoiceUrl: invoice.hosted_invoice_url || invoice.invoice_pdf || '',
               periodLabel,
+              planLabel: planLabel(tenants[0].plan),
             });
           } catch (e) {
             console.warn('invoice.paid receipt email', e.message);
@@ -180,14 +185,15 @@ exports.handler = async (event) => {
         const invoice = stripeEvent.data.object;
         const { data: tenants } = await db.from('tenants').update({
           subscription_status: 'inactive',
-        }).eq('stripe_customer_id', invoice.customer).select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id');
+        }).eq('stripe_customer_id', invoice.customer).select('id, business_name, email, contact_email, trial_ends_at, stripe_customer_id, plan');
         if (tenants && tenants[0]) {
           await suspendTenant(tenants[0].id, { release: false });
           try {
             const portalUrl = await portalLinkForCustomer(invoice.customer);
             await sendPaymentFailedEmail(tenants[0], {
               portalUrl,
-              amountLabel: amountLabelFromInvoice(invoice),
+              amountLabel: amountLabelFromInvoice(invoice, tenants[0].plan),
+              planLabel: planLabel(tenants[0].plan),
             });
           } catch (e) {
             console.warn('payment_failed email', e.message);
@@ -206,9 +212,23 @@ exports.handler = async (event) => {
         }
         try {
           const portalUrl = await portalLinkForCustomer(sub.customer);
+          const usage = await getUsageSnapshot({
+            ...tenant,
+            trial_ends_at: trialEnds || tenant.trial_ends_at,
+            subscription_status: 'trialing',
+          });
+          const reco = usage.recommendation;
+          const recommendedKey = normalizePlan(reco.plan);
           await sendTrialEndingEmail(
             { ...tenant, trial_ends_at: trialEnds || tenant.trial_ends_at },
-            { trialEndsAt: trialEnds || tenant.trial_ends_at, portalUrl, amountLabel: '199 $ CAD' },
+            {
+              trialEndsAt: trialEnds || tenant.trial_ends_at,
+              portalUrl,
+              amountLabel: planPriceLabel(recommendedKey),
+              planLabel: planLabel(recommendedKey),
+              recommendationHtml:
+                `<p style="background:#f4f7fb;border-radius:8px;padding:12px 14px;line-height:1.45">${reco.message}</p>`,
+            },
           );
         } catch (e) {
           console.warn('trial_will_end email', e.message);
