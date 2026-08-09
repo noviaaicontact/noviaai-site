@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Votre potentiel de revenus récupérables | NoviaAI</title>
+<meta name="description" content="Répondez à 9 questions rapides et découvrez combien de revenus vous pourriez récupérer en automatisant vos appels manqués. Estimation gratuite pour les PME du Québec.">
+<link rel="canonical" href="https://noviaai.ca/potentiel">
+<meta name="robots" content="noindex, follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:url" content="https://noviaai.ca/potentiel">
+<meta property="og:title" content="Combien vos appels manqués vous coûtent chaque mois?">
+<meta property="og:description" content="Estimation gratuite en 60 secondes — voyez le revenu que vous pourriez récupérer avec NoviaAI.">
+<link rel="stylesheet" href="/assets/landing.css?v=3">
+<link rel="stylesheet" href="/assets/qualification-form.css?v=1">
+<script src="/assets/meta-pixel.js"></script>
+</head>
+<body class="landing qualif-body">
+
+<nav class="landing-nav">
+  <a href="/" class="landing-logo">Novia<span>AI</span></a>
+  <div class="landing-nav-actions">
+    <a href="tel:+15819095332" class="landing-btn landing-btn-ghost landing-btn-sm">581 909-5332</a>
+  </div>
+</nav>
+
+<main class="qualif-main">
+  <div class="qualif-wrap">
+
+    <header class="qualif-head">
+      <span class="qualif-badge">Estimation gratuite · 60 secondes</span>
+      <h1 class="qualif-h1">Combien vos appels manqués vous coûtent-ils chaque mois?</h1>
+      <p class="qualif-sub">9 questions rapides. À la fin, vous voyez une estimation du revenu que vous pourriez récupérer en automatisant vos appels manqués.</p>
+    </header>
+
+    <!-- ÉCRAN 1 — FORMULAIRE -->
+    <section class="qualif-card" id="formScreen">
+      <div class="qualif-progress" aria-hidden="true">
+        <div class="qualif-progress-bar"><span id="progressFill"></span></div>
+        <p class="qualif-progress-label">Étape <strong id="stepNow">1</strong> sur 3</p>
+      </div>
+
+      <form id="qualifForm" novalidate>
+
+        <!-- Étape 1 : votre situation -->
+        <div class="qualif-step is-active" data-step="1">
+          <h2 class="qualif-step-title">Votre situation</h2>
+
+          <fieldset class="qualif-field">
+            <legend>Votre secteur d'activité</legend>
+            <div class="qualif-choices qualif-choices-wrap" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="sector" value="esthetique"><span>Esthétique</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="coiffure"><span>Coiffure</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="construction"><span>Construction</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="nettoyage"><span>Nettoyage</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="garage"><span>Garage / automobile</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="services-pro"><span>Services professionnels</span></label>
+              <label class="qualif-choice"><input type="radio" name="sector" value="autre"><span>Autre</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="sector"></p>
+          </fieldset>
+
+          <fieldset class="qualif-field">
+            <legend>Combien d'appels recevez-vous par mois?</legend>
+            <div class="qualif-choices qualif-choices-5" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="callsPerMonth" value="0-20"><span>0 à 20</span></label>
+              <label class="qualif-choice"><input type="radio" name="callsPerMonth" value="21-50"><span>21 à 50</span></label>
+              <label class="qualif-choice"><input type="radio" name="callsPerMonth" value="51-100"><span>51 à 100</span></label>
+              <label class="qualif-choice"><input type="radio" name="callsPerMonth" value="101-200"><span>101 à 200</span></label>
+              <label class="qualif-choice"><input type="radio" name="callsPerMonth" value="200+"><span>200 +</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="callsPerMonth"></p>
+          </fieldset>
+
+          <fieldset class="qualif-field">
+            <legend>Combien d'appels manquez-vous par mois?</legend>
+            <div class="qualif-choices qualif-choices-5" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="0-5"><span>0 à 5</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="6-10"><span>6 à 10</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="11-20"><span>11 à 20</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="21-50"><span>21 à 50</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="50+"><span>50 +</span></label>
+            </div>
+            <p class="qualif-hint">Une estimation suffit — pas besoin du chiffre exact.</p>
+            <p class="qualif-error" data-error-for="missedCalls"></p>
+          </fieldset>
+
+          <fieldset class="qualif-field">
+            <legend>Combien vaut un nouveau client en moyenne?</legend>
+            <div class="qualif-choices qualif-choices-5" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="moins-100"><span>Moins de 100 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="100-250"><span>100 à 250 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="250-500"><span>250 à 500 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="500-1000"><span>500 à 1 000 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="1000+"><span>1 000 $ +</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="clientValue"></p>
+          </fieldset>
+
+          <div class="qualif-actions">
+            <button type="button" class="landing-btn landing-btn-lime landing-btn-block" data-next="2">Continuer</button>
+          </div>
+        </div>
+
+        <!-- Étape 2 : intention -->
+        <div class="qualif-step" data-step="2">
+          <h2 class="qualif-step-title">Une dernière chose</h2>
+
+          <fieldset class="qualif-field">
+            <legend>Souhaitez-vous voir combien de revenus vous pourriez récupérer en automatisant vos appels manqués?</legend>
+            <div class="qualif-choices qualif-choices-stack" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="intent" value="oui-absolument"><span>Oui, absolument</span></label>
+              <label class="qualif-choice"><input type="radio" name="intent" value="oui-en-savoir-plus"><span>Oui, je veux en savoir plus</span></label>
+              <label class="qualif-choice"><input type="radio" name="intent" value="curieux"><span>Je suis simplement curieux</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="intent"></p>
+          </fieldset>
+
+          <div class="qualif-actions">
+            <button type="button" class="landing-btn landing-btn-lime landing-btn-block" data-next="3">Continuer</button>
+            <button type="button" class="qualif-back" data-back="1">← Retour</button>
+          </div>
+        </div>
+
+        <!-- Étape 3 : coordonnées -->
+        <div class="qualif-step" data-step="3">
+          <h2 class="qualif-step-title">Où envoyer votre estimation?</h2>
+
+          <div class="qualif-grid-2">
+            <div class="qualif-field">
+              <label class="qualif-label" for="firstName">Prénom</label>
+              <input class="qualif-input" type="text" id="firstName" name="firstName" autocomplete="given-name" maxlength="60" required>
+              <p class="qualif-error" data-error-for="firstName"></p>
+            </div>
+            <div class="qualif-field">
+              <label class="qualif-label" for="lastName">Nom</label>
+              <input class="qualif-input" type="text" id="lastName" name="lastName" autocomplete="family-name" maxlength="60" required>
+              <p class="qualif-error" data-error-for="lastName"></p>
+            </div>
+          </div>
+
+          <div class="qualif-field">
+            <label class="qualif-label" for="businessName">Nom de l'entreprise</label>
+            <input class="qualif-input" type="text" id="businessName" name="businessName" autocomplete="organization" maxlength="120" required>
+            <p class="qualif-error" data-error-for="businessName"></p>
+          </div>
+
+          <div class="qualif-grid-2">
+            <div class="qualif-field">
+              <label class="qualif-label" for="phone">Téléphone</label>
+              <input class="qualif-input" type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="418 555-1234" maxlength="25" required>
+              <p class="qualif-error" data-error-for="phone"></p>
+            </div>
+            <div class="qualif-field">
+              <label class="qualif-label" for="email">Courriel</label>
+              <input class="qualif-input" type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="vous@entreprise.ca" maxlength="160" required>
+              <p class="qualif-error" data-error-for="email"></p>
+            </div>
+          </div>
+
+          <label class="qualif-consent">
+            <input type="checkbox" name="consent" value="1">
+            <span>J'accepte d'être contacté par NoviaAI par courriel, texto ou téléphone au sujet de mon estimation. Voir la <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span>
+          </label>
+          <p class="qualif-error" data-error-for="consent"></p>
+
+          <!-- Piège à robots : un humain ne voit pas ce champ. -->
+          <div class="qualif-hp" aria-hidden="true">
+            <label for="siteWeb">Site web</label>
+            <input type="text" id="siteWeb" name="siteWeb" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="qualif-actions">
+            <button type="submit" class="landing-btn landing-btn-lime landing-btn-block" id="submitBtn">Voir mon estimation</button>
+            <button type="button" class="qualif-back" data-back="2">← Retour</button>
+          </div>
+
+          <p class="qualif-formerror" id="formError" role="alert"></p>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ÉCRAN 2 — CONFIRMATION -->
+    <section class="qualif-card qualif-hidden" id="confirmScreen" aria-live="polite">
+      <div class="qualif-check" aria-hidden="true">✓</div>
+      <h2 class="qualif-confirm-title">C'est enregistré, <span id="confirmName">merci</span>.</h2>
+      <p class="qualif-confirm-text">Vos réponses sont reçues. On a calculé ce que vos appels manqués représentent — en dollars.</p>
+      <button type="button" class="landing-btn landing-btn-lime landing-btn-block" id="revealBtn">Voir mon potentiel de revenus récupérables</button>
+      <p class="qualif-confirm-note">Un membre de l'équipe NoviaAI peut vous joindre pour vous expliquer les chiffres.</p>
+    </section>
+
+    <!-- ÉCRAN 3 — RÉSULTAT -->
+    <section class="qualif-card qualif-hidden" id="resultScreen" aria-live="polite">
+      <p class="qualif-result-eyebrow">Votre estimation</p>
+      <h2 class="qualif-result-title">Vous pourriez potentiellement récupérer jusqu'à</h2>
+      <p class="qualif-result-amount"><span id="resultAmount">0 $</span><span class="qualif-result-per">/ mois</span></p>
+      <p class="qualif-result-range" id="resultRange"></p>
+
+      <ul class="qualif-result-detail" id="resultDetail"></ul>
+
+      <p class="qualif-disclaimer">
+        Il s'agit d'une <strong>estimation</strong>, pas d'une garantie de résultat. Le calcul est basé
+        uniquement sur les réponses que vous avez fournies et sur un taux de récupération prudent.
+        Vos résultats réels dépendent de votre offre, de vos prix et de votre suivi.
+      </p>
+
+      <div class="qualif-result-cta">
+        <a href="/signup.html?plan=croissance&amp;utm_source=potentiel" class="landing-btn landing-btn-lime landing-btn-block">Démarrer mon essai gratuit 14 jours</a>
+        <a href="/comment-ca-marche.html" class="landing-btn landing-btn-ghost landing-btn-block">Voir comment ça marche</a>
+      </div>
+      <p class="qualif-confirm-note">Sans contrat · Annulable en 1 clic · Support en français</p>
+    </section>
+
+    <div class="landing-trust qualif-trust">
+      <span>PME du Québec</span>
+      <span>Sans engagement</span>
+      <span>Vos données restent confidentielles</span>
+    </div>
+
+  </div>
+</main>
+
+<footer class="landing-footer">
+  NoviaAI · Québec ·
+  <a href="tel:+15819095332">581 909-5332</a> ·
+  <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a> ·
+  <a href="/comment-ca-marche.html">Comment ça marche</a> ·
+  <a href="/confidentialite.html">Confidentialité (Loi&nbsp;25)</a> ·
+  <a href="/conditions.html">Conditions</a> ·
+  <a href="/politique-sms.html">Politique SMS</a>
+</footer>
+
+<script src="/assets/revenue-estimate.js?v=1"></script>
+<script src="/assets/qualification-form.js?v=1" defer></script>
+</body>
+</html>

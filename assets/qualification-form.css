@@ -1,0 +1,406 @@
+/* Formulaire de qualification /potentiel — complète landing.css (variables réutilisées) */
+
+.qualif-body {
+  background:
+    radial-gradient(1000px 520px at 50% -180px, rgba(28, 74, 134, 0.16), transparent 70%),
+    var(--bg);
+}
+
+.qualif-main { padding: clamp(28px, 6vw, 56px) 0 clamp(48px, 8vw, 80px); }
+
+.qualif-wrap {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
+
+/* En-tête */
+.qualif-head { text-align: center; margin-bottom: clamp(20px, 4vw, 32px); }
+
+.qualif-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #3d5a00;
+  background: rgba(200, 241, 53, 0.25);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.qualif-h1 {
+  font-size: clamp(1.5rem, 5vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 14px 0 10px;
+  color: var(--ink);
+}
+
+.qualif-sub {
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  color: var(--muted);
+  margin: 0 auto;
+  max-width: 46ch;
+  line-height: 1.6;
+}
+
+/* Carte */
+.qualif-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  padding: clamp(20px, 4.5vw, 36px);
+}
+
+.qualif-hidden { display: none; }
+
+/* Progression */
+.qualif-progress { margin-bottom: 24px; }
+
+.qualif-progress-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #eef2f7;
+  overflow: hidden;
+}
+
+.qualif-progress-bar span {
+  display: block;
+  height: 100%;
+  width: 33.33%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--navy2), var(--accent));
+  transition: width 0.35s ease;
+}
+
+.qualif-progress-label {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* Étapes */
+.qualif-step { display: none; }
+.qualif-step.is-active { display: block; animation: qualifIn 0.28s ease; }
+
+@keyframes qualifIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qualif-step.is-active { animation: none; }
+  .qualif-progress-bar span { transition: none; }
+}
+
+.qualif-step-title {
+  font-size: clamp(1.1rem, 3vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 22px;
+  color: var(--ink);
+}
+
+/* Champs */
+.qualif-field {
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.qualif-field legend,
+.qualif-label {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 10px;
+  padding: 0;
+  line-height: 1.45;
+}
+
+.qualif-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Choix radio en cartes */
+.qualif-choices { display: grid; gap: 8px; }
+
+.qualif-choices-5 { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+.qualif-choices-wrap { grid-template-columns: repeat(auto-fit, minmax(152px, 1fr)); }
+.qualif-choices-stack { grid-template-columns: 1fr; }
+
+.qualif-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.qualif-choice:hover { border-color: #b8c6d8; }
+
+.qualif-choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.qualif-choice:has(input:checked),
+.qualif-choice.is-selected {
+  border-color: var(--accent-dark);
+  background: rgba(200, 241, 53, 0.14);
+  box-shadow: inset 0 0 0 1px var(--accent-dark);
+}
+
+.qualif-choice:has(input:focus-visible) {
+  outline: 2px solid var(--navy2);
+  outline-offset: 2px;
+}
+
+/* Inputs texte */
+.qualif-input {
+  width: 100%;
+  padding: 13px 14px;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 11px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.qualif-input:focus {
+  outline: none;
+  border-color: var(--navy2);
+  box-shadow: 0 0 0 3px rgba(28, 74, 134, 0.12);
+}
+
+.qualif-input.is-invalid { border-color: var(--danger); }
+
+.qualif-grid-2 { display: grid; gap: 0 14px; grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 520px) {
+  .qualif-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Consentement */
+.qualif-consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.qualif-consent input {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--accent-dark);
+}
+
+.qualif-consent a { color: var(--navy2); text-decoration: underline; }
+
+/* Honeypot */
+.qualif-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Erreurs */
+.qualif-error {
+  margin: 6px 0 0;
+  min-height: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.qualif-error:empty { display: none; }
+
+.qualif-formerror {
+  margin: 14px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--danger);
+  text-align: center;
+}
+
+.qualif-formerror:empty { display: none; }
+
+/* Actions */
+.qualif-actions { margin-top: 26px; }
+
+.qualif-actions .landing-btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.qualif-back {
+  display: block;
+  margin: 12px auto 0;
+  padding: 6px 10px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.qualif-back:hover { color: var(--navy); }
+
+/* Écran confirmation */
+#confirmScreen { text-align: center; }
+
+.qualif-check {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(200, 241, 53, 0.28);
+  color: #3d5a00;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.qualif-confirm-title {
+  font-size: clamp(1.25rem, 3.6vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.qualif-confirm-text {
+  font-size: 0.98rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 auto 24px;
+  max-width: 42ch;
+}
+
+.qualif-confirm-note {
+  margin: 14px 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Écran résultat */
+#resultScreen { text-align: center; }
+
+.qualif-result-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--navy2);
+  margin: 0 0 10px;
+}
+
+.qualif-result-title {
+  font-size: clamp(1rem, 2.6vw, 1.15rem);
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qualif-result-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 6px;
+  font-size: clamp(2.4rem, 11vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--navy);
+}
+
+.qualif-result-per {
+  font-size: clamp(0.95rem, 2.6vw, 1.1rem);
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.qualif-result-range {
+  margin: 0 0 24px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.qualif-result-detail {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 16px 18px;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 0.87rem;
+  color: var(--ink);
+}
+
+.qualif-result-detail li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.qualif-result-detail li:last-child { border-bottom: 0; }
+.qualif-result-detail strong { font-weight: 700; }
+
+.qualif-disclaimer {
+  margin: 0 0 26px;
+  padding: 13px 15px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 11px;
+  font-size: 0.79rem;
+  line-height: 1.55;
+  color: #713f12;
+  text-align: left;
+}
+
+.qualif-result-cta { display: grid; gap: 10px; }
+
+/* Bandeau confiance — landing-trust est prévu pour le héros foncé, on le repasse en clair */
+.qualif-trust {
+  justify-content: center;
+  margin-top: 22px;
+  color: var(--muted);
+}
+
+.qualif-trust span::before { color: var(--accent-dark); }
