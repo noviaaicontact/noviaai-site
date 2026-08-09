@@ -52,7 +52,11 @@ BUZZ_CYCLES = [(1.40, 2.70), (3.00, 4.20)]
 
 CAPTIONS = [
     # (t_in, t_out, [(mot, couleur), ...])
-    (0.90, 5.60, [("Trop occupé pour", WHITE), ("répondre?", WHITE)]),
+    # Le hook doit etre lisible des la premiere image : sur Meta la majorite du
+    # trafic decroche avant 3 s, un fondu d'entree coute plus cher qu'il rapporte.
+    (-0.30, 3.60, [("Trop occupé pour", WHITE), ("répondre?", WHITE)]),
+    # Tient sur une seule ligne a 70 px : un chiffre coupe en deux perd sa force.
+    (3.85, 5.60, [("1 800 $", LIME), ("perdus par mois", WHITE)]),
 ]
 
 
@@ -378,13 +382,28 @@ def draw_caption(img: Image.Image, t: float, captions: list | None = None,
                 flat.append((word, color))
         lines = wrap_tokens(flat, f, W - 200)
 
-        y = int(H * 0.20) + rise
+        y0 = int(H * 0.20) + rise
+
+        # Voile sombre derriere le bloc : le plan garage est contraste, sans lui
+        # le texte se perd sur les zones eclairees par la lampe.
+        widest = max(d.textlength(" ".join(w for w, _ in line), font=f) for line in lines)
+        scrim = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ImageDraw.Draw(scrim).rounded_rectangle(
+            [int((W - widest) / 2) - 46, y0 - 34,
+             int((W + widest) / 2) + 46, y0 + 86 * len(lines) + 6],
+            radius=44,
+            fill=(0, 0, 0, int(120 * alpha)),
+        )
+        layer = Image.alpha_composite(scrim.filter(ImageFilter.GaussianBlur(26)), layer)
+        d = ImageDraw.Draw(layer)
+
+        y = y0
         for line in lines:
             total = d.textlength(" ".join(w for w, _ in line), font=f)
             x = (W - total) / 2
             for word, color in line:
-                for dx, dy in ((-2, 0), (2, 0), (0, -2), (0, 2)):
-                    d.text((x + dx, y + dy), word, font=f, fill=(0, 0, 0, int(120 * alpha)))
+                for dx, dy in ((-3, 0), (3, 0), (0, -3), (0, 3), (-2, -2), (2, 2)):
+                    d.text((x + dx, y + dy), word, font=f, fill=(0, 0, 0, int(170 * alpha)))
                 d.text((x, y), word, font=f, fill=(*color, int(255 * alpha)))
                 x += d.textlength(word + " ", font=f)
             y += 86

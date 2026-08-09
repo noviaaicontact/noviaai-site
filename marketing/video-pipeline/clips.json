@@ -769,66 +769,6 @@
       "quality": "sd"
     },
     {
-      "filename": "sms_novia_plombier_01.mp4",
-      "path": "clips\\local\\sms_novia_plombier_01.mp4",
-      "scene": "sms",
-      "term": "novia_mockup",
-      "source": "local",
-      "pexels_id": null,
-      "duration": 8.0,
-      "width": 1080,
-      "height": 1920,
-      "priority": 100
-    },
-    {
-      "filename": "sms_novia_garage_01.mp4",
-      "path": "clips\\local\\sms_novia_garage_01.mp4",
-      "scene": "sms",
-      "term": "novia_mockup",
-      "source": "local",
-      "pexels_id": null,
-      "duration": 8.0,
-      "width": 1080,
-      "height": 1920,
-      "priority": 100
-    },
-    {
-      "filename": "sms_novia_electro_01.mp4",
-      "path": "clips\\local\\sms_novia_electro_01.mp4",
-      "scene": "sms",
-      "term": "novia_mockup",
-      "source": "local",
-      "pexels_id": null,
-      "duration": 8.0,
-      "width": 1080,
-      "height": 1920,
-      "priority": 100
-    },
-    {
-      "filename": "sms_novia_reno_01.mp4",
-      "path": "clips\\local\\sms_novia_reno_01.mp4",
-      "scene": "sms",
-      "term": "novia_mockup",
-      "source": "local",
-      "pexels_id": null,
-      "duration": 8.0,
-      "width": 1080,
-      "height": 1920,
-      "priority": 100
-    },
-    {
-      "filename": "sms_novia_salon_01.mp4",
-      "path": "clips\\local\\sms_novia_salon_01.mp4",
-      "scene": "sms",
-      "term": "novia_mockup",
-      "source": "local",
-      "pexels_id": null,
-      "duration": 8.0,
-      "width": 1080,
-      "height": 1920,
-      "priority": 100
-    },
-    {
       "filename": "busy_px_construction_worker_busy_01.mp4",
       "path": "clips\\busy_px_construction_worker_busy_01.mp4",
       "scene": "busy",
@@ -1091,6 +1031,66 @@
       "duration": 10,
       "width": 1920,
       "height": 1080
+    },
+    {
+      "filename": "sms_novia_plombier_01.mp4",
+      "path": "clips\\local\\sms_novia_plombier_01.mp4",
+      "scene": "sms",
+      "term": "novia_mockup",
+      "source": "local",
+      "pexels_id": null,
+      "duration": 8.0,
+      "width": 1080,
+      "height": 1920,
+      "priority": 100
+    },
+    {
+      "filename": "sms_novia_garage_01.mp4",
+      "path": "clips\\local\\sms_novia_garage_01.mp4",
+      "scene": "sms",
+      "term": "novia_mockup",
+      "source": "local",
+      "pexels_id": null,
+      "duration": 8.0,
+      "width": 1080,
+      "height": 1920,
+      "priority": 100
+    },
+    {
+      "filename": "sms_novia_electro_01.mp4",
+      "path": "clips\\local\\sms_novia_electro_01.mp4",
+      "scene": "sms",
+      "term": "novia_mockup",
+      "source": "local",
+      "pexels_id": null,
+      "duration": 8.0,
+      "width": 1080,
+      "height": 1920,
+      "priority": 100
+    },
+    {
+      "filename": "sms_novia_reno_01.mp4",
+      "path": "clips\\local\\sms_novia_reno_01.mp4",
+      "scene": "sms",
+      "term": "novia_mockup",
+      "source": "local",
+      "pexels_id": null,
+      "duration": 8.0,
+      "width": 1080,
+      "height": 1920,
+      "priority": 100
+    },
+    {
+      "filename": "sms_novia_salon_01.mp4",
+      "path": "clips\\local\\sms_novia_salon_01.mp4",
+      "scene": "sms",
+      "term": "novia_mockup",
+      "source": "local",
+      "pexels_id": null,
+      "duration": 8.0,
+      "width": 1080,
+      "height": 1920,
+      "priority": 100
     }
   ],
   "scenes": [
