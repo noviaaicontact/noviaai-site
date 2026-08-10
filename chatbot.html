@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=6">
+<link rel="stylesheet" href="/assets/saas.css?v=7">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -28,161 +28,139 @@
   <main class="dash-main">
     <div class="dash-header">
       <h1>Agent SMS &amp; web</h1>
-      <p class="muted" style="margin:0">Personnalité, services, FAQ et base de connaissances</p>
-      <p class="muted" style="margin:8px 0 0;font-size:.88rem">Configurez vos <strong>messages SMS</strong>, <strong>services</strong>, <strong>FAQ</strong> et <strong>liens de soumission</strong>.</p>
+      <p class="muted" style="margin:0">Configurez l’essentiel en 5 minutes. Le reste est optionnel.</p>
     </div>
 
     <div class="card">
       <form id="chatbotForm">
+
+        <!-- ═══ 1. ESSENTIEL ═══ -->
         <div class="settings-section">
-          <h3>Personnalité</h3>
+          <h3>1 · Identité</h3>
           <div class="settings-grid">
             <div class="settings-field">
-              <label for="setAgentName">Prénom de l'agent *</label>
-              <input id="setAgentName" required placeholder="Léa">
+              <label for="setAgentName">Prénom de l’agent *</label>
+              <input id="setAgentName" required placeholder="Léa" maxlength="40">
             </div>
             <div class="settings-field">
               <label for="setBusinessType">Type de commerce</label>
-              <input id="setBusinessType" placeholder="Salon de coiffure">
+              <input id="setBusinessType" placeholder="Ex. salon de coiffure, garage, plombier" maxlength="80">
             </div>
             <div class="settings-field settings-field-wide">
-              <label for="setAgentTone">Ton / personnalité</label>
-              <input id="setAgentTone" placeholder="Français québécois, chaleureux et professionnel">
-            </div>
-            <div class="settings-field settings-field-wide">
-              <label for="setAgentInstructions">Instructions personnalisées pour l'agent</label>
-              <textarea id="setAgentInstructions" rows="4" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit. Mentionner la livraison partout au Québec. Ne jamais parler de la concurrence."></textarea>
-              <small class="settings-hint">Consignes métier, sujets à mettre de l'avant ou à éviter — l'agent les suit sans inventer de faits absents de la base.</small>
+              <label>Ton de l’agent</label>
+              <div class="tone-presets" id="tonePresets" role="radiogroup" aria-label="Ton de l’agent">
+                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="chaleureux" checked><span>Chaleureux</span></label>
+                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="professionnel"><span>Professionnel</span></label>
+                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="direct"><span>Direct</span></label>
+                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="custom"><span>Perso</span></label>
+              </div>
+              <input id="setAgentTone" class="tone-custom-input" hidden placeholder="Décrivez le ton souhaité" maxlength="200">
             </div>
           </div>
         </div>
 
-        <div class="settings-section" id="favoris">
-          <h3>Favoris agent</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Infos que l'agent garde sous la main — promos, consignes urgentes, réponses types. Plus besoin de fouiller dans le chat pour les retrouver.</p>
-          <div id="favoritesList"></div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnAddFavorite" style="margin-top:8px">+ Ajouter un favori</button>
-        </div>
-
-        <div class="settings-section" id="qualification">
-          <h3>Infos à collecter &amp; résumé client</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Choisissez ce que l'agent doit demander (nom, téléphone, demande, urgence…). Il produit un <strong>résumé structuré</strong> visible dans Conversations et dans vos alertes courriel.</p>
-          <div id="qualificationFieldsList" class="qual-fields-grid"></div>
+        <div class="settings-section">
+          <h3>2 · Type de demandes</h3>
+          <p class="muted settings-lead">Ça détermine ce que l’agent demande aux clients.</p>
+          <div class="workflow-cards" id="workflowCards" role="radiogroup" aria-label="Type de demandes">
+            <label class="workflow-card">
+              <input type="radio" name="qualWorkflow" value="appointment">
+              <span class="workflow-card-body">
+                <strong>Sur rendez-vous</strong>
+                <em>Salon, clinique, spa, services professionnels</em>
+              </span>
+            </label>
+            <label class="workflow-card">
+              <input type="radio" name="qualWorkflow" value="field_service">
+              <span class="workflow-card-body">
+                <strong>Service sur place</strong>
+                <em>Plombier, garage, construction, dépannage</em>
+              </span>
+            </label>
+          </div>
+          <div class="qual-simple" id="qualificationSimple"></div>
+          <details class="agent-details" id="qualAdvancedDetails">
+            <summary>Ajuster les infos à collecter</summary>
+            <p class="muted" style="font-size:.85rem;margin:10px 0 12px">Cochez ce que l’agent doit demander. Laissez les réglages par défaut si vous hésitez.</p>
+            <div id="qualificationFieldsList" class="qual-fields-grid"></div>
+          </details>
         </div>
 
         <div class="settings-section">
-          <h3>Messages de l'agent</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 16px">Deux messages distincts selon le canal — rédigés ici, utilisés tels quels par l'agent.</p>
+          <h3>3 · Messages</h3>
           <div class="settings-grid">
+            <div class="settings-field settings-field-wide msg-channel-card">
+              <div class="msg-channel-head">
+                <span class="msg-channel-badge sms">SMS · Prioritaire</span>
+                <label for="setMissedSms">Premier texto après un appel manqué</label>
+              </div>
+              <textarea id="setMissedSms" rows="3" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. On a manqué votre appel — répondez à ce texto…"></textarea>
+              <small class="settings-hint">Envoyé tel quel quand quelqu’un appelle sans réponse.</small>
+            </div>
             <div class="settings-field settings-field-wide msg-channel-card">
               <div class="msg-channel-head">
                 <span class="msg-channel-badge web">Site web</span>
-                <label for="setWelcomeSms">Message d'accueil — bulle chat sur votre site</label>
+                <label for="setWelcomeSms">Message d’accueil du chat</label>
               </div>
-              <textarea id="setWelcomeSms" rows="2" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
-              <small class="settings-hint">Affiché dans le widget 💬 en bas à droite de votre site web quand un visiteur ouvre le chat.</small>
-            </div>
-            <div class="settings-field settings-field-wide msg-channel-card">
-              <div class="msg-channel-head">
-                <span class="msg-channel-badge sms">SMS · Téléphone</span>
-                <label for="setMissedSms">Premier texto après appel manqué</label>
-              </div>
-              <textarea id="setMissedSms" rows="3" placeholder="Bonjour! Ici Léa, de [Commerce]. Désolé, on a manqué votre appel! Répondez à ce texto…"></textarea>
-              <small class="settings-hint">Envoyé automatiquement en 📱 SMS quand un client appelle votre ligne sans réponse — texte exact, sans variation IA.</small>
+              <textarea id="setWelcomeSms" rows="2" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
+              <small class="settings-hint">Première bulle du widget sur votre site.</small>
             </div>
           </div>
         </div>
 
         <div class="settings-section">
-          <h3>Commerce &amp; horaires</h3>
+          <h3>4 · Contact &amp; liens</h3>
           <div class="settings-grid">
-            <div class="settings-field settings-field-wide">
-              <label for="setWebsiteUrl">Site web (référence)</label>
-              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
-              <small class="settings-hint">Optionnel — importez les pages ci-dessous pour entraîner l'IA</small>
+            <div class="settings-field">
+              <label for="setPublicPhone">Téléphone à donner aux clients</label>
+              <input id="setPublicPhone" type="tel" placeholder="418-555-1234" autocomplete="tel">
             </div>
             <div class="settings-field">
-              <label for="setPublicPhone">Numéro public (site web)</label>
-              <input id="setPublicPhone" type="tel" placeholder="418-555-1234" autocomplete="tel">
-              <small class="settings-hint">Celui affiché sur votre site / Google — l’agent le donne aux clients</small>
+              <label for="setWebsiteUrl">Site web</label>
+              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
             </div>
             <div class="settings-field settings-field-wide">
               <label>Liens de réservation ou de soumission</label>
               <div id="reservationLinksList"></div>
               <button type="button" class="btn btn-ghost btn-sm" id="btnAddReservationLink" style="margin-top:8px">+ Ajouter un lien</button>
-              <small class="settings-hint">Un lien par service si besoin (ex. Coupe, Coloration…). Libellé + URL, puis Enregistrer — l’agent envoie le bon lien selon la demande.</small>
-            </div>
-            <div class="settings-field">
-              <label for="setAddress">Adresse</label>
-              <input id="setAddress" placeholder="245, rue Principale">
-            </div>
-            <div class="settings-field">
-              <label for="setCity">Ville</label>
-              <input id="setCity" placeholder="Lévis">
-            </div>
-            <div class="settings-field settings-field-wide">
-              <label>Horaires d'ouverture</label>
-              <div class="hours-grid" id="hoursGrid"></div>
+              <small class="settings-hint">L’agent envoie le bon lien selon la demande (ex. Coupe, Soumission…).</small>
             </div>
           </div>
         </div>
 
         <div class="settings-section">
-          <h3>Services</h3>
-          <div id="servicesList"></div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnAddService" style="margin-top:8px">+ Ajouter un service</button>
-        </div>
-
-        <div class="settings-section">
-          <h3>FAQ</h3>
-          <div id="faqList"></div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnAddFaq" style="margin-top:8px">+ Ajouter une question</button>
-        </div>
-
-        <div class="settings-section">
-          <h3>Politiques</h3>
+          <h3>5 · Consignes</h3>
+          <p class="muted settings-lead">Ce que l’agent doit toujours savoir ou respecter.</p>
           <div class="settings-field settings-field-wide">
-            <textarea id="setPolicies" rows="3" placeholder="Annulation 24 h à l'avance&#10;Paiement: carte, Interac"></textarea>
-            <small class="settings-hint">Une politique par ligne</small>
+            <label for="setAgentInstructions">Consignes importantes</label>
+            <textarea id="setAgentInstructions" rows="3" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit. Mentionner la livraison partout au Québec. Ne jamais parler des concurrents."></textarea>
           </div>
+          <details class="agent-details" id="favoritesDetails">
+            <summary>Infos à retenir (optionnel)</summary>
+            <p class="muted" style="font-size:.85rem;margin:10px 0 12px">Promos, réponses types, détails urgents — l’agent les priorise.</p>
+            <div id="favoritesList"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddFavorite" style="margin-top:8px">+ Ajouter</button>
+          </details>
         </div>
 
-        <div class="settings-section">
-          <h3>Sources — site web &amp; documents</h3>
-          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Importez votre site ou uploadez un menu tarifs (PDF, Word, TXT). L'IA indexe le contenu automatiquement.</p>
-          <div id="kbMigrationWarn" class="install-warn" hidden>Migration Supabase requise pour l'import URL — exécutez <code>supabase/schema-v6-knowledge-base.sql</code></div>
-          <div class="kb-sources-box">
-            <div class="kb-import-row">
-              <input type="url" id="kbUrlInput" placeholder="https://votre-site.ca/services">
-              <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Importer URL</button>
-            </div>
-            <div class="kb-import-row" style="margin-top:10px">
-              <input type="file" id="kbFileInput" accept=".pdf,.doc,.docx,.txt,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv">
-              <button type="button" class="btn btn-ghost btn-sm" id="btnImportFile">Uploader fichier</button>
-            </div>
-            <small class="settings-hint" style="display:block;margin:6px 0 10px">PDF, DOCX, DOC, TXT, CSV — max 4 Mo</small>
-            <p id="kbImportErr" class="err" hidden style="margin:0 0 8px"></p>
-            <ul class="kb-sources-list" id="kbSourcesList"></ul>
-          </div>
-        </div>
-
-        <div class="settings-section kb-tester">
+        <!-- ═══ TEST ═══ -->
+        <div class="settings-section kb-tester agent-test-block">
           <div class="client-sim-head" style="margin-bottom:12px">
             <div>
-              <h3 style="margin:0">Simuler une conversation</h3>
-              <p class="muted" style="font-size:.88rem;margin:6px 0 0">Parlez comme un client — multi-tours, avec votre vraie config (services, FAQ, site).</p>
+              <h3 style="margin:0">Tester l’agent</h3>
+              <p class="muted" style="font-size:.88rem;margin:6px 0 0">Parlez comme un client. Enregistrez d’abord pour appliquer vos changements.</p>
             </div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <label for="kbTestPreview" class="muted" style="font-size:.82rem;margin:0">1re bulle :</label>
               <select id="kbTestPreview" class="btn btn-ghost btn-sm" style="font-size:.82rem;padding:6px 10px">
-                <option value="welcome">🌐 Site web — accueil</option>
                 <option value="missed">📱 SMS — appel manqué</option>
+                <option value="welcome">🌐 Site web — accueil</option>
               </select>
               <button type="button" class="btn btn-ghost btn-sm" id="btnKbTestReset">Réinitialiser</button>
             </div>
           </div>
           <div class="client-sim-phone kb-sim-phone">
-            <div class="client-sim-status"><span class="live-dot"></span> Test agent · pas de SMS réel</div>
+            <div class="client-sim-status"><span class="live-dot"></span> Test · pas de SMS réel</div>
             <div class="client-sim-msgs" id="kbTestMsgs" aria-live="polite"></div>
             <div class="client-sim-chips" id="kbTestChips"></div>
             <div class="client-sim-form" id="kbTestForm">
@@ -196,7 +174,72 @@
           </details>
         </div>
 
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px">
+        <!-- ═══ AVANCÉ ═══ -->
+        <details class="agent-advanced" id="agentAdvanced">
+          <summary>
+            <span>Options avancées</span>
+            <em class="muted">Horaires, services, FAQ, import du site</em>
+          </summary>
+
+          <div class="settings-section" style="margin-top:20px">
+            <h3>Horaires &amp; adresse</h3>
+            <div class="settings-grid">
+              <div class="settings-field">
+                <label for="setAddress">Adresse</label>
+                <input id="setAddress" placeholder="245, rue Principale">
+              </div>
+              <div class="settings-field">
+                <label for="setCity">Ville</label>
+                <input id="setCity" placeholder="Lévis">
+              </div>
+              <div class="settings-field settings-field-wide">
+                <label>Horaires d’ouverture</label>
+                <div class="hours-grid" id="hoursGrid"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Services</h3>
+            <div id="servicesList"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddService" style="margin-top:8px">+ Ajouter un service</button>
+          </div>
+
+          <div class="settings-section">
+            <h3>FAQ</h3>
+            <div id="faqList"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddFaq" style="margin-top:8px">+ Ajouter une question</button>
+          </div>
+
+          <div class="settings-section">
+            <h3>Politiques</h3>
+            <div class="settings-field settings-field-wide">
+              <textarea id="setPolicies" rows="3" placeholder="Annulation 24 h à l’avance&#10;Paiement : carte, Interac"></textarea>
+              <small class="settings-hint">Une politique par ligne</small>
+            </div>
+          </div>
+
+          <div class="settings-section" style="border-bottom:none;padding-bottom:0;margin-bottom:0">
+            <h3>Importer le site ou des documents</h3>
+            <p class="muted" style="font-size:.88rem;margin:0 0 12px">L’IA indexe le contenu pour répondre plus précisément.</p>
+            <div id="kbMigrationWarn" class="install-warn" hidden>Migration Supabase requise pour l’import URL — exécutez <code>supabase/schema-v6-knowledge-base.sql</code></div>
+            <div class="kb-sources-box">
+              <div class="kb-import-row">
+                <input type="url" id="kbUrlInput" placeholder="https://votre-site.ca/services">
+                <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Importer URL</button>
+              </div>
+              <div class="kb-import-row" style="margin-top:10px">
+                <input type="file" id="kbFileInput" accept=".pdf,.doc,.docx,.txt,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv">
+                <button type="button" class="btn btn-ghost btn-sm" id="btnImportFile">Uploader fichier</button>
+              </div>
+              <small class="settings-hint" style="display:block;margin:6px 0 10px">PDF, DOCX, DOC, TXT, CSV — max 4 Mo</small>
+              <p id="kbImportErr" class="err" hidden style="margin:0 0 8px"></p>
+              <ul class="kb-sources-list" id="kbSourcesList"></ul>
+            </div>
+          </div>
+        </details>
+
+        <div class="agent-save-bar">
           <button type="submit" class="btn btn-primary" id="btnSaveChatbot">Enregistrer l’agent</button>
           <p id="chatbotOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:0">Agent enregistré</p>
           <p id="chatbotErr" class="err" hidden style="margin:0"></p>
@@ -205,7 +248,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=13"></script>
+<script src="/assets/chatbot-kb.js?v=14"></script>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=15"></script>

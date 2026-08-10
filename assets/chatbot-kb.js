@@ -16,19 +16,31 @@ const QUALIFICATION_BY_WORKFLOW = {
     { key: 'nom', label: 'Nom du client', enabled: true, required: true },
     { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
     { key: 'service_souhaite', label: 'Service désiré', enabled: true, required: true },
-    { key: 'preferences', label: 'Préférences du client', enabled: true, required: false },
+    { key: 'preferences', label: 'Préférences du client', enabled: false, required: false },
     { key: 'disponibilites', label: 'Disponibilités', enabled: true, required: true },
-    { key: 'creneau_confirme', label: 'Créneau souhaité', enabled: true, required: false },
+    { key: 'creneau_confirme', label: 'Créneau souhaité', enabled: false, required: false },
   ],
   field_service: [
     { key: 'nom', label: 'Nom du client', enabled: true, required: true },
     { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
     { key: 'probleme', label: 'Type de problème', enabled: true, required: true },
     { key: 'urgence', label: 'Urgence', enabled: true, required: true },
-    { key: 'depuis_quand', label: 'Depuis quand', enabled: true, required: false },
+    { key: 'depuis_quand', label: 'Depuis quand', enabled: false, required: false },
     { key: 'adresse', label: 'Adresse', enabled: true, required: false },
     { key: 'disponibilite_rappel', label: 'Meilleur moment pour rappeler', enabled: true, required: true },
   ],
+};
+
+/** Champs montrés en vue simple (le reste reste dans « Ajuster »). */
+const QUAL_SIMPLE_KEYS = {
+  appointment: ['nom', 'telephone', 'service_souhaite', 'disponibilites'],
+  field_service: ['nom', 'telephone', 'probleme', 'urgence', 'adresse', 'disponibilite_rappel'],
+};
+
+const TONE_PRESETS = {
+  chaleureux: 'Français québécois, chaleureux, amical et professionnel',
+  professionnel: 'Français québécois, professionnel, clair et courtois',
+  direct: 'Français québécois, direct, simple et efficace',
 };
 
 const APPOINTMENT_KEYWORDS = [
@@ -54,12 +66,55 @@ function detectWorkflowClient(businessType, businessName) {
   return 'field_service';
 }
 
-function defaultQualificationFieldsForContext() {
+function selectedWorkflow() {
+  const checked = document.querySelector('input[name="qualWorkflow"]:checked');
+  if (checked && (checked.value === 'appointment' || checked.value === 'field_service')) {
+    return checked.value;
+  }
   const type = document.getElementById('setBusinessType')?.value || '';
-  const name = document.getElementById('setBusinessName')?.value || '';
-  const wf = detectWorkflowClient(type, name);
+  return detectWorkflowClient(type, '');
+}
+
+function setSelectedWorkflow(wf) {
+  const value = wf === 'appointment' ? 'appointment' : 'field_service';
+  document.querySelectorAll('input[name="qualWorkflow"]').forEach((radio) => {
+    radio.checked = radio.value === value;
+    radio.closest('.workflow-card')?.classList.toggle('is-selected', radio.checked);
+  });
+}
+
+function defaultQualificationFieldsForContext() {
+  const wf = selectedWorkflow();
   return (QUALIFICATION_BY_WORKFLOW[wf] || QUALIFICATION_BY_WORKFLOW.field_service)
     .map((f) => ({ ...f }));
+}
+
+function tonePresetFromValue(tone) {
+  const t = String(tone || '').trim();
+  if (!t) return 'chaleureux';
+  const hit = Object.keys(TONE_PRESETS).find((k) => TONE_PRESETS[k] === t);
+  return hit || 'custom';
+}
+
+function applyTonePreset(preset) {
+  const custom = document.getElementById('setAgentTone');
+  const isCustom = preset === 'custom';
+  document.querySelectorAll('input[name="agentTonePreset"]').forEach((radio) => {
+    radio.checked = radio.value === preset;
+    radio.closest('.tone-preset')?.classList.toggle('is-selected', radio.checked);
+  });
+  if (custom) {
+    custom.hidden = !isCustom;
+    if (!isCustom) custom.value = TONE_PRESETS[preset] || TONE_PRESETS.chaleureux;
+  }
+}
+
+function collectAgentTone() {
+  const preset = document.querySelector('input[name="agentTonePreset"]:checked')?.value || 'chaleureux';
+  if (preset === 'custom') {
+    return (document.getElementById('setAgentTone')?.value || '').trim() || TONE_PRESETS.chaleureux;
+  }
+  return TONE_PRESETS[preset] || TONE_PRESETS.chaleureux;
 }
 
 /** @deprecated — utiliser defaultQualificationFieldsForContext */
@@ -241,11 +296,44 @@ function qualificationFieldRowHtml(f) {
   </div>`;
 }
 
+function renderQualificationSimple(fields) {
+  const el = document.getElementById('qualificationSimple');
+  if (!el) return;
+  const list = normalizeQualificationFieldsClient(fields);
+  const wf = selectedWorkflow();
+  const keys = QUAL_SIMPLE_KEYS[wf] || QUAL_SIMPLE_KEYS.field_service;
+  const byKey = new Map(list.map((f) => [f.key, f]));
+  el.innerHTML = keys.map((key) => {
+    const f = byKey.get(key);
+    if (!f) return '';
+    return `<label class="qual-simple-chip">
+      <input type="checkbox" class="qual-simple-enabled" data-key="${esc(f.key)}" ${f.enabled !== false ? 'checked' : ''}>
+      <span>${esc(f.label)}</span>
+    </label>`;
+  }).join('');
+
+  el.querySelectorAll('.qual-simple-enabled').forEach((input) => {
+    input.onchange = () => {
+      const row = document.querySelector(`#qualificationFieldsList .qual-field-row[data-key="${input.dataset.key}"]`);
+      const adv = row?.querySelector('.qual-enabled');
+      if (adv) adv.checked = input.checked;
+    };
+  });
+}
+
 function renderQualificationFields(fields) {
   const el = document.getElementById('qualificationFieldsList');
   if (!el) return;
   const list = normalizeQualificationFieldsClient(fields);
   el.innerHTML = list.map((f) => qualificationFieldRowHtml(f)).join('');
+  el.querySelectorAll('.qual-enabled').forEach((input) => {
+    input.onchange = () => {
+      const key = input.closest('.qual-field-row')?.dataset.key;
+      const simple = document.querySelector(`.qual-simple-enabled[data-key="${key}"]`);
+      if (simple) simple.checked = input.checked;
+    };
+  });
+  renderQualificationSimple(list);
 }
 
 function collectQualificationFields() {
@@ -255,6 +343,15 @@ function collectQualificationFields() {
     enabled: row.querySelector('.qual-enabled').checked,
     required: row.querySelector('.qual-required').checked,
   }));
+}
+
+function applyWorkflowChange(wf, { resetFields = true } = {}) {
+  setSelectedWorkflow(wf);
+  if (resetFields) {
+    renderQualificationFields(QUALIFICATION_BY_WORKFLOW[wf] || QUALIFICATION_BY_WORKFLOW.field_service);
+  } else {
+    renderQualificationFields(collectQualificationFields());
+  }
 }
 
 function bindRemoveButtons(container) {
@@ -356,7 +453,7 @@ function populateChatbotForm(t) {
   };
   set('setAgentName', t.agent_name || 'Léa');
   set('setBusinessType', t.business_type || '');
-  set('setAgentTone', t.agent_tone || '');
+  set('setAgentTone', t.agent_tone || TONE_PRESETS.chaleureux);
   set('setAgentInstructions', t.agent_instructions || '');
   set('setWelcomeSms', t.welcome_sms || '');
   set('setMissedSms', t.missed_call_sms || '');
@@ -365,12 +462,32 @@ function populateChatbotForm(t) {
   set('setAddress', t.address_line || '');
   set('setCity', t.city || '');
   set('setPolicies', policiesToLines(t.policies));
+  applyTonePreset(tonePresetFromValue(t.agent_tone || TONE_PRESETS.chaleureux));
+  if (tonePresetFromValue(t.agent_tone || '') === 'custom') {
+    set('setAgentTone', t.agent_tone || '');
+  }
+  const wf = (t.qualification_workflow === 'appointment' || t.qualification_workflow === 'field_service')
+    ? t.qualification_workflow
+    : detectWorkflowClient(t.business_type, t.business_name);
+  setSelectedWorkflow(wf);
   renderHours(t.hours || DEFAULT_HOURS);
   renderServices(t.services);
   renderFaq(t.faq);
   renderFavorites(t.agent_favorites);
   renderQualificationFields(t.qualification_fields);
   renderReservationLinks(normalizeLinksFromTenant(t));
+  const favDetails = document.getElementById('favoritesDetails');
+  if (favDetails && Array.isArray(t.agent_favorites) && t.agent_favorites.some((f) => f && f.content)) {
+    favDetails.open = true;
+  }
+  const adv = document.getElementById('agentAdvanced');
+  if (adv) {
+    const hasExtra = (Array.isArray(t.services) && t.services.length)
+      || (Array.isArray(t.faq) && t.faq.length)
+      || (Array.isArray(t.policies) && t.policies.length)
+      || !!(t.address_line || t.city);
+    if (hasExtra) adv.open = true;
+  }
   if (!_demo) loadKnowledgeSources();
   if (typeof _refreshTestWelcome === 'function') _refreshTestWelcome();
 }
@@ -454,14 +571,47 @@ function bindUiClicks() {
       e.preventDefault();
       e.stopPropagation();
       addFavoriteRow();
+      const det = document.getElementById('favoritesDetails');
+      if (det) det.open = true;
     }
   });
+
+  document.querySelectorAll('input[name="qualWorkflow"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      applyWorkflowChange(radio.value, { resetFields: true });
+    });
+  });
+
+  document.querySelectorAll('input[name="agentTonePreset"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      applyTonePreset(radio.value);
+      if (radio.value === 'custom') {
+        const custom = document.getElementById('setAgentTone');
+        if (custom) {
+          custom.hidden = false;
+          custom.focus();
+        }
+      }
+    });
+  });
+
   const typeEl = document.getElementById('setBusinessType');
   if (typeEl) {
     typeEl.addEventListener('change', () => {
-      renderQualificationFields(collectQualificationFields());
+      // Suggestion seulement si aucun choix explicite n'a encore été forcé par l'utilisateur
+      // (on détecte via data-user-picked).
+      const cards = document.getElementById('workflowCards');
+      if (cards?.dataset.userPicked === '1') return;
+      const suggested = detectWorkflowClient(typeEl.value, '');
+      applyWorkflowChange(suggested, { resetFields: true });
     });
   }
+  document.getElementById('workflowCards')?.addEventListener('click', () => {
+    const cards = document.getElementById('workflowCards');
+    if (cards) cards.dataset.userPicked = '1';
+  });
 }
 
 function initChatbotPanel(opts) {
@@ -746,7 +896,7 @@ function initChatbotPanel(opts) {
         settings: true,
         agent_name: document.getElementById('setAgentName').value.trim(),
         business_type: document.getElementById('setBusinessType').value.trim(),
-        agent_tone: document.getElementById('setAgentTone').value.trim(),
+        agent_tone: collectAgentTone(),
         agent_instructions: document.getElementById('setAgentInstructions').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
         missed_call_sms: document.getElementById('setMissedSms').value.trim(),
@@ -760,6 +910,7 @@ function initChatbotPanel(opts) {
         services: collectServices(),
         faq: collectFaq(),
         agent_favorites: collectFavorites(),
+        qualification_workflow: selectedWorkflow(),
         qualification_fields: collectQualificationFields(),
       };
       const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });

@@ -515,6 +515,179 @@ a:hover { text-decoration: underline; }
   font-size: 1rem;
   color: var(--navy);
 }
+.settings-lead { font-size: .88rem; margin: -8px 0 14px; }
+
+/* Agent — presets ton */
+.tone-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tone-preset {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+.tone-preset input { position: absolute; opacity: 0; pointer-events: none; }
+.tone-preset span {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: #fff;
+  transition: border-color .15s, background .15s;
+}
+.tone-preset:hover span { border-color: #cbd5e1; }
+.tone-preset.is-selected span,
+.tone-preset:has(input:checked) span {
+  border-color: var(--accent-dark);
+  background: rgba(200, 241, 53, 0.18);
+}
+.tone-custom-input { margin-top: 10px; }
+
+/* Agent — workflow RDV / terrain */
+.workflow-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+@media (max-width: 640px) {
+  .workflow-cards { grid-template-columns: 1fr; }
+}
+.workflow-card {
+  display: block;
+  margin: 0;
+  cursor: pointer;
+}
+.workflow-card input { position: absolute; opacity: 0; pointer-events: none; }
+.workflow-card-body {
+  display: block;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.workflow-card-body strong {
+  display: block;
+  font-size: .95rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.workflow-card-body em {
+  display: block;
+  font-style: normal;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.workflow-card:hover .workflow-card-body { border-color: #cbd5e1; }
+.workflow-card.is-selected .workflow-card-body,
+.workflow-card:has(input:checked) .workflow-card-body {
+  border-color: var(--accent-dark);
+  background: rgba(200, 241, 53, 0.12);
+  box-shadow: inset 0 0 0 1px var(--accent-dark);
+}
+
+.qual-simple {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.qual-simple-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fafbfc;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+}
+.qual-simple-chip:has(input:checked) {
+  border-color: var(--accent-dark);
+  background: rgba(200, 241, 53, 0.14);
+}
+.qual-simple-chip input { accent-color: var(--accent-dark); width: 16px; height: 16px; }
+
+.agent-details {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 14px;
+  background: #fafbfd;
+}
+.agent-details > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--navy2);
+  padding: 12px 0;
+  list-style: none;
+}
+.agent-details > summary::-webkit-details-marker { display: none; }
+.agent-details > summary::after { content: ' ▾'; color: var(--muted); }
+.agent-details[open] > summary::after { content: ' ▴'; }
+.agent-details[open] { padding-bottom: 14px; }
+
+.agent-advanced {
+  margin: 8px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 18px;
+  background: #fff;
+}
+.agent-advanced > summary {
+  cursor: pointer;
+  padding: 16px 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.agent-advanced > summary::-webkit-details-marker { display: none; }
+.agent-advanced > summary span {
+  font-weight: 800;
+  font-size: .95rem;
+  color: var(--navy);
+}
+.agent-advanced > summary em {
+  font-style: normal;
+  font-size: .8rem;
+}
+.agent-advanced[open] { padding-bottom: 8px; }
+
+.agent-test-block {
+  background: linear-gradient(180deg, #f8fafc, #fff);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 16px;
+}
+
+.agent-save-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0), #fff 28%);
+  padding-bottom: 4px;
+  z-index: 5;
+}
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
