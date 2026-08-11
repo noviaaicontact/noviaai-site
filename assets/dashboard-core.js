@@ -522,11 +522,11 @@ function updateBillingUI(t) {
     box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
     title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit — carte enregistrée';
     msg.textContent = trialEndStr
-      ? `Forfait ${planLabel} · Premier prélèvement après le ${trialEndStr}.`
-      : `Forfait ${planLabel} · Votre carte est enregistrée pour la fin de l'essai.`;
+      ? `Premier prélèvement après le ${trialEndStr}. Aucun autre forfait à choisir maintenant.`
+      : 'Votre carte est enregistrée pour la fin de l\'essai. Aucun forfait à choisir maintenant.';
     if (btnSub) btnSub.hidden = true;
     if (btnPortal) btnPortal.hidden = false;
-    if (btnSwitch) btnSwitch.hidden = false;
+    if (btnSwitch) btnSwitch.hidden = true;
     return;
   }
 
@@ -575,8 +575,16 @@ function closePlanPicker() {
   if (backdrop) backdrop.hidden = true;
 }
 
+function trialStillActive(t) {
+  if (!t || t.subscription_status !== 'trialing') return false;
+  if (t.stripe_subscription_id) return false;
+  if (!t.trial_ends_at) return true;
+  return new Date(t.trial_ends_at).getTime() > Date.now();
+}
+
 function openPlanPicker(mode) {
-  // Pendant l'essai : seul le checkout permet de choisir Croissance/Pro.
+  // Jamais pendant l'essai gratuit : le choix de forfait vient après les 14 jours.
+  if (trialStillActive(tenant)) return;
   planPickerMode = 'checkout';
   const backdrop = document.getElementById('planPickerBackdrop');
   const hint = document.getElementById('planPickerHint');
@@ -588,9 +596,9 @@ function openPlanPicker(mode) {
   const radio = document.querySelector(`input[name="dashPlan"][value="${current}"]`)
     || document.querySelector('input[name="dashPlan"][value="essentiel"]');
   if (radio) radio.checked = true;
-  if (title) title.textContent = 'Activer un forfait';
+  if (title) title.textContent = 'Choisir un forfait pour continuer';
   if (hint) {
-    hint.textContent = 'Essentiel peut garder les jours d’essai restants. Croissance et Pro démarrent au paiement.';
+    hint.textContent = 'Votre essai est terminé. Choisissez Essentiel, Croissance ou Pro pour réactiver votre ligne.';
   }
   if (confirmBtn) confirmBtn.textContent = 'Continuer vers le paiement';
   backdrop.hidden = false;
@@ -1483,12 +1491,12 @@ function initPageHandlers() {
   if (btnSub) {
     btnSub.onclick = async () => {
       try {
+        if (trialStillActive(tenant)) return;
         if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive', 'past_due'].includes(tenant.subscription_status)) {
           btnSub.disabled = true;
           try { await openBillingPortal(); } finally { btnSub.disabled = false; }
           return;
         }
-        // Essai sans carte ou reprise : choisir parmi les 3 forfaits puis Stripe.
         openPlanPicker('checkout');
       } catch (ex) {
         alert(ex.message || 'Erreur Stripe');
@@ -1503,6 +1511,7 @@ function initPageHandlers() {
   if (btnSwitch) {
     btnSwitch.onclick = async () => {
       try {
+        if (trialStillActive(tenant)) return;
         if (tenant && hasBillingSetup(tenant) && isPaidSubscription(tenant)) {
           btnSwitch.disabled = true;
           try { await openBillingPortal(); } finally { btnSwitch.disabled = false; }

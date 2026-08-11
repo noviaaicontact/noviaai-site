@@ -1850,7 +1850,8 @@ body.has-assist-banner { padding-top: 44px; }
   transform: scale(1);
 }
 
-/* Sélecteur de forfait (dashboard) */
+/* Sélecteur de forfait (dashboard)
+   Important: display:flex écrase l'attribut HTML hidden — on gère [hidden] explicitement. */
 .plan-picker-backdrop {
   position: fixed;
   inset: 0;
@@ -1861,6 +1862,9 @@ body.has-assist-banner { padding-top: 44px; }
   justify-content: center;
   padding: 20px;
   backdrop-filter: blur(2px);
+}
+.plan-picker-backdrop[hidden] {
+  display: none !important;
 }
 .plan-picker {
   background: #fff;
