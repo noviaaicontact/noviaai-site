@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inscription | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=2">
+<link rel="stylesheet" href="/assets/saas.css?v=3">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/assets/app.js"></script>
+<script src="/assets/app.js?v=2"></script>
 <script src="/assets/meta-pixel.js"></script>
 </head>
 <body>
@@ -15,8 +15,38 @@
   <div class="auth-panel">
     <div class="form-box">
       <h1>Créez votre compte</h1>
-      <p class="muted">Essai gratuit 14 jours · Activez en ~5 minutes</p>
+      <p class="muted">Essai 14 jours · Aucune carte · Choisissez votre forfait</p>
       <form id="form">
+        <label>Forfait pour votre essai *</label>
+        <div class="signup-plans" role="radiogroup" aria-label="Choisir un forfait">
+          <label class="signup-plan">
+            <input type="radio" name="plan" value="essentiel">
+            <span class="signup-plan-body">
+              <strong>Essentiel</strong>
+              <span class="signup-plan-price">149&nbsp;$ <small>CAD/mois</small></span>
+              <span class="signup-plan-meta">100 conversations / mois</span>
+            </span>
+          </label>
+          <label class="signup-plan signup-plan-featured">
+            <input type="radio" name="plan" value="croissance" checked>
+            <span class="signup-plan-body">
+              <em class="signup-plan-tag">Recommandé</em>
+              <strong>Croissance</strong>
+              <span class="signup-plan-price">299&nbsp;$ <small>CAD/mois</small></span>
+              <span class="signup-plan-meta">300 conversations / mois</span>
+            </span>
+          </label>
+          <label class="signup-plan">
+            <input type="radio" name="plan" value="pro">
+            <span class="signup-plan-body">
+              <strong>Pro</strong>
+              <span class="signup-plan-price">499&nbsp;$ <small>CAD/mois</small></span>
+              <span class="signup-plan-meta">1&nbsp;000 conversations / mois</span>
+            </span>
+          </label>
+        </div>
+        <p class="muted" style="font-size:.78rem;margin:0 0 16px;line-height:1.4">Rien n’est prélevé pendant 14 jours. Vous payez seulement si vous continuez après l’essai. Modifiable dans le tableau de bord.</p>
+
         <label for="email">Courriel professionnel</label>
         <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
         <label for="password">Mot de passe</label>
@@ -50,8 +80,22 @@
   </div>
 </div>
 <script>
-const plan = new URLSearchParams(location.search).get('plan') || 'croissance';
-sessionStorage.setItem('novia_plan', plan);
+const ALLOWED_PLANS = ['essentiel', 'croissance', 'pro'];
+const urlPlan = new URLSearchParams(location.search).get('plan') || 'croissance';
+const initialPlan = ALLOWED_PLANS.includes(urlPlan) ? urlPlan : 'croissance';
+sessionStorage.setItem('novia_plan', initialPlan);
+const planRadio = document.querySelector(`input[name="plan"][value="${initialPlan}"]`);
+if (planRadio) planRadio.checked = true;
+document.querySelectorAll('input[name="plan"]').forEach((el) => {
+  el.addEventListener('change', () => {
+    if (el.checked) sessionStorage.setItem('novia_plan', el.value);
+  });
+});
+function selectedPlan() {
+  const checked = document.querySelector('input[name="plan"]:checked');
+  const p = checked?.value || sessionStorage.getItem('novia_plan') || 'croissance';
+  return ALLOWED_PLANS.includes(p) ? p : 'croissance';
+}
 document.getElementById('form').onsubmit = async (e) => {
   e.preventDefault();
   const err = document.getElementById('err');
@@ -62,10 +106,12 @@ document.getElementById('form').onsubmit = async (e) => {
     if (!document.getElementById('acceptLegal').checked) {
       throw new Error('Veuillez accepter les conditions, la confidentialité et la politique SMS pour continuer.');
     }
+    const plan = selectedPlan();
+    sessionStorage.setItem('novia_plan', plan);
     sessionStorage.setItem('novia_legal_consent', '1');
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password);
+    const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password, plan);
     if (error) throw error;
     if (typeof window.noviaTrackSignup === 'function') window.noviaTrackSignup();
     if (autoConfirmed) {

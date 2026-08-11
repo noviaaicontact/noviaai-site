@@ -159,12 +159,16 @@ function formatSignUpError(err) {
   return err?.message || 'Erreur inscription';
 }
 
-async function signUp(email, password) {
+async function signUp(email, password, plan) {
   const normalized = String(email || '').trim().toLowerCase();
   const res = await fetch('/.netlify/functions/api-auth-signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: normalized, password }),
+    body: JSON.stringify({
+      email: normalized,
+      password,
+      plan: plan || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('novia_plan') : null) || 'croissance',
+    }),
   });
   let payload = {};
   try { payload = await res.json(); } catch (_) { /* non-JSON */ }

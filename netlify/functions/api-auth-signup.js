@@ -1,7 +1,9 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getAdmin } = require('../../lib/db');
 const { sendSignupConfirmationEmail } = require('../../lib/confirmation-email');
+const { sendAdminNewAccountAlert } = require('../../lib/email');
 const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
+const { normalizePlan } = require('../../lib/plans');
 
 const REDIRECT = () => `${process.env.PUBLIC_BASE_URL || 'https://noviaai.ca'}/auth/callback.html`;
 
@@ -34,12 +36,13 @@ exports.handler = async (event) => {
     return json(429, { error: 'Trop de tentatives. Réessayez dans une heure.' });
   }
 
-  const { email, password } = parseJson(event);
+  const { email, password, plan } = parseJson(event);
   const normalized = String(email || '').trim().toLowerCase();
   if (!normalized || !normalized.includes('@')) return json(400, { error: 'Courriel invalide' });
   if (!password || String(password).length < 8) {
     return json(400, { error: 'Mot de passe : 8 caractères minimum' });
   }
+  const chosenPlan = normalizePlan(plan);
 
   const rlEmail = await checkRateLimit(`signup-email:${normalized}`, { maxAttempts: 5, windowMinutes: 60 });
   if (!rlEmail.ok) {
@@ -65,6 +68,12 @@ exports.handler = async (event) => {
     }
 
     if (autoConfirm) {
+      sendAdminNewAccountAlert({
+        email: normalized,
+        plan: chosenPlan,
+        userId: created?.user?.id,
+        autoConfirmed: true,
+      }).catch((e) => console.error('admin signup alert', e.message));
       return json(200, {
         ok: true,
         autoConfirmed: true,
@@ -83,6 +92,13 @@ exports.handler = async (event) => {
     if (!confirmationUrl) throw new Error('Lien de confirmation indisponible');
 
     await sendSignupConfirmationEmail(normalized, confirmationUrl);
+
+    sendAdminNewAccountAlert({
+      email: normalized,
+      plan: chosenPlan,
+      userId: created?.user?.id,
+      autoConfirmed: false,
+    }).catch((e) => console.error('admin signup alert', e.message));
 
     return json(200, {
       ok: true,

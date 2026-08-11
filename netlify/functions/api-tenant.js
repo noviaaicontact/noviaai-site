@@ -5,6 +5,7 @@ const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('
 const { normalizePlan } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
 const { startHostedRequest } = require('../../lib/hosted-sms');
+const { sendAdminOnboardingCompleteAlert } = require('../../lib/email');
 
 exports.handler = async (event) => {
   try {
@@ -40,10 +41,16 @@ exports.handler = async (event) => {
           ? settingsToTenantPayload(body, ctx.tenant)
           : null;
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
+      const wasOnboarded = !!ctx.tenant.onboarding_done;
       const updated = await updateTenantById(ctx.tenant.id, patch);
 
       if (body.onboarding && updated.onboarding_done && updated.line_mode === 'hosted') {
         await startHostedRequest(updated);
+      }
+
+      if (body.onboarding && updated.onboarding_done && !wasOnboarded && !ctx.assisting) {
+        sendAdminOnboardingCompleteAlert(updated).catch((e) =>
+          console.error('admin onboarding alert', e.message));
       }
 
       const fresh = await getTenantById(ctx.tenant.id);
