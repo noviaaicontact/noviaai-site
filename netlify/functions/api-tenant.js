@@ -2,7 +2,7 @@ const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getTenantById, createTenantForUser, updateTenantById } = require('../../lib/tenant');
 const { resolveTenantContext } = require('../../lib/tenant-context');
 const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
-const { normalizePlan } = require('../../lib/plans');
+const { normalizePlan, TRIAL_PLAN } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
 const { startHostedRequest } = require('../../lib/hosted-sms');
 const { sendAdminOnboardingCompleteAlert } = require('../../lib/email');
@@ -16,16 +16,16 @@ exports.handler = async (event) => {
   try {
     if (event.httpMethod === 'GET') {
       const qs = event.queryStringParameters || {};
-      const plan = normalizePlan(qs.plan);
       const legalConsent = qs.legal_consent === '1';
+      // Essai 14 j = Essentiel uniquement (qs.plan ignoré à la création).
       const ctx = await resolveTenantContext(event, {
         createIfMissing: true,
-        createOptions: { plan, legalConsent },
+        createOptions: { plan: TRIAL_PLAN, legalConsent },
       });
       if (!ctx.ok) return ctx.response;
       let tenant = ctx.tenant;
       if (!ctx.assisting && legalConsent) {
-        tenant = await createTenantForUser(ctx.user, { plan, legalConsent: true });
+        tenant = await createTenantForUser(ctx.user, { plan: TRIAL_PLAN, legalConsent: true });
       }
       await ensureWidgetPublicId(tenant);
       return json(200, { tenant, dossier: rowToDossier(tenant), assisting: ctx.assisting });
@@ -41,6 +41,17 @@ exports.handler = async (event) => {
           ? settingsToTenantPayload(body, ctx.tenant)
           : null;
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
+      // Pendant l'essai sans abonnement Stripe : forfait verrouillé sur Essentiel.
+      const unpaidTrial = ctx.tenant.subscription_status === 'trialing'
+        && !ctx.tenant.stripe_subscription_id;
+      if (unpaidTrial) {
+        if (body.plan && normalizePlan(body.plan) !== TRIAL_PLAN) {
+          return json(400, {
+            error: 'L\'essai gratuit est sur Essentiel. Choisissez Croissance ou Pro à l\'activation (paiement).',
+          });
+        }
+        patch.plan = TRIAL_PLAN;
+      }
       const wasOnboarded = !!ctx.tenant.onboarding_done;
       const updated = await updateTenantById(ctx.tenant.id, patch);
 

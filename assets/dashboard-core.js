@@ -550,18 +550,15 @@ function updateBillingUI(t) {
   }
 
   box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
-  title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
+  title.textContent = daysLeft <= 3 ? `Essai Essentiel — ${daysLeft} jour(s) restant(s)` : 'Essai Essentiel actif';
   msg.textContent = trialEndStr
-    ? `Forfait ${planLabel} · Aucune carte requise. Après le ${trialEndStr}, les fonctions se mettent en pause tant que vous n'activez pas un forfait.`
-    : `Forfait ${planLabel} · Aucune carte requise pendant l'essai. Après 14 jours, payez pour continuer.`;
+    ? `Essai sur Essentiel · Aucune carte requise. Après le ${trialEndStr}, les fonctions se mettent en pause. À l'activation, choisissez Essentiel, Croissance ou Pro.`
+    : `Essai sur Essentiel · Aucune carte requise. Après 14 jours, activez un forfait (Essentiel, Croissance ou Pro) pour continuer.`;
   if (btnSub) {
     btnSub.hidden = false;
-    btnSub.textContent = daysLeft <= 3 ? 'Activer mon forfait' : 'Activer mon forfait (optionnel)';
+    btnSub.textContent = daysLeft <= 3 ? 'Activer un forfait' : 'Activer un forfait (optionnel)';
   }
-  if (btnSwitch) {
-    btnSwitch.hidden = false;
-    btnSwitch.textContent = 'Changer de forfait';
-  }
+  if (btnSwitch) btnSwitch.hidden = true;
 }
 
 let planPickerMode = 'save'; // 'save' | 'checkout'
@@ -572,27 +569,23 @@ function closePlanPicker() {
 }
 
 function openPlanPicker(mode) {
-  planPickerMode = mode === 'checkout' ? 'checkout' : 'save';
+  // Pendant l'essai : seul le checkout permet de choisir Croissance/Pro.
+  planPickerMode = 'checkout';
   const backdrop = document.getElementById('planPickerBackdrop');
   const hint = document.getElementById('planPickerHint');
   const confirmBtn = document.getElementById('planPickerConfirm');
   const title = document.getElementById('planPickerTitle');
   if (!backdrop) return;
-  const current = (tenant && tenant.plan) || 'croissance';
+  const reco = (window.__noviaTrialReco && window.__noviaTrialReco.plan) || 'essentiel';
+  const current = ['essentiel', 'croissance', 'pro'].includes(reco) ? reco : 'essentiel';
   const radio = document.querySelector(`input[name="dashPlan"][value="${current}"]`)
-    || document.querySelector('input[name="dashPlan"][value="croissance"]');
+    || document.querySelector('input[name="dashPlan"][value="essentiel"]');
   if (radio) radio.checked = true;
-  if (title) {
-    title.textContent = planPickerMode === 'checkout' ? 'Activer un forfait' : 'Changer de forfait';
-  }
+  if (title) title.textContent = 'Activer un forfait';
   if (hint) {
-    hint.textContent = planPickerMode === 'checkout'
-      ? 'Vous serez redirigé vers Stripe pour enregistrer votre carte.'
-      : 'Aucun paiement maintenant — modifiable pendant l’essai.';
+    hint.textContent = 'Essentiel peut garder les jours d’essai restants. Croissance et Pro démarrent au paiement.';
   }
-  if (confirmBtn) {
-    confirmBtn.textContent = planPickerMode === 'checkout' ? 'Continuer vers le paiement' : 'Enregistrer le forfait';
-  }
+  if (confirmBtn) confirmBtn.textContent = 'Continuer vers le paiement';
   backdrop.hidden = false;
 }
 
@@ -705,7 +698,7 @@ function loadDemoData() {
     banner.id = 'demoBanner';
     banner.className = 'prov-box success';
     banner.style.marginBottom = '16px';
-    banner.innerHTML = '<strong>Mode démo</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Données fictives pour voir le SaaS complet. <a href="/signup.html?plan=croissance">Créer un vrai compte →</a></p>';
+    banner.innerHTML = '<strong>Mode démo</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Données fictives pour voir le SaaS complet. <a href="/signup.html?plan=essentiel">Créer un vrai compte →</a></p>';
     document.querySelector('.dash-main').insertBefore(banner, document.querySelector('.dash-main').firstChild.nextSibling);
   }
 }
@@ -1510,13 +1503,7 @@ function initPageHandlers() {
           try { await openBillingPortal(); } finally { btnSwitch.disabled = false; }
           return;
         }
-        // Pendant l'essai (sans abonnement payant) : changer le forfait sans payer.
-        const status = tenant && tenant.subscription_status;
-        if (['canceled', 'inactive', 'past_due'].includes(status)) {
-          openPlanPicker('checkout');
-        } else {
-          openPlanPicker('save');
-        }
+        openPlanPicker('checkout');
       } catch (ex) {
         alert(ex.message || 'Erreur forfait');
       }
@@ -1536,12 +1523,7 @@ function initPageHandlers() {
       const plan = selectedDashPlan();
       planConfirm.disabled = true;
       try {
-        if (planPickerMode === 'checkout') {
-          await startCheckout(plan);
-          return;
-        }
-        await saveTrialPlan(plan);
-        closePlanPicker();
+        await startCheckout(plan);
       } catch (ex) {
         alert(ex.message || 'Impossible de mettre à jour le forfait');
       } finally {

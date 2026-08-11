@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inscription | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=8">
+<link rel="stylesheet" href="/assets/saas.css?v=9">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/assets/app.js?v=2"></script>
+<script src="/assets/app.js?v=3"></script>
 <script src="/assets/meta-pixel.js"></script>
 </head>
 <body>
@@ -15,47 +15,19 @@
   <div class="auth-panel">
     <div class="form-box">
       <h1>Créez votre compte</h1>
-      <p class="muted">Essai 14 jours · Aucune carte requise</p>
+      <p class="muted">Essai 14 jours sur Essentiel · Aucune carte requise</p>
       <form id="form">
-        <fieldset class="plan-fieldset">
-          <legend>Choisissez votre forfait</legend>
-          <div class="signup-plans" role="radiogroup" aria-label="Choisir un forfait">
-            <label class="signup-plan">
-              <input type="radio" name="plan" value="essentiel">
-              <span class="signup-plan-body">
-                <span class="signup-plan-radio" aria-hidden="true"></span>
-                <span class="signup-plan-info">
-                  <strong>Essentiel</strong>
-                  <span class="signup-plan-meta">50 conversations / mois</span>
-                </span>
-                <span class="signup-plan-price">149&nbsp;$<small>/mois</small></span>
-              </span>
-            </label>
-            <label class="signup-plan signup-plan-featured">
-              <input type="radio" name="plan" value="croissance" checked>
-              <span class="signup-plan-body">
-                <span class="signup-plan-radio" aria-hidden="true"></span>
-                <span class="signup-plan-info">
-                  <strong>Croissance <em class="signup-plan-tag">Reco</em></strong>
-                  <span class="signup-plan-meta">200 conversations / mois</span>
-                </span>
-                <span class="signup-plan-price">299&nbsp;$<small>/mois</small></span>
-              </span>
-            </label>
-            <label class="signup-plan">
-              <input type="radio" name="plan" value="pro">
-              <span class="signup-plan-body">
-                <span class="signup-plan-radio" aria-hidden="true"></span>
-                <span class="signup-plan-info">
-                  <strong>Pro</strong>
-                  <span class="signup-plan-meta">750 conversations / mois</span>
-                </span>
-                <span class="signup-plan-price">499&nbsp;$<small>/mois</small></span>
-              </span>
-            </label>
+        <div class="trial-plan-card" aria-label="Forfait d'essai">
+          <div class="trial-plan-top">
+            <strong>Essentiel</strong>
+            <span class="signup-plan-tag">Essai 14&nbsp;j</span>
           </div>
-          <p class="plan-note">Payable seulement si vous continuez après l’essai. Modifiable plus tard.</p>
-        </fieldset>
+          <div class="trial-plan-row">
+            <span class="signup-plan-meta">50 conversations / mois · widget + avis Google</span>
+            <span class="signup-plan-price">149&nbsp;$<small>/mois</small></span>
+          </div>
+          <p class="plan-note">Rien n’est prélevé pendant 14 jours. Après l’essai, activez Essentiel, Croissance ou Pro pour continuer.</p>
+        </div>
 
         <label for="email">Courriel professionnel</label>
         <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
@@ -68,7 +40,7 @@
         </label>
         <p class="muted" style="font-size:.78rem;margin:8px 0 0;line-height:1.4">En vous inscrivant, vous confirmez exploiter un commerce au Canada et utiliser NoviaAI conformément à ces politiques (pas de textos non sollicités).</p>
 
-        <button type="submit" class="btn btn-accent btn-block" style="margin-top:20px">Continuer →</button>
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:20px">Commencer l’essai →</button>
         <p id="ok" class="ok" hidden></p>
         <p id="err" class="err" hidden></p>
       </form>
@@ -76,36 +48,22 @@
     </div>
   </div>
   <div class="auth-side">
-    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Essai 14 jours · Québec</span>
+    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Essai Essentiel · Québec</span>
     <h2>Votre ligne pro, prête aujourd'hui.</h2>
-    <p style="opacity:.85;margin:0">Choisissez votre forfait, configurez en quelques minutes — payez seulement si vous êtes satisfait après 14 jours.</p>
+    <p style="opacity:.85;margin:0">Testez 14 jours sur Essentiel — payez seulement si vous continuez. Croissance et Pro s’activent au paiement.</p>
     <ul>
       <li>Numéro local 418 / 514 / 581 automatique</li>
       <li>Appels manqués → texto en 5 sec</li>
       <li>Inbox SMS centralisée</li>
-      <li>Alertes par courriel</li>
+      <li>Widget web + avis Google</li>
       <li>Conformité LCAP (ARRET / STOP)</li>
     </ul>
     <p style="opacity:.5;font-size:.75rem;margin-top:32px">Service destiné aux PME québécoises · <a href="/confidentialite.html" style="color:inherit">Confidentialité</a></p>
   </div>
 </div>
 <script>
-const ALLOWED_PLANS = ['essentiel', 'croissance', 'pro'];
-const urlPlan = new URLSearchParams(location.search).get('plan') || 'croissance';
-const initialPlan = ALLOWED_PLANS.includes(urlPlan) ? urlPlan : 'croissance';
-sessionStorage.setItem('novia_plan', initialPlan);
-const planRadio = document.querySelector(`input[name="plan"][value="${initialPlan}"]`);
-if (planRadio) planRadio.checked = true;
-document.querySelectorAll('input[name="plan"]').forEach((el) => {
-  el.addEventListener('change', () => {
-    if (el.checked) sessionStorage.setItem('novia_plan', el.value);
-  });
-});
-function selectedPlan() {
-  const checked = document.querySelector('input[name="plan"]:checked');
-  const p = checked?.value || sessionStorage.getItem('novia_plan') || 'croissance';
-  return ALLOWED_PLANS.includes(p) ? p : 'croissance';
-}
+const TRIAL_PLAN = 'essentiel';
+sessionStorage.setItem('novia_plan', TRIAL_PLAN);
 document.getElementById('form').onsubmit = async (e) => {
   e.preventDefault();
   const err = document.getElementById('err');
@@ -116,20 +74,18 @@ document.getElementById('form').onsubmit = async (e) => {
     if (!document.getElementById('acceptLegal').checked) {
       throw new Error('Veuillez accepter les conditions, la confidentialité et la politique SMS pour continuer.');
     }
-    const plan = selectedPlan();
-    sessionStorage.setItem('novia_plan', plan);
+    sessionStorage.setItem('novia_plan', TRIAL_PLAN);
     sessionStorage.setItem('novia_legal_consent', '1');
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password, plan);
+    const { data, error, autoConfirmed } = await NoviaApp.signUp(email, password, TRIAL_PLAN);
     if (error) throw error;
     if (typeof window.noviaTrackSignup === 'function') window.noviaTrackSignup();
     if (autoConfirmed) {
       const { data: authData, error: signInErr } = await NoviaApp.signIn(email, password);
       if (signInErr) throw signInErr;
       sessionStorage.removeItem('novia_demo');
-      const plan = sessionStorage.getItem('novia_plan') || 'croissance';
-      await NoviaApp.ensureTenant(plan, authData.session.access_token);
+      await NoviaApp.ensureTenant(TRIAL_PLAN, authData.session.access_token);
       location.href = '/onboarding.html';
       return;
     }
@@ -141,8 +97,7 @@ document.getElementById('form').onsubmit = async (e) => {
     }
     if (data.session) {
       sessionStorage.removeItem('novia_demo');
-      const plan = sessionStorage.getItem('novia_plan') || 'croissance';
-      await NoviaApp.ensureTenant(plan, data.session.access_token);
+      await NoviaApp.ensureTenant(TRIAL_PLAN, data.session.access_token);
       location.href = '/onboarding.html';
     } else {
       document.getElementById('form').querySelector('button[type=submit]').disabled = true;

@@ -124,7 +124,7 @@ async function api(fn, opts, accessToken) {
 }
 
 async function ensureTenant(plan, accessToken) {
-  const p = plan || sessionStorage.getItem('novia_plan') || 'croissance';
+  const p = 'essentiel';
   const legal = sessionStorage.getItem('novia_legal_consent') === '1';
   let url = 'api-tenant?plan=' + encodeURIComponent(p);
   if (legal) url += '&legal_consent=1';
@@ -167,7 +167,7 @@ async function signUp(email, password, plan) {
     body: JSON.stringify({
       email: normalized,
       password,
-      plan: plan || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('novia_plan') : null) || 'croissance',
+      plan: 'essentiel',
     }),
   });
   let payload = {};

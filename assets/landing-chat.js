@@ -118,7 +118,7 @@
   foot.append(input, sendBtn);
 
   const cta = el('div', 'novia-landing-chat-cta');
-  cta.innerHTML = '<a href="/signup.html?plan=croissance">Essai gratuit 14 jours →</a>';
+  cta.innerHTML = '<a href="/signup.html?plan=essentiel">Essai gratuit 14 jours →</a>';
 
   panel.append(head, msgs, chips, foot, cta);
   root.append(btn, panel);
@@ -182,7 +182,7 @@
       saveHistory(history);
     } catch {
       thinking.remove();
-      const fallback = 'Connexion impossible pour le moment. Essayez /signup.html?plan=croissance ou noviaai.contact@gmail.com';
+      const fallback = 'Connexion impossible pour le moment. Essayez /signup.html?plan=essentiel ou noviaai.contact@gmail.com';
       appendMsg('assistant', fallback);
     } finally {
       sending = false;
