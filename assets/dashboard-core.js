@@ -536,10 +536,10 @@ function updateBillingUI(t) {
     title.textContent = status === 'past_due' ? 'Paiement en retard' : 'Abonnement inactif';
     msg.textContent = status === 'past_due'
       ? 'Mettez à jour votre carte pour éviter la suspension de votre ligne.'
-      : 'Votre ligne NoviaAI est suspendue. Réactivez votre forfait pour continuer.';
+      : 'Votre essai est terminé — la ligne est en pause. Choisissez un forfait pour reprendre.';
     if (btnSub) {
       btnSub.hidden = false;
-      btnSub.textContent = hasBilling ? 'Mettre à jour la carte' : 'Réactiver mon abonnement';
+      btnSub.textContent = hasBilling ? 'Mettre à jour la carte' : 'Activer mon forfait';
     }
     if (btnPortal) btnPortal.hidden = !hasBilling;
     return;
@@ -548,11 +548,11 @@ function updateBillingUI(t) {
   box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
   title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
   msg.textContent = trialEndStr
-    ? `Forfait ${planLabel} · Ajoutez votre carte avant le ${trialEndStr}.`
-    : `Forfait ${planLabel} · Ajoutez votre carte pour continuer après l'essai.`;
+    ? `Forfait ${planLabel} · Aucune carte requise. Après le ${trialEndStr}, les fonctions se mettent en pause tant que vous n'activez pas un forfait.`
+    : `Forfait ${planLabel} · Aucune carte requise pendant l'essai. Après 14 jours, payez pour continuer.`;
   if (btnSub) {
     btnSub.hidden = false;
-    btnSub.textContent = 'Ajouter ma carte';
+    btnSub.textContent = daysLeft <= 3 ? 'Activer mon forfait' : 'Choisir mon forfait (optionnel)';
   }
 }
 
@@ -841,19 +841,16 @@ function openThreadDemo(phone) {
     handleBillingReturn();
     const params = new URLSearchParams(location.search);
     if (DASH_PAGE === 'home' && params.get('checkout') === '1') {
-      history.replaceState({}, '', location.pathname);
-      if (tenant && !tenant.stripe_subscription_id) {
-        try { await startCheckout(); } catch (e) { console.warn('checkout', e); }
-      }
+      // Ancien lien « checkout forcé » → on active la ligne sans carte.
+      history.replaceState({}, '', '/dashboard.html?activating=1');
+      params.set('activating', '1');
+      params.delete('checkout');
     }
     if (DASH_PAGE === 'home' || DASH_PAGE === 'conversations') await loadStats();
     if (DASH_PAGE === 'home') {
       if (params.get('activating') === '1' || sessionStorage.getItem('novia_provisioning')) {
-        if (tenant && tenant.stripe_subscription_id) startProvisioningPoll();
-        else if (tenant && tenant.onboarding_done && !tenant.stripe_subscription_id) {
-          showFlashBanner('checkoutNeededBanner', '<strong>Presque fini!</strong><p class="muted" style="margin:8px 0 0;font-size:.92rem">Ajoutez votre carte pour activer votre ligne NoviaAI (essai 14 jours).</p>');
-        }
-      } else if (sessionStorage.getItem('novia_provisioning') && tenant?.stripe_subscription_id) {
+        if (tenant && tenant.onboarding_done) startProvisioningPoll();
+      } else if (sessionStorage.getItem('novia_provisioning') && tenant?.onboarding_done) {
         startProvisioningPoll();
       }
     }

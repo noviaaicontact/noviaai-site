@@ -473,7 +473,7 @@ document.getElementById('form').onsubmit = async (e) => {
     clearDraft();
     sessionStorage.setItem('novia_provisioning', '1');
     sessionStorage.setItem('novia_show_link_guide', '1');
-    location.href = '/dashboard.html?checkout=1';
+    location.href = '/dashboard.html?activating=1';
   } catch (ex) {
     err.textContent = ex.message || 'Erreur';
     err.hidden = false;

@@ -52,7 +52,9 @@ exports.handler = async (event) => {
         tenant: fresh || updated,
         dossier: rowToDossier(fresh || updated),
         assisting: ctx.assisting,
-        needsCheckout: !!(fresh || updated).onboarding_done && !(fresh || updated).stripe_subscription_id,
+        needsCheckout: !!(fresh || updated).onboarding_done
+          && !(fresh || updated).stripe_subscription_id
+          && ['inactive', 'canceled', 'past_due'].includes((fresh || updated).subscription_status),
       });
     }
 
