@@ -1006,12 +1006,10 @@ async function loadStats() {
   const recoEl = document.getElementById('trialRecoMsg');
   if (recoEl && s.trial_recommendation && tenant?.subscription_status === 'trialing') {
     const daysLeft = s.trial_recommendation.days_left;
-    // Afficher la reco en fin d'essai (≤ 3 jours) pour guider le choix de forfait.
+    // Info douce en fin d'essai seulement — jamais de choix forcé pendant l'essai.
     if (daysLeft != null && daysLeft <= 3) {
       recoEl.style.display = 'block';
       recoEl.textContent = s.trial_recommendation.message;
-      const btnSwitch = document.getElementById('btnSwitchPlan');
-      if (btnSwitch) btnSwitch.hidden = false;
     }
   }
   const missedEl = $('missedCount');
