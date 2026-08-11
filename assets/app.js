@@ -108,7 +108,9 @@ async function api(fn, opts, accessToken) {
   if (assist && assist.tenant_id) headers['X-Assist-Tenant-Id'] = assist.tenant_id;
   const res = await fetch('/.netlify/functions/' + fn, Object.assign({}, opts, { headers }));
   let data = {};
-  try { data = await res.json(); } catch (_) { /* réponse non-JSON */ }
+  try { data = await res.json(); } catch (_) { /* réponse non-JSON (ex. 202 background) */ }
+  // 202 = fonction background Netlify acceptée
+  if (res.status === 202) return Object.assign({ accepted: true }, data || {});
   if (!res.ok) {
     if (res.status === 502 || res.status === 503) {
       throw new Error('Serveur occupé — attendez 30 secondes et réessayez.');

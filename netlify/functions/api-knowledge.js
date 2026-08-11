@@ -1,8 +1,20 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { resolveTenantContext } = require('../../lib/tenant-context');
-const { listSources, ingestUrl, ingestFile, deleteSource, testRetrieval } = require('../../lib/knowledge');
+const {
+  listSources, ingestUrl, ingestWebsite, ingestFile, deleteSource, testRetrieval,
+} = require('../../lib/knowledge');
 const { generateReply } = require('../../lib/ai');
 const { rowToDossier } = require('../../lib/dossier-builder');
+
+function looksLikeSiteRoot(url) {
+  try {
+    const u = new URL(url);
+    const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
+    return path === '/' || path.split('/').filter(Boolean).length <= 1;
+  } catch {
+    return false;
+  }
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -41,7 +53,21 @@ exports.handler = async (event) => {
       if (action === 'import_url') {
         const url = (body.url || '').trim();
         if (!url) return json(400, { error: 'URL requise' });
-        const result = await ingestUrl(tenant.id, url);
+        // Une URL "racine" → crawl profond ; une page précise → page seule.
+        const deep = body.deep !== false && looksLikeSiteRoot(url);
+        const result = deep
+          ? await ingestWebsite(tenant.id, url, { maxPages: Number(body.max_pages) || 12, replace: !!body.replace })
+          : await ingestUrl(tenant.id, url);
+        return json(200, result);
+      }
+
+      if (action === 'analyze_website') {
+        const url = (body.url || tenant.website_url || '').trim();
+        if (!url) return json(400, { error: 'URL du site requise' });
+        const result = await ingestWebsite(tenant.id, url, {
+          maxPages: Math.min(20, Number(body.max_pages) || 16),
+          replace: body.replace !== false,
+        });
         return json(200, result);
       }
 

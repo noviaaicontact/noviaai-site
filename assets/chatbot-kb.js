@@ -133,6 +133,7 @@ const DEFAULT_HOURS = {
 let _demo = false;
 let _chatbotBound = false;
 let _refreshTestWelcome = null;
+let _tenant = null;
 
 function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -447,6 +448,7 @@ function parsePoliciesLines(text) {
 
 function populateChatbotForm(t) {
   if (!t) return;
+  _tenant = t;
   const set = (id, val) => {
     const node = document.getElementById(id);
     if (node) node.value = val;
@@ -620,6 +622,19 @@ function initChatbotPanel(opts) {
   const form = document.getElementById('chatbotForm');
   if (!form) return;
 
+  const btnAnalyzeSite = document.getElementById('btnAnalyzeWebsite');
+  if (btnAnalyzeSite) {
+    btnAnalyzeSite.onclick = async () => {
+      if (_demo) { alert('Mode démo — connectez-vous pour analyser un site.'); return; }
+      const url = document.getElementById('setWebsiteUrl').value.trim();
+      if (!url) {
+        setWebsiteAnalyzeStatus('Entrez d’abord l’URL du site web.', 'err');
+        return;
+      }
+      await startWebsiteDeepAnalyze(url);
+    };
+  }
+
   const btnImportUrl = document.getElementById('btnImportUrl');
   if (btnImportUrl) {
     btnImportUrl.onclick = async () => {
@@ -629,21 +644,27 @@ function initChatbotPanel(opts) {
       err.hidden = true;
       if (!url) { err.textContent = 'Entrez une URL.'; err.hidden = false; return; }
       btnImportUrl.disabled = true;
-      btnImportUrl.textContent = 'Import…';
+      btnImportUrl.textContent = 'Analyse…';
       try {
         const res = await NoviaApp.api('api-knowledge', {
           method: 'POST',
-          body: JSON.stringify({ action: 'import_url', url }),
+          body: JSON.stringify({ action: 'import_url', url, deep: true, replace: false }),
         });
         if (res.error) throw new Error(res.error);
         document.getElementById('kbUrlInput').value = '';
         await loadKnowledgeSources();
+        if (res.pages_indexed != null) {
+          err.className = 'ok';
+          err.textContent = `Analysé : ${res.pages_indexed} page(s), ${res.chunks || 0} extraits.`;
+          err.hidden = false;
+        }
       } catch (ex) {
-        err.textContent = ex.message || 'Import échoué';
+        err.className = 'err';
+        err.textContent = ex.message || 'Analyse échouée';
         err.hidden = false;
       } finally {
         btnImportUrl.disabled = false;
-        btnImportUrl.textContent = 'Importer URL';
+        btnImportUrl.textContent = 'Analyser URL';
       }
     };
   }
@@ -892,6 +913,7 @@ function initChatbotPanel(opts) {
     }
     if (_demo) { ok.hidden = false; return; }
     try {
+      const websiteUrl = document.getElementById('setWebsiteUrl').value.trim();
       const payload = {
         settings: true,
         agent_name: document.getElementById('setAgentName').value.trim(),
@@ -900,7 +922,7 @@ function initChatbotPanel(opts) {
         agent_instructions: document.getElementById('setAgentInstructions').value.trim(),
         welcome_sms: document.getElementById('setWelcomeSms').value.trim(),
         missed_call_sms: document.getElementById('setMissedSms').value.trim(),
-        website_url: document.getElementById('setWebsiteUrl').value.trim(),
+        website_url: websiteUrl,
         public_phone: document.getElementById('setPublicPhone')?.value.trim() || '',
         reservation_links: collectReservationLinks(),
         address_line: document.getElementById('setAddress').value.trim(),
@@ -916,12 +938,75 @@ function initChatbotPanel(opts) {
       const res = await NoviaApp.api('api-tenant', { method: 'PATCH', body: JSON.stringify(payload) });
       if (res.error) throw new Error(res.error);
       if (opts && opts.onSaved) opts.onSaved(res.tenant);
+      _tenant = res.tenant || _tenant;
       ok.hidden = false;
+      // Site web = source #1 : analyser / réanalyser en profondeur à chaque enregistrement.
+      if (websiteUrl) startWebsiteDeepAnalyze(websiteUrl);
     } catch (ex) {
       err.textContent = ex.message || 'Erreur enregistrement';
       err.hidden = false;
     }
   };
+}
+
+function normalizeWebsiteKey(url) {
+  try {
+    const u = new URL(url.startsWith('http') ? url : `https://${url}`);
+    return `${u.hostname.replace(/^www\./, '')}${u.pathname.replace(/\/+$/, '') || ''}`.toLowerCase();
+  } catch {
+    return String(url || '').trim().toLowerCase();
+  }
+}
+
+function setWebsiteAnalyzeStatus(text, kind) {
+  const el = document.getElementById('websiteAnalyzeStatus');
+  if (!el) return;
+  if (!text) {
+    el.style.display = 'none';
+    el.textContent = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = text;
+  el.style.color = kind === 'err' ? 'var(--err, #c0392b)' : (kind === 'ok' ? 'var(--ok, #1a7f37)' : '');
+}
+
+async function startWebsiteDeepAnalyze(url) {
+  setWebsiteAnalyzeStatus('Analyse du site en cours (toutes les pages importantes)… Cela peut prendre 1–2 minutes.', 'info');
+  const btn = document.getElementById('btnAnalyzeWebsite');
+  if (btn) btn.disabled = true;
+  try {
+    // Préférer l'analyse synchrone pour avoir un résultat clair (timeout Netlify ~26s).
+    // Si timeout / erreur → relancer en background.
+    let res;
+    try {
+      res = await NoviaApp.api('api-knowledge', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'analyze_website', url, max_pages: 16, replace: true }),
+      });
+    } catch (syncErr) {
+      await NoviaApp.api('api-analyze-website-background', {
+        method: 'POST',
+        body: JSON.stringify({ url, max_pages: 20 }),
+      });
+      setWebsiteAnalyzeStatus(
+        'Analyse longue lancée en arrière-plan. Rechargez Options avancées dans 1–2 min.',
+        'ok',
+      );
+      setTimeout(() => loadKnowledgeSources().catch(() => {}), 12000);
+      return;
+    }
+    if (res && res.error) throw new Error(res.error);
+    setWebsiteAnalyzeStatus(
+      `Site analysé : ${res.pages_indexed || 0} page(s), ${res.chunks || 0} extraits. L’agent s’en sert pour répondre.`,
+      'ok',
+    );
+    await loadKnowledgeSources();
+  } catch (ex) {
+    setWebsiteAnalyzeStatus(ex.message || 'Analyse du site échouée — réessayez.', 'err');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 // Bind add buttons immédiatement (même avant initChatbotPanel)

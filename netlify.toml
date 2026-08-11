@@ -22,6 +22,12 @@
   node_bundler = "esbuild"
   included_files = ["dossiers/**/*.json"]
 
+[functions."api-knowledge"]
+  timeout = 26
+
+[functions."api-analyze-website-background"]
+  timeout = 26
+
 [functions."review-queue-processor"]
   schedule = "*/1 * * * *"
 

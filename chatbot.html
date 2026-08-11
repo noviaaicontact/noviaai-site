@@ -115,9 +115,14 @@
               <label for="setPublicPhone">Téléphone à donner aux clients</label>
               <input id="setPublicPhone" type="tel" placeholder="418-555-1234" autocomplete="tel">
             </div>
-            <div class="settings-field">
-              <label for="setWebsiteUrl">Site web</label>
+            <div class="settings-field settings-field-wide">
+              <label for="setWebsiteUrl">Site web de votre commerce *</label>
               <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
+              <small class="settings-hint">Priorité #1 : à l’enregistrement, l’agent analyse tout le site (services, prix, contact, FAQ, à propos…) pour répondre comme votre équipe.</small>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+                <button type="button" class="btn btn-ghost btn-sm" id="btnAnalyzeWebsite">Réanalyser le site maintenant</button>
+              </div>
+              <p id="websiteAnalyzeStatus" class="muted" style="font-size:.82rem;margin:8px 0 0;display:none"></p>
             </div>
             <div class="settings-field settings-field-wide">
               <label>Liens de réservation ou de soumission</label>
@@ -220,13 +225,13 @@
           </div>
 
           <div class="settings-section" style="border-bottom:none;padding-bottom:0;margin-bottom:0">
-            <h3>Importer le site ou des documents</h3>
-            <p class="muted" style="font-size:.88rem;margin:0 0 12px">L’IA indexe le contenu pour répondre plus précisément.</p>
+            <h3>Base de connaissances (pages &amp; documents)</h3>
+            <p class="muted" style="font-size:.88rem;margin:0 0 12px">Le site web principal est analysé automatiquement. Ajoutez ici une page précise ou un PDF en plus.</p>
             <div id="kbMigrationWarn" class="install-warn" hidden>Migration Supabase requise pour l’import URL — exécutez <code>supabase/schema-v6-knowledge-base.sql</code></div>
             <div class="kb-sources-box">
               <div class="kb-import-row">
                 <input type="url" id="kbUrlInput" placeholder="https://votre-site.ca/services">
-                <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Importer URL</button>
+                <button type="button" class="btn btn-accent btn-sm" id="btnImportUrl">Analyser URL</button>
               </div>
               <div class="kb-import-row" style="margin-top:10px">
                 <input type="file" id="kbFileInput" accept=".pdf,.doc,.docx,.txt,.csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv">
@@ -248,7 +253,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=14"></script>
+<script src="/assets/chatbot-kb.js?v=15"></script>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=20"></script>
