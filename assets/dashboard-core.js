@@ -550,13 +550,20 @@ function updateBillingUI(t) {
   }
 
   box.className = daysLeft <= 3 ? 'prov-box billing-urgent' : 'prov-box success';
-  title.textContent = daysLeft <= 3 ? `Essai Essentiel — ${daysLeft} jour(s) restant(s)` : 'Essai Essentiel actif';
-  msg.textContent = trialEndStr
-    ? `Essai sur Essentiel · Aucune carte requise. Après le ${trialEndStr}, les fonctions se mettent en pause. À l'activation, choisissez Essentiel, Croissance ou Pro.`
-    : `Essai sur Essentiel · Aucune carte requise. Après 14 jours, activez un forfait (Essentiel, Croissance ou Pro) pour continuer.`;
-  if (btnSub) {
-    btnSub.hidden = false;
-    btnSub.textContent = daysLeft <= 3 ? 'Activer un forfait' : 'Activer un forfait (optionnel)';
+  title.textContent = daysLeft <= 3 ? `Essai — ${daysLeft} jour(s) restant(s)` : 'Essai gratuit actif';
+  if (daysLeft <= 3) {
+    msg.textContent = trialEndStr
+      ? `Votre essai se termine le ${trialEndStr}. Aucune carte n'a été prise. Pour continuer, choisissez alors un forfait.`
+      : 'Votre essai se termine bientôt. Pour continuer après, choisissez un forfait — rien n\'est prélevé avant.';
+    if (btnSub) {
+      btnSub.hidden = false;
+      btnSub.textContent = 'Continuer avec un forfait';
+    }
+  } else {
+    msg.textContent = trialEndStr
+      ? `Aucune carte requise. Profitez de NoviaAI jusqu'au ${trialEndStr} — aucun forfait à choisir maintenant.`
+      : 'Aucune carte requise. Profitez de NoviaAI pendant 14 jours — aucun forfait à choisir maintenant.';
+    if (btnSub) btnSub.hidden = true;
   }
   if (btnSwitch) btnSwitch.hidden = true;
 }
