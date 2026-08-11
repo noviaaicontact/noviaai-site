@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tableau de bord | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=6">
+<link rel="stylesheet" href="/assets/saas.css?v=8">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -45,6 +45,52 @@
         <button type="button" class="btn btn-accent btn-sm" id="btnSubscribe" hidden>Activer mon forfait</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnManageBilling" hidden>Gérer la facturation</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnSwitchPlan" hidden>Changer de forfait</button>
+      </div>
+    </div>
+
+    <div id="planPickerBackdrop" class="plan-picker-backdrop" hidden>
+      <div class="plan-picker" role="dialog" aria-modal="true" aria-labelledby="planPickerTitle">
+        <h3 id="planPickerTitle">Choisir un forfait</h3>
+        <p id="planPickerHint" class="plan-note">Rien n’est prélevé pendant l’essai.</p>
+        <div class="signup-plans" id="planPickerOptions">
+          <label class="signup-plan">
+            <input type="radio" name="dashPlan" value="essentiel">
+            <span class="signup-plan-body">
+              <span class="signup-plan-radio" aria-hidden="true"></span>
+              <span class="signup-plan-info">
+                <strong>Essentiel</strong>
+                <span class="signup-plan-meta">100 conversations / mois</span>
+              </span>
+              <span class="signup-plan-price">149&nbsp;$<small>/mois</small></span>
+            </span>
+          </label>
+          <label class="signup-plan signup-plan-featured">
+            <input type="radio" name="dashPlan" value="croissance" checked>
+            <span class="signup-plan-body">
+              <span class="signup-plan-radio" aria-hidden="true"></span>
+              <span class="signup-plan-info">
+                <strong>Croissance <em class="signup-plan-tag">Reco</em></strong>
+                <span class="signup-plan-meta">300 conversations / mois</span>
+              </span>
+              <span class="signup-plan-price">299&nbsp;$<small>/mois</small></span>
+            </span>
+          </label>
+          <label class="signup-plan">
+            <input type="radio" name="dashPlan" value="pro">
+            <span class="signup-plan-body">
+              <span class="signup-plan-radio" aria-hidden="true"></span>
+              <span class="signup-plan-info">
+                <strong>Pro</strong>
+                <span class="signup-plan-meta">1&nbsp;000 conversations / mois</span>
+              </span>
+              <span class="signup-plan-price">499&nbsp;$<small>/mois</small></span>
+            </span>
+          </label>
+        </div>
+        <div class="plan-picker-actions">
+          <button type="button" class="btn btn-accent btn-sm" id="planPickerConfirm">Confirmer</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="planPickerCancel">Annuler</button>
+        </div>
       </div>
     </div>
 
@@ -115,6 +161,6 @@
 </div>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
-<script src="/assets/dashboard-core.js?v=14"></script>
+<script src="/assets/dashboard-core.js?v=16"></script>
 </body>
 </html>

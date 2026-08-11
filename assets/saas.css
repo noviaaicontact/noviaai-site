@@ -1689,3 +1689,175 @@ body.has-assist-banner { padding-top: 44px; }
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Choix de forfait (inscription + dashboard) */
+.plan-fieldset {
+  border: 0;
+  margin: 0 0 18px;
+  padding: 0;
+  min-width: 0;
+}
+.plan-fieldset legend {
+  padding: 0;
+  margin: 0 0 8px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.plan-note {
+  margin: 8px 0 0;
+  font-size: .78rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.signup-plans {
+  display: grid;
+  gap: 8px;
+}
+.signup-plan {
+  display: block;
+  cursor: pointer;
+  margin: 0;
+}
+.signup-plan input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.signup-plan-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.signup-plan-radio {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  position: relative;
+  transition: border-color .15s ease, background .15s ease;
+}
+.signup-plan-radio::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  background: var(--navy);
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .15s ease, transform .15s ease;
+}
+.signup-plan-info {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.signup-plan-info strong {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.signup-plan-meta {
+  font-size: .78rem;
+  color: var(--muted);
+}
+.signup-plan-price {
+  flex: 0 0 auto;
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 1rem;
+  white-space: nowrap;
+  letter-spacing: -.01em;
+}
+.signup-plan-price small {
+  font-weight: 500;
+  font-size: .72rem;
+  color: var(--muted);
+  margin-left: 1px;
+}
+.signup-plan-tag {
+  font-style: normal;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--navy);
+  background: var(--accent);
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+.signup-plan:hover .signup-plan-body {
+  border-color: #cbd5e1;
+  background: #fafbfc;
+}
+.signup-plan input:focus-visible + .signup-plan-body {
+  outline: 2px solid var(--navy2);
+  outline-offset: 2px;
+}
+.signup-plan input:checked + .signup-plan-body {
+  border-color: var(--navy);
+  background: #f4f7fb;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.signup-plan input:checked + .signup-plan-body .signup-plan-radio {
+  border-color: var(--navy);
+}
+.signup-plan input:checked + .signup-plan-body .signup-plan-radio::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Sélecteur de forfait (dashboard) */
+.plan-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .48);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.plan-picker {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 400px;
+  width: 100%;
+  padding: 22px 20px 18px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, .22);
+  border: 1px solid rgba(226, 232, 240, .9);
+}
+.plan-picker h3 {
+  margin: 0 0 4px;
+  font-size: 1.12rem;
+  color: var(--navy);
+}
+.plan-picker .plan-note {
+  margin: 0 0 14px;
+}
+.plan-picker-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.plan-picker-actions .btn {
+  flex: 1;
+  justify-content: center;
+}

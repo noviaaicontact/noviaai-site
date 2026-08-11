@@ -542,6 +542,10 @@ function updateBillingUI(t) {
       btnSub.textContent = hasBilling ? 'Mettre à jour la carte' : 'Activer mon forfait';
     }
     if (btnPortal) btnPortal.hidden = !hasBilling;
+    if (btnSwitch) {
+      btnSwitch.hidden = false;
+      btnSwitch.textContent = 'Choisir un forfait';
+    }
     return;
   }
 
@@ -552,7 +556,61 @@ function updateBillingUI(t) {
     : `Forfait ${planLabel} · Aucune carte requise pendant l'essai. Après 14 jours, payez pour continuer.`;
   if (btnSub) {
     btnSub.hidden = false;
-    btnSub.textContent = daysLeft <= 3 ? 'Activer mon forfait' : 'Choisir mon forfait (optionnel)';
+    btnSub.textContent = daysLeft <= 3 ? 'Activer mon forfait' : 'Activer mon forfait (optionnel)';
+  }
+  if (btnSwitch) {
+    btnSwitch.hidden = false;
+    btnSwitch.textContent = 'Changer de forfait';
+  }
+}
+
+let planPickerMode = 'save'; // 'save' | 'checkout'
+
+function closePlanPicker() {
+  const backdrop = document.getElementById('planPickerBackdrop');
+  if (backdrop) backdrop.hidden = true;
+}
+
+function openPlanPicker(mode) {
+  planPickerMode = mode === 'checkout' ? 'checkout' : 'save';
+  const backdrop = document.getElementById('planPickerBackdrop');
+  const hint = document.getElementById('planPickerHint');
+  const confirmBtn = document.getElementById('planPickerConfirm');
+  const title = document.getElementById('planPickerTitle');
+  if (!backdrop) return;
+  const current = (tenant && tenant.plan) || 'croissance';
+  const radio = document.querySelector(`input[name="dashPlan"][value="${current}"]`)
+    || document.querySelector('input[name="dashPlan"][value="croissance"]');
+  if (radio) radio.checked = true;
+  if (title) {
+    title.textContent = planPickerMode === 'checkout' ? 'Activer un forfait' : 'Changer de forfait';
+  }
+  if (hint) {
+    hint.textContent = planPickerMode === 'checkout'
+      ? 'Vous serez redirigé vers Stripe pour enregistrer votre carte.'
+      : 'Aucun paiement maintenant — modifiable pendant l’essai.';
+  }
+  if (confirmBtn) {
+    confirmBtn.textContent = planPickerMode === 'checkout' ? 'Continuer vers le paiement' : 'Enregistrer le forfait';
+  }
+  backdrop.hidden = false;
+}
+
+function selectedDashPlan() {
+  const checked = document.querySelector('input[name="dashPlan"]:checked');
+  const p = checked?.value || (tenant && tenant.plan) || 'croissance';
+  return ['essentiel', 'croissance', 'pro'].includes(p) ? p : 'croissance';
+}
+
+async function saveTrialPlan(plan) {
+  const res = await NoviaApp.api('api-tenant', {
+    method: 'PATCH',
+    body: JSON.stringify({ settings: true, plan }),
+  });
+  if (res.error) throw new Error(res.error);
+  if (res.tenant) {
+    tenant = res.tenant;
+    applyTenantToUI();
   }
 }
 
@@ -1426,17 +1484,16 @@ function initPageHandlers() {
   const btnSub = $('btnSubscribe');
   if (btnSub) {
     btnSub.onclick = async () => {
-      btnSub.disabled = true;
       try {
         if (tenant && hasBillingSetup(tenant) && !['canceled', 'inactive', 'past_due'].includes(tenant.subscription_status)) {
-          await openBillingPortal();
+          btnSub.disabled = true;
+          try { await openBillingPortal(); } finally { btnSub.disabled = false; }
           return;
         }
-        await startCheckout();
+        // Essai sans carte ou reprise : choisir parmi les 3 forfaits puis Stripe.
+        openPlanPicker('checkout');
       } catch (ex) {
         alert(ex.message || 'Erreur Stripe');
-      } finally {
-        btnSub.disabled = false;
       }
     };
   }
@@ -1447,21 +1504,48 @@ function initPageHandlers() {
   const btnSwitch = $('btnSwitchPlan');
   if (btnSwitch) {
     btnSwitch.onclick = async () => {
-      btnSwitch.disabled = true;
       try {
-        // Portail Stripe si déjà abonné; sinon checkout vers le forfait recommandé / actuel.
         if (tenant && hasBillingSetup(tenant) && isPaidSubscription(tenant)) {
-          await openBillingPortal();
+          btnSwitch.disabled = true;
+          try { await openBillingPortal(); } finally { btnSwitch.disabled = false; }
           return;
         }
-        const plan = (window.__noviaTrialReco && window.__noviaTrialReco.plan)
-          || (tenant && tenant.plan)
-          || 'croissance';
-        await startCheckout(plan);
+        // Pendant l'essai (sans abonnement payant) : changer le forfait sans payer.
+        const status = tenant && tenant.subscription_status;
+        if (['canceled', 'inactive', 'past_due'].includes(status)) {
+          openPlanPicker('checkout');
+        } else {
+          openPlanPicker('save');
+        }
       } catch (ex) {
         alert(ex.message || 'Erreur forfait');
+      }
+    };
+  }
+  const planCancel = $('planPickerCancel');
+  if (planCancel) planCancel.onclick = () => closePlanPicker();
+  const planBackdrop = $('planPickerBackdrop');
+  if (planBackdrop) {
+    planBackdrop.onclick = (ev) => {
+      if (ev.target === planBackdrop) closePlanPicker();
+    };
+  }
+  const planConfirm = $('planPickerConfirm');
+  if (planConfirm) {
+    planConfirm.onclick = async () => {
+      const plan = selectedDashPlan();
+      planConfirm.disabled = true;
+      try {
+        if (planPickerMode === 'checkout') {
+          await startCheckout(plan);
+          return;
+        }
+        await saveTrialPlan(plan);
+        closePlanPicker();
+      } catch (ex) {
+        alert(ex.message || 'Impossible de mettre à jour le forfait');
       } finally {
-        btnSwitch.disabled = false;
+        planConfirm.disabled = false;
       }
     };
   }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inscription | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=3">
+<link rel="stylesheet" href="/assets/saas.css?v=8">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js?v=2"></script>
 <script src="/assets/meta-pixel.js"></script>
@@ -15,37 +15,47 @@
   <div class="auth-panel">
     <div class="form-box">
       <h1>Créez votre compte</h1>
-      <p class="muted">Essai 14 jours · Aucune carte · Choisissez votre forfait</p>
+      <p class="muted">Essai 14 jours · Aucune carte requise</p>
       <form id="form">
-        <label>Forfait pour votre essai *</label>
-        <div class="signup-plans" role="radiogroup" aria-label="Choisir un forfait">
-          <label class="signup-plan">
-            <input type="radio" name="plan" value="essentiel">
-            <span class="signup-plan-body">
-              <strong>Essentiel</strong>
-              <span class="signup-plan-price">149&nbsp;$ <small>CAD/mois</small></span>
-              <span class="signup-plan-meta">100 conversations / mois</span>
-            </span>
-          </label>
-          <label class="signup-plan signup-plan-featured">
-            <input type="radio" name="plan" value="croissance" checked>
-            <span class="signup-plan-body">
-              <em class="signup-plan-tag">Recommandé</em>
-              <strong>Croissance</strong>
-              <span class="signup-plan-price">299&nbsp;$ <small>CAD/mois</small></span>
-              <span class="signup-plan-meta">300 conversations / mois</span>
-            </span>
-          </label>
-          <label class="signup-plan">
-            <input type="radio" name="plan" value="pro">
-            <span class="signup-plan-body">
-              <strong>Pro</strong>
-              <span class="signup-plan-price">499&nbsp;$ <small>CAD/mois</small></span>
-              <span class="signup-plan-meta">1&nbsp;000 conversations / mois</span>
-            </span>
-          </label>
-        </div>
-        <p class="muted" style="font-size:.78rem;margin:0 0 16px;line-height:1.4">Rien n’est prélevé pendant 14 jours. Vous payez seulement si vous continuez après l’essai. Modifiable dans le tableau de bord.</p>
+        <fieldset class="plan-fieldset">
+          <legend>Choisissez votre forfait</legend>
+          <div class="signup-plans" role="radiogroup" aria-label="Choisir un forfait">
+            <label class="signup-plan">
+              <input type="radio" name="plan" value="essentiel">
+              <span class="signup-plan-body">
+                <span class="signup-plan-radio" aria-hidden="true"></span>
+                <span class="signup-plan-info">
+                  <strong>Essentiel</strong>
+                  <span class="signup-plan-meta">100 conversations / mois</span>
+                </span>
+                <span class="signup-plan-price">149&nbsp;$<small>/mois</small></span>
+              </span>
+            </label>
+            <label class="signup-plan signup-plan-featured">
+              <input type="radio" name="plan" value="croissance" checked>
+              <span class="signup-plan-body">
+                <span class="signup-plan-radio" aria-hidden="true"></span>
+                <span class="signup-plan-info">
+                  <strong>Croissance <em class="signup-plan-tag">Reco</em></strong>
+                  <span class="signup-plan-meta">300 conversations / mois</span>
+                </span>
+                <span class="signup-plan-price">299&nbsp;$<small>/mois</small></span>
+              </span>
+            </label>
+            <label class="signup-plan">
+              <input type="radio" name="plan" value="pro">
+              <span class="signup-plan-body">
+                <span class="signup-plan-radio" aria-hidden="true"></span>
+                <span class="signup-plan-info">
+                  <strong>Pro</strong>
+                  <span class="signup-plan-meta">1&nbsp;000 conversations / mois</span>
+                </span>
+                <span class="signup-plan-price">499&nbsp;$<small>/mois</small></span>
+              </span>
+            </label>
+          </div>
+          <p class="plan-note">Payable seulement si vous continuez après l’essai. Modifiable plus tard.</p>
+        </fieldset>
 
         <label for="email">Courriel professionnel</label>
         <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
@@ -68,7 +78,7 @@
   <div class="auth-side">
     <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Essai 14 jours · Québec</span>
     <h2>Votre ligne pro, prête aujourd'hui.</h2>
-    <p style="opacity:.85;margin:0">Inscrivez-vous, configurez en quelques minutes, publiez sur Google.</p>
+    <p style="opacity:.85;margin:0">Choisissez votre forfait, configurez en quelques minutes — payez seulement si vous êtes satisfait après 14 jours.</p>
     <ul>
       <li>Numéro local 418 / 514 / 581 automatique</li>
       <li>Appels manqués → texto en 5 sec</li>
