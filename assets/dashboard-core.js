@@ -1304,7 +1304,7 @@ function initClientSim() {
 
   function welcomeText() {
     if (tenant && tenant.missed_call_sms) return tenant.missed_call_sms;
-    return `Bonjour! On a manqué votre appel chez ${businessName()}. Ici ${agentName()} — comment puis-je vous aider?`;
+    return `Bonjour! Ici ${agentName()}, de ${businessName()}. Nous avons manqué votre appel. Comment puis-je vous aider?`;
   }
 
   function escHtml(s) {

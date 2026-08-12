@@ -737,7 +737,7 @@ function initChatbotPanel(opts) {
     if (preview === 'missed') {
       const m = document.getElementById('setMissedSms')?.value?.trim();
       if (m) return m;
-      return `Bonjour! Ici ${agentLabel()} — désolé, on a manqué votre appel! Répondez à ce texto.`;
+      return `Bonjour! Ici ${agentLabel()}. Nous avons manqué votre appel. Comment puis-je vous aider?`;
     }
     const w = document.getElementById('setWelcomeSms')?.value?.trim();
     if (w) return w;

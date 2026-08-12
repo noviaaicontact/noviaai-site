@@ -51,6 +51,23 @@
         <label for="business_name">Nom du commerce *</label>
         <input id="business_name" required placeholder="Salon Éclat">
 
+        <label for="city">Ville du commerce *</label>
+        <input id="city" required placeholder="Québec, Montréal, Lévis, Alma…" list="city_suggestions" autocomplete="address-level2">
+        <datalist id="city_suggestions">
+          <option value="Québec">
+          <option value="Lévis">
+          <option value="Montréal">
+          <option value="Laval">
+          <option value="Longueuil">
+          <option value="Gatineau">
+          <option value="Sherbrooke">
+          <option value="Trois-Rivières">
+          <option value="Saguenay">
+          <option value="Alma">
+          <option value="Rimouski">
+        </datalist>
+        <small class="muted ob-hint">Obligatoire : votre numéro NoviaAI sera choisi dans cette localité (pas une autre ville du même indicatif).</small>
+
         <label for="business_phone">Cellulaire du commerce où vous répondez *</label>
         <input id="business_phone" type="tel" required placeholder="581-909-5332">
         <small class="muted ob-hint">Quand un client appelle votre ligne NoviaAI, c'est ce numéro qui sonne.</small>
@@ -68,13 +85,15 @@
 
         <label for="area_code">Indicatif de votre ligne NoviaAI</label>
         <select id="area_code">
-          <option value="418">418 — Québec</option>
-          <option value="581">581 — Québec</option>
+          <option value="418">418 — Capitale-Nationale / Est</option>
+          <option value="581">581 — Capitale-Nationale / Saguenay</option>
           <option value="514">514 — Montréal</option>
           <option value="438">438 — Montréal</option>
-          <option value="450">450 — Rive-Sud</option>
-          <option value="819">819 — Est</option>
+          <option value="450">450 — Rive-Sud / couronne</option>
+          <option value="819">819 — Outaouais / Estrie / Mauricie</option>
+          <option value="873">873 — Outaouais (overlay)</option>
         </select>
+        <small class="muted ob-hint">L’indicatif seul ne suffit pas : la <strong>ville</strong> ci-dessus détermine le vrai lieu du numéro (ex. Québec ≠ Alma).</small>
 
         <details class="line-mode-advanced" id="forwardOption">
           <summary>Vous tenez à garder votre numéro actuel ? (option avancée)</summary>
@@ -192,13 +211,13 @@ const TYPE_PRESETS = {
     label: 'Salon / clinique',
     placeholder: 'Salon de coiffure',
     sms: (biz, agent) =>
-      `Bonjour! Ici ${agent}, de ${biz}. Désolé, on a manqué votre appel! Répondez à ce texto — je vais noter le service souhaité et vos disponibilités pour un rendez-vous.`,
+      `Bonjour! Ici ${agent}, de ${biz}. Nous avons manqué votre appel. Comment puis-je vous aider?`,
   },
   field_service: {
     label: 'Service terrain',
     placeholder: 'Plomberie / garage',
     sms: (biz, agent) =>
-      `Bonjour! Ici ${agent}, de ${biz}. Nous avons remarqué votre appel. Je vais prendre quelques informations pour que notre équipe puisse mieux vous aider.`,
+      `Bonjour! Ici ${agent}, de ${biz}. Nous avons manqué votre appel. Comment puis-je vous aider?`,
   },
 };
 
@@ -309,7 +328,7 @@ function showStep(n) {
 // interrompue repart d'un formulaire vide.
 const DRAFT_KEY = 'novia_onboarding_draft';
 const DRAFT_TEXT_FIELDS = [
-  'business_name', 'business_phone', 'area_code', 'business_type', 'agent_name',
+  'business_name', 'city', 'business_phone', 'area_code', 'business_type', 'agent_name',
   'missed_call_sms', 'contact_email', 'services_text', 'faq_text', 'reservation_url',
 ];
 
@@ -363,6 +382,22 @@ function syncLineModeUI() {
 missedSmsEl.addEventListener('input', () => { missedSmsTouched = true; });
 businessNameEl.addEventListener('input', refreshMissedSms);
 agentNameEl.addEventListener('input', refreshMissedSms);
+
+function suggestAreaFromCity() {
+  const city = (document.getElementById('city')?.value || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const areaEl = document.getElementById('area_code');
+  if (!city || !areaEl) return;
+  let code = '';
+  if (/(montreal|laval|longueuil|brossard|terrebonne|repentigny)/.test(city)) code = '514';
+  else if (/(gatineau|hull|sherbrooke|trois-?rivieres|shawinigan)/.test(city)) code = '819';
+  else if (/(alma|saguenay|chicoutimi|jonquiere)/.test(city)) code = '418';
+  else if (/(quebec|levis|rimouski|beauport|charlesbourg)/.test(city)) code = '418';
+  if (code) areaEl.value = code;
+}
+document.getElementById('city')?.addEventListener('change', suggestAreaFromCity);
+document.getElementById('city')?.addEventListener('blur', suggestAreaFromCity);
+
 document.querySelectorAll('input[name="biz_kind"]').forEach((el) => {
   el.addEventListener('change', () => {
     missedSmsTouched = false;
@@ -382,13 +417,15 @@ document.getElementById('next1').onclick = () => {
   const err = document.getElementById('err');
   err.hidden = true;
   const name = businessNameEl.value.trim();
+  const city = document.getElementById('city').value.trim();
   const phone = document.getElementById('business_phone').value.trim();
-  if (!name || !phone) {
-    err.textContent = 'Indiquez le nom du commerce et le cellulaire.';
+  if (!name || !city || !phone) {
+    err.textContent = 'Indiquez le nom du commerce, la ville et le cellulaire.';
     err.hidden = false;
     showStep(1);
     return;
   }
+  suggestAreaFromCity();
   syncTypePreset();
   showStep(2);
 };
@@ -430,16 +467,17 @@ document.getElementById('form').onsubmit = async (e) => {
   err.hidden = true;
 
   const name = businessNameEl.value.trim();
+  const city = document.getElementById('city').value.trim();
   const phone = document.getElementById('business_phone').value.trim();
   const sms = missedSmsEl.value.trim();
   const lineMode = document.querySelector('input[name="line_mode"]:checked')?.value || 'new';
   const businessType = businessTypeEl.value.trim()
     || (TYPE_PRESETS[bizKind()] || TYPE_PRESETS.appointment).placeholder;
 
-  if (!name || !phone || !sms) {
-    err.textContent = 'Remplissez tous les champs obligatoires.';
+  if (!name || !city || !phone || !sms) {
+    err.textContent = 'Remplissez tous les champs obligatoires (dont la ville du commerce).';
     err.hidden = false;
-    showStep(!name || !phone ? 1 : 2);
+    showStep(!name || !city || !phone ? 1 : 2);
     return;
   }
 
@@ -456,6 +494,8 @@ document.getElementById('form').onsubmit = async (e) => {
         onboarding: true,
         business_name: name,
         business_type: businessType,
+        city,
+        province: 'QC',
         phone_forward: phone,
         agent_name: agentNameEl.value.trim() || 'Léa',
         missed_call_sms: sms,
