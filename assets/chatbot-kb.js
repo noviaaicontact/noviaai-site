@@ -24,7 +24,7 @@ const QUALIFICATION_BY_WORKFLOW = {
     { key: 'nom', label: 'Nom du client', enabled: true, required: true },
     { key: 'telephone', label: 'Téléphone', enabled: true, required: false },
     { key: 'probleme', label: 'Type de problème', enabled: true, required: true },
-    { key: 'urgence', label: 'Urgence', enabled: true, required: true },
+    { key: 'urgence', label: 'Urgence', enabled: false, required: false },
     { key: 'depuis_quand', label: 'Depuis quand', enabled: false, required: false },
     { key: 'adresse', label: 'Adresse', enabled: true, required: false },
     { key: 'disponibilite_rappel', label: 'Meilleur moment pour rappeler', enabled: true, required: true },
@@ -34,7 +34,7 @@ const QUALIFICATION_BY_WORKFLOW = {
 /** Champs montrés en vue simple (le reste reste dans « Ajuster »). */
 const QUAL_SIMPLE_KEYS = {
   appointment: ['nom', 'telephone', 'service_souhaite', 'disponibilites'],
-  field_service: ['nom', 'telephone', 'probleme', 'urgence', 'adresse', 'disponibilite_rappel'],
+  field_service: ['nom', 'telephone', 'probleme', 'adresse', 'disponibilite_rappel'],
 };
 
 const TONE_PRESETS = {
