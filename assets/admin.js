@@ -261,7 +261,10 @@
       if (sb) await sb.auth.signOut();
       accessToken = '';
       if (errEl) {
-        errEl.textContent = ex.message || 'Connexion impossible';
+        const msg = ex.message || 'Connexion impossible';
+        errEl.textContent = /refus|autoris|401|Non autorisé/i.test(msg)
+          ? 'Ce courriel n’est pas autorisé comme admin. Utilisez noviaai.contact@gmail.com ou aetienne511@gmail.com.'
+          : msg;
         errEl.hidden = false;
       }
     }
