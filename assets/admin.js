@@ -111,15 +111,19 @@
     body.innerHTML = rows.map((t) => {
       const canSuspend = t.provisioning_status !== 'suspended';
       const canReactivate = t.provisioning_status === 'suspended' || t.subscription_status === 'inactive';
+      const pendingClaim = t.claim_token_expires_at && new Date(t.claim_token_expires_at).getTime() > Date.now();
+      const placeholder = /@noviaai\.invalid$/i.test(t.email || '');
       return `<tr data-id="${esc(t.id)}">
         <td>
           <strong>${esc(t.business_name || '—')}</strong>
           ${t.onboarding_done ? '' : statusBadge('Onboarding', 'warn')}
+          ${placeholder ? statusBadge('À transférer', 'trial') : ''}
+          ${pendingClaim ? statusBadge('Lien client', 'ok') : ''}
           <div class="admin-sub">${esc(t.agent_name || '')}${t.business_type ? ' · ' + esc(t.business_type) : ''}</div>
         </td>
         <td>
-          <div>${esc(t.email || '—')}</div>
-          ${t.contact_email && t.contact_email !== t.email ? `<div class="admin-sub">${esc(t.contact_email)}</div>` : ''}
+          <div>${placeholder ? 'En attente du client' : esc(t.email || '—')}</div>
+          ${t.contact_email && t.contact_email !== t.email && !placeholder ? `<div class="admin-sub">${esc(t.contact_email)}</div>` : ''}
         </td>
         <td>${esc(t.plan || '—')}</td>
         <td>${subBadge(t.subscription_status)}<div class="admin-sub">Fin essai: ${esc(fmtDate(t.trial_ends_at))}</div></td>
@@ -130,6 +134,7 @@
         <td>${esc(fmtDate(t.created_at))}</td>
         <td class="admin-actions">
           <button type="button" class="btn btn-accent btn-sm" data-action="assist">Assister</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-action="invite">Lien client</button>
           <button type="button" class="btn btn-ghost btn-sm" data-action="detail">Détails</button>
           ${canSuspend ? `<button type="button" class="btn btn-ghost btn-sm admin-danger" data-action="suspend">Suspendre</button>` : ''}
           ${canReactivate ? `<button type="button" class="btn btn-ghost btn-sm" data-action="reactivate">Réactiver</button>` : ''}
@@ -151,6 +156,19 @@
         </td>
       </tr>`;
     }).join('');
+  }
+
+  function showLinkModal(url, businessName) {
+    $('adminClaimUrl').value = url;
+    $('adminLinkHint').textContent = businessName
+      ? `Envoyez ce lien à ${businessName}. Le client y choisit son courriel et son mot de passe — le compte préparé reste le même.`
+      : 'Envoyez ce lien au client. Il choisit son courriel et son mot de passe — le compte préparé reste le même.';
+    $('adminLinkModal').hidden = false;
+  }
+
+  function closeModals() {
+    $('adminPrepareModal').hidden = true;
+    $('adminLinkModal').hidden = true;
   }
 
   function toast(msg, isErr) {
@@ -276,6 +294,61 @@
   $('adminFilterStatus')?.addEventListener('change', renderTable);
   $('adminFilterLine')?.addEventListener('change', renderTable);
 
+  $('btnAdminPrepare')?.addEventListener('click', () => {
+    $('adminPrepareErr').hidden = true;
+    $('prepareBusinessName').value = '';
+    $('prepareBusinessType').value = '';
+    $('adminPrepareModal').hidden = false;
+    $('prepareBusinessName').focus();
+  });
+  $('btnPrepareCancel')?.addEventListener('click', closeModals);
+  $('btnLinkClose')?.addEventListener('click', closeModals);
+  $('adminPrepareModal')?.addEventListener('click', (e) => {
+    if (e.target === $('adminPrepareModal')) closeModals();
+  });
+  $('adminLinkModal')?.addEventListener('click', (e) => {
+    if (e.target === $('adminLinkModal')) closeModals();
+  });
+  $('btnCopyClaim')?.addEventListener('click', async () => {
+    const url = $('adminClaimUrl').value;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Lien copié.');
+    } catch (_) {
+      $('adminClaimUrl').select();
+      toast('Sélectionnez le lien et copiez-le (Ctrl+C).');
+    }
+  });
+  $('adminPrepareForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = $('adminPrepareErr');
+    errEl.hidden = true;
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      const data = await adminApi('api-admin-tenants', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'prepare',
+          business_name: $('prepareBusinessName').value.trim(),
+          business_type: $('prepareBusinessType').value.trim(),
+        }),
+      });
+      if (data.tenant) {
+        tenants = [data.tenant].concat(tenants.filter((t) => t.id !== data.tenant.id));
+        renderTable();
+      }
+      $('adminPrepareModal').hidden = true;
+      showLinkModal(data.claim_url, data.tenant?.business_name);
+      toast(data.message || 'Compte préparé.');
+    } catch (ex) {
+      errEl.textContent = ex.message || 'Création impossible';
+      errEl.hidden = false;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   $('adminTableBody')?.addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
@@ -297,6 +370,28 @@
       const url = '/dashboard.html?assist=' + encodeURIComponent(id)
         + '&assist_nom=' + encodeURIComponent(t?.business_name || '');
       window.open(url, '_blank');
+      return;
+    }
+
+    if (action === 'invite') {
+      const t = tenants.find((x) => x.id === id);
+      try {
+        const data = await adminApi('api-admin-tenants', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'invite', tenant_id: id }),
+        });
+        if (data.tenant) {
+          tenants = tenants.map((x) => (x.id === data.tenant.id ? data.tenant : x));
+        } else {
+          tenants = tenants.map((x) => (x.id === id
+            ? Object.assign({}, x, { claim_token_expires_at: data.expires_at })
+            : x));
+        }
+        renderTable();
+        showLinkModal(data.claim_url, t?.business_name || data.business_name);
+      } catch (ex) {
+        toast(ex.message || 'Lien impossible', true);
+      }
       return;
     }
 

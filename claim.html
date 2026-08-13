@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Activer votre compte | NoviaAI</title>
+<link rel="stylesheet" href="/assets/saas.css?v=10">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/app.js?v=4"></script>
+</head>
+<body>
+<nav class="nav"><a href="/" class="logo">Novia<span>AI</span></a></nav>
+<div class="auth-split">
+  <div class="auth-panel">
+    <div class="form-box">
+      <h1>Votre compte est prêt</h1>
+      <p class="muted" id="claimIntro">Choisissez le courriel et le mot de passe avec lesquels vous vous connecterez.</p>
+      <form id="form">
+        <label for="email">Votre courriel</label>
+        <input id="email" type="email" required autocomplete="email" placeholder="vous@commerce.com">
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" required minlength="8" autocomplete="new-password" placeholder="8 caractères minimum">
+        <label for="password2">Confirmer le mot de passe</label>
+        <input id="password2" type="password" required minlength="8" autocomplete="new-password">
+
+        <label class="legal-consent" for="acceptLegal">
+          <input type="checkbox" id="acceptLegal" required>
+          <span>J’accepte les <a href="/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a>, la <a href="/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a> (Loi&nbsp;25) et la <a href="/politique-sms.html" target="_blank" rel="noopener">politique SMS&nbsp;/ LCAP</a>.</span>
+        </label>
+
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:20px">Activer mon compte →</button>
+        <p id="ok" class="ok" hidden></p>
+        <p id="err" class="err" hidden></p>
+      </form>
+      <p class="muted" style="margin-top:20px;font-size:.88rem">Déjà activé? <a href="/login.html">Connexion</a></p>
+    </div>
+  </div>
+  <div class="auth-side">
+    <span class="badge" style="background:rgba(200,241,53,.2);color:var(--accent)">Compte préparé pour vous</span>
+    <h2 id="claimSideTitle">On a déjà tout configuré.</h2>
+    <p style="opacity:.85;margin:0">Votre agent, vos textes et votre essai restent en place. Vous n’avez qu’à choisir vos identifiants.</p>
+  </div>
+</div>
+<script>
+const token = new URLSearchParams(location.search).get('token') || '';
+const err = document.getElementById('err');
+const ok = document.getElementById('ok');
+const form = document.getElementById('form');
+
+function showErr(msg) {
+  ok.hidden = true;
+  err.textContent = msg;
+  err.hidden = false;
+}
+
+(async function preview() {
+  if (!token) {
+    form.hidden = true;
+    showErr('Lien manquant. Demandez un nouveau lien à NoviaAI.');
+    return;
+  }
+  try {
+    const res = await fetch('/.netlify/functions/api-claim-account?token=' + encodeURIComponent(token));
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Lien invalide');
+    const name = data.business_name || 'votre commerce';
+    document.getElementById('claimIntro').textContent =
+      'Compte préparé pour ' + name + '. Choisissez le courriel et le mot de passe avec lesquels vous vous connecterez.';
+    document.getElementById('claimSideTitle').textContent = name + ' est déjà configuré.';
+  } catch (ex) {
+    form.hidden = true;
+    showErr(ex.message || 'Lien invalide ou expiré.');
+  }
+})();
+
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  err.hidden = true;
+  ok.hidden = true;
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const password2 = document.getElementById('password2').value;
+  if (password !== password2) {
+    showErr('Les mots de passe ne correspondent pas.');
+    return;
+  }
+  if (!document.getElementById('acceptLegal').checked) {
+    showErr('Veuillez accepter les conditions pour continuer.');
+    return;
+  }
+  const btn = form.querySelector('button[type=submit]');
+  btn.disabled = true;
+  try {
+    const res = await fetch('/.netlify/functions/api-claim-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token,
+        email,
+        password,
+        legal_consent: true,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Activation impossible');
+    const { data: authData, error: signInErr } = await NoviaApp.signIn(email, password);
+    if (signInErr) throw signInErr;
+    sessionStorage.removeItem('novia_demo');
+    await NoviaApp.ensureTenant('essentiel', authData.session.access_token);
+    location.href = data.onboarding_done ? '/dashboard.html' : '/onboarding.html';
+  } catch (ex) {
+    btn.disabled = false;
+    showErr(NoviaApp.formatSignUpError ? NoviaApp.formatSignUpError(ex) : (ex.message || 'Erreur'));
+  }
+};
+</script>
+</body>
+</html>

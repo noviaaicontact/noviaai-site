@@ -4,8 +4,10 @@ const {
   checkAdminAccess,
   isAdminConfigured,
   getAdminEmailList,
+  isAdminEmail,
 } = require('../../lib/admin-auth');
 const { suspendTenant } = require('../../lib/provision');
+const { createPreparedTenant, issueClaimToken, isPlaceholderEmail } = require('../../lib/claim');
 
 const TENANT_LIST_FIELDS = [
   'id', 'user_id', 'email', 'contact_email', 'business_name', 'business_type',
@@ -13,6 +15,7 @@ const TENANT_LIST_FIELDS = [
   'twilio_number', 'phone_forward', 'line_mode', 'onboarding_done', 'widget_enabled',
   'stripe_customer_id', 'stripe_subscription_id', 'trial_ends_at', 'created_at',
   'updated_at', 'activated_at', 'leads_count', 'website_url', 'public_phone',
+  'claim_token_expires_at', 'claimed_at',
 ].join(',');
 
 function summarize(tenants) {
@@ -55,6 +58,55 @@ exports.handler = async (event) => {
 
   const db = getAdmin();
   if (!db) return json(503, { error: 'Base de données non configurée' });
+
+  if (event.httpMethod === 'POST' && body.action === 'prepare') {
+    try {
+      const { tenant, invite } = await createPreparedTenant({
+        businessName: body.business_name,
+        businessType: body.business_type,
+      });
+      return json(200, {
+        ok: true,
+        tenant,
+        claim_url: invite.url,
+        expires_at: invite.expires_at,
+        message: 'Compte préparé. Envoyez le lien au client pour qu’il y mette son courriel et son mot de passe.',
+      });
+    } catch (e) {
+      console.error('admin prepare', e.message || e);
+      return json(500, { error: e.message || 'Création impossible' });
+    }
+  }
+
+  if (event.httpMethod === 'POST' && body.action === 'invite') {
+    const tenantId = body.tenant_id;
+    if (!tenantId) return json(400, { error: 'tenant_id requis' });
+    const { data: existing, error: loadErr } = await db
+      .from('tenants')
+      .select('id, email, business_name')
+      .eq('id', tenantId)
+      .maybeSingle();
+    if (loadErr) return json(500, { error: loadErr.message });
+    if (!existing) return json(404, { error: 'Compte introuvable' });
+    if (isAdminEmail(existing.email) && !isPlaceholderEmail(existing.email)) {
+      return json(400, {
+        error: 'Ce compte est lié à un courriel admin. Créez plutôt un compte préparé (bouton en haut).',
+      });
+    }
+    try {
+      const invite = await issueClaimToken(tenantId);
+      return json(200, {
+        ok: true,
+        claim_url: invite.url,
+        expires_at: invite.expires_at,
+        business_name: existing.business_name,
+        message: 'Lien prêt. Le client y choisit son courriel et son mot de passe.',
+      });
+    } catch (e) {
+      console.error('admin invite', e.message || e);
+      return json(500, { error: e.message || 'Lien impossible' });
+    }
+  }
 
   if (event.httpMethod === 'GET') {
     const { data, error } = await db

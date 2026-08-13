@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css">
+<link rel="stylesheet" href="/assets/saas.css?v=11">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -31,6 +31,7 @@
         <p class="muted" style="margin:4px 0 0">Connecté · <span id="adminUserEmail">…</span></p>
       </div>
       <div class="admin-top-actions">
+        <button type="button" class="btn btn-accent btn-sm" id="btnAdminPrepare">Préparer un compte</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnAdminRefresh">Actualiser</button>
         <button type="button" class="btn btn-ghost btn-sm" id="btnAdminLogout">Déconnexion</button>
       </div>
@@ -81,6 +82,38 @@
     <p id="adminToast" class="admin-toast" hidden role="status"></p>
   </section>
 </div>
-<script src="/assets/admin.js?v=2"></script>
+
+<div class="admin-modal-backdrop" id="adminPrepareModal" hidden>
+  <div class="admin-modal card" role="dialog" aria-labelledby="adminPrepareTitle">
+    <h2 id="adminPrepareTitle">Préparer un compte client</h2>
+    <p class="muted">Vous configurez le commerce maintenant. Le client mettra son courriel et son mot de passe plus tard, via un lien.</p>
+    <form id="adminPrepareForm">
+      <label for="prepareBusinessName">Nom du commerce</label>
+      <input id="prepareBusinessName" required placeholder="Ex. Corvée 360" maxlength="80">
+      <label for="prepareBusinessType">Type (optionnel)</label>
+      <input id="prepareBusinessType" placeholder="Ex. service terrain, salon…" maxlength="80">
+      <div class="admin-modal-actions">
+        <button type="button" class="btn btn-ghost" id="btnPrepareCancel">Annuler</button>
+        <button type="submit" class="btn btn-accent">Créer le compte</button>
+      </div>
+      <p id="adminPrepareErr" class="err" hidden></p>
+    </form>
+  </div>
+</div>
+
+<div class="admin-modal-backdrop" id="adminLinkModal" hidden>
+  <div class="admin-modal card" role="dialog" aria-labelledby="adminLinkTitle">
+    <h2 id="adminLinkTitle">Lien pour le client</h2>
+    <p class="muted" id="adminLinkHint">Envoyez ce lien au client. Il choisit son courriel et son mot de passe — le compte préparé reste le même.</p>
+    <label for="adminClaimUrl">Lien d’activation</label>
+    <input id="adminClaimUrl" readonly>
+    <div class="admin-modal-actions">
+      <button type="button" class="btn btn-accent" id="btnCopyClaim">Copier le lien</button>
+      <button type="button" class="btn btn-ghost" id="btnLinkClose">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/admin.js?v=3"></script>
 </body>
 </html>
