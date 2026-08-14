@@ -1,8 +1,11 @@
 const { processDueReviewRequests } = require('../../lib/review-request');
+const { processDueFollowups } = require('../../lib/followup');
 
 exports.handler = async () => {
   try {
-    const result = await processDueReviewRequests();
+    const reviews = await processDueReviewRequests();
+    const followups = await processDueFollowups();
+    const result = { reviews, followups };
     return {
       statusCode: 200,
       body: JSON.stringify({ ok: true, ...result }),

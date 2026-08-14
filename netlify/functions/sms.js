@@ -6,6 +6,7 @@ const { loadHistory, saveHistory } = require('../../lib/store');
 const { generateReply } = require('../../lib/ai');
 const { processInboundActions } = require('../../lib/agent-tools');
 const { maybeAutoReviewRequest, clearReviewPending } = require('../../lib/review-request');
+const { clearFollowupPending } = require('../../lib/followup');
 const { hasNegativeInboundText } = require('../../lib/review-eligibility');
 const {
   isOptOutMessage,
@@ -33,6 +34,9 @@ function withTimeout(promise, ms) {
 }
 
 exports.handler = async (event) => {
+  let alertTenant = null;
+  let alertFrom = null;
+  let alertTo = null;
   try {
     const p = parseBody(event);
     if (!validateTwilioRequest(event)) {
@@ -46,9 +50,12 @@ exports.handler = async (event) => {
     const from = p.get('From');
     const to = p.get('To');
     const body = (p.get('Body') || '').trim();
+    alertFrom = from;
+    alertTo = to;
     if (!from || !to) return xmlResponse(twimlMessage(DEFAULT_ACK));
 
     const client = await resolveClient(to);
+    alertTenant = client?.tenant || null;
 
     const tenantId = client && client.tenant && client.tenant.id;
     const dossier = client && client.dossier;
@@ -58,6 +65,7 @@ exports.handler = async (event) => {
       await recordOptOut(tenantId, from);
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_opt_out', { body: body.slice(0, 80) });
+      await clearFollowupPending(tenantId, from);
       return xmlResponse(twimlMessage(OPT_OUT_ACK));
     }
 
@@ -91,6 +99,14 @@ exports.handler = async (event) => {
       const quota = await checkSmsQuota(client.tenant);
       if (!quota.ok) {
         await logMessage(tenantId, from, 'inbound', body);
+        const { notifyAdminClientError } = require('../../lib/admin-alert');
+        notifyAdminClientError({
+          area: 'quota',
+          error: `Limite SMS atteinte (${quota.count}/${quota.limit})`,
+          tenant: client.tenant,
+          extra: { count: quota.count, limit: quota.limit, from },
+          maxPerHour: 1,
+        }).catch(() => {});
         return xmlResponse(twimlMessage('Limite mensuelle de textos atteinte. Appelez-nous ou réessayez le mois prochain.'));
       }
     }
@@ -99,6 +115,7 @@ exports.handler = async (event) => {
       await logMessage(tenantId, from, 'inbound', body);
       await logEvent(tenantId, from, 'sms_inbound', { body: body.slice(0, 160) });
       await touchThread(tenantId, from, body, 'open');
+      await clearFollowupPending(tenantId, from);
       if (hasNegativeInboundText(body)) {
         await clearReviewPending(tenantId, from);
       }
@@ -175,6 +192,15 @@ exports.handler = async (event) => {
     return xmlResponse(twimlMessage(reply));
   } catch (e) {
     console.error('sms error', e);
+    try {
+      const { notifyAdminClientError } = require('../../lib/admin-alert');
+      await notifyAdminClientError({
+        area: 'sms',
+        error: e,
+        tenant: alertTenant,
+        extra: { from: alertFrom, to: alertTo },
+      });
+    } catch (_) { /* ignore alert failures */ }
     return xmlResponse(twimlMessage(DEFAULT_ACK));
   }
 };

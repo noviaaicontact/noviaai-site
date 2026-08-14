@@ -57,6 +57,8 @@ exports.handler = async (event) => {
     await logMessage(tenant.id, to, 'outbound', text);
     await logEvent(tenant.id, to, 'sms_outbound', { body: text.slice(0, 160), manual: true });
     await touchThread(tenant.id, to, text, 'open');
+    const { clearFollowupPending } = require('../../lib/followup');
+    await clearFollowupPending(tenant.id, to);
     return json(200, { ok: true, quota: { count: quota.count + 1, limit: quota.limit } });
   } catch (e) {
     console.error('api-sms-reply', e);
