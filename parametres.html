@@ -28,7 +28,7 @@
   <main class="dash-main">
     <div class="dash-header">
       <h1>Paramètres</h1>
-      <p class="muted" style="margin:0">Commerce, SMS, avis Google et widget web</p>
+      <p class="muted" style="margin:0">Commerce, calendrier, avis Google et widget web</p>
     </div>
 
     <div class="card">
@@ -53,6 +53,14 @@
               <input id="setContactEmail" type="email">
             </div>
           </div>
+        </div>
+
+        <div class="settings-section" id="calendarSection">
+          <h3>Calendrier</h3>
+          <p class="muted" style="font-size:.88rem;margin:0 0 12px">Connectez l'agenda du commerce. L'agent proposera seulement les plages vraiment libres, puis créera le rendez-vous quand le client accepte.</p>
+          <div id="calendarProviders" class="cal-list">Chargement…</div>
+          <p id="calendarOk" class="muted" hidden style="color:var(--ok);font-weight:600;margin:12px 0 0"></p>
+          <p id="calendarErr" class="err" hidden style="margin:12px 0 0"></p>
         </div>
 
         <div class="settings-section">
@@ -121,5 +129,6 @@
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=20"></script>
+<script src="/assets/calendar-settings.js?v=1"></script>
 </body>
 </html>

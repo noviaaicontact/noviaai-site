@@ -517,6 +517,19 @@ a:hover { text-decoration: underline; }
 }
 .settings-lead { font-size: .88rem; margin: -8px 0 14px; }
 
+.cal-list { display: flex; flex-direction: column; gap: 12px; }
+.cal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.cal-row > div:first-child { min-width: 0; }
+
 /* Agent — presets ton */
 .tone-presets {
   display: flex;

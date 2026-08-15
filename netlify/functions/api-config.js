@@ -12,6 +12,8 @@ exports.handler = async () => {
     resendConfigured: !!process.env.RESEND_API_KEY,
     autoProvision: process.env.TWILIO_AUTO_PROVISION !== 'false',
     publicBaseUrl: process.env.PUBLIC_BASE_URL || '',
+    googleCalendarConfigured: !!(process.env.GOOGLE_CALENDAR_CLIENT_ID && process.env.GOOGLE_CALENDAR_CLIENT_SECRET),
+    microsoftCalendarConfigured: !!(process.env.MICROSOFT_CALENDAR_CLIENT_ID && process.env.MICROSOFT_CALENDAR_CLIENT_SECRET),
     plans: PLANS,
   });
 };
