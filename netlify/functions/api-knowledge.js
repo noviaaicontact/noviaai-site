@@ -88,9 +88,27 @@ exports.handler = async (event) => {
         const retrieval = await testRetrieval(tenant.id, question);
         const dossier = rowToDossier(tenant);
         const reply = await generateReply(dossier, history, question, tenant.id);
+        let calendar = null;
+        try {
+          const { maybeCreateCalendarEvent } = require('../../lib/calendar');
+          const booked = await maybeCreateCalendarEvent({
+            tenant,
+            callerPhone: 'test:agent',
+            userMessage: question,
+            aiReply: reply,
+            history,
+            qualificationData: {},
+          });
+          if (booked && booked.ok) {
+            calendar = { created: true, start: booked.slot.start, end: booked.slot.end };
+          }
+        } catch (calErr) {
+          console.warn('api-knowledge calendar', calErr.message);
+        }
         return json(200, {
           hits: retrieval.hits,
           reply: reply || null,
+          calendar,
         });
       }
 
