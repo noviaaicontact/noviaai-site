@@ -22,7 +22,7 @@ const {
   startConnect,
   assertOAuthCallbackSession,
 } = require('../lib/calendar/index.js');
-const { buildOpenSlots, parseAcceptedSlot } = require('../lib/calendar/slots.js');
+const { buildOpenSlots, parseAcceptedSlot, extractAcceptedSlot, assistantRejectedSlot, stripCalendarClaims } = require('../lib/calendar/slots.js');
 const { getConversations, getThreadMessages } = require('../lib/inbox.js');
 const { textbackMessage } = require('../lib/sms-send.js');
 const { validateTwilioRequest } = require('../lib/twilio-util.js');
@@ -187,6 +187,71 @@ await test('applyCalendarConfirmationToReply: timeout sans RDV ne parle pas de r
   });
   assert.strictEqual(adj.calendarConfirmed, false);
   assert.ok(!/confirmera ce rendez-vous/i.test(adj.reply));
+});
+
+await test('calendrier: une demande d\'heure n\'est pas une acceptation', () => {
+  const hours = { lundi: { ouvert: true, debut: '9h', fin: '17h' } };
+  assert.strictEqual(extractAcceptedSlot({
+    userMessage: 'Je voudrais une coupe lundi à 10h',
+    hours,
+    durationMin: 30,
+  }), null);
+  assert.ok(extractAcceptedSlot({
+    userMessage: 'Oui je prends lundi 10h',
+    hours,
+    durationMin: 30,
+  }));
+});
+
+await test('calendrier: si l\'IA dit que c\'est pris, on ne confirme pas', () => {
+  assert.strictEqual(assistantRejectedSlot('Le créneau de lundi à 10h est déjà pris. Voici 9h.'), true);
+  assert.strictEqual(assistantRejectedSlot('Le créneau est libre, dites-moi si ça vous va.'), false);
+  const adj = applyCalendarConfirmationToReply({
+    reply: 'Le créneau de lundi à 10h est déjà pris. Voici 9h, 12h.',
+    tenant: { business_name: 'garage', id: 'tenant-test' },
+    booking: { skipped: 'ai_rejected' },
+    userMessage: 'Je voudrais une coupe lundi à 10h',
+    offeredSlots: [
+      { start: '2026-08-17T13:00:00.000Z', end: '2026-08-17T13:30:00.000Z' },
+    ],
+  });
+  assert.strictEqual(adj.calendarConfirmed, false);
+  assert.match(adj.reply, /n'est pas libre/i);
+  assert.match(adj.reply, /plages libres/i);
+  assert.ok(!/confirmé dans l'agenda/i.test(adj.reply));
+  assert.ok(!/déjà pris/i.test(adj.reply));
+  assert.ok(!/vous confirmera/i.test(adj.reply));
+});
+
+await test('calendrier: seuls les faits backend parlent de l\'agenda', () => {
+  assert.ok(!stripCalendarClaims('Le créneau est déjà pris. Bonjour Test.').match(/déjà pris/i));
+  const wish = applyCalendarConfirmationToReply({
+    reply: 'Bonjour Test NoviaAI! Le créneau de lundi à 10h est déjà pris.\n- Lundi à 9h00\n- Lundi à 12h00',
+    tenant: { business_name: 'garage' },
+    booking: null,
+    userMessage: 'Je voudrais une coupe lundi à 10h',
+    bookingAction: { create: true, action: 'create_calendar' },
+    offeredSlots: [
+      { start: '2026-08-17T13:00:00.000Z', end: '2026-08-17T13:30:00.000Z' },
+    ],
+  });
+  assert.strictEqual(wish.calendarConfirmed, false);
+  assert.match(wish.reply, /plages libres/i);
+  assert.ok(!/déjà pris/i.test(wish.reply));
+  assert.ok(!/confirmé dans l'agenda/i.test(wish.reply));
+
+  const booked = applyCalendarConfirmationToReply({
+    reply: 'Je suis désolée, c\'est déjà pris.',
+    tenant: { business_name: 'garage' },
+    booking: {
+      ok: true,
+      slot: { start: '2026-08-17T13:00:00.000Z', end: '2026-08-17T13:30:00.000Z' },
+    },
+    userMessage: 'Oui je prends lundi 9h',
+  });
+  assert.strictEqual(booked.calendarConfirmed, true);
+  assert.match(booked.reply, /confirmé dans l'agenda/i);
+  assert.ok(!/déjà pris/i.test(booked.reply));
 });
 
 await test('Google Calendar: helpers toujours branchés', () => {
