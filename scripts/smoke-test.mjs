@@ -28,7 +28,7 @@ const { textbackMessage } = require('../lib/sms-send.js');
 const { validateTwilioRequest } = require('../lib/twilio-util.js');
 const { authorizeCron, isNetlifySchedulerEvent, withCronSecret } = require('../lib/cron-auth.js');
 const { parseHttpUrl, isBlockedHostname } = require('../lib/ssrf.js');
-const { encryptSecret } = require('../lib/calendar/crypto.js');
+const { encryptSecret, decryptSecret, tryDecryptSecret } = require('../lib/calendar/crypto.js');
 const { isProductionEnv } = require('../lib/runtime-env.js');
 const { dbPatchAfterCheckoutCreate, tenantPatchFromCheckoutSession } = require('../lib/stripe.js');
 const {
@@ -629,6 +629,18 @@ await test('sécurité: CALENDAR_TOKEN_ENCRYPTION_KEY sans fallback service_role
   assert.ok(encryptSecret('token'));
   restoreEnv('CALENDAR_TOKEN_ENCRYPTION_KEY', prevKey);
   restoreEnv('SUPABASE_SERVICE_ROLE_KEY', prevService);
+});
+
+await test('calendrier: déconnexion possible même si les jetons sont illisibles', () => {
+  const prevKey = process.env.CALENDAR_TOKEN_ENCRYPTION_KEY;
+  process.env.CALENDAR_TOKEN_ENCRYPTION_KEY = 'unit-test-calendar-key-32b';
+  const enc = encryptSecret('refresh-token');
+  assert.strictEqual(decryptSecret(enc), 'refresh-token');
+  process.env.CALENDAR_TOKEN_ENCRYPTION_KEY = 'other-calendar-key-after-rotation';
+  assert.throws(() => decryptSecret(enc), /authenticate|unable|bad decrypt|Unsupported/i);
+  assert.strictEqual(tryDecryptSecret(enc), null);
+  assert.strictEqual(tryDecryptSecret(null), null);
+  restoreEnv('CALENDAR_TOKEN_ENCRYPTION_KEY', prevKey);
 });
 
 await test('sécurité: import de site bloque localhost, RFC1918, metadata', () => {
