@@ -1,7 +1,9 @@
 const { getAdmin, isDbConfigured } = require('../../lib/db');
 const { suspendTenant } = require('../../lib/provision');
+const { authorizeCron, cronUnauthorized, withCronSecret } = require('../../lib/cron-auth');
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  if (!authorizeCron(withCronSecret(event))) return cronUnauthorized();
   if (!isDbConfigured()) {
     return { statusCode: 503, body: JSON.stringify({ error: 'DB non configurée' }) };
   }

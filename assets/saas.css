@@ -928,6 +928,12 @@ a:hover { text-decoration: underline; }
 .inbox-reply input { flex: 1; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; font-size: .9rem; }
 .inbox-reply button { flex-shrink: 0; }
 .kb-row { display: grid; grid-template-columns: 1fr 140px 36px; gap: 8px; margin-bottom: 8px; align-items: start; }
+.kb-row-service { grid-template-columns: 1fr 120px 36px; }
+.kb-row-service .svc-mode,
+.kb-row-service .svc-duration,
+.kb-row-service .svc-url { grid-column: 1 / -2; }
+.kb-row-service .kb-remove { grid-row: 1; grid-column: 3; }
+.kb-row-service .svc-price { min-width: 0; }
 .kb-row-faq { grid-template-columns: 1fr 36px; }
 .kb-row-faq .faq-q { grid-column: 1 / -2; }
 .kb-row-faq .faq-a { grid-column: 1 / -2; }
@@ -1086,6 +1092,11 @@ a:hover { text-decoration: underline; }
 @media (max-width: 600px) {
   .kb-row { grid-template-columns: 1fr 36px; }
   .kb-row .svc-price { grid-column: 1 / -2; }
+  .kb-row-service { grid-template-columns: 1fr 36px; }
+  .kb-row-service .svc-price,
+  .kb-row-service .svc-mode,
+  .kb-row-service .svc-duration,
+  .kb-row-service .svc-url { grid-column: 1 / -2; }
   .kb-row-link { grid-template-columns: 1fr 36px; }
   .kb-row-link .link-label,
   .kb-row-link .link-url { grid-column: 1 / -2; }

@@ -3,8 +3,10 @@ const { resolveClient, logMessage } = require('../../lib/tenant');
 const { logEvent } = require('../../lib/events');
 const { touchThread } = require('../../lib/inbox');
 const { loadHistory, saveHistory } = require('../../lib/store');
-const { generateReply } = require('../../lib/ai');
+const { generateReply, withAiBudget, buildTimeoutFallback } = require('../../lib/ai');
 const { processInboundActions } = require('../../lib/agent-tools');
+const { loadThreadQualification } = require('../../lib/qualification');
+const { resolveBookingAction } = require('../../lib/service-workflows');
 const { maybeAutoReviewRequest, clearReviewPending } = require('../../lib/review-request');
 const { clearFollowupPending } = require('../../lib/followup');
 const { hasNegativeInboundText } = require('../../lib/review-eligibility');
@@ -21,17 +23,10 @@ const {
 
 const DEFAULT_ACK = 'Merci pour votre message! Nous vous répondrons très bientôt.';
 const OPTED_OUT_MSG = 'Vous êtes désinscrit(e) des textos. Répondez OUI pour vous réabonner, ou appelez-nous directement.';
-const AI_TIMEOUT_MSG = 'Un instant, on vous revient tout de suite.';
 const SUSPENDED_SMS = 'Cette ligne est temporairement inactive. Veuillez appeler le commerce directement ou réessayez plus tard.';
 /** Budget max pour l'IA — Twilio abandonne le webhook ~15s; on garde une marge. */
 const AI_BUDGET_MS = 9000;
-
-function withTimeout(promise, ms) {
-  return Promise.race([
-    promise,
-    new Promise((resolve) => setTimeout(() => resolve(null), ms)),
-  ]);
-}
+const CALENDAR_BUDGET_MS = 4000;
 
 exports.handler = async (event) => {
   let alertTenant = null;
@@ -126,42 +121,108 @@ exports.handler = async (event) => {
     let historyForReview = [];
     let conversationHistory = [];
     let priorAssistantCount = 0;
+    let calendarBooking = undefined;
+    let history = [];
+    let qualificationData = {};
+    let bookingAction = null;
     if (body && dossier) {
-      const history = await loadHistory(key, tenantId, from);
+      history = await loadHistory(key, tenantId, from);
       historyForReview = history;
       conversationHistory = history;
       priorAssistantCount = history.filter((m) => m.role === 'assistant').length;
       history.push({ role: 'user', content: body });
+      if (tenantId && client && client.tenant) {
+        qualificationData = await loadThreadQualification(tenantId, from).catch(() => ({}));
+        const { hasConnectedCalendar } = require('../../lib/calendar');
+        const calendarConnected = await hasConnectedCalendar(tenantId);
+        bookingAction = resolveBookingAction({
+          services: client.tenant.services,
+          userMessage: body,
+          qualificationData,
+          calendarConnected,
+          reservationLinks: client.tenant.reservation_links,
+          reservationUrl: client.tenant.reservation_url,
+          tenant: client.tenant,
+        });
+      }
       try {
-        reply = await withTimeout(
-          generateReply(dossier, history.slice(0, -1), body, tenantId),
+        reply = await withAiBudget(
+          generateReply(dossier, history.slice(0, -1), body, tenantId, {
+            bookingAction,
+            qualificationData,
+          }),
           AI_BUDGET_MS,
         );
         if (!reply) timedOut = true;
       } catch (e) {
         console.error('generateReply', e.message);
         reply = null;
+        timedOut = true;
       }
-      if (reply) {
-        history.push({ role: 'assistant', content: reply });
-        await saveHistory(key, history, tenantId, from);
+      if (!reply) {
+        reply = buildTimeoutFallback({
+          tenant: client && client.tenant,
+          dossier,
+          userMessage: body,
+          priorAssistantCount,
+        });
+      }
+
+      if (client && client.tenant) {
+        try {
+          const {
+            maybeCreateCalendarEventWithBudget,
+            applyCalendarConfirmationToReply,
+            hasConnectedCalendar,
+          } = require('../../lib/calendar');
+          if (timedOut) {
+            calendarBooking = { skipped: 'timeout', action: bookingAction };
+          } else if (bookingAction && !bookingAction.create) {
+            calendarBooking = { skipped: bookingAction.action, action: bookingAction };
+          } else if (await hasConnectedCalendar(tenantId)) {
+            calendarBooking = await maybeCreateCalendarEventWithBudget({
+              tenant: client.tenant,
+              callerPhone: from,
+              userMessage: body,
+              aiReply: reply,
+              history: conversationHistory,
+              qualificationData,
+              bookingAction,
+            }, CALENDAR_BUDGET_MS);
+          } else {
+            calendarBooking = null;
+          }
+          const adj = applyCalendarConfirmationToReply({
+            reply,
+            tenant: client.tenant,
+            booking: calendarBooking,
+            userMessage: body,
+            aiReply: reply,
+            bookingAction,
+            durationMin: bookingAction && bookingAction.durationMin,
+          });
+          reply = adj.reply;
+        } catch (calErr) {
+          console.warn('sms calendar', calErr.message);
+          calendarBooking = { skipped: 'error', error: calErr.message };
+        }
       }
     }
 
     if (!reply) {
-      if (timedOut && priorAssistantCount > 0) {
-        // En cours de fil : ne pas renvoyer le message d'accueil hors contexte
-        reply = AI_TIMEOUT_MSG;
-      } else {
-        reply = (client && client.tenant && client.tenant.welcome_sms)
-          || (dossier && dossier.scripts && dossier.scripts.accueil)
-          || DEFAULT_ACK;
-      }
+      reply = (client && client.tenant && client.tenant.welcome_sms)
+        || (dossier && dossier.scripts && dossier.scripts.accueil)
+        || DEFAULT_ACK;
     }
 
     // Footer ARRET sur la 1re réponse auto du fil (LCAP)
     if (priorAssistantCount === 0 && client && client.tenant) {
       reply = appendPromoFooter(reply, client.tenant.business_name);
+    }
+
+    if (body && dossier && history.length) {
+      history.push({ role: 'assistant', content: reply });
+      await saveHistory(key, history, tenantId, from);
     }
 
     if (tenantId) {
@@ -170,6 +231,7 @@ exports.handler = async (event) => {
         body: reply.slice(0, 160),
         auto: true,
         ai: !!process.env.OPENAI_API_KEY,
+        timed_out: timedOut,
       });
       if (body && client.tenant) {
         processInboundActions({
@@ -178,6 +240,7 @@ exports.handler = async (event) => {
           userMessage: body,
           aiReply: reply,
           history: conversationHistory,
+          calendarBooking,
         }).catch((e) => console.error('agent-tools', e.message));
         maybeAutoReviewRequest({
           tenant: client.tenant,

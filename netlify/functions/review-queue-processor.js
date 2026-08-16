@@ -1,7 +1,9 @@
 const { processDueReviewRequests } = require('../../lib/review-request');
 const { processDueFollowups } = require('../../lib/followup');
+const { authorizeCron, cronUnauthorized, withCronSecret } = require('../../lib/cron-auth');
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  if (!authorizeCron(withCronSecret(event))) return cronUnauthorized();
   try {
     const reviews = await processDueReviewRequests();
     const followups = await processDueFollowups();

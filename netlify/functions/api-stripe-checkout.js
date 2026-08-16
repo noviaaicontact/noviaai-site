@@ -1,6 +1,6 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { resolveTenantContext } = require('../../lib/tenant-context');
-const { createCheckoutSession, PLANS } = require('../../lib/stripe');
+const { createCheckoutSession, dbPatchAfterCheckoutCreate, PLANS } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { normalizePlan } = require('../../lib/plans');
 
@@ -30,19 +30,24 @@ exports.handler = async (event) => {
 
     {
       const db = getAdmin();
-      const patch = {
-        plan: normalizePlan(plan),
-        updated_at: new Date().toISOString(),
-      };
-      if (customerId && customerId !== tenant.stripe_customer_id) {
-        patch.stripe_customer_id = customerId;
+      const patch = dbPatchAfterCheckoutCreate(tenant, customerId);
+      if (Object.keys(patch).length) {
+        await db.from('tenants').update(patch).eq('id', tenant.id);
       }
-      await db.from('tenants').update(patch).eq('id', tenant.id);
     }
 
     return json(200, { url });
   } catch (e) {
     console.error('stripe-checkout', e);
+    try {
+      const { notifyAdminClientError } = require('../../lib/admin-alert');
+      await notifyAdminClientError({
+        area: 'checkout',
+        error: e,
+        tenant: ctx.tenant,
+        maxPerHour: 5,
+      });
+    } catch (_) { /* ignore */ }
     return json(500, { error: e.message || 'Impossible de créer la session Stripe' });
   }
 };

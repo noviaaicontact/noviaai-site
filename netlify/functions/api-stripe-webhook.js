@@ -1,4 +1,4 @@
-const { getStripe, createPortalSession } = require('../../lib/stripe');
+const { getStripe, createPortalSession, tenantPatchFromCheckoutSession } = require('../../lib/stripe');
 const { getAdmin } = require('../../lib/db');
 const { provisionTenant, suspendTenant } = require('../../lib/provision');
 const { sendTrialEndingEmail, sendPaymentFailedEmail, sendPaymentReceiptEmail } = require('../../lib/email');
@@ -75,22 +75,20 @@ exports.handler = async (event) => {
         const tenantId = session.metadata && session.metadata.tenant_id;
         if (tenantId) {
           let subStatus = 'active';
-          const patch = {
-            stripe_customer_id: session.customer,
-            stripe_subscription_id: session.subscription,
-            plan: normalizePlan((session.metadata && session.metadata.plan) || 'croissance'),
-          };
+          let trialEnds = null;
           if (session.subscription) {
             try {
               const sub = await stripe.subscriptions.retrieve(session.subscription);
               subStatus = statusFromSub(sub);
-              const trialEnds = trialEndsFromSub(sub);
-              if (trialEnds) patch.trial_ends_at = trialEnds;
+              trialEnds = trialEndsFromSub(sub);
             } catch (e) {
               console.warn('webhook subscription retrieve', e.message);
             }
           }
-          patch.subscription_status = subStatus;
+          const patch = tenantPatchFromCheckoutSession(session, {
+            subscriptionStatus: subStatus,
+            trialEnds,
+          });
           await db.from('tenants').update(patch).eq('id', tenantId);
           await provisionTenant(tenantId);
         }
@@ -197,6 +195,22 @@ exports.handler = async (event) => {
             });
           } catch (e) {
             console.warn('payment_failed email', e.message);
+          }
+          try {
+            const { notifyAdminClientError } = require('../../lib/admin-alert');
+            await notifyAdminClientError({
+              area: 'paiement',
+              error: 'Échec de paiement Stripe — compte suspendu (numéro conservé)',
+              tenant: tenants[0],
+              extra: {
+                invoice: invoice.id,
+                amount: amountLabelFromInvoice(invoice, tenants[0].plan),
+                plan: planLabel(tenants[0].plan),
+              },
+              maxPerHour: 5,
+            });
+          } catch (e) {
+            console.warn('payment_failed admin alert', e.message);
           }
         }
         break;

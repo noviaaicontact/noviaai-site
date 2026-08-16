@@ -324,8 +324,8 @@ function showStep(n) {
 }
 
 // Brouillon local : le tenant n'est enregistré qu'à la soumission finale
-// (formToTenantPayload force onboarding_done), donc sans ça une inscription
-// interrompue repart d'un formulaire vide.
+// (le serveur refuse l'activation si la validation échoue), donc sans ça
+// une inscription interrompue repart d'un formulaire vide.
 const DRAFT_KEY = 'novia_onboarding_draft';
 const DRAFT_TEXT_FIELDS = [
   'business_name', 'city', 'business_phone', 'area_code', 'business_type', 'agent_name',

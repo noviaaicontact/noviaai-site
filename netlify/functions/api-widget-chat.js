@@ -3,12 +3,17 @@ const { getTenantByWidgetId, webCallerId } = require('../../lib/widget');
 const { rowToDossier } = require('../../lib/dossier-builder');
 const { convoKey } = require('../../lib/twilio-util');
 const { loadHistory, saveHistory } = require('../../lib/store');
-const { generateReply } = require('../../lib/ai');
+const { generateReply, withAiBudget, buildTimeoutFallback } = require('../../lib/ai');
 const { logMessage } = require('../../lib/tenant');
 const { logEvent } = require('../../lib/events');
 const { touchThread } = require('../../lib/inbox');
 const { processInboundActions } = require('../../lib/agent-tools');
 const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
+const { loadThreadQualification } = require('../../lib/qualification');
+const { resolveBookingAction } = require('../../lib/service-workflows');
+
+const AI_BUDGET_MS = 9000;
+const CALENDAR_BUDGET_MS = 4000;
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -45,13 +50,78 @@ exports.handler = async (event) => {
     await touchThread(tenant.id, callerPhone, message, 'open');
 
     const history = await loadHistory(key, tenant.id, callerPhone);
+    const priorAssistantCount = history.filter((m) => m.role === 'assistant').length;
     history.push({ role: 'user', content: message });
-    let reply = await generateReply(dossier, history.slice(0, -1), message, tenant.id);
-
+    const qualificationData = await loadThreadQualification(tenant.id, callerPhone).catch(() => ({}));
+    const { hasConnectedCalendar } = require('../../lib/calendar');
+    const calendarConnected = await hasConnectedCalendar(tenant.id);
+    const bookingAction = resolveBookingAction({
+      services: tenant.services,
+      userMessage: message,
+      qualificationData,
+      calendarConnected,
+      reservationLinks: tenant.reservation_links,
+      reservationUrl: tenant.reservation_url,
+      tenant,
+    });
+    let timedOut = false;
+    let reply = null;
+    try {
+      reply = await withAiBudget(
+        generateReply(dossier, history.slice(0, -1), message, tenant.id, {
+          bookingAction,
+          qualificationData,
+        }),
+        AI_BUDGET_MS,
+      );
+      if (!reply) timedOut = true;
+    } catch (e) {
+      console.error('widget generateReply', e.message);
+      timedOut = true;
+    }
     if (!reply) {
-      reply = tenant.welcome_sms
-        || (dossier.scripts && dossier.scripts.accueil)
-        || 'Merci pour votre message! Nous vous répondrons très bientôt.';
+      reply = buildTimeoutFallback({
+        tenant,
+        dossier,
+        userMessage: message,
+        priorAssistantCount,
+      });
+    }
+
+    let calendarBooking = null;
+    try {
+      const {
+        maybeCreateCalendarEventWithBudget,
+        applyCalendarConfirmationToReply,
+      } = require('../../lib/calendar');
+      if (timedOut) {
+        calendarBooking = { skipped: 'timeout', action: bookingAction };
+      } else if (bookingAction && !bookingAction.create) {
+        calendarBooking = { skipped: bookingAction.action, action: bookingAction };
+      } else if (calendarConnected) {
+        calendarBooking = await maybeCreateCalendarEventWithBudget({
+          tenant,
+          callerPhone,
+          userMessage: message,
+          aiReply: reply,
+          history,
+          qualificationData,
+          bookingAction,
+        }, CALENDAR_BUDGET_MS);
+      }
+      const adj = applyCalendarConfirmationToReply({
+        reply,
+        tenant,
+        booking: calendarBooking,
+        userMessage: message,
+        aiReply: reply,
+        bookingAction,
+        durationMin: bookingAction && bookingAction.durationMin,
+      });
+      reply = adj.reply;
+    } catch (calErr) {
+      console.warn('widget calendar', calErr.message);
+      calendarBooking = { skipped: 'error', error: calErr.message };
     }
 
     history.push({ role: 'assistant', content: reply });
@@ -61,6 +131,7 @@ exports.handler = async (event) => {
       body: reply.slice(0, 160),
       channel: 'web',
       ai: true,
+      timed_out: timedOut,
     });
     await touchThread(tenant.id, callerPhone, reply, 'open');
 
@@ -69,6 +140,8 @@ exports.handler = async (event) => {
       callerPhone,
       userMessage: message,
       aiReply: reply,
+      history,
+      calendarBooking,
     }).catch((e) => console.error('widget agent-tools', e.message));
 
     return json(200, { reply });

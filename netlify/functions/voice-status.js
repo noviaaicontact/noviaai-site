@@ -42,6 +42,21 @@ exports.handler = async (event) => {
         code: e.code,
         message: e.message,
       });
+      try {
+        const { notifyAdminClientError } = require('../../lib/admin-alert');
+        const client = await resolveClient(twilioNumber).catch(() => null);
+        await notifyAdminClientError({
+          area: 'textback',
+          error: e,
+          tenant: client?.tenant || null,
+          extra: {
+            twilioNumber,
+            callerNumber,
+            status,
+            code: e.code || null,
+          },
+        });
+      } catch (_) { /* ignore */ }
     }
 
     const base = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');

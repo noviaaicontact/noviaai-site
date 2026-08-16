@@ -27,8 +27,17 @@ exports.handler = async (event) => {
       recordingUrl,
       recordingSid,
       durationSec: duration,
+    }).then(() => client).catch(async (e) => {
+      console.error('voice-recording', e.message);
+      const { notifyAdminClientError } = require('../../lib/admin-alert');
+      await notifyAdminClientError({
+        area: 'messagerie',
+        error: e,
+        tenant: client.tenant,
+        extra: { callerNumber, twilioNumber, recordingSid },
+      });
     });
-  }).catch((e) => console.error('voice-recording', e.message));
+  }).catch((e) => console.error('voice-recording resolve', e.message));
 
   return xmlResponse('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
 };

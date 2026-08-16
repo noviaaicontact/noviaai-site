@@ -87,21 +87,53 @@ exports.handler = async (event) => {
         const history = Array.isArray(body.history) ? body.history.slice(-10) : [];
         const retrieval = await testRetrieval(tenant.id, question);
         const dossier = rowToDossier(tenant);
-        const reply = await generateReply(dossier, history, question, tenant.id);
+        const { hasConnectedCalendar, maybeCreateCalendarEvent, applyCalendarConfirmationToReply } = require('../../lib/calendar');
+        const { resolveBookingAction } = require('../../lib/service-workflows');
+        const calendarConnected = await hasConnectedCalendar(tenant.id);
+        const bookingAction = resolveBookingAction({
+          services: tenant.services,
+          userMessage: question,
+          qualificationData: {},
+          calendarConnected,
+          reservationLinks: tenant.reservation_links,
+          reservationUrl: tenant.reservation_url,
+          tenant,
+        });
+        const reply = await generateReply(dossier, history, question, tenant.id, { bookingAction });
         let calendar = null;
+        let booked = null;
         try {
-          const { maybeCreateCalendarEvent } = require('../../lib/calendar');
-          const booked = await maybeCreateCalendarEvent({
-            tenant,
-            callerPhone: 'test:agent',
-            userMessage: question,
-            aiReply: reply,
-            history,
-            qualificationData: {},
-          });
+          if (bookingAction.create) {
+            booked = await maybeCreateCalendarEvent({
+              tenant,
+              callerPhone: 'test:agent',
+              userMessage: question,
+              aiReply: reply,
+              history,
+              qualificationData: {},
+              bookingAction,
+            });
+          } else {
+            booked = { skipped: bookingAction.action, action: bookingAction };
+          }
           if (booked && booked.ok) {
             calendar = { created: true, start: booked.slot.start, end: booked.slot.end };
           }
+          const adj = applyCalendarConfirmationToReply({
+            reply: reply || '',
+            tenant,
+            booking: booked,
+            userMessage: question,
+            aiReply: reply,
+            bookingAction,
+            durationMin: bookingAction.durationMin,
+          });
+          return json(200, {
+            hits: retrieval.hits,
+            reply: adj.reply || reply || null,
+            calendar,
+            calendarConfirmed: adj.calendarConfirmed,
+          });
         } catch (calErr) {
           console.warn('api-knowledge calendar', calErr.message);
         }

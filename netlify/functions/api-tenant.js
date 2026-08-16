@@ -1,8 +1,8 @@
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getTenantById, createTenantForUser, updateTenantById } = require('../../lib/tenant');
 const { resolveTenantContext } = require('../../lib/tenant-context');
-const { formToTenantPayload, settingsToTenantPayload, rowToDossier } = require('../../lib/dossier-builder');
-const { normalizePlan, TRIAL_PLAN } = require('../../lib/plans');
+const { formToTenantPayload, settingsToTenantPayload, rowToDossier, validateOnboarding } = require('../../lib/dossier-builder');
+const { TRIAL_PLAN } = require('../../lib/plans');
 const { ensureWidgetPublicId } = require('../../lib/widget');
 const { startHostedRequest } = require('../../lib/hosted-sms');
 const { sendAdminOnboardingCompleteAlert } = require('../../lib/email');
@@ -41,17 +41,27 @@ exports.handler = async (event) => {
           ? settingsToTenantPayload(body, ctx.tenant)
           : null;
       if (!patch) return json(400, { error: 'Requête invalide — utilisez onboarding ou settings: true' });
-      // Pendant l'essai sans abonnement Stripe : forfait verrouillé sur Essentiel.
-      const unpaidTrial = ctx.tenant.subscription_status === 'trialing'
-        && !ctx.tenant.stripe_subscription_id;
-      if (unpaidTrial) {
-        if (body.plan && normalizePlan(body.plan) !== TRIAL_PLAN) {
+      if (body.onboarding) {
+        const check = validateOnboarding({
+          business_name: body.business_name,
+          city: body.city,
+          phone_forward: body.phone_forward || body.business_phone,
+          existing_business_number: body.existing_business_number,
+          line_mode: body.line_mode,
+          area_code: body.area_code,
+          missed_call_sms: body.missed_call_sms,
+          hours: body.hours,
+        });
+        if (!check.ok) {
           return json(400, {
-            error: 'L\'essai gratuit est sur Essentiel. Choisissez Croissance ou Pro à l\'activation (paiement).',
+            error: check.errors.join(' '),
+            errors: check.errors,
           });
         }
-        patch.plan = TRIAL_PLAN;
+        patch.onboarding_done = true;
       }
+      delete patch.plan;
+      delete patch.subscription_status;
       const wasOnboarded = !!ctx.tenant.onboarding_done;
       const updated = await updateTenantById(ctx.tenant.id, patch);
 
@@ -79,6 +89,9 @@ exports.handler = async (event) => {
     return json(405, { error: 'Méthode non supportée' });
   } catch (e) {
     console.error('api-tenant', e);
+    if (e && e.code === 'ONBOARDING_INCOMPLETE') {
+      return json(400, { error: e.message, errors: e.errors || [] });
+    }
     return json(500, { error: e.message || 'Erreur serveur' });
   }
   } catch (e) {

@@ -189,11 +189,48 @@ function collectHours() {
 }
 
 function serviceRowHtml(s, idx) {
-  return `<div class="kb-row" data-idx="${idx}">
+  const mode = s.booking_mode || '';
+  const duration = Number(s.duration_minutes) || 30;
+  const durations = [15, 30, 45, 60, 90, 120, 180, 240];
+  if (!durations.includes(duration)) durations.push(duration);
+  durations.sort((a, b) => a - b);
+  const durationOpts = durations.map((m) =>
+    `<option value="${m}" ${Number(duration) === m ? 'selected' : ''}>${m} min</option>`).join('');
+  return `<div class="kb-row kb-row-service" data-idx="${idx}">
     <input type="text" class="svc-name" placeholder="Nom du service" value="${esc(s.nom || s.description_courte || '')}">
     <input type="text" class="svc-price" placeholder="Prix" value="${esc(s.prix || '')}">
+    <select class="svc-mode" aria-label="Action du service">
+      <option value="" ${!mode ? 'selected' : ''}>Automatique</option>
+      <option value="calendar" ${mode === 'calendar' ? 'selected' : ''}>Agenda Google</option>
+      <option value="estimate" ${mode === 'estimate' ? 'selected' : ''}>Estimation (agenda)</option>
+      <option value="external_link" ${mode === 'external_link' ? 'selected' : ''}>Lien externe</option>
+      <option value="human" ${mode === 'human' ? 'selected' : ''}>Rappel humain</option>
+    </select>
+    <select class="svc-duration" aria-label="Durée">${durationOpts}</select>
+    <input type="url" class="svc-url" placeholder="https://fresha.com/… ou Calendly / Jobber" value="${esc(s.booking_url || '')}">
     <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
   </div>`;
+}
+
+function syncServiceRowFields(row) {
+  if (!row) return;
+  const mode = (row.querySelector('.svc-mode') || {}).value || '';
+  const dur = row.querySelector('.svc-duration');
+  const url = row.querySelector('.svc-url');
+  if (dur) dur.hidden = !(mode === 'calendar' || mode === 'estimate');
+  if (url) url.hidden = mode !== 'external_link';
+}
+
+function bindServiceModeToggles(container) {
+  if (!container) return;
+  container.querySelectorAll('.kb-row-service').forEach((row) => {
+    syncServiceRowFields(row);
+    const sel = row.querySelector('.svc-mode');
+    if (sel && !sel.dataset.bound) {
+      sel.dataset.bound = '1';
+      sel.onchange = () => syncServiceRowFields(row);
+    }
+  });
 }
 
 function renderServices(services) {
@@ -202,14 +239,25 @@ function renderServices(services) {
   const list = Array.isArray(services) && services.length ? services : [{ nom: '', prix: '' }];
   el.innerHTML = list.map((s, i) => serviceRowHtml(s, i)).join('');
   bindRemoveButtons(el);
+  bindServiceModeToggles(el);
 }
 
 function collectServices() {
-  return Array.from(document.querySelectorAll('#servicesList .kb-row')).map((row) => ({
-    nom: row.querySelector('.svc-name').value.trim(),
-    prix: row.querySelector('.svc-price').value.trim(),
-    description_courte: row.querySelector('.svc-name').value.trim(),
-  })).filter((s) => s.nom);
+  return Array.from(document.querySelectorAll('#servicesList .kb-row-service')).map((row) => {
+    const mode = (row.querySelector('.svc-mode') && row.querySelector('.svc-mode').value) || '';
+    const duration = parseInt(row.querySelector('.svc-duration') && row.querySelector('.svc-duration').value, 10) || 30;
+    const url = (row.querySelector('.svc-url') && row.querySelector('.svc-url').value.trim()) || '';
+    const nom = row.querySelector('.svc-name').value.trim();
+    const out = {
+      nom,
+      prix: row.querySelector('.svc-price').value.trim(),
+      description_courte: nom,
+    };
+    if (mode) out.booking_mode = mode;
+    if (mode === 'calendar' || mode === 'estimate') out.duration_minutes = duration;
+    if (mode === 'external_link' && url) out.booking_url = url;
+    return out;
+  }).filter((s) => s.nom);
 }
 
 function faqRowHtml(f, idx) {
@@ -372,8 +420,9 @@ function bindRemoveButtons(container) {
 function addServiceRow() {
   const el = document.getElementById('servicesList');
   if (!el) return false;
-  el.insertAdjacentHTML('beforeend', serviceRowHtml({ nom: '', prix: '' }, el.children.length));
+  el.insertAdjacentHTML('beforeend', serviceRowHtml({ nom: '', prix: '', booking_mode: 'calendar', duration_minutes: 30 }, el.children.length));
   bindRemoveButtons(el);
+  bindServiceModeToggles(el);
   const inputs = el.querySelectorAll('.svc-name');
   const last = inputs[inputs.length - 1];
   if (last) last.focus();
