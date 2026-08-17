@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url);
 const { shouldSendTextback } = require('../lib/voice-callback.js');
 const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
-const { resolveCustomerPhone } = require('../lib/phone-util.js');
+const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
 const { USER_PATCHABLE_FIELDS, pickPatch } = require('../lib/tenant.js');
 const { validateOnboarding, formToTenantPayload, settingsToTenantPayload } = require('../lib/dossier-builder.js');
 const { withAiBudget, buildTimeoutFallback } = require('../lib/ai.js');
@@ -102,6 +102,16 @@ await test('resolveCustomerPhone: public_phone prioritaire', () => {
     phone_forward: '581-909-5332',
   });
   assert.ok(phone.includes('418') || phone.includes('836'));
+});
+
+await test('toE164: ne transforme pas un test widget en faux numéro', () => {
+  assert.strictEqual(toE164('web:w_test_calendar_coupe_mswb1e6i'), null);
+  assert.strictEqual(toE164('test:agent'), null);
+  assert.strictEqual(toE164('+14185551212'), '+14185551212');
+  assert.ok(isTestCaller('web:w_test_human_urgence_abc'));
+  assert.ok(isTestCaller('test:agent'));
+  assert.ok(!isTestCaller('web:client-session-xyz'));
+  assert.ok(!isTestCaller('+14185551212'));
 });
 
 await test('textback: SMS d\'appel manqué inchangé', () => {

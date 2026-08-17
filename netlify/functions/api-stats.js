@@ -2,6 +2,7 @@ const { json, corsHeaders } = require('../../lib/http');
 const { resolveTenantContext } = require('../../lib/tenant-context');
 const { getAdmin } = require('../../lib/db');
 const { getUsageSnapshot } = require('../../lib/usage-limits');
+const { isTestCaller } = require('../../lib/phone-util');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -23,9 +24,10 @@ exports.handler = async (event) => {
     getUsageSnapshot(tenant),
   ]);
 
+  const visibleLeads = (leads.data || []).filter((l) => !isTestCaller(l.caller_phone));
   const msgCount = msgs.count || 0;
   const missedCount = missed.count || 0;
-  const leadCount = tenant.leads_count || (leads.data || []).length;
+  const leadCount = tenant.leads_count || visibleLeads.length;
   const avg = parseFloat(tenant.avg_client_value) || 75;
   const roiLow = Math.round(leadCount * avg * 0.3);
   const roiHigh = Math.round(leadCount * avg);
@@ -43,7 +45,7 @@ exports.handler = async (event) => {
     missed_calls_30d: missedCount,
     leads_total: leadCount,
     roi_estimated: { low: roiLow, high: roiHigh, avg_client_value: avg },
-    leads: leads.data || [],
+    leads: visibleLeads,
     provisioning_status: tenant.provisioning_status,
     twilio_number: tenant.twilio_number,
     // Nouveau compteur principal
