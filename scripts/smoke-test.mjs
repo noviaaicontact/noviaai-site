@@ -40,6 +40,7 @@ const {
   formatServicesForPrompt,
   normalizeServices,
 } = require('../lib/service-workflows.js');
+const { normalizeUrl, shouldSkipCrawlUrl, pathScore } = require('../lib/knowledge.js');
 
 function restoreEnv(name, prev) {
   if (prev === undefined || prev === null) delete process.env[name];
@@ -164,6 +165,19 @@ await test('toE164: ne transforme pas un test widget en faux numéro', () => {
   assert.ok(isTestCaller('test:agent'));
   assert.ok(!isTestCaller('web:client-session-xyz'));
   assert.ok(!isTestCaller('+14185551212'));
+});
+
+await test('crawl: ignore wishlist WooCommerce et canonise l\'URL', () => {
+  const junk = 'https://www.spasetpiscines.com/?add_to_wishlist=50960&_wpnonce=abc';
+  assert.ok(shouldSkipCrawlUrl(junk));
+  assert.ok(shouldSkipCrawlUrl('/?add_to_wishlist=1'));
+  assert.ok(!shouldSkipCrawlUrl('/contact'));
+  assert.ok(!shouldSkipCrawlUrl('https://www.spasetpiscines.com/categorie-produit/produits-chimiques/'));
+  const canon = normalizeUrl(junk, 'https://www.spasetpiscines.com/');
+  assert.ok(canon === 'https://www.spasetpiscines.com' || canon === 'https://www.spasetpiscines.com/');
+  assert.ok(!/\?/.test(canon));
+  assert.ok(pathScore('/categorie-produit/produits-chimiques') > pathScore('/product/owow-101'));
+  assert.ok(pathScore('/contact') > pathScore('/blog/un-article'));
 });
 
 await test('textback: SMS d\'appel manqué inchangé', () => {
