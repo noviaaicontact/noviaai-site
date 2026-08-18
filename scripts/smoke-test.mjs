@@ -11,6 +11,7 @@ const { shouldSendTextback } = require('../lib/voice-callback.js');
 const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
 const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
+const { parseOwnerNotifyDecision, isTrivialInbound, heuristicOwnerNotify } = require('../lib/owner-notify.js');
 const { USER_PATCHABLE_FIELDS, pickPatch } = require('../lib/tenant.js');
 const { validateOnboarding, formToTenantPayload, settingsToTenantPayload } = require('../lib/dossier-builder.js');
 const { withAiBudget, buildTimeoutFallback } = require('../lib/ai.js');
@@ -103,6 +104,56 @@ await test('resolveCustomerPhone: public_phone prioritaire', () => {
     phone_forward: '581-909-5332',
   });
   assert.ok(phone.includes('418') || phone.includes('836'));
+});
+
+await test('owner-notify: JSON et messages triviaux', () => {
+  assert.deepStrictEqual(parseOwnerNotifyDecision('{"notify":true,"kind":"complaint","why":"fâché"}'), {
+    notify: true,
+    kind: 'complaint',
+    why: 'fâché',
+  });
+  assert.strictEqual(parseOwnerNotifyDecision('{"notify":false,"kind":null,"why":"horaire"}').notify, false);
+  assert.ok(isTrivialInbound('Allo'));
+  assert.ok(isTrivialInbound('merci!'));
+  assert.ok(!isTrivialInbound('Je veux une fermeture de piscine'));
+  assert.ok(!isTrivialInbound('Je suis pas content'));
+});
+
+await test('owner-notify: heuristique — payant/mécontent oui, horaire non', () => {
+  const tenant = {
+    services: [
+      { nom: 'Fermeture de piscine', booking_mode: 'human' },
+      { nom: "Analyse d'eau", booking_mode: 'human', notify_owner: false },
+    ],
+  };
+  assert.strictEqual(heuristicOwnerNotify({
+    tenant,
+    userMessage: 'Je veux une fermeture',
+    qualificationData: { service: 'Fermeture de piscine' },
+    intent: { type: 'lead' },
+    complete: false,
+  }).notify, true);
+  assert.strictEqual(heuristicOwnerNotify({
+    tenant,
+    userMessage: "Je suis pas content",
+    qualificationData: {},
+    intent: { type: 'human_transfer', reason: 'complaint' },
+    complete: false,
+  }).notify, true);
+  assert.strictEqual(heuristicOwnerNotify({
+    tenant,
+    userMessage: 'Pouvez-vous me rappeler pour vos heures?',
+    qualificationData: {},
+    intent: { type: 'human_transfer', reason: 'callback' },
+    complete: false,
+  }).notify, false);
+  assert.strictEqual(heuristicOwnerNotify({
+    tenant,
+    userMessage: "C'est quoi l'adresse?",
+    qualificationData: {},
+    intent: null,
+    complete: false,
+  }).notify, false);
 });
 
 await test('toE164: ne transforme pas un test widget en faux numéro', () => {
