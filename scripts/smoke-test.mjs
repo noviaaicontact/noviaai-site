@@ -12,6 +12,7 @@ const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
 const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
 const { parseOwnerNotifyDecision, isTrivialInbound, heuristicOwnerNotify } = require('../lib/owner-notify.js');
+const { parseCoachDecision, mergeInstructions, mergeServices } = require('../lib/agent-coach.js');
 const { USER_PATCHABLE_FIELDS, pickPatch } = require('../lib/tenant.js');
 const { validateOnboarding, formToTenantPayload, settingsToTenantPayload } = require('../lib/dossier-builder.js');
 const { withAiBudget, buildTimeoutFallback } = require('../lib/ai.js');
@@ -178,6 +179,25 @@ await test('crawl: ignore wishlist WooCommerce et canonise l\'URL', () => {
   assert.ok(!/\?/.test(canon));
   assert.ok(pathScore('/categorie-produit/produits-chimiques') > pathScore('/product/owow-101'));
   assert.ok(pathScore('/contact') > pathScore('/blog/un-article'));
+});
+
+await test('agent-coach: JSON consignes fusionnées, pas d’écrasement', () => {
+  const parsed = parseCoachDecision('{"reply":"Noté.","instructions_add":"Jamais de prix inventé","favorites_add":[{"label":"Eau","content":"Analyse gratuite"}],"services_upsert":[{"nom":"Fermeture","booking_mode":"human","notify_owner":true}],"links_add":[],"faq_add":[],"workflow":"field_service","public_phone":null,"agent_name":null}');
+  assert.strictEqual(parsed.instructions_add, 'Jamais de prix inventé');
+  assert.strictEqual(parsed.favorites_add[0].content, 'Analyse gratuite');
+  assert.strictEqual(parsed.services_upsert[0].booking_mode, 'human');
+  assert.strictEqual(parsed.workflow, 'field_service');
+  assert.strictEqual(
+    mergeInstructions('Toujours vouvoyer', 'Jamais de prix inventé'),
+    'Toujours vouvoyer\nJamais de prix inventé',
+  );
+  assert.strictEqual(mergeInstructions('Jamais de prix inventé', 'Jamais de prix inventé'), 'Jamais de prix inventé');
+  const services = mergeServices(
+    [{ nom: 'Analyse d’eau', booking_mode: 'human', notify_owner: false }],
+    [{ nom: 'Fermeture', booking_mode: 'human' }, { nom: 'Analyse d’eau', booking_mode: 'human', notify_owner: false }],
+  );
+  assert.ok(services.some((s) => s.nom.includes('Fermeture') && s.booking_mode === 'human'));
+  assert.strictEqual(services.find((s) => /analyse/i.test(s.nom)).notify_owner, false);
 });
 
 await test('textback: SMS d\'appel manqué inchangé', () => {

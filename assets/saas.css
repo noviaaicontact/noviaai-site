@@ -687,6 +687,47 @@ a:hover { text-decoration: underline; }
   padding: 18px 16px;
 }
 
+.agent-coach-block {
+  background: linear-gradient(180deg, #f4fbe8, #fff);
+  border: 1px solid #d7e8a8;
+  border-radius: 14px;
+  padding: 18px 16px;
+}
+.agent-coach-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 12px 0;
+  min-height: 72px;
+}
+.agent-coach-bubble {
+  max-width: 92%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: .9rem;
+  line-height: 1.35;
+}
+.agent-coach-bubble.user {
+  align-self: flex-end;
+  background: var(--navy);
+  color: #fff;
+}
+.agent-coach-bubble.assistant {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.agent-coach-form {
+  display: flex;
+  gap: 8px;
+}
+.agent-coach-form input {
+  flex: 1;
+  min-width: 0;
+}
+
 .agent-save-bar {
   display: flex;
   gap: 12px;

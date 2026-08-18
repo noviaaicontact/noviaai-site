@@ -533,14 +533,6 @@ function populateChatbotForm(t) {
   if (favDetails && Array.isArray(t.agent_favorites) && t.agent_favorites.some((f) => f && f.content)) {
     favDetails.open = true;
   }
-  const adv = document.getElementById('agentAdvanced');
-  if (adv) {
-    const hasExtra = (Array.isArray(t.services) && t.services.length)
-      || (Array.isArray(t.faq) && t.faq.length)
-      || (Array.isArray(t.policies) && t.policies.length)
-      || !!(t.address_line || t.city);
-    if (hasExtra) adv.open = true;
-  }
   if (!_demo) loadKnowledgeSources();
   if (typeof _refreshTestWelcome === 'function') _refreshTestWelcome();
 }
@@ -667,6 +659,98 @@ function bindUiClicks() {
   });
 }
 
+function applyCoachTenant(t) {
+  if (!t) return;
+  _tenant = t;
+  const set = (id, val) => {
+    const node = document.getElementById(id);
+    if (node && val != null) node.value = val;
+  };
+  set('setAgentInstructions', t.agent_instructions || '');
+  if (t.public_phone) set('setPublicPhone', t.public_phone);
+  if (t.agent_name) set('setAgentName', t.agent_name);
+  if (Array.isArray(t.agent_favorites)) renderFavorites(t.agent_favorites);
+  if (Array.isArray(t.services)) renderServices(t.services);
+  if (Array.isArray(t.faq)) renderFaq(t.faq);
+  if (t.qualification_workflow) setSelectedWorkflow(t.qualification_workflow);
+  renderReservationLinks(normalizeLinksFromTenant(t));
+}
+
+function bindCoachChat() {
+  const input = document.getElementById('coachInput');
+  const btn = document.getElementById('btnCoachSend');
+  const box = document.getElementById('coachMsgs');
+  if (!input || !btn || !box || box.dataset.bound === '1') return;
+  box.dataset.bound = '1';
+
+  let history = [];
+  let sending = false;
+
+  function appendBubble(role, text) {
+    const el = document.createElement('div');
+    el.className = `agent-coach-bubble ${role}`;
+    el.textContent = text;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+    return el;
+  }
+
+  if (!box.childElementCount) {
+    appendBubble('assistant', 'Dis-moi comment ça marche chez vous. Ex. : une coupe se booke sur Fresha, une réparation on rappelle, l’analyse d’eau c’est gratuit en magasin…');
+  }
+
+  async function sendCoach() {
+    const text = input.value.trim();
+    if (!text || sending || _demo) return;
+    sending = true;
+    input.value = '';
+    appendBubble('user', text);
+    const typing = appendBubble('assistant', '…');
+    const savedEl = document.getElementById('coachSaved');
+    if (savedEl) savedEl.hidden = true;
+    try {
+      const res = await NoviaApp.api('api-knowledge', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'coach', message: text, history }),
+      });
+      typing.remove();
+      if (res.error) throw new Error(res.error);
+      const reply = res.reply || 'C’est noté.';
+      appendBubble('assistant', reply);
+      history = history.concat([
+        { role: 'user', content: text },
+        { role: 'assistant', content: reply },
+      ]).slice(-8);
+      if (res.tenant) applyCoachTenant(res.tenant);
+      if (res.saved && savedEl) {
+        savedEl.textContent = (res.applied && res.applied.length)
+          ? `Enregistré (${res.applied.join(', ')})`
+          : 'Enregistré';
+        savedEl.hidden = false;
+      }
+    } catch (ex) {
+      typing.remove();
+      appendBubble('assistant', ex.message || 'Erreur — réessaie.');
+    } finally {
+      sending = false;
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    sendCoach();
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      sendCoach();
+    }
+  });
+}
+
 function initChatbotPanel(opts) {
   _demo = !!(opts && opts.demo);
   bindUiClicks();
@@ -684,6 +768,14 @@ function initChatbotPanel(opts) {
       }
       await startWebsiteDeepAnalyze(url);
     };
+  }
+  const websiteInput = document.getElementById('setWebsiteUrl');
+  if (websiteInput) {
+    websiteInput.addEventListener('change', () => {
+      const url = websiteInput.value.trim();
+      if (!url || _demo) return;
+      startWebsiteDeepAnalyze(url);
+    });
   }
 
   const btnImportUrl = document.getElementById('btnImportUrl');
@@ -947,6 +1039,8 @@ function initChatbotPanel(opts) {
     });
   }
 
+  bindCoachChat();
+
   if (document.getElementById('setWelcomeSms')?.value?.trim()) {
     resetTestConvo();
   }
@@ -1027,6 +1121,12 @@ async function startWebsiteDeepAnalyze(url) {
   const btn = document.getElementById('btnAnalyzeWebsite');
   if (btn) btn.disabled = true;
   try {
+    try {
+      await NoviaApp.api('api-tenant', {
+        method: 'PATCH',
+        body: JSON.stringify({ settings: true, website_url: url }),
+      });
+    } catch (_) { /* l'analyse peut quand même partir */ }
     // Préférer l'analyse synchrone pour avoir un résultat clair (timeout Netlify ~26s).
     // Si timeout / erreur → relancer en background.
     let res;

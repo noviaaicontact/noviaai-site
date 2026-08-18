@@ -81,6 +81,15 @@ exports.handler = async (event) => {
         return json(200, result);
       }
 
+      if (action === 'coach') {
+        const message = (body.message || '').trim();
+        if (!message) return json(400, { error: 'Message requis' });
+        const { runAgentCoach } = require('../../lib/agent-coach');
+        const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
+        const result = await runAgentCoach({ tenant, message, history });
+        return json(200, result);
+      }
+
       if (action === 'test') {
         const question = (body.question || '').trim();
         if (!question) return json(400, { error: 'Question requise' });

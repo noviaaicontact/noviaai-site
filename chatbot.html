@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=7">
+<link rel="stylesheet" href="/assets/saas.css?v=8">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -28,132 +28,46 @@
   <main class="dash-main">
     <div class="dash-header">
       <h1>Agent SMS &amp; web</h1>
-      <p class="muted" style="margin:0">Configurez l’essentiel en 5 minutes. Le reste est optionnel.</p>
+      <p class="muted" style="margin:0">Deux minutes : collez le site, dites comment ça marche, testez. Le reste est optionnel.</p>
     </div>
 
     <div class="card">
       <form id="chatbotForm">
 
-        <!-- ═══ 1. ESSENTIEL ═══ -->
         <div class="settings-section">
-          <h3>1 · Identité</h3>
+          <h3>1 · Site web</h3>
+          <p class="muted settings-lead">C’est le cerveau. On lit services, horaires, contact et FAQ tout seuls.</p>
           <div class="settings-grid">
-            <div class="settings-field">
-              <label for="setAgentName">Prénom de l’agent *</label>
-              <input id="setAgentName" required placeholder="Léa" maxlength="40">
-            </div>
-            <div class="settings-field">
-              <label for="setBusinessType">Type de commerce</label>
-              <input id="setBusinessType" placeholder="Ex. salon de coiffure, garage, plombier" maxlength="80">
-            </div>
             <div class="settings-field settings-field-wide">
-              <label>Ton de l’agent</label>
-              <div class="tone-presets" id="tonePresets" role="radiogroup" aria-label="Ton de l’agent">
-                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="chaleureux" checked><span>Chaleureux</span></label>
-                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="professionnel"><span>Professionnel</span></label>
-                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="direct"><span>Direct</span></label>
-                <label class="tone-preset"><input type="radio" name="agentTonePreset" value="custom"><span>Perso</span></label>
+              <label for="setWebsiteUrl">Adresse du site</label>
+              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+                <button type="button" class="btn btn-ghost btn-sm" id="btnAnalyzeWebsite">Analyser le site</button>
               </div>
-              <input id="setAgentTone" class="tone-custom-input" hidden placeholder="Décrivez le ton souhaité" maxlength="200">
+              <p id="websiteAnalyzeStatus" class="muted" style="font-size:.82rem;margin:8px 0 0;display:none"></p>
             </div>
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <h3>2 · Type de demandes</h3>
-          <p class="muted settings-lead">Ça détermine ce que l’agent demande aux clients.</p>
-          <div class="workflow-cards" id="workflowCards" role="radiogroup" aria-label="Type de demandes">
-            <label class="workflow-card">
-              <input type="radio" name="qualWorkflow" value="appointment">
-              <span class="workflow-card-body">
-                <strong>Sur rendez-vous</strong>
-                <em>Salon, clinique, spa, services professionnels</em>
-              </span>
-            </label>
-            <label class="workflow-card">
-              <input type="radio" name="qualWorkflow" value="field_service">
-              <span class="workflow-card-body">
-                <strong>Service sur place</strong>
-                <em>Plombier, garage, construction, dépannage</em>
-              </span>
-            </label>
-          </div>
-          <div class="qual-simple" id="qualificationSimple"></div>
-          <details class="agent-details" id="qualAdvancedDetails">
-            <summary>Ajuster les infos à collecter</summary>
-            <p class="muted" style="font-size:.85rem;margin:10px 0 12px">Cochez ce que l’agent doit demander. Laissez les réglages par défaut si vous hésitez.</p>
-            <div id="qualificationFieldsList" class="qual-fields-grid"></div>
-          </details>
-        </div>
-
-        <div class="settings-section">
-          <h3>3 · Messages</h3>
-          <div class="settings-grid">
-            <div class="settings-field settings-field-wide msg-channel-card">
-              <div class="msg-channel-head">
-                <span class="msg-channel-badge sms">SMS · Prioritaire</span>
-                <label for="setMissedSms">Premier texto après un appel manqué</label>
-              </div>
-              <textarea id="setMissedSms" rows="3" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. Nous avons manqué votre appel. Comment puis-je vous aider?"></textarea>
-              <small class="settings-hint">Envoyé tel quel quand quelqu’un appelle sans réponse.</small>
-            </div>
-            <div class="settings-field settings-field-wide msg-channel-card">
-              <div class="msg-channel-head">
-                <span class="msg-channel-badge web">Site web</span>
-                <label for="setWelcomeSms">Message d’accueil du chat</label>
-              </div>
-              <textarea id="setWelcomeSms" rows="2" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
-              <small class="settings-hint">Première bulle du widget sur votre site.</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <h3>4 · Contact &amp; liens</h3>
-          <div class="settings-grid">
             <div class="settings-field">
               <label for="setPublicPhone">Téléphone à donner aux clients</label>
               <input id="setPublicPhone" type="tel" placeholder="418-555-1234" autocomplete="tel">
             </div>
-            <div class="settings-field settings-field-wide">
-              <label for="setWebsiteUrl">Site web de votre commerce *</label>
-              <input id="setWebsiteUrl" type="url" placeholder="https://votre-commerce.ca">
-              <small class="settings-hint">Priorité #1 : à l’enregistrement, l’agent analyse tout le site (services, prix, contact, FAQ, à propos…) pour répondre comme votre équipe.</small>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
-                <button type="button" class="btn btn-ghost btn-sm" id="btnAnalyzeWebsite">Réanalyser le site maintenant</button>
-              </div>
-              <p id="websiteAnalyzeStatus" class="muted" style="font-size:.82rem;margin:8px 0 0;display:none"></p>
-            </div>
-            <div class="settings-field settings-field-wide">
-              <label>Liens de réservation ou de soumission</label>
-              <div id="reservationLinksList"></div>
-              <button type="button" class="btn btn-ghost btn-sm" id="btnAddReservationLink" style="margin-top:8px">+ Ajouter un lien</button>
-              <small class="settings-hint">L’agent envoie le bon lien selon la demande (ex. Coupe, Soumission…).</small>
-            </div>
           </div>
         </div>
 
-        <div class="settings-section">
-          <h3>5 · Consignes</h3>
-          <p class="muted settings-lead">Ce que l’agent doit toujours savoir ou respecter.</p>
-          <div class="settings-field settings-field-wide">
-            <label for="setAgentInstructions">Consignes importantes</label>
-            <textarea id="setAgentInstructions" rows="3" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit. Mentionner la livraison partout au Québec. Ne jamais parler des concurrents."></textarea>
+        <div class="settings-section agent-coach-block">
+          <h3>2 · Dites comment ça marche</h3>
+          <p class="muted settings-lead">Pas un roman : « une fermeture = on rappelle », « un spa = le lien soumission ». L’agente se construit avec vos services.</p>
+          <div class="agent-coach-msgs" id="coachMsgs" aria-live="polite"></div>
+          <div class="agent-coach-form">
+            <input type="text" id="coachInput" placeholder="Ex. : fermeture = on rappelle, spa = lien soumission, jamais de prix…" maxlength="500" autocomplete="off">
+            <button type="button" class="btn btn-accent btn-sm" id="btnCoachSend">Noter</button>
           </div>
-          <details class="agent-details" id="favoritesDetails">
-            <summary>Infos à retenir (optionnel)</summary>
-            <p class="muted" style="font-size:.85rem;margin:10px 0 12px">Promos, réponses types, détails urgents — l’agent les priorise.</p>
-            <div id="favoritesList"></div>
-            <button type="button" class="btn btn-ghost btn-sm" id="btnAddFavorite" style="margin-top:8px">+ Ajouter</button>
-          </details>
+          <p id="coachSaved" class="muted" hidden style="color:var(--ok);font-weight:600;margin:8px 0 0;font-size:.85rem">Enregistré</p>
         </div>
-
-        <!-- ═══ TEST ═══ -->
         <div class="settings-section kb-tester agent-test-block">
           <div class="client-sim-head" style="margin-bottom:12px">
             <div>
-              <h3 style="margin:0">Tester l’agent</h3>
-              <p class="muted" style="font-size:.88rem;margin:6px 0 0">Parlez comme un client. Enregistrez d’abord pour appliquer vos changements.</p>
+              <h3 style="margin:0">3 · Tester comme un client</h3>
+              <p class="muted" style="font-size:.88rem;margin:6px 0 0">Pas de SMS réel. Les consignes du chat ci-dessus sont déjà enregistrées.</p>
             </div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <label for="kbTestPreview" class="muted" style="font-size:.82rem;margin:0">1re bulle :</label>
@@ -178,6 +92,104 @@
             <div id="kbTestResult" class="kb-test-result" style="margin-top:8px" hidden></div>
           </details>
         </div>
+
+        <details class="agent-advanced" id="agentBasics">
+          <summary>
+            <span>Plus de réglages</span>
+            <em class="muted">Prénom, textos, type de demandes, liens</em>
+          </summary>
+
+          <div class="settings-section" style="margin-top:20px">
+            <h3>Identité</h3>
+            <div class="settings-grid">
+              <div class="settings-field">
+                <label for="setAgentName">Prénom de l’agent *</label>
+                <input id="setAgentName" required placeholder="Léa" maxlength="40">
+              </div>
+              <div class="settings-field">
+                <label for="setBusinessType">Type de commerce</label>
+                <input id="setBusinessType" placeholder="Ex. salon de coiffure, garage, plombier" maxlength="80">
+              </div>
+              <div class="settings-field settings-field-wide">
+                <label>Ton de l’agent</label>
+                <div class="tone-presets" id="tonePresets" role="radiogroup" aria-label="Ton de l’agent">
+                  <label class="tone-preset"><input type="radio" name="agentTonePreset" value="chaleureux" checked><span>Chaleureux</span></label>
+                  <label class="tone-preset"><input type="radio" name="agentTonePreset" value="professionnel"><span>Professionnel</span></label>
+                  <label class="tone-preset"><input type="radio" name="agentTonePreset" value="direct"><span>Direct</span></label>
+                  <label class="tone-preset"><input type="radio" name="agentTonePreset" value="custom"><span>Perso</span></label>
+                </div>
+                <input id="setAgentTone" class="tone-custom-input" hidden placeholder="Décrivez le ton souhaité" maxlength="200">
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Type de demandes</h3>
+            <p class="muted settings-lead">Ça détermine ce que l’agent demande aux clients.</p>
+            <div class="workflow-cards" id="workflowCards" role="radiogroup" aria-label="Type de demandes">
+              <label class="workflow-card">
+                <input type="radio" name="qualWorkflow" value="appointment">
+                <span class="workflow-card-body">
+                  <strong>Sur rendez-vous</strong>
+                  <em>Salon, clinique, spa, services professionnels</em>
+                </span>
+              </label>
+              <label class="workflow-card">
+                <input type="radio" name="qualWorkflow" value="field_service">
+                <span class="workflow-card-body">
+                  <strong>Service sur place</strong>
+                  <em>Plombier, garage, construction, dépannage</em>
+                </span>
+              </label>
+            </div>
+            <div class="qual-simple" id="qualificationSimple"></div>
+            <details class="agent-details" id="qualAdvancedDetails">
+              <summary>Ajuster les infos à collecter</summary>
+              <p class="muted" style="font-size:.85rem;margin:10px 0 12px">Cochez ce que l’agent doit demander. Laissez les réglages par défaut si vous hésitez.</p>
+              <div id="qualificationFieldsList" class="qual-fields-grid"></div>
+            </details>
+          </div>
+
+          <div class="settings-section">
+            <h3>Messages</h3>
+            <div class="settings-grid">
+              <div class="settings-field settings-field-wide msg-channel-card">
+                <div class="msg-channel-head">
+                  <span class="msg-channel-badge sms">SMS · Prioritaire</span>
+                  <label for="setMissedSms">Premier texto après un appel manqué</label>
+                </div>
+                <textarea id="setMissedSms" rows="3" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. Nous avons manqué votre appel. Comment puis-je vous aider?"></textarea>
+              </div>
+              <div class="settings-field settings-field-wide msg-channel-card">
+                <div class="msg-channel-head">
+                  <span class="msg-channel-badge web">Site web</span>
+                  <label for="setWelcomeSms">Message d’accueil du chat</label>
+                </div>
+                <textarea id="setWelcomeSms" rows="2" maxlength="480" placeholder="Bonjour! Ici Léa, de [Commerce]. Comment puis-je vous aider?"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Liens de réservation ou de soumission</h3>
+            <div id="reservationLinksList"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnAddReservationLink" style="margin-top:8px">+ Ajouter un lien</button>
+          </div>
+
+          <div class="settings-section" style="border-bottom:none;padding-bottom:0;margin-bottom:0">
+            <h3>Consignes (texte)</h3>
+            <p class="muted" style="font-size:.85rem;margin:0 0 10px">Le chat ci-dessus écrit ici. Vous pouvez corriger à la main.</p>
+            <div class="settings-field settings-field-wide">
+              <label for="setAgentInstructions">Consignes importantes</label>
+              <textarea id="setAgentInstructions" rows="3" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit."></textarea>
+            </div>
+            <details class="agent-details" id="favoritesDetails">
+              <summary>Infos à retenir (optionnel)</summary>
+              <div id="favoritesList"></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnAddFavorite" style="margin-top:8px">+ Ajouter</button>
+            </details>
+          </div>
+        </details>
 
         <!-- ═══ AVANCÉ ═══ -->
         <details class="agent-advanced" id="agentAdvanced">
@@ -254,7 +266,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=16"></script>
+<script src="/assets/chatbot-kb.js?v=18"></script>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=20"></script>
