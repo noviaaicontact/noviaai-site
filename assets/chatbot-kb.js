@@ -208,6 +208,7 @@ function serviceRowHtml(s, idx) {
     </select>
     <select class="svc-duration" aria-label="Durée">${durationOpts}</select>
     <input type="url" class="svc-url" placeholder="https://fresha.com/… ou Calendly / Jobber" value="${esc(s.booking_url || '')}">
+    <input type="hidden" class="svc-notify-owner" value="${s.notify_owner === false ? '0' : '1'}">
     <button type="button" class="btn btn-ghost btn-sm kb-remove" title="Supprimer">&times;</button>
   </div>`;
 }
@@ -256,6 +257,7 @@ function collectServices() {
     if (mode) out.booking_mode = mode;
     if (mode === 'calendar' || mode === 'estimate') out.duration_minutes = duration;
     if (mode === 'external_link' && url) out.booking_url = url;
+    if ((row.querySelector('.svc-notify-owner') || {}).value === '0') out.notify_owner = false;
     return out;
   }).filter((s) => s.nom);
 }
