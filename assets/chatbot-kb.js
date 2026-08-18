@@ -696,7 +696,7 @@ function bindCoachChat() {
   }
 
   if (!box.childElementCount) {
-    appendBubble('assistant', 'Dis-moi comment ça marche chez vous. Ex. : une coupe se booke sur Fresha, une réparation on rappelle, l’analyse d’eau c’est gratuit en magasin…');
+    appendBubble('assistant', 'Explique-moi comment ça marche chez vous — tout ce que tu veux, d’un coup. J’applique ça à l’agente et j’enregistre (services, consignes, liens).');
   }
 
   async function sendCoach() {
@@ -724,7 +724,7 @@ function bindCoachChat() {
       if (res.tenant) applyCoachTenant(res.tenant);
       if (res.saved && savedEl) {
         savedEl.textContent = (res.applied && res.applied.length)
-          ? `Enregistré (${res.applied.join(', ')})`
+          ? `Enregistré et appliqué (${res.applied.join(', ')})`
           : 'Enregistré';
         savedEl.hidden = false;
       }
@@ -743,7 +743,7 @@ function bindCoachChat() {
     sendCoach();
   });
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       e.stopPropagation();
       sendCoach();

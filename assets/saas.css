@@ -722,10 +722,15 @@ a:hover { text-decoration: underline; }
 .agent-coach-form {
   display: flex;
   gap: 8px;
+  align-items: flex-end;
 }
-.agent-coach-form input {
+.agent-coach-form input,
+.agent-coach-form textarea {
   flex: 1;
   min-width: 0;
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
 }
 
 .agent-save-bar {

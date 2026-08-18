@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent | NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=8">
+<link rel="stylesheet" href="/assets/saas.css?v=9">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -51,12 +51,13 @@
 
         <div class="settings-section agent-coach-block">
           <h3>2 · Dites comment ça marche</h3>
-          <p class="muted settings-lead">Pas un roman : « une fermeture = on rappelle », « un spa = le lien soumission ». L’agente se construit avec vos services.</p>
+          <p class="muted settings-lead">Comme ChatGPT : vous expliquez, l’agente applique et enregistre tout de suite dans son dossier.</p>
           <div class="agent-coach-msgs" id="coachMsgs" aria-live="polite"></div>
           <div class="agent-coach-form">
-            <input type="text" id="coachInput" placeholder="Ex. : fermeture = on rappelle, spa = lien soumission, jamais de prix…" maxlength="500" autocomplete="off">
-            <button type="button" class="btn btn-accent btn-sm" id="btnCoachSend">Noter</button>
+            <textarea id="coachInput" rows="5" maxlength="4000" placeholder="Collez autant que vous voulez : comment ça se passe pour une fermeture, un spa, l’analyse d’eau, qui rappeler, les liens, ce qu’il ne faut jamais dire…"></textarea>
+            <button type="button" class="btn btn-accent btn-sm" id="btnCoachSend">Enregistrer</button>
           </div>
+          <p class="muted" style="font-size:.78rem;margin:6px 0 0">Écrivez autant de phrases que vous voulez. Entrée = nouvelle ligne. Enregistrer (ou Ctrl+Entrée) = exécuter et sauver.</p>
           <p id="coachSaved" class="muted" hidden style="color:var(--ok);font-weight:600;margin:8px 0 0;font-size:.85rem">Enregistré</p>
         </div>
         <div class="settings-section kb-tester agent-test-block">
@@ -267,7 +268,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=18"></script>
+<script src="/assets/chatbot-kb.js?v=20"></script>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=20"></script>
