@@ -28,7 +28,7 @@
   <main class="dash-main">
     <div class="dash-header">
       <h1>Agent SMS &amp; web</h1>
-      <p class="muted" style="margin:0">Deux minutes : collez le site, dites comment ça marche, testez. Le reste est optionnel.</p>
+      <p class="muted" style="margin:0">Collez le site, donnez les consignes à votre agent, testez. Le reste est optionnel.</p>
     </div>
 
     <div class="card">
@@ -50,11 +50,11 @@
         </div>
 
         <div class="settings-section agent-coach-block">
-          <h3>2 · Dites comment ça marche</h3>
-          <p class="muted settings-lead">Comme ChatGPT : vous expliquez, l’agente applique et enregistre tout de suite dans son dossier.</p>
+          <h3>2 · Demandez les consignes à votre agent</h3>
+          <p class="muted settings-lead">Dites-lui comment il devrait répondre à vos clients. Il exécute et enregistre.</p>
           <div class="agent-coach-msgs" id="coachMsgs" aria-live="polite"></div>
           <div class="agent-coach-form">
-            <textarea id="coachInput" rows="5" maxlength="4000" placeholder="Collez autant que vous voulez : comment ça se passe pour une fermeture, un spa, l’analyse d’eau, qui rappeler, les liens, ce qu’il ne faut jamais dire…"></textarea>
+            <textarea id="coachInput" rows="5" maxlength="4000" placeholder="Écrivez vos consignes ici…"></textarea>
             <button type="button" class="btn btn-accent btn-sm" id="btnCoachSend">Enregistrer</button>
           </div>
           <p class="muted" style="font-size:.78rem;margin:6px 0 0">Écrivez autant de phrases que vous voulez. Entrée = nouvelle ligne. Enregistrer (ou Ctrl+Entrée) = exécuter et sauver.</p>
@@ -183,7 +183,7 @@
             <p class="muted" style="font-size:.85rem;margin:0 0 10px">Le chat ci-dessus écrit ici. Vous pouvez corriger à la main.</p>
             <div class="settings-field settings-field-wide">
               <label for="setAgentInstructions">Consignes importantes</label>
-              <textarea id="setAgentInstructions" rows="3" maxlength="2000" placeholder="Ex. : Toujours proposer un devis gratuit."></textarea>
+              <textarea id="setAgentInstructions" rows="3" maxlength="2000" placeholder="Ce que l’agent doit toujours respecter."></textarea>
             </div>
             <details class="agent-details" id="favoritesDetails">
               <summary>Infos à retenir (optionnel)</summary>
@@ -268,7 +268,7 @@
     </div>
   </main>
 </div>
-<script src="/assets/chatbot-kb.js?v=20"></script>
+<script src="/assets/chatbot-kb.js?v=22"></script>
 <script src="/assets/live-sync.js?v=1"></script>
 <script src="/assets/dash-layout.js?v=2"></script>
 <script src="/assets/dashboard-core.js?v=20"></script>

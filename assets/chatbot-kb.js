@@ -696,7 +696,7 @@ function bindCoachChat() {
   }
 
   if (!box.childElementCount) {
-    appendBubble('assistant', 'Explique-moi comment ça marche chez vous — tout ce que tu veux, d’un coup. J’applique ça à l’agente et j’enregistre (services, consignes, liens).');
+    appendBubble('assistant', 'Donne-moi tes consignes : comment je dois répondre à tes clients. J’applique ça et j’enregistre.');
   }
 
   async function sendCoach() {
