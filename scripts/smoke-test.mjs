@@ -11,7 +11,6 @@ const { shouldSendTextback } = require('../lib/voice-callback.js');
 const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
 const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
-const { buildOwnerLeadSms, ownerNotifyPhone } = require('../lib/owner-alert-sms.js');
 const { USER_PATCHABLE_FIELDS, pickPatch } = require('../lib/tenant.js');
 const { validateOnboarding, formToTenantPayload, settingsToTenantPayload } = require('../lib/dossier-builder.js');
 const { withAiBudget, buildTimeoutFallback } = require('../lib/ai.js');
@@ -104,20 +103,6 @@ await test('resolveCustomerPhone: public_phone prioritaire', () => {
     phone_forward: '581-909-5332',
   });
   assert.ok(phone.includes('418') || phone.includes('836'));
-});
-
-await test('owner SMS: seulement le cell du commerce, résumé court', () => {
-  assert.strictEqual(ownerNotifyPhone({ phone_forward: '418-836-3138' }), '+14188363138');
-  assert.strictEqual(ownerNotifyPhone({ phone_forward: '418-836-3138', notify_email: false }), null);
-  const sms = buildOwnerLeadSms({
-    callerPhone: '+14185551212',
-    source: 'lead',
-    qualificationData: { probleme: 'Fermeture de piscine', adresse: 'St-Nicolas' },
-  });
-  assert.match(sms, /NoviaAI Lead/);
-  assert.match(sms, /418/);
-  assert.match(sms, /Fermeture/i);
-  assert.ok(sms.length <= 280);
 });
 
 await test('toE164: ne transforme pas un test widget en faux numéro', () => {

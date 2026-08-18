@@ -37,6 +37,8 @@ const CAS = [
   // Vraies demandes de transfert humain.
   ['Je veux parler à une personne', '', 'appointment', 'human_transfer'],
   ['Pouvez-vous me rappeler svp?', '', 'appointment', 'human_transfer'],
+  ["Je suis pas content, personne m'a rappelé", '', 'field_service', 'human_transfer'],
+  ['C’est inacceptable, je vais laisser un avis', '', 'field_service', 'human_transfer'],
 ];
 
 let echecs = 0;
