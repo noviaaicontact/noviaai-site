@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Découvrez comment NoviaAI peut aider votre entreprise</title>
+<meta name="description" content="Répondez à quelques questions. Ça prend moins de 30 secondes. NoviaAI rattrape les clients qui appellent quand vous ne pouvez pas décrocher.">
+<link rel="canonical" href="https://noviaai.ca/decouvrir">
+<meta name="robots" content="noindex, follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:url" content="https://noviaai.ca/decouvrir">
+<meta property="og:title" content="Découvrez comment NoviaAI peut aider votre entreprise">
+<meta property="og:description" content="Moins de 30 secondes. On vous dit ensuite si NoviaAI peut vous aider.">
+<link rel="stylesheet" href="/assets/landing.css?v=5">
+<link rel="stylesheet" href="/assets/qualification-form.css?v=2">
+<script src="/assets/meta-pixel.js"></script>
+</head>
+<body class="landing qualif-body">
+
+<nav class="landing-nav">
+  <a href="/" class="landing-logo">Novia<span>AI</span></a>
+  <div class="landing-nav-actions">
+    <a href="tel:+15819095332" class="landing-btn landing-btn-ghost landing-btn-sm">581 909-5332</a>
+  </div>
+</nav>
+
+<main class="qualif-main">
+  <div class="qualif-wrap">
+
+    <header class="qualif-head">
+      <h1 class="qualif-h1">Découvrez comment NoviaAI peut aider votre entreprise</h1>
+      <p class="qualif-sub">Répondez à quelques questions. Ça prend moins de 30 secondes.</p>
+    </header>
+
+    <section class="qualif-card" id="formScreen">
+      <form id="captureForm" novalidate>
+
+        <div class="qualif-field">
+          <label class="qualif-label" for="firstName">Prénom</label>
+          <input class="qualif-input" id="firstName" name="firstName" type="text" autocomplete="given-name" maxlength="60" required>
+          <p class="qualif-error" data-error-for="firstName"></p>
+        </div>
+
+        <div class="qualif-field">
+          <label class="qualif-label" for="businessName">Nom de l'entreprise</label>
+          <input class="qualif-input" id="businessName" name="businessName" type="text" autocomplete="organization" maxlength="120" required>
+          <p class="qualif-error" data-error-for="businessName"></p>
+        </div>
+
+        <fieldset class="qualif-field">
+          <legend>Comment recevez-vous principalement vos demandes de clients&nbsp;?</legend>
+          <div class="qualif-choices qualif-choices-stack" role="radiogroup">
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="phone"><span>Téléphone</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="sms"><span>SMS</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="messenger"><span>Messenger</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="instagram"><span>Instagram</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="website_form"><span>Formulaire sur le site</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="booking"><span>Système de réservation</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="several"><span>Plusieurs de ces options</span></label>
+            <label class="qualif-choice"><input type="radio" name="inboundChannel" value="other"><span>Autre</span></label>
+          </div>
+          <p class="qualif-error" data-error-for="inboundChannel"></p>
+        </fieldset>
+
+        <div class="qualif-field">
+          <label class="qualif-label" for="phone">Téléphone</label>
+          <input class="qualif-input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="418 555-1234" required>
+          <p class="qualif-error" data-error-for="phone"></p>
+        </div>
+
+        <div class="qualif-field">
+          <label class="qualif-label" for="email">Courriel</label>
+          <input class="qualif-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" required>
+          <p class="qualif-error" data-error-for="email"></p>
+        </div>
+
+        <label class="qualif-hp" aria-hidden="true">
+          Site web
+          <input type="text" name="siteWeb" tabindex="-1" autocomplete="off">
+        </label>
+
+        <div class="qualif-actions">
+          <button type="submit" class="landing-btn landing-btn-lime landing-btn-block capture-submit" id="submitBtn">Voir comment NoviaAI peut aider mon entreprise</button>
+          <p class="qualif-consent-note">En envoyant, vous acceptez d’être contacté au sujet de NoviaAI. <a href="/confidentialite.html">Confidentialité</a></p>
+          <p class="qualif-formerror" id="formError"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="qualif-card qualif-hidden" id="confirmScreen" aria-live="polite">
+      <div class="qualif-check" aria-hidden="true">✓</div>
+      <h2 class="qualif-confirm-title">Merci ! Votre demande est reçue.</h2>
+      <p class="qualif-confirm-text">Je vais regarder votre demande et voir comment NoviaAI pourrait aider votre entreprise.</p>
+      <a class="landing-btn landing-btn-lime landing-btn-block" id="demoBtn" href="mailto:noviaai.contact@gmail.com?subject=D%C3%A9mo%20NoviaAI">Réserver une courte démo</a>
+    </section>
+
+    <div class="landing-trust qualif-trust">
+      <span>PME du Québec</span>
+      <span>Sans engagement</span>
+      <span>Réponse en français</span>
+    </div>
+
+  </div>
+</main>
+
+<footer class="landing-footer">
+  NoviaAI · Québec ·
+  <a href="tel:+15819095332">581 909-5332</a> ·
+  <a href="mailto:noviaai.contact@gmail.com">noviaai.contact@gmail.com</a> ·
+  <a href="/confidentialite.html">Confidentialité (Loi&nbsp;25)</a>
+</footer>
+
+<script src="/assets/capture-form.js?v=1" defer></script>
+</body>
+</html>

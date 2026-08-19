@@ -34,3 +34,13 @@
 
 [functions."trial-expiry-processor"]
   schedule = "0 6 * * *"
+
+[[redirects]]
+  from = "/go"
+  to = "/decouvrir"
+  status = 301
+
+[[redirects]]
+  from = "/pub"
+  to = "/decouvrir"
+  status = 301

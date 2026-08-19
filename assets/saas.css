@@ -1665,7 +1665,36 @@ footer.site-footer {
   max-width: 360px;
   z-index: 200;
 }
-.admin-toast.err { background: #991b1b; }
+.admin-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.admin-tab {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  font-size: .88rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.admin-tab.is-active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+.admin-lead-status {
+  min-width: 150px;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-size: .82rem;
+}
 
 .admin-modal-backdrop {
   position: fixed;

@@ -14,6 +14,7 @@ exports.handler = async () => {
     publicBaseUrl: process.env.PUBLIC_BASE_URL || '',
     googleCalendarConfigured: !!(process.env.GOOGLE_CALENDAR_CLIENT_ID && process.env.GOOGLE_CALENDAR_CLIENT_SECRET),
     microsoftCalendarConfigured: !!(process.env.MICROSOFT_CALENDAR_CLIENT_ID && process.env.MICROSOFT_CALENDAR_CLIENT_SECRET),
+    demoBookingUrl: process.env.NOVIA_DEMO_BOOKING_URL || '',
     plans: PLANS,
   });
 };

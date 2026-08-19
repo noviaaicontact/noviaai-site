@@ -1,11 +1,12 @@
-// Formulaire de qualification /potentiel — enregistre le prospect et alerte l'équipe.
+// Formulaires prospects NoviaAI : /potentiel (estimation) et /decouvrir (capture pubs).
 const { json, parseJson, corsHeaders } = require('../../lib/http');
 const { getAdmin, isDbConfigured } = require('../../lib/db');
 const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
 const { sendMarketingLeadAlert } = require('../../lib/email');
+const { validateCapture } = require('../../lib/marketing-lead');
 const E = require('../../assets/revenue-estimate');
 
-const UTM_KEYS = ['source', 'medium', 'campaign', 'content', 'term', 'fbclid', 'referrer', 'landing_page'];
+const UTM_KEYS = ['source', 'medium', 'campaign', 'content', 'term', 'fbclid', 'ttclid', 'igshid', 'referrer', 'landing_page'];
 
 function text(v, max) {
   return String(v == null ? '' : v).trim().slice(0, max);
@@ -97,7 +98,9 @@ exports.handler = async (event) => {
   // Honeypot : un robot remplit tous les champs, on répond 200 pour ne rien lui apprendre.
   if (text(body.siteWeb, 200)) return json(200, { ok: true });
 
-  const { errors, lead, estimate } = validate(body);
+  const isCapture = body.formVariant === 'capture';
+  const parsed = isCapture ? validateCapture(body) : validate(body);
+  const { errors, lead, estimate } = parsed;
   if (errors.length) {
     return json(400, { error: `Champs à corriger : ${errors.join(', ')}.` });
   }
@@ -111,7 +114,24 @@ exports.handler = async (event) => {
     return json(500, { error: 'Service indisponible. Réessayez plus tard.' });
   }
 
-  const { error } = await getAdmin().from('marketing_leads').insert(lead);
+  const db = getAdmin();
+
+  // Doublon récent : on confirme quand même, sans créer une 2e fiche.
+  if (isCapture) {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: existing } = await db
+      .from('marketing_leads')
+      .select('id')
+      .eq('email', lead.email)
+      .eq('form_variant', 'capture')
+      .gte('created_at', since)
+      .limit(1);
+    if (existing && existing.length) {
+      return json(200, { ok: true, duplicate: true });
+    }
+  }
+
+  const { error } = await db.from('marketing_leads').insert(lead);
   if (error) {
     console.error('qualification-lead insert', error.message);
     return json(500, { error: 'Enregistrement impossible. Réessayez.' });
@@ -124,5 +144,8 @@ exports.handler = async (event) => {
     console.error('qualification-lead email', e.message);
   }
 
-  return json(200, { ok: true, estimatedMonthly: estimate.monthly });
+  return json(200, {
+    ok: true,
+    estimatedMonthly: estimate ? estimate.monthly : undefined,
+  });
 };

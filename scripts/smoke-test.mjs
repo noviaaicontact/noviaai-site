@@ -42,6 +42,12 @@ const {
   normalizeServices,
 } = require('../lib/service-workflows.js');
 const { normalizeUrl, shouldSkipCrawlUrl, pathScore } = require('../lib/knowledge.js');
+const {
+  validateCapture,
+  resolveSourceChannel,
+  INBOUND_CHANNELS,
+  STATUSES,
+} = require('../lib/marketing-lead.js');
 
 function restoreEnv(name, prev) {
   if (prev === undefined || prev === null) delete process.env[name];
@@ -970,6 +976,53 @@ await test('sécurité: utilisateur normal ne peut pas modifier plan/Stripe/Twil
   assert.ok(rpc.error, 'count_conversations_since aurait dû être refusé à anon');
   const rlsRpc = await anon.rpc('rls_auto_enable');
   assert.ok(rlsRpc.error, 'rls_auto_enable aurait dû être refusé à anon');
+});
+
+await test('capture: formulaire valide', () => {
+  const { errors, lead } = validateCapture({
+    firstName: 'Marie',
+    businessName: 'Institut Éclat',
+    inboundChannel: 'phone',
+    phone: '4185551234',
+    email: 'marie@eclat.ca',
+    utm: { source: 'facebook', medium: 'cpc', campaign: 'esthetique' },
+  });
+  assert.deepStrictEqual(errors, []);
+  assert.strictEqual(lead.first_name, 'Marie');
+  assert.strictEqual(lead.business_name, 'Institut Éclat');
+  assert.strictEqual(lead.phone, '+14185551234');
+  assert.strictEqual(lead.form_variant, 'capture');
+  assert.strictEqual(lead.source_channel, 'meta_ads');
+  assert.strictEqual(lead.status, 'new');
+});
+
+await test('capture: champs manquants / invalides', () => {
+  const empty = validateCapture({});
+  assert.ok(empty.errors.includes('prénom'));
+  assert.ok(empty.errors.includes('entreprise'));
+  assert.ok(empty.errors.includes('courriel'));
+  assert.ok(empty.errors.includes('téléphone'));
+  assert.ok(empty.errors.includes('réception des demandes'));
+  const bad = validateCapture({
+    firstName: '12345',
+    businessName: 'http://spam.example',
+    inboundChannel: 'fax',
+    phone: '555',
+    email: 'test@test.com',
+  });
+  assert.ok(bad.errors.length >= 4);
+});
+
+await test('capture: tracking sources UTM', () => {
+  assert.strictEqual(resolveSourceChannel({ source: 'facebook', medium: 'organic' }), 'facebook');
+  assert.strictEqual(resolveSourceChannel({ source: 'instagram', medium: 'organic' }), 'instagram');
+  assert.strictEqual(resolveSourceChannel({ source: 'tiktok', medium: 'organic' }), 'tiktok');
+  assert.strictEqual(resolveSourceChannel({ source: 'facebook', medium: 'cpc' }), 'meta_ads');
+  assert.strictEqual(resolveSourceChannel({ source: 'instagram', medium: 'paid_social' }), 'meta_ads');
+  assert.strictEqual(resolveSourceChannel({}), 'direct');
+  assert.strictEqual(resolveSourceChannel({ fbclid: 'abc' }), 'facebook');
+  assert.ok(INBOUND_CHANNELS.includes('several'));
+  assert.ok(STATUSES.includes('demo_booked'));
 });
 
 console.log(`\n📊 ${passed} passés, ${failed} échoués\n`);

@@ -403,4 +403,19 @@
   color: var(--muted);
 }
 
-.qualif-trust span::before { color: var(--accent-dark); }
+.qualif-consent-note {
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+}
+
+.qualif-consent-note a { color: var(--navy2); text-decoration: underline; }
+
+.capture-submit {
+  min-height: 52px;
+  white-space: normal;
+  line-height: 1.25;
+  padding: 14px 16px;
+}

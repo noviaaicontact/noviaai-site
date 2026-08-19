@@ -1,8 +1,37 @@
 (function () {
   let tenants = [];
+  let leads = [];
+  let leadLabels = { status: {}, source: {}, inbound: {} };
   let accessToken = '';
+  let currentTab = 'tenants';
 
   const $ = (id) => document.getElementById(id);
+
+  const STATUS_LABELS = {
+    new: 'Nouveau',
+    contacted: 'Contacté',
+    demo_booked: 'Démo planifiée',
+    demo_done: 'Démo effectuée',
+    customer: 'Client',
+    not_interested: 'Pas intéressé',
+  };
+  const SOURCE_LABELS = {
+    facebook: 'Facebook organique',
+    instagram: 'Instagram organique',
+    tiktok: 'TikTok organique',
+    meta_ads: 'Meta Ads',
+    direct: 'Direct',
+  };
+  const INBOUND_LABELS = {
+    phone: 'Téléphone',
+    sms: 'SMS',
+    messenger: 'Messenger',
+    instagram: 'Instagram',
+    website_form: 'Formulaire sur le site',
+    booking: 'Système de réservation',
+    several: 'Plusieurs de ces options',
+    other: 'Autre',
+  };
 
   async function getToken() {
     if (accessToken) return accessToken;
@@ -158,6 +187,134 @@
     }).join('');
   }
 
+  function fmtPhone(p) {
+    const d = String(p || '').replace(/\D/g, '');
+    if (d.length === 11 && d.charAt(0) === '1') {
+      return d.slice(1, 4) + '-' + d.slice(4, 7) + '-' + d.slice(7);
+    }
+    if (d.length === 10) {
+      return d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6);
+    }
+    return p || '—';
+  }
+
+  function sourceLabel(key) {
+    return (leadLabels.source && leadLabels.source[key]) || SOURCE_LABELS[key] || key || 'Direct';
+  }
+
+  function inboundLabel(key) {
+    return (leadLabels.inbound && leadLabels.inbound[key]) || INBOUND_LABELS[key] || key || '—';
+  }
+
+  function statusLabel(key) {
+    return (leadLabels.status && leadLabels.status[key]) || STATUS_LABELS[key] || key || '—';
+  }
+
+  function renderLeadStats(summary) {
+    const el = $('adminLeadStats');
+    if (!el) return;
+    const s = summary || {};
+    const items = [
+      ['Prospects', s.total || 0, ''],
+      ['Nouveaux', s.new || 0, 'trial'],
+      ['7 derniers jours', s.this_week || 0, 'ok'],
+      ['Facebook', s.facebook || 0, ''],
+      ['Instagram', s.instagram || 0, ''],
+      ['TikTok', s.tiktok || 0, ''],
+      ['Meta Ads', s.meta_ads || 0, 'warn'],
+    ];
+    el.innerHTML = items.map(([label, n, kind]) =>
+      `<div class="admin-stat-card${kind ? ' ' + kind : ''}"><div class="n">${n}</div><div class="label">${esc(label)}</div></div>`
+    ).join('');
+  }
+
+  function filteredLeads() {
+    const q = ($('adminLeadSearch')?.value || '').trim().toLowerCase();
+    const status = $('adminLeadFilterStatus')?.value || '';
+    const source = $('adminLeadFilterSource')?.value || '';
+    const form = $('adminLeadFilterForm')?.value;
+    return leads.filter((l) => {
+      if (status && l.status !== status) return false;
+      if (source && l.source_channel !== source) return false;
+      if (form && (l.form_variant || 'potentiel') !== form) return false;
+      if (!q) return true;
+      const hay = [
+        l.first_name, l.last_name, l.business_name, l.email, l.phone,
+        inboundLabel(l.inbound_channel), sourceLabel(l.source_channel),
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function renderLeads() {
+    const body = $('adminLeadTableBody');
+    if (!body) return;
+    const rows = filteredLeads();
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="8" class="muted">Aucun prospect pour ces filtres.</td></tr>';
+      return;
+    }
+    const statusOpts = Object.keys(STATUS_LABELS).map((k) =>
+      `<option value="${k}">${esc(STATUS_LABELS[k])}</option>`
+    ).join('');
+    body.innerHTML = rows.map((l) => {
+      const st = l.status || 'new';
+      return `<tr data-lead-id="${esc(l.id)}">
+        <td><strong>${esc(l.first_name || '—')}</strong></td>
+        <td>${esc(l.business_name || '—')}</td>
+        <td>${esc(inboundLabel(l.inbound_channel))}</td>
+        <td><a href="tel:${esc(l.phone || '')}">${esc(fmtPhone(l.phone))}</a></td>
+        <td><a href="mailto:${esc(l.email || '')}">${esc(l.email || '—')}</a></td>
+        <td>${esc(fmtDate(l.created_at))}</td>
+        <td>${esc(sourceLabel(l.source_channel || 'direct'))}</td>
+        <td>
+          <select class="admin-lead-status" data-action="status" aria-label="Statut">
+            ${statusOpts.replace(`value="${st}"`, `value="${st}" selected`)}
+          </select>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function loadLeads() {
+    const errEl = $('adminLeadLoadErr');
+    if (errEl) errEl.hidden = true;
+    try {
+      const data = await adminApi('api-admin-marketing-leads', { method: 'GET' });
+      leads = data.leads || [];
+      leadLabels = data.labels || leadLabels;
+      renderLeadStats(data.summary);
+      renderLeads();
+    } catch (e) {
+      if (errEl) {
+        errEl.textContent = e.message || 'Erreur chargement';
+        errEl.hidden = false;
+      }
+    }
+  }
+
+  function showTab(tab) {
+    currentTab = tab === 'leads' ? 'leads' : 'tenants';
+    const tenantsView = $('adminTenantsView');
+    const leadsView = $('adminLeadsView');
+    if (tenantsView) tenantsView.hidden = currentTab !== 'tenants';
+    if (leadsView) leadsView.hidden = currentTab !== 'leads';
+    const title = $('adminTitle');
+    if (title) title.textContent = currentTab === 'leads' ? 'Prospects pubs' : 'Inscriptions SaaS';
+    const prepare = $('btnAdminPrepare');
+    if (prepare) prepare.hidden = currentTab !== 'tenants';
+    document.querySelectorAll('.admin-tab').forEach((btn) => {
+      const on = btn.getAttribute('data-tab') === currentTab;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  async function loadAll() {
+    await loadTenants();
+    await loadLeads();
+  }
+
   function showLinkModal(url, businessName) {
     $('adminClaimUrl').value = url;
     $('adminLinkHint').textContent = businessName
@@ -227,6 +384,7 @@
     const emailEl = $('adminUserEmail');
     if (emailEl) emailEl.textContent = email || 'admin';
     await loadTenants();
+    await loadLeads();
   }
 
   async function logout() {
@@ -289,10 +447,18 @@
   });
 
   $('btnAdminLogout')?.addEventListener('click', logout);
-  $('btnAdminRefresh')?.addEventListener('click', () => loadTenants());
+  $('btnAdminRefresh')?.addEventListener('click', () => loadAll());
   $('adminSearch')?.addEventListener('input', renderTable);
   $('adminFilterStatus')?.addEventListener('change', renderTable);
   $('adminFilterLine')?.addEventListener('change', renderTable);
+  $('adminLeadSearch')?.addEventListener('input', renderLeads);
+  $('adminLeadFilterStatus')?.addEventListener('change', renderLeads);
+  $('adminLeadFilterSource')?.addEventListener('change', renderLeads);
+  $('adminLeadFilterForm')?.addEventListener('change', renderLeads);
+
+  document.querySelectorAll('.admin-tab').forEach((btn) => {
+    btn.addEventListener('click', () => showTab(btn.getAttribute('data-tab')));
+  });
 
   $('btnAdminPrepare')?.addEventListener('click', () => {
     $('adminPrepareErr').hidden = true;
@@ -412,6 +578,40 @@
       } catch (ex) {
         toast(ex.message || 'Erreur', true);
       }
+    }
+  });
+
+  $('adminLeadTableBody')?.addEventListener('change', async (e) => {
+    const sel = e.target.closest('select[data-action="status"]');
+    if (!sel) return;
+    const row = sel.closest('tr[data-lead-id]');
+    if (!row) return;
+    const id = row.getAttribute('data-lead-id');
+    const status = sel.value;
+    sel.disabled = true;
+    try {
+      const data = await adminApi('api-admin-marketing-leads', {
+        method: 'PATCH',
+        body: JSON.stringify({ id, status }),
+      });
+      if (data.lead) {
+        leads = leads.map((l) => (l.id === data.lead.id ? data.lead : l));
+        renderLeadStats({
+          total: leads.length,
+          new: leads.filter((x) => x.status === 'new').length,
+          this_week: leads.filter((x) => x.created_at && new Date(x.created_at).getTime() >= Date.now() - 7 * 24 * 60 * 60 * 1000).length,
+          facebook: leads.filter((x) => x.source_channel === 'facebook').length,
+          instagram: leads.filter((x) => x.source_channel === 'instagram').length,
+          tiktok: leads.filter((x) => x.source_channel === 'tiktok').length,
+          meta_ads: leads.filter((x) => x.source_channel === 'meta_ads').length,
+        });
+      }
+      toast('Statut mis à jour.');
+    } catch (ex) {
+      toast(ex.message || 'Erreur statut', true);
+      await loadLeads();
+    } finally {
+      sel.disabled = false;
     }
   });
 

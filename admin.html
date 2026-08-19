@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin NoviaAI</title>
-<link rel="stylesheet" href="/assets/saas.css?v=11">
+<link rel="stylesheet" href="/assets/saas.css?v=12">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/app.js"></script>
 </head>
@@ -27,7 +27,7 @@
   <section class="admin-panel" id="adminPanel" hidden>
     <header class="admin-top">
       <div>
-        <h1>Inscriptions SaaS</h1>
+        <h1 id="adminTitle">Inscriptions SaaS</h1>
         <p class="muted" style="margin:4px 0 0">Connecté · <span id="adminUserEmail">…</span></p>
       </div>
       <div class="admin-top-actions">
@@ -37,6 +37,12 @@
       </div>
     </header>
 
+    <div class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab is-active" data-tab="tenants" role="tab" aria-selected="true">Comptes</button>
+      <button type="button" class="admin-tab" data-tab="leads" role="tab" aria-selected="false">Prospects</button>
+    </div>
+
+    <div id="adminTenantsView">
     <div class="admin-stats" id="adminStats"></div>
 
     <div class="card admin-filters">
@@ -78,6 +84,58 @@
         </table>
       </div>
     </div>
+    </div>
+
+    <div id="adminLeadsView" hidden>
+      <div class="admin-stats" id="adminLeadStats"></div>
+      <div class="card admin-filters">
+        <input type="search" id="adminLeadSearch" placeholder="Rechercher prénom, entreprise, courriel, téléphone…" aria-label="Rechercher un prospect">
+        <select id="adminLeadFilterStatus" aria-label="Filtrer par statut">
+          <option value="">Tous les statuts</option>
+          <option value="new">Nouveau</option>
+          <option value="contacted">Contacté</option>
+          <option value="demo_booked">Démo planifiée</option>
+          <option value="demo_done">Démo effectuée</option>
+          <option value="customer">Client</option>
+          <option value="not_interested">Pas intéressé</option>
+        </select>
+        <select id="adminLeadFilterSource" aria-label="Filtrer par source">
+          <option value="">Toutes les sources</option>
+          <option value="facebook">Facebook organique</option>
+          <option value="instagram">Instagram organique</option>
+          <option value="tiktok">TikTok organique</option>
+          <option value="meta_ads">Meta Ads</option>
+          <option value="direct">Direct</option>
+        </select>
+        <select id="adminLeadFilterForm" aria-label="Filtrer par formulaire">
+          <option value="capture">Pubs / découvrir</option>
+          <option value="potentiel">Estimation /potentiel</option>
+          <option value="">Tous les formulaires</option>
+        </select>
+      </div>
+      <div class="card admin-table-wrap">
+        <p id="adminLeadLoadErr" class="err" hidden></p>
+        <div class="admin-table-scroll">
+          <table class="admin-table" id="adminLeadTable">
+            <thead>
+              <tr>
+                <th>Prénom</th>
+                <th>Entreprise</th>
+                <th>Demandes via</th>
+                <th>Téléphone</th>
+                <th>Courriel</th>
+                <th>Soumis le</th>
+                <th>Source</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody id="adminLeadTableBody">
+              <tr><td colspan="8" class="muted">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <p id="adminToast" class="admin-toast" hidden role="status"></p>
   </section>
@@ -114,6 +172,6 @@
   </div>
 </div>
 
-<script src="/assets/admin.js?v=3"></script>
+<script src="/assets/admin.js?v=4"></script>
 </body>
 </html>
