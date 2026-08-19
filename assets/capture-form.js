@@ -10,7 +10,6 @@
   var submitBtn = document.getElementById('submitBtn');
   var formScreen = document.getElementById('formScreen');
   var confirmScreen = document.getElementById('confirmScreen');
-  var demoBtn = document.getElementById('demoBtn');
 
   form.addEventListener('change', function (e) {
     var input = e.target;
@@ -124,35 +123,6 @@
   // Capture UTM dès l'arrivée, avant que le visiteur recharge sans query.
   attribution();
 
-  function setDemoLink(firstName, business, email) {
-    if (!demoBtn) return;
-    var mailto = 'mailto:noviaai.contact@gmail.com'
-      + '?subject=' + encodeURIComponent('Démo NoviaAI — ' + (business || ''))
-      + '&body=' + encodeURIComponent(
-        'Bonjour,\n\nJe souhaite une courte démo NoviaAI.\n'
-        + 'Prénom : ' + (firstName || '') + '\n'
-        + 'Entreprise : ' + (business || '') + '\n'
-        + 'Courriel : ' + (email || '') + '\n'
-      );
-    demoBtn.href = mailto;
-
-    fetch('/.netlify/functions/api-config')
-      .then(function (res) { return res.json().catch(function () { return {}; }); })
-      .then(function (cfg) {
-        var url = (cfg && cfg.demoBookingUrl) || '';
-        if (!url) return;
-        try {
-          var u = new URL(url, window.location.origin);
-          if (firstName) u.searchParams.set('name', firstName);
-          if (email) u.searchParams.set('email', email);
-          demoBtn.href = u.toString();
-        } catch (e) {
-          demoBtn.href = url;
-        }
-      })
-      .catch(function () { /* mailto déjà en place */ });
-  }
-
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!validate()) return;
@@ -185,7 +155,6 @@
       })
       .then(function () {
         if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead();
-        setDemoLink(payload.firstName, payload.businessName, payload.email);
         formScreen.classList.add('qualif-hidden');
         confirmScreen.classList.remove('qualif-hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
