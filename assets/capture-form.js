@@ -11,6 +11,26 @@
   var formScreen = document.getElementById('formScreen');
   var confirmScreen = document.getElementById('confirmScreen');
 
+  (function applyLanding() {
+    var L = window.NOVIA_LANDING;
+    if (!L) return;
+    if (submitBtn && L.cta) submitBtn.textContent = L.cta;
+    var confirmTitle = document.getElementById('qualifConfirmTitle');
+    var confirmText = document.getElementById('qualifConfirmText');
+    if (confirmTitle && L.confirmTitle) confirmTitle.textContent = L.confirmTitle;
+    if (confirmText && L.confirmText) confirmText.textContent = L.confirmText;
+    var trust = document.getElementById('qualifTrust');
+    if (trust && L.trust && L.trust.length) {
+      trust.innerHTML = L.trust.map(function (t) {
+        return '<span>' + t + '</span>';
+      }).join('');
+    }
+  })();
+
+  if (typeof window.noviaTrackViewContent === 'function') {
+    window.noviaTrackViewContent(window.NOVIA_CAMPAIGN || 'decouvrir');
+  }
+
   form.addEventListener('change', function (e) {
     var input = e.target;
     if (input.type !== 'radio') return;
@@ -131,6 +151,8 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Envoi…';
 
+    var eventId = typeof window.noviaEventId === 'function' ? window.noviaEventId() : '';
+    var cookies = typeof window.noviaPixelCookies === 'function' ? window.noviaPixelCookies() : {};
     var payload = {
       formVariant: 'capture',
       firstName: value('firstName'),
@@ -140,6 +162,9 @@
       email: value('email'),
       siteWeb: value('siteWeb'),
       utm: attribution(),
+      eventId: eventId,
+      fbp: cookies.fbp || '',
+      fbc: cookies.fbc || '',
     };
 
     fetch(API, {
@@ -154,14 +179,15 @@
         });
       })
       .then(function () {
-        if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead();
+        if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead(eventId);
         formScreen.classList.add('qualif-hidden');
         confirmScreen.classList.remove('qualif-hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(function (err) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Voir comment NoviaAI peut aider mon entreprise';
+        submitBtn.textContent = (window.NOVIA_LANDING && window.NOVIA_LANDING.cta)
+          || 'Voir comment NoviaAI peut aider mon entreprise';
         formError.textContent = err.message === 'Failed to fetch'
           ? 'Connexion interrompue. Réessayez.'
           : (err.message || 'Une erreur est survenue. Réessayez.');

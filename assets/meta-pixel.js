@@ -3,7 +3,7 @@
  * Pixel ID public (normal). Ne pas y mettre de secrets.
  */
 (function () {
-  var PIXEL_ID = '3941658129476501';
+  var PIXEL_ID = '1422965575850124';
 
   if (typeof window === 'undefined') return;
   if (window.fbq) {
@@ -31,13 +31,44 @@
   window.fbq('init', PIXEL_ID);
   window.fbq('track', 'PageView');
 
+  window.noviaEventId = function () {
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
+
+  window.noviaPixelCookies = function () {
+    var out = { fbp: '', fbc: '' };
+    try {
+      document.cookie.split(';').forEach(function (part) {
+        var i = part.indexOf('=');
+        if (i < 0) return;
+        var k = part.slice(0, i).trim();
+        var v = part.slice(i + 1).trim();
+        if (k === '_fbp') out.fbp = decodeURIComponent(v);
+        if (k === '_fbc') out.fbc = decodeURIComponent(v);
+      });
+    } catch (e) { /* ignore */ }
+    return out;
+  };
+
   /** Inscription / démarrage essai */
   window.noviaTrackSignup = function () {
     try { window.fbq('track', 'CompleteRegistration'); } catch (e) {}
   };
 
-  /** Clic CTA principal (démo / essai) */
-  window.noviaTrackLead = function () {
-    try { window.fbq('track', 'Lead'); } catch (e) {}
+  window.noviaTrackViewContent = function (name) {
+    try { window.fbq('track', 'ViewContent', { content_name: name || 'decouvrir' }); } catch (e) {}
+  };
+
+  /** Formulaire /decouvrir envoyé — eventID pour dédup CAPI */
+  window.noviaTrackLead = function (eventID) {
+    try {
+      if (eventID) window.fbq('track', 'Lead', { content_name: 'qualification' }, { eventID: eventID });
+      else window.fbq('track', 'Lead');
+    } catch (e) {}
   };
 })();

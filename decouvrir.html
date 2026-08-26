@@ -13,8 +13,27 @@
 <meta property="og:title" content="Découvrez comment NoviaAI peut aider votre entreprise">
 <meta property="og:description" content="Moins de 30 secondes. On vous dit ensuite si NoviaAI peut vous aider.">
 <link rel="stylesheet" href="/assets/landing.css?v=5">
-<link rel="stylesheet" href="/assets/qualification-form.css?v=2">
-<script src="/assets/meta-pixel.js"></script>
+<link rel="stylesheet" href="/assets/qualification-form.css?v=3">
+<script src="/assets/meta-pixel.js?v=2"></script>
+<script>
+(function () {
+  var campaign = '';
+  try { campaign = new URLSearchParams(location.search).get('utm_campaign') || ''; } catch (e) {}
+  window.NOVIA_CAMPAIGN = campaign;
+  if (campaign !== 'plombier') return;
+  document.title = 'Fuite à minuit? NoviaAI rattrape tes jobs.';
+  window.NOVIA_LANDING = {
+    badge: 'Plombiers du Québec',
+    h1: 'Fuite à minuit et personne répond?',
+    sub: 'NoviaAI envoie un texto tout de suite + un agent IA qui qualifie le job. Moins de 30 secondes.',
+    cta: 'Je veux rattraper mes appels manqués',
+    legend: 'Comment tes clients te rejoignent surtout ?',
+    confirmTitle: 'C’est reçu.',
+    confirmText: 'Je vais regarder comment NoviaAI peut rattraper tes appels de plomberie manqués. Essai 14 jours, sans engagement.',
+    trust: ['Essai 14 jours', 'Sans engagement', 'Réponse en français']
+  };
+})();
+</script>
 </head>
 <body class="landing qualif-body">
 
@@ -29,9 +48,24 @@
   <div class="qualif-wrap">
 
     <header class="qualif-head">
-      <h1 class="qualif-h1">Découvrez comment NoviaAI peut aider votre entreprise</h1>
-      <p class="qualif-sub">Répondez à quelques questions. Ça prend moins de 30 secondes.</p>
+      <span class="qualif-badge" id="campaignBadge" hidden></span>
+      <h1 class="qualif-h1" id="qualifH1">Découvrez comment NoviaAI peut aider votre entreprise</h1>
+      <p class="qualif-sub" id="qualifSub">Répondez à quelques questions. Ça prend moins de 30 secondes.</p>
     </header>
+    <script>
+    (function () {
+      var L = window.NOVIA_LANDING;
+      if (!L) return;
+      var badge = document.getElementById('campaignBadge');
+      var h1 = document.getElementById('qualifH1');
+      var sub = document.getElementById('qualifSub');
+      if (badge && L.badge) { badge.hidden = false; badge.textContent = L.badge; }
+      if (h1 && L.h1) h1.textContent = L.h1;
+      if (sub && L.sub) sub.textContent = L.sub;
+      var legend = document.getElementById('inboundLegend');
+      if (legend && L.legend) legend.textContent = L.legend;
+    })();
+    </script>
 
     <section class="qualif-card" id="formScreen">
       <form id="captureForm" novalidate>
@@ -49,7 +83,7 @@
         </div>
 
         <fieldset class="qualif-field">
-          <legend>Comment recevez-vous principalement vos demandes de clients&nbsp;?</legend>
+          <legend id="inboundLegend">Comment recevez-vous principalement vos demandes de clients&nbsp;?</legend>
           <div class="qualif-choices qualif-choices-stack" role="radiogroup">
             <label class="qualif-choice"><input type="radio" name="inboundChannel" value="phone"><span>Téléphone</span></label>
             <label class="qualif-choice"><input type="radio" name="inboundChannel" value="sms"><span>SMS</span></label>
@@ -90,11 +124,11 @@
 
     <section class="qualif-card qualif-hidden" id="confirmScreen" aria-live="polite">
       <div class="qualif-check" aria-hidden="true">✓</div>
-      <h2 class="qualif-confirm-title">Merci ! Votre demande est reçue.</h2>
-      <p class="qualif-confirm-text">Je vais regarder votre demande et voir comment NoviaAI pourrait aider votre entreprise.</p>
+      <h2 class="qualif-confirm-title" id="qualifConfirmTitle">Merci ! Votre demande est reçue.</h2>
+      <p class="qualif-confirm-text" id="qualifConfirmText">Je vais regarder votre demande et voir comment NoviaAI pourrait aider votre entreprise.</p>
     </section>
 
-    <div class="landing-trust qualif-trust">
+    <div class="landing-trust qualif-trust" id="qualifTrust">
       <span>PME du Québec</span>
       <span>Sans engagement</span>
       <span>Réponse en français</span>
@@ -110,6 +144,6 @@
   <a href="/confidentialite.html">Confidentialité (Loi&nbsp;25)</a>
 </footer>
 
-<script src="/assets/capture-form.js?v=2" defer></script>
+<script src="/assets/capture-form.js?v=3" defer></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ const { getAdmin, isDbConfigured } = require('../../lib/db');
 const { checkRateLimit, clientIp } = require('../../lib/rate-limit');
 const { sendMarketingLeadAlert } = require('../../lib/email');
 const { validateCapture } = require('../../lib/marketing-lead');
+const { sendMetaLead } = require('../../lib/meta-capi');
 const E = require('../../assets/revenue-estimate');
 
 const UTM_KEYS = ['source', 'medium', 'campaign', 'content', 'term', 'fbclid', 'ttclid', 'igshid', 'referrer', 'landing_page'];
@@ -116,6 +117,31 @@ exports.handler = async (event) => {
 
   const db = getAdmin();
 
+  async function trackMetaLead() {
+    if (!isCapture) return;
+    try {
+      const utm = lead.utm || {};
+      await sendMetaLead({
+        email: lead.email,
+        phone: lead.phone,
+        firstName: lead.first_name,
+        eventId: text(body.eventId, 80),
+        eventSourceUrl: utm.landing_page
+          ? `https://noviaai.ca${String(utm.landing_page).startsWith('/') ? utm.landing_page : `/${utm.landing_page}`}`
+          : 'https://noviaai.ca/decouvrir',
+        fbp: text(body.fbp, 120),
+        fbc: text(body.fbc, 200),
+        fbclid: utm.fbclid,
+        ip,
+        ua: event.headers['user-agent'] || event.headers['User-Agent'] || '',
+        campaign: utm.campaign,
+        cookieHeader: event.headers.cookie || event.headers.Cookie || '',
+      });
+    } catch (e) {
+      console.error('qualification-lead capi', e.message);
+    }
+  }
+
   // Doublon récent : on confirme quand même, sans créer une 2e fiche.
   if (isCapture) {
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -127,6 +153,7 @@ exports.handler = async (event) => {
       .gte('created_at', since)
       .limit(1);
     if (existing && existing.length) {
+      await trackMetaLead();
       return json(200, { ok: true, duplicate: true });
     }
   }
@@ -143,6 +170,8 @@ exports.handler = async (event) => {
   } catch (e) {
     console.error('qualification-lead email', e.message);
   }
+
+  await trackMetaLead();
 
   return json(200, {
     ok: true,
