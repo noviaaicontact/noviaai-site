@@ -118,7 +118,6 @@ exports.handler = async (event) => {
   const db = getAdmin();
 
   async function trackMetaLead() {
-    if (!isCapture) return;
     try {
       const utm = lead.utm || {};
       await sendMetaLead({
@@ -128,7 +127,7 @@ exports.handler = async (event) => {
         eventId: text(body.eventId, 80),
         eventSourceUrl: utm.landing_page
           ? `https://noviaai.ca${String(utm.landing_page).startsWith('/') ? utm.landing_page : `/${utm.landing_page}`}`
-          : 'https://noviaai.ca/decouvrir',
+          : 'https://noviaai.ca/potentiel',
         fbp: text(body.fbp, 120),
         fbc: text(body.fbc, 200),
         fbclid: utm.fbclid,

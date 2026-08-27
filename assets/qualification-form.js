@@ -163,6 +163,12 @@
 
   /* ---------- Envoi ---------- */
 
+  attribution();
+
+  if (typeof window.noviaTrackViewContent === 'function') {
+    window.noviaTrackViewContent('potentiel');
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!validateStep(3)) return;
@@ -171,6 +177,8 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Calcul en cours…';
 
+    var eventId = typeof window.noviaEventId === 'function' ? window.noviaEventId() : '';
+    var cookies = typeof window.noviaPixelCookies === 'function' ? window.noviaPixelCookies() : {};
     var payload = {
       firstName: value('firstName'),
       lastName: value('lastName'),
@@ -185,6 +193,9 @@
       consent: value('consent') === '1',
       siteWeb: value('siteWeb'),
       utm: attribution(),
+      eventId: eventId,
+      fbp: cookies.fbp || '',
+      fbc: cookies.fbc || '',
     };
 
     lastEstimate = E.estimate(payload.missedCalls, payload.clientValue);
@@ -201,7 +212,7 @@
         });
       })
       .then(function () {
-        if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead();
+        if (typeof window.noviaTrackLead === 'function') window.noviaTrackLead(eventId);
         showConfirm(payload.firstName);
       })
       .catch(function (err) {

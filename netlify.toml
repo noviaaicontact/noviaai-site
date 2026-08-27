@@ -37,10 +37,16 @@
 
 [[redirects]]
   from = "/go"
-  to = "/decouvrir"
-  status = 301
+  to = "/potentiel"
+  status = 302
 
 [[redirects]]
   from = "/pub"
-  to = "/decouvrir"
-  status = 301
+  to = "/potentiel"
+  status = 302
+
+[[redirects]]
+  from = "/decouvrir"
+  to = "/potentiel"
+  status = 302
+  force = true
