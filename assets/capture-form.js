@@ -76,7 +76,6 @@
     var fields = [
       ['firstName', 'Entrez votre prénom.'],
       ['businessName', "Entrez le nom de l'entreprise."],
-      ['inboundChannel', 'Choisissez une réponse.'],
       ['missedCalls', 'Estimez vos appels manqués.'],
       ['clientValue', 'Indiquez la valeur moyenne d’un job.'],
       ['phone', 'Entrez un numéro à 10 chiffres.'],
@@ -159,7 +158,6 @@
       formVariant: 'capture',
       firstName: value('firstName'),
       businessName: value('businessName'),
-      inboundChannel: value('inboundChannel'),
       missedCalls: value('missedCalls'),
       clientValue: value('clientValue'),
       phone: value('phone'),
