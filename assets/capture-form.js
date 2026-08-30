@@ -75,10 +75,8 @@
     clearErrors();
     var fields = [
       ['firstName', 'Entrez votre prénom.'],
-      ['businessName', "Entrez le nom de l'entreprise."],
-      ['missedCalls', 'Estimez vos appels manqués.'],
-      ['clientValue', 'Indiquez la valeur moyenne d’un job.'],
       ['phone', 'Entrez un numéro à 10 chiffres.'],
+      ['businessName', "Entrez le nom de l'entreprise."],
       ['email', 'Entrez un courriel valide.'],
     ];
     var firstBad = null;
@@ -189,7 +187,7 @@
       .catch(function (err) {
         submitBtn.disabled = false;
         submitBtn.textContent = (window.NOVIA_LANDING && window.NOVIA_LANDING.cta)
-          || 'Voir comment NoviaAI peut aider mon entreprise';
+          || 'Rappelle-moi — essai 14 jours';
         formError.textContent = err.message === 'Failed to fetch'
           ? 'Connexion interrompue. Réessayez.'
           : (err.message || 'Une erreur est survenue. Réessayez.');

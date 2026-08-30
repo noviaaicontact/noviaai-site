@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Découvrez comment NoviaAI peut aider votre entreprise</title>
-<meta name="description" content="Répondez à quelques questions. Ça prend moins de 30 secondes. NoviaAI rattrape les clients qui appellent quand vous ne pouvez pas décrocher.">
+<title>1 job manquée = 400 $ de perdu | NoviaAI</title>
+<meta name="description" content="Un appel manqué part chez ton concurrent. NoviaAI répond par texto en 30 secondes, 24/7. Essai 14 jours, pas de carte.">
 <link rel="canonical" href="https://noviaai.ca/decouvrir">
 <meta name="robots" content="noindex, follow">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
 <meta property="og:url" content="https://noviaai.ca/decouvrir">
-<meta property="og:title" content="Découvrez comment NoviaAI peut aider votre entreprise">
-<meta property="og:description" content="Moins de 30 secondes. On vous dit ensuite si NoviaAI peut vous aider.">
+<meta property="og:title" content="1 job manquée = 400 $ de perdu">
+<meta property="og:description" content="NoviaAI répond par texto en 30 secondes. Essai 14 jours, pas de carte.">
 <link rel="stylesheet" href="/assets/landing.css?v=5">
-<link rel="stylesheet" href="/assets/qualification-form.css?v=3">
+<link rel="stylesheet" href="/assets/qualification-form.css?v=4">
 <script src="/assets/meta-pixel.js?v=3"></script>
 <script>
 (function () {
@@ -35,8 +35,14 @@
   <div class="qualif-wrap">
 
     <header class="qualif-head">
-      <h1 class="qualif-h1">Découvrez comment NoviaAI peut aider votre entreprise</h1>
-      <p class="qualif-sub">Quelques questions. Ça prend moins de 30 secondes.</p>
+      <p class="qualif-badge">Pour les plombiers du Québec</p>
+      <h1 class="qualif-h1">1 job manquée = 400&nbsp;$ de perdu</h1>
+      <p class="qualif-sub">Un appel manqué, c’est ton concurrent qui décroche. NoviaAI répond par texto en 30 secondes — même quand t’es sous l’évier.</p>
+      <ul class="qualif-points">
+        <li>Réponse 24/7 par SMS</li>
+        <li>Le client est qualifié et booké</li>
+        <li>Essai 14 jours, pas de carte</li>
+      </ul>
     </header>
 
     <section class="qualif-card" id="formScreen">
@@ -49,13 +55,25 @@
         </div>
 
         <div class="qualif-field">
+          <label class="qualif-label" for="phone">Téléphone</label>
+          <input class="qualif-input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="418 555-1234" required>
+          <p class="qualif-error" data-error-for="phone"></p>
+        </div>
+
+        <div class="qualif-field">
           <label class="qualif-label" for="businessName">Nom de l'entreprise</label>
           <input class="qualif-input" id="businessName" name="businessName" type="text" autocomplete="organization" maxlength="120" required>
           <p class="qualif-error" data-error-for="businessName"></p>
         </div>
 
+        <div class="qualif-field">
+          <label class="qualif-label" for="email">Courriel</label>
+          <input class="qualif-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" required>
+          <p class="qualif-error" data-error-for="email"></p>
+        </div>
+
         <fieldset class="qualif-field">
-          <legend>Combien d'appels manquez-vous par mois, environ?</legend>
+          <legend>Appels manqués par mois <span class="qualif-optional">(optionnel)</span></legend>
           <div class="qualif-choices qualif-choices-5" role="radiogroup">
             <label class="qualif-choice"><input type="radio" name="missedCalls" value="0-5"><span>0 à 5</span></label>
             <label class="qualif-choice"><input type="radio" name="missedCalls" value="6-10"><span>6 à 10</span></label>
@@ -63,12 +81,11 @@
             <label class="qualif-choice"><input type="radio" name="missedCalls" value="21-50"><span>21 à 50</span></label>
             <label class="qualif-choice"><input type="radio" name="missedCalls" value="50+"><span>50 +</span></label>
           </div>
-          <p class="qualif-hint">Une estimation suffit.</p>
           <p class="qualif-error" data-error-for="missedCalls"></p>
         </fieldset>
 
         <fieldset class="qualif-field">
-          <legend>Combien vaut un job en moyenne?</legend>
+          <legend>Valeur moyenne d’un job <span class="qualif-optional">(optionnel)</span></legend>
           <div class="qualif-choices qualif-choices-5" role="radiogroup">
             <label class="qualif-choice"><input type="radio" name="clientValue" value="moins-100"><span>Moins de 100 $</span></label>
             <label class="qualif-choice"><input type="radio" name="clientValue" value="100-250"><span>100 à 250 $</span></label>
@@ -79,26 +96,14 @@
           <p class="qualif-error" data-error-for="clientValue"></p>
         </fieldset>
 
-        <div class="qualif-field">
-          <label class="qualif-label" for="phone">Téléphone</label>
-          <input class="qualif-input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="418 555-1234" required>
-          <p class="qualif-error" data-error-for="phone"></p>
-        </div>
-
-        <div class="qualif-field">
-          <label class="qualif-label" for="email">Courriel</label>
-          <input class="qualif-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" required>
-          <p class="qualif-error" data-error-for="email"></p>
-        </div>
-
         <label class="qualif-hp" aria-hidden="true">
           Site web
           <input type="text" name="siteWeb" tabindex="-1" autocomplete="off">
         </label>
 
         <div class="qualif-actions">
-          <button type="submit" class="landing-btn landing-btn-lime landing-btn-block capture-submit" id="submitBtn">Voir comment NoviaAI peut aider mon entreprise</button>
-          <p class="qualif-consent-note">En envoyant, vous acceptez d’être contacté au sujet de NoviaAI. <a href="/confidentialite.html">Confidentialité</a></p>
+          <button type="submit" class="landing-btn landing-btn-lime landing-btn-block capture-submit" id="submitBtn">Rappelle-moi — essai 14 jours</button>
+          <p class="qualif-consent-note">On te rappelle. Pas de carte, pas d’engagement. <a href="/confidentialite.html">Confidentialité</a></p>
           <p class="qualif-formerror" id="formError"></p>
         </div>
       </form>
@@ -106,14 +111,14 @@
 
     <section class="qualif-card qualif-hidden" id="confirmScreen" aria-live="polite">
       <div class="qualif-check" aria-hidden="true">✓</div>
-      <h2 class="qualif-confirm-title">Merci ! Votre demande est reçue.</h2>
-      <p class="qualif-confirm-text">Je vais regarder votre demande et voir comment NoviaAI pourrait aider votre entreprise.</p>
+      <h2 class="qualif-confirm-title">Reçu. On te rappelle.</h2>
+      <p class="qualif-confirm-text">Tes infos sont rendues. On te contacte pour voir comment NoviaAI peut rattraper tes appels manqués.</p>
     </section>
 
     <div class="landing-trust qualif-trust">
-      <span>PME du Québec</span>
-      <span>Sans engagement</span>
-      <span>Réponse en français</span>
+      <span>Plombiers du Québec</span>
+      <span>Essai 14 jours</span>
+      <span>Pas de carte de crédit</span>
     </div>
 
   </div>
@@ -126,6 +131,6 @@
   <a href="/confidentialite.html">Confidentialité (Loi&nbsp;25)</a>
 </footer>
 
-<script src="/assets/capture-form.js?v=6" defer></script>
+<script src="/assets/capture-form.js?v=7" defer></script>
 </body>
 </html>
