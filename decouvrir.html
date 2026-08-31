@@ -13,7 +13,7 @@
 <meta property="og:title" content="1 job manquée = 400 $ de perdu">
 <meta property="og:description" content="NoviaAI répond par texto en 30 secondes. Essai 14 jours, pas de carte.">
 <link rel="stylesheet" href="/assets/landing.css?v=5">
-<link rel="stylesheet" href="/assets/qualification-form.css?v=4">
+<link rel="stylesheet" href="/assets/qualification-form.css?v=6">
 <script src="/assets/meta-pixel.js?v=3"></script>
 <script>
 (function () {
@@ -72,30 +72,6 @@
           <p class="qualif-error" data-error-for="email"></p>
         </div>
 
-        <fieldset class="qualif-field">
-          <legend>Appels manqués par mois <span class="qualif-optional">(optionnel)</span></legend>
-          <div class="qualif-choices qualif-choices-5" role="radiogroup">
-            <label class="qualif-choice"><input type="radio" name="missedCalls" value="0-5"><span>0 à 5</span></label>
-            <label class="qualif-choice"><input type="radio" name="missedCalls" value="6-10"><span>6 à 10</span></label>
-            <label class="qualif-choice"><input type="radio" name="missedCalls" value="11-20"><span>11 à 20</span></label>
-            <label class="qualif-choice"><input type="radio" name="missedCalls" value="21-50"><span>21 à 50</span></label>
-            <label class="qualif-choice"><input type="radio" name="missedCalls" value="50+"><span>50 +</span></label>
-          </div>
-          <p class="qualif-error" data-error-for="missedCalls"></p>
-        </fieldset>
-
-        <fieldset class="qualif-field">
-          <legend>Valeur moyenne d’un job <span class="qualif-optional">(optionnel)</span></legend>
-          <div class="qualif-choices qualif-choices-5" role="radiogroup">
-            <label class="qualif-choice"><input type="radio" name="clientValue" value="moins-100"><span>Moins de 100 $</span></label>
-            <label class="qualif-choice"><input type="radio" name="clientValue" value="100-250"><span>100 à 250 $</span></label>
-            <label class="qualif-choice"><input type="radio" name="clientValue" value="250-500"><span>250 à 500 $</span></label>
-            <label class="qualif-choice"><input type="radio" name="clientValue" value="500-1000"><span>500 à 1 000 $</span></label>
-            <label class="qualif-choice"><input type="radio" name="clientValue" value="1000+"><span>1 000 $ +</span></label>
-          </div>
-          <p class="qualif-error" data-error-for="clientValue"></p>
-        </fieldset>
-
         <label class="qualif-hp" aria-hidden="true">
           Site web
           <input type="text" name="siteWeb" tabindex="-1" autocomplete="off">
@@ -106,6 +82,32 @@
           <p class="qualif-consent-note">On te rappelle. Pas de carte, pas d’engagement. <a href="/confidentialite.html">Confidentialité</a></p>
           <p class="qualif-formerror" id="formError"></p>
         </div>
+
+        <details class="qualif-more">
+          <summary>Quelques chiffres — optionnel, ça aide à te rappeler plus vite</summary>
+          <fieldset class="qualif-field">
+            <legend>Appels manqués par mois</legend>
+            <div class="qualif-choices qualif-choices-5" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="0-5"><span>0 à 5</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="6-10"><span>6 à 10</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="11-20"><span>11 à 20</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="21-50"><span>21 à 50</span></label>
+              <label class="qualif-choice"><input type="radio" name="missedCalls" value="50+"><span>50 +</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="missedCalls"></p>
+          </fieldset>
+          <fieldset class="qualif-field">
+            <legend>Valeur moyenne d’un job</legend>
+            <div class="qualif-choices qualif-choices-5" role="radiogroup">
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="moins-100"><span>Moins de 100 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="100-250"><span>100 à 250 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="250-500"><span>250 à 500 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="500-1000"><span>500 à 1 000 $</span></label>
+              <label class="qualif-choice"><input type="radio" name="clientValue" value="1000+"><span>1 000 $ +</span></label>
+            </div>
+            <p class="qualif-error" data-error-for="clientValue"></p>
+          </fieldset>
+        </details>
       </form>
     </section>
 
@@ -131,6 +133,8 @@
   <a href="/confidentialite.html">Confidentialité (Loi&nbsp;25)</a>
 </footer>
 
-<script src="/assets/capture-form.js?v=7" defer></script>
+<a class="qualif-callbar" href="tel:+15819095332">Appelle maintenant — 581 909-5332</a>
+
+<script src="/assets/capture-form.js?v=8" defer></script>
 </body>
 </html>
