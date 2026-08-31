@@ -474,23 +474,23 @@
   padding-bottom: 72px;
 }
 
-.qualif-callbar {
+.landing a.qualif-callbar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 40;
+  z-index: 120;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 56px;
   padding: 12px 16px;
-  background: var(--navy);
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--navy);
   font-weight: 800;
   font-size: 1.02rem;
   text-decoration: none;
   letter-spacing: 0.01em;
   box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.18);
 }
-.qualif-callbar:active { background: var(--navy2); }
+.landing a.qualif-callbar:active { background: var(--accent-dark); }
