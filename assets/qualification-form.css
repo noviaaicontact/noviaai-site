@@ -471,7 +471,7 @@
 }
 
 .qualif-body {
-  padding-bottom: 72px;
+  padding-bottom: 96px;
 }
 
 .landing a.qualif-callbar {
@@ -483,7 +483,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 56px;
+  min-height: 52px;
   padding: 12px 16px;
   background: var(--accent);
   color: var(--navy);
@@ -494,3 +494,10 @@
   box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.18);
 }
 .landing a.qualif-callbar:active { background: var(--accent-dark); }
+
+/* Sur grand écran le numéro est déjà dans la nav — le bandeau
+   recouvrait le bouton « Rappelle-moi » et les deux sont lime. */
+@media (min-width: 768px) {
+  .qualif-body { padding-bottom: 32px; }
+  .landing a.qualif-callbar { display: none; }
+}
