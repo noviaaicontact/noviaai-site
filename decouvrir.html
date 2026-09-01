@@ -66,12 +66,6 @@
           <p class="qualif-error" data-error-for="businessName"></p>
         </div>
 
-        <div class="qualif-field">
-          <label class="qualif-label" for="email">Courriel</label>
-          <input class="qualif-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" required>
-          <p class="qualif-error" data-error-for="email"></p>
-        </div>
-
         <label class="qualif-hp" aria-hidden="true">
           Site web
           <input type="text" name="siteWeb" tabindex="-1" autocomplete="off">
@@ -85,6 +79,11 @@
 
         <details class="qualif-more">
           <summary>Quelques chiffres — optionnel, ça aide à te rappeler plus vite</summary>
+          <div class="qualif-field">
+            <label class="qualif-label" for="email">Courriel — si tu en as un</label>
+            <input class="qualif-input" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160">
+            <p class="qualif-error" data-error-for="email"></p>
+          </div>
           <fieldset class="qualif-field">
             <legend>Appels manqués par mois</legend>
             <div class="qualif-choices qualif-choices-5" role="radiogroup">
@@ -135,6 +134,6 @@
 
 <a class="qualif-callbar" href="tel:+15819095332">Appelle maintenant — 581 909-5332</a>
 
-<script src="/assets/capture-form.js?v=8" defer></script>
+<script src="/assets/capture-form.js?v=9" defer></script>
 </body>
 </html>

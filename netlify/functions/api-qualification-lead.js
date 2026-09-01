@@ -147,7 +147,7 @@ exports.handler = async (event) => {
     const { data: existing } = await db
       .from('marketing_leads')
       .select('id')
-      .eq('email', lead.email)
+      .eq('phone', lead.phone)
       .eq('form_variant', 'capture')
       .gte('created_at', since)
       .limit(1);

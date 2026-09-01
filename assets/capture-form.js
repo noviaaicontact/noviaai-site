@@ -77,7 +77,6 @@
       ['firstName', 'Entrez votre prénom.'],
       ['phone', 'Entrez un numéro à 10 chiffres.'],
       ['businessName', "Entrez le nom de l'entreprise."],
-      ['email', 'Entrez un courriel valide.'],
     ];
     var firstBad = null;
 
@@ -89,13 +88,18 @@
       if (!v) msg = emptyMsg;
       else if (name === 'firstName' && v.length < 2) msg = 'Prénom trop court.';
       else if (name === 'businessName' && v.length < 2) msg = 'Nom trop court.';
-      else if (name === 'email' && !isEmail(v)) msg = 'Courriel invalide.';
       else if (name === 'phone' && !isPhone(v)) msg = 'Entrez un numéro à 10 chiffres.';
       if (msg) {
         setError(name, msg);
         if (!firstBad) firstBad = name;
       }
     });
+
+    var email = value('email');
+    if (email && !isEmail(email)) {
+      setError('email', 'Courriel invalide.');
+      if (!firstBad) firstBad = 'email';
+    }
 
     if (firstBad) {
       var node = errorNode(firstBad) || form.querySelector('[name="' + firstBad + '"]');

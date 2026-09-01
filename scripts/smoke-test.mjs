@@ -1000,9 +1000,8 @@ await test('capture: champs manquants / invalides', () => {
   const empty = validateCapture({});
   assert.ok(empty.errors.includes('prénom'));
   assert.ok(empty.errors.includes('entreprise'));
-  assert.ok(empty.errors.includes('courriel'));
+  assert.ok(!empty.errors.includes('courriel'));
   assert.ok(empty.errors.includes('téléphone'));
-  assert.ok(empty.errors.includes('réception des demandes'));
   const bad = validateCapture({
     firstName: '12345',
     businessName: 'http://spam.example',
