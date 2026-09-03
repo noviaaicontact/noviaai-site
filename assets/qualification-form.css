@@ -470,22 +470,12 @@
   padding: 14px 16px;
 }
 
-<<<<<<< Updated upstream
-.qualif-body {
-  padding-bottom: 96px;
-}
-
-=======
->>>>>>> Stashed changes
 .landing a.qualif-callbar {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 52px;
-<<<<<<< Updated upstream
-=======
   margin-top: 8px;
->>>>>>> Stashed changes
   padding: 12px 16px;
   background: var(--accent);
   color: var(--navy);
@@ -495,10 +485,3 @@
   letter-spacing: 0.01em;
 }
 .landing a.qualif-callbar:active { background: var(--accent-dark); }
-
-/* Sur grand écran le numéro est déjà dans la nav — le bandeau
-   recouvrait le bouton « Rappelle-moi » et les deux sont lime. */
-@media (min-width: 768px) {
-  .qualif-body { padding-bottom: 32px; }
-  .landing a.qualif-callbar { display: none; }
-}
