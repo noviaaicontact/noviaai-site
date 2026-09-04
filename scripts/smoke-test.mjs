@@ -7,7 +7,8 @@ import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 
-const { shouldSendTextback } = require('../lib/voice-callback.js');
+const { shouldSendTextback, shouldSkipStoreForward } = require('../lib/voice-callback.js');
+const { buildVoicemailSmsFallback } = require('../lib/voicemail.js');
 const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
 const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
@@ -24,7 +25,7 @@ const {
   startConnect,
   assertOAuthCallbackSession,
 } = require('../lib/calendar/index.js');
-const { buildOpenSlots, parseAcceptedSlot, extractAcceptedSlot, assistantRejectedSlot, stripCalendarClaims } = require('../lib/calendar/slots.js');
+const { buildOpenSlots, parseAcceptedSlot, extractAcceptedSlot, assistantRejectedSlot, stripCalendarClaims, isOpenNow } = require('../lib/calendar/slots.js');
 const { getConversations, getThreadMessages } = require('../lib/inbox.js');
 const { textbackMessage } = require('../lib/sms-send.js');
 const { validateTwilioRequest } = require('../lib/twilio-util.js');
@@ -89,8 +90,66 @@ await test('shouldSendTextback: boîte vocale courte → SMS', () => {
   assert.strictEqual(shouldSendTextback('completed', '8', 'false'), true);
 });
 
-await test('shouldSendTextback: vraie conversation → pas de SMS', () => {
-  assert.strictEqual(shouldSendTextback('completed', '45', 'true'), false);
+await test('shouldSendTextback: répondeur magasin 45s → SMS quand même', () => {
+  assert.strictEqual(shouldSendTextback('completed', '45', 'true'), true);
+});
+
+await test('shouldSendTextback: vraie conversation 2 min → pas de SMS', () => {
+  assert.strictEqual(shouldSendTextback('completed', '120', 'true'), false);
+});
+
+await test('voicemail SMS: fallback cite la raison', () => {
+  const msg = buildVoicemailSmsFallback({ raison: 'eau verte, analyse' }, 'Camille');
+  assert.ok(/Camille/.test(msg));
+  assert.ok(/eau verte/.test(msg));
+  assert.ok(/écouté/.test(msg));
+});
+
+const SANSOUCI_HOURS = {
+  lundi: { ouvert: true, debut: '9h', fin: '17h' },
+  mardi: { ouvert: true, debut: '9h', fin: '17h' },
+  mercredi: { ouvert: true, debut: '9h', fin: '17h' },
+  jeudi: { ouvert: true, debut: '9h', fin: '17h' },
+  vendredi: { ouvert: true, debut: '9h', fin: '17h' },
+  samedi: { ouvert: true, debut: '9h', fin: '17h' },
+  dimanche: { ouvert: true, debut: '10h', fin: '16h' },
+};
+
+await test('isOpenNow: Sansouci jeudi 21h fermé, 10h ouvert', () => {
+  const evening = new Date('2026-09-03T21:45:00-04:00');
+  const morning = new Date('2026-09-03T10:00:00-04:00');
+  assert.strictEqual(isOpenNow(SANSOUCI_HOURS, evening), false);
+  assert.strictEqual(isOpenNow(SANSOUCI_HOURS, morning), true);
+});
+
+await test('shouldSkipStoreForward: fermé + même ligne magasin → skip', () => {
+  const evening = new Date('2026-09-03T21:45:00-04:00');
+  assert.strictEqual(shouldSkipStoreForward({
+    hours: SANSOUCI_HOURS,
+    forwardTo: '+14188363138',
+    storePhone: '418-836-3138',
+    at: evening,
+  }), true);
+});
+
+await test('shouldSkipStoreForward: fermé + cell proprio → on compose', () => {
+  const evening = new Date('2026-09-03T21:45:00-04:00');
+  assert.strictEqual(shouldSkipStoreForward({
+    hours: SANSOUCI_HOURS,
+    forwardTo: '+15815551212',
+    storePhone: '418-836-3138',
+    at: evening,
+  }), false);
+});
+
+await test('shouldSkipStoreForward: ouvert + même ligne → on compose', () => {
+  const morning = new Date('2026-09-03T10:00:00-04:00');
+  assert.strictEqual(shouldSkipStoreForward({
+    hours: SANSOUCI_HOURS,
+    forwardTo: '+14188363138',
+    storePhone: '418-836-3138',
+    at: morning,
+  }), false);
 });
 
 await test('monthlyLimit Pro = 750 conversations', () => {
@@ -185,6 +244,9 @@ await test('crawl: ignore wishlist WooCommerce et canonise l\'URL', () => {
   assert.ok(!/\?/.test(canon));
   assert.ok(pathScore('/categorie-produit/produits-chimiques') > pathScore('/product/owow-101'));
   assert.ok(pathScore('/contact') > pathScore('/blog/un-article'));
+  const queued = normalizeUrl('https://www.spasetpiscines.com/', 'https://www.spasetpiscines.com/');
+  const afterFetch = normalizeUrl('https://www.spasetpiscines.com/', 'https://www.spasetpiscines.com/');
+  assert.strictEqual(queued, afterFetch);
 });
 
 await test('agent-coach: JSON consignes fusionnées, pas d’écrasement', () => {
