@@ -13,6 +13,7 @@ const { monthlyLimit, FAIR_USE_SMS } = require('../lib/usage-limits.js');
 const { normalizePlan, PLANS, DEFAULT_PLAN } = require('../lib/plans.js');
 const { resolveCustomerPhone, toE164, isTestCaller } = require('../lib/phone-util.js');
 const { parseOwnerNotifyDecision, isTrivialInbound, heuristicOwnerNotify } = require('../lib/owner-notify.js');
+const { isPlaceholderEmail, ownerAlertEmail } = require('../lib/email.js');
 const { parseCoachDecision, mergeInstructions, mergeServices } = require('../lib/agent-coach.js');
 const { USER_PATCHABLE_FIELDS, pickPatch } = require('../lib/tenant.js');
 const { validateOnboarding, formToTenantPayload, settingsToTenantPayload } = require('../lib/dossier-builder.js');
@@ -171,6 +172,20 @@ await test('resolveCustomerPhone: public_phone prioritaire', () => {
     phone_forward: '581-909-5332',
   });
   assert.ok(phone.includes('418') || phone.includes('836'));
+});
+
+await test('ownerAlertEmail: ignore @noviaai.invalid, prend contact_email', () => {
+  assert.strictEqual(isPlaceholderEmail('pending-61a9e323@noviaai.invalid'), true);
+  assert.strictEqual(isPlaceholderEmail(''), true);
+  assert.strictEqual(isPlaceholderEmail('nancy@sansouci.ca'), false);
+  assert.strictEqual(ownerAlertEmail({
+    email: 'pending-61a9e323@noviaai.invalid',
+    contact_email: '',
+  }), 'noviaai.contact@gmail.com');
+  assert.strictEqual(ownerAlertEmail({
+    email: 'pending-61a9e323@noviaai.invalid',
+    contact_email: 'aetienne511@gmail.com',
+  }), 'aetienne511@gmail.com');
 });
 
 await test('owner-notify: JSON et messages triviaux', () => {
