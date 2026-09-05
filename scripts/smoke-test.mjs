@@ -89,10 +89,12 @@ await test('shouldSendTextback: no-answer → SMS', () => {
 
 await test('shouldSendTextback: boîte vocale courte → SMS', () => {
   assert.strictEqual(shouldSendTextback('completed', '8', 'false'), true);
+  assert.strictEqual(shouldSendTextback('completed', '8', 'true'), true);
 });
 
-await test('shouldSendTextback: répondeur magasin 45s → SMS quand même', () => {
-  assert.strictEqual(shouldSendTextback('completed', '45', 'true'), true);
+await test('shouldSendTextback: humain décroche 20–45s → pas de SMS', () => {
+  assert.strictEqual(shouldSendTextback('completed', '21', 'true'), false);
+  assert.strictEqual(shouldSendTextback('completed', '45', 'true'), false);
 });
 
 await test('shouldSendTextback: vraie conversation 2 min → pas de SMS', () => {
